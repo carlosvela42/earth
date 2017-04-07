@@ -1,0 +1,20 @@
+# MYSQL
+#spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+#spring.datasource.url=jdbc:mysql://localhost:3306/test_bpmproject
+#spring.datasource.username=root
+#spring.datasource.password=12345
+#spring.datasource.maximum-pool-size=1
+
+# SQL SERVER
+#spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+#spring.datasource.url=jdbc:sqlserver://172.20.108.60;databaseName=EARTHDB;integratedSecurity=false;
+#spring.datasource.username=sa
+#spring.datasource.password=Earth12345
+#spring.datasource.maximum-pool-size=1
+
+# ORACLE
+spring.datasource.driver-class-name=oracle.jdbc.driver.OracleDriver
+spring.datasource.url=jdbc:oracle:thin:@172.20.108.60:1521:earth
+spring.datasource.username=c##earth
+spring.datasource.password=earth123
+spring.datasource.maximum-pool-size=1
