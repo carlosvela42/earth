@@ -367,7 +367,7 @@
 
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal" id="addLayer">Add</button>
+						<button type="button" class="btn btn-default" id="addLayer">Add</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Remove</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Rename</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Active</button>

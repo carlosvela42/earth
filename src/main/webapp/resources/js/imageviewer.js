@@ -9,7 +9,7 @@ window.onload = function() {
 	var y2 = [];
 	var cut = -1;
 	var selectId = -1;
-	var layerCount = jsonLayer.Layer.length;
+	var layerCount = 0;
 	var layerName = [];
 	var layerOwner = [];
 	var layerDisplay = [];
@@ -76,40 +76,30 @@ window.onload = function() {
 			}
 		}
 	});
-	
-	function addNewLayer(layerName,layerOwner,layerItems,layerModified,layerCreated,layerActive){
+
+	function addNewLayer(layerName, layerOwner, layerItems, layerModified,
+			layerCreated, layerActive) {
 		var layerBody = "";
-		layerBody += '<div class="row">'
-				+ '<div class="col-md-1">'
-				+ layerName
-				+ '</div>'
-				+ '<div class="col-md-1">'
-				+ layerOwner
-				+ '</div>'
+		layerCount++;
+		layerBody += '<div class="row">' + '<div class="col-md-1" id="layer'
+				+ layerCount + '">' + layerName + '</div>'
+				+ '<div class="col-md-1">' + layerOwner + '</div>'
 				+ '<div class="col-md-1">'
 				+ '<input type="checkbox" name="display" value="true" checked>'
-				+ '</div>'
-				+ '<div class="col-md-1">'
-				+ layerItems
-				+ '</div>'
-				+ '<div class="col-md-2">'
-				+ layerModified
-				+ '</div>'
-				+ '<div class="col-md-2">'
-				+ layerCreated
-				+ '</div>'
+				+ '</div>' + '<div class="col-md-1">' + layerItems + '</div>'
+				+ '<div class="col-md-2">' + layerModified + '</div>'
+				+ '<div class="col-md-2">' + layerCreated + '</div>'
 				+ '<div class="col-md-1">';
-		if(layerActive){
+		if (layerActive) {
 			layerBody += '<input type="radio" name="active" value="true" checked="checked"></div></div>';
-		}
-		else{
+		} else {
 			layerBody += '<input type="radio" name="active" value="false"></div></div>';
-		}				
+		}
 		$('#layerBody').append(layerBody);
 	}
-	
+
 	var layerLength = jsonLayer.Layer.length;
-	
+
 	for (var k = 0; k < layerLength; k++) {
 		layer = jsonLayer.Layer[k];
 		layerName[k] = layer.Name;
@@ -117,11 +107,12 @@ window.onload = function() {
 		layerDisplay[k] = true;
 		layerItems[k] = layer.Items;
 		layerModified[k] = layer.Modified;
-		layerCreated[k] = layer.Created;	
-		if(layer.Active){
+		layerCreated[k] = layer.Created;
+		if (layer.Active) {
 			layerActive = layerName[k];
 		}
-		addNewLayer(layerName[k],layerOwner[k],layerItems[k],layerModified[k],layerCreated[k],layer.Active);
+		addNewLayer(layerName[k], layerOwner[k], layerItems[k],
+				layerModified[k], layerCreated[k], layer.Active);
 		var annotationsLength = layer.Annotations.length;
 		for (var j = 0; j < annotationsLength; j++) {
 			var counter = layer.Annotations[j];
@@ -152,7 +143,7 @@ window.onload = function() {
 				i = counter.id;
 			}
 		}
-	}	
+	}
 
 	$("#select").click(function() {
 		$('[name=toolOption]').prop('checked', false);
@@ -768,22 +759,25 @@ window.onload = function() {
 					$('#container').css("opacity", Math.abs(val / 100) * 2);
 				}
 			});
-	
-	$("#addLayer").click(function() {
-		var k = 0;
-		for(var j=0;j<layerCount;j++){
-			if($('#layerName').val()==layerName[j]){
-				k++;
-			}			
-		}
-		if(k==0){
-			addNewLayer($('#layerName').val(),jsonLayer.User,0,2017,2017,false);			
-		}
-		else{
-			alert("Layer exist");
-		}
-	});
-	
+
+	$("#addLayer").click(
+			function() {
+				var k = 0;
+				if ($('#layerName').val() != "") {
+					for (var j = 1; j <= layerCount; j++) {
+						if ($('#layerName').val() == $('#layer' + j).html()) {
+							k++;
+						}
+					}
+					if (k == 0) {
+						addNewLayer($('#layerName').val(), jsonLayer.User, 0,
+								2017, 2017, false);
+					} else {
+						alert("Layer exist");
+					}
+				}
+			});
+
 	$("#okLayer").click(function() {
 
 	});
