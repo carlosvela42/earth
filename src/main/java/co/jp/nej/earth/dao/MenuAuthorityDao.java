@@ -5,6 +5,7 @@ import java.util.Map;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.MenuAccessRight;
+import co.jp.nej.earth.model.UserAccessRight;
 
 public interface MenuAuthorityDao {
 
@@ -12,8 +13,14 @@ public interface MenuAuthorityDao {
 
     public boolean deleteListByUserIds(List<String> userIds) throws EarthException;
 
-    public boolean insertMixAuthority(String menuId,List<MenuAccessRight> menuAccessRights) throws EarthException;
+    public boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
+
+    public boolean insertMixAuthority(String menuId, List<UserAccessRight> userAccessRights) throws EarthException;
 
     public boolean deleteAllMixAuthority(String menuId) throws EarthException;
+
+    public List<UserAccessRight> getUserAuthority(String menuId) throws EarthException;
+
+    public List<UserAccessRight> getUserAuthorityByProfiles(String menuId) throws EarthException;
 
 }

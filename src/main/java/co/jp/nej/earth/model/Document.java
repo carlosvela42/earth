@@ -8,8 +8,8 @@ import co.jp.nej.earth.model.entity.MgrTemplate;
 public class Document {
 
     private String workItemId;
-    private String folderItemNo;
-    private String documentNo;
+    private Integer folderItemNo;
+    private Integer documentNo;
     private MgrTemplate mgrTemplate;
     private int pageCount;
     private String displayInformation;
@@ -39,7 +39,7 @@ public class Document {
     /**
      * @return the folderItemNo
      */
-    public String getFolderItemNo() {
+    public Integer getFolderItemNo() {
         return folderItemNo;
     }
 
@@ -47,14 +47,14 @@ public class Document {
      * @param folderItemNo
      *            the folderItemNo to set
      */
-    public void setFolderItemNo(String folderItemNo) {
+    public void setFolderItemNo(Integer folderItemNo) {
         this.folderItemNo = folderItemNo;
     }
 
     /**
      * @return the documentNo
      */
-    public String getDocumentNo() {
+    public Integer getDocumentNo() {
         return documentNo;
     }
 
@@ -62,7 +62,7 @@ public class Document {
      * @param documentNo
      *            the documentNo to set
      */
-    public void setDocumentNo(String documentNo) {
+    public void setDocumentNo(Integer documentNo) {
         this.documentNo = documentNo;
     }
 
@@ -209,4 +209,6 @@ public class Document {
         this.layers = layers;
     }
 
+    
+    
 }

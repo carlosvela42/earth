@@ -1,10 +1,16 @@
 package co.jp.nej.earth.model;
 
+import java.io.Serializable;
+
 import com.google.gson.annotations.SerializedName;
 
 import co.jp.nej.earth.model.enums.LinkType;
 
-public class MenuLink {
+public class MenuLink implements Serializable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @SerializedName("linkType")
     private LinkType linkType;
     private String url;

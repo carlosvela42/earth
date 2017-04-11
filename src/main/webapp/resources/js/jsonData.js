@@ -1,13 +1,13 @@
 var jsonLayer = {
 		"User" : "ADMIN",
 		"Image" : "resources/images/imageViewer/bc.jpg",
+		"Active" : "DEF0",
 		"Layer" : [ {
 			"Name" : "DEF0",
 			"Owner" : "ADMIN",			
 			"Items" : "2",
 			"Modified" : "2012",
-			"Created" : "2012",	
-			"Active" : true,
+			"Created" : "2012",			
 			"Annotations" : [ {
 				"type" : "line",
 				"x1" : "10",
@@ -34,8 +34,7 @@ var jsonLayer = {
 			"Owner" : "DEV1",		
 			"Items" : "1",
 			"Modified" : "2013",
-			"Created" : "2013",	
-			"Active" : false,
+			"Created" : "2013",			
 			"Annotations" : [ {
 				"type" : "line",
 				"x1" : "130",

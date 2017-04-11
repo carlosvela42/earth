@@ -9,14 +9,17 @@ window.onload = function() {
 	var y2 = [];
 	var cut = -1;
 	var selectId = -1;
-	var layerCount = 0;
+	var layerCount = jsonLayer.Layer.length;
 	var layerName = [];
 	var layerOwner = [];
 	var layerDisplay = [];
 	var layerItems = [];
 	var layerModified = [];
 	var layerCreated = [];
-	var layerActive;
+	var layerActive = jsonLayer.Active;
+	var contrast = 100;
+	var brightness = 100;
+	var checkGrayscale = false;
 
 	var container = d3.select('body').append('div').attr('id', 'container');
 	var vis = container.append('svg').on("mousedown", mousedown).on("mouseup",
@@ -77,30 +80,36 @@ window.onload = function() {
 		}
 	});
 
-	function addNewLayer(layerName, layerOwner, layerItems, layerModified,
-			layerCreated, layerActive) {
+	function addNewLayer(countLayer, layerName, layerOwner, layerDisplay,
+			layerItems, layerModified, layerCreated, layerActive) {
 		var layerBody = "";
-		layerCount++;
 		layerBody += '<div class="row">' + '<div class="col-md-1" id="layer'
-				+ layerCount + '">' + layerName + '</div>'
+				+ countLayer + '">' + layerName + '</div>'
 				+ '<div class="col-md-1">' + layerOwner + '</div>'
-				+ '<div class="col-md-1">'
-				+ '<input type="checkbox" name="display" value="true" checked>'
-				+ '</div>' + '<div class="col-md-1">' + layerItems + '</div>'
-				+ '<div class="col-md-2">' + layerModified + '</div>'
-				+ '<div class="col-md-2">' + layerCreated + '</div>'
 				+ '<div class="col-md-1">';
-		if (layerActive) {
-			layerBody += '<input type="radio" name="active" value="true" checked="checked"></div></div>';
+		if (layerDisplay) {
+			layerBody += '<input type="checkbox" name="display" value="'
+					+ layerName + '" checked>';
 		} else {
-			layerBody += '<input type="radio" name="active" value="false"></div></div>';
+			layerBody += '<input type="checkbox" name="display" value="'
+					+ layerName + '">';
+		}
+		layerBody += '</div>' + '<div class="col-md-1">' + layerItems
+				+ '</div>' + '<div class="col-md-2">' + layerModified
+				+ '</div>' + '<div class="col-md-2">' + layerCreated + '</div>'
+				+ '<div class="col-md-1">';
+		if (layerActive == layerName) {
+			layerBody += '<input type="radio" name="active" value="'
+					+ layerName + '" checked="checked"></div></div>';
+			$('#layerActive').val(layerName);
+		} else {
+			layerBody += '<input type="radio" name="active" value="'
+					+ layerName + '"></div></div>';
 		}
 		$('#layerBody').append(layerBody);
 	}
 
-	var layerLength = jsonLayer.Layer.length;
-
-	for (var k = 0; k < layerLength; k++) {
+	for (var k = 0; k < layerCount; k++) {
 		layer = jsonLayer.Layer[k];
 		layerName[k] = layer.Name;
 		layerOwner[k] = layer.Owner;
@@ -108,11 +117,8 @@ window.onload = function() {
 		layerItems[k] = layer.Items;
 		layerModified[k] = layer.Modified;
 		layerCreated[k] = layer.Created;
-		if (layer.Active) {
-			layerActive = layerName[k];
-		}
-		addNewLayer(layerName[k], layerOwner[k], layerItems[k],
-				layerModified[k], layerCreated[k], layer.Active);
+		addNewLayer(k + 1, layerName[k], layerOwner[k], layerDisplay[k],
+				layerItems[k], layerModified[k], layerCreated[k], layerActive);
 		var annotationsLength = layer.Annotations.length;
 		for (var j = 0; j < annotationsLength; j++) {
 			var counter = layer.Annotations[j];
@@ -144,6 +150,10 @@ window.onload = function() {
 			}
 		}
 	}
+
+	$('input[type=radio][name=active]').change(function() {
+		$('#layerActive').val(this.value);
+	});
 
 	$("#select").click(function() {
 		$('[name=toolOption]').prop('checked', false);
@@ -380,14 +390,14 @@ window.onload = function() {
 			i++;
 			anno = vis.append("line").attr("x1", x).attr("y1", y).attr("x2", x)
 					.attr("y2", y).attr("id", i).attr("stroke", "black").attr(
-							"stroke-width", scale).on("click", selectClick);
+							"stroke-width", scale).attr("class", layerActive).on("click", selectClick);
 			vis.on("mousemove", mousemove);
 		}
 		if ($("#rectangle").prop("checked")) {
 			i++;
 			anno = vis.append("rect").attr("x", x).attr("y", y)
 					.attr("width", 0).attr("height", 0).attr("id", i).attr(
-							"fill", "white").attr("stroke", "black").on(
+							"fill", "white").attr("stroke", "black").attr("class", layerActive).on(
 							"click", selectClick);
 			vis.on("mousemove", mousemove);
 		}
@@ -395,7 +405,7 @@ window.onload = function() {
 			i++;
 			anno = vis.append("foreignObject").attr("x", x).attr("y", y).attr(
 					"width", 0).attr("height", 0).attr("class", "text").attr(
-					"id", i).on("click", selectClick);
+					"id", i).attr("class", layerActive).on("click", selectClick);
 			$('#' + i).append('<textarea id="t' + i + '"/>');
 			$("#t" + i).css("color", "black");
 			$("#t" + i).css("backgroundColor", "transparent");
@@ -411,14 +421,14 @@ window.onload = function() {
 			i++;
 			anno = vis.append("rect").attr("x", x).attr("y", y)
 					.attr("width", 0).attr("height", 0).attr("fill", "yellow")
-					.attr("stroke", "none").attr("fill-opacity", "0.4").on(
+					.attr("stroke", "none").attr("fill-opacity", "0.4").attr("class", layerActive).on(
 							"click", selectClick).attr("id", i);
 			vis.on("mousemove", mousemove);
 		}
 		if ($("#comment").prop("checked")) {
 			i++;
 			anno = vis.append("foreignObject").attr("x", x).attr("y", y).attr(
-					"width", 0).attr("height", 0).attr("id", i).on("click",
+					"width", 0).attr("height", 0).attr("id", i).attr("class", layerActive).on("click",
 					selectClick);
 			$('#' + i)
 					.append(
@@ -747,40 +757,167 @@ window.onload = function() {
 				}
 			});
 
+	$("#btnGrayscale").click(function() {
+		$('#controls').val(contrast);
+		$('#controls1').val(brightness);
+		if(checkGrayscale){
+			$("#cbox1").prop('checked',true);
+		}
+		else{
+			$("#cbox1").prop('checked',false);
+		}
+	});
+
 	$("#okGrayscale").click(
 			function() {
-				if (cbox1.checked) {
-					var val = (parseInt($('#controls').val()) + parseInt($(
-							'#controls1').val())) / 2 - 50;
+				contrast = parseInt($('#controls').val());
+				brightness = parseInt($('#controls1').val());
+				checkGrayscale = cbox1.checked;
+				var val;
+				if (checkGrayscale) {			
+					val = (contrast + brightness) / 2 - 50;
 					if (val > 50 || val < -50)
 						return false;
-					$('#container').css("backgroundColor",
-							val > 0 ? 'white' : 'black');
-					$('#container').css("opacity", Math.abs(val / 100) * 2);
 				}
+				else{
+					val=50;
+				}
+				$('#container').css("backgroundColor",
+						val > 0 ? 'white' : 'black');
+				$('#container').css("opacity", Math.abs(val / 100) * 2);
+			});
+
+	$("#btnLayer").click(
+			function() {
+				for (var j = 1; j <= layerCount; j++) {
+					$("#layerBody .row:eq(1)").remove();
+				}
+				for (var k = 0; k < layerCount; k++) {
+					addNewLayer(k + 1, layerName[k], layerOwner[k],
+							layerDisplay[k], layerItems[k], layerModified[k],
+							layerCreated[k], layerActive);
+				}
+				$('#layerName').val("");
 			});
 
 	$("#addLayer").click(
 			function() {
 				var k = 0;
 				if ($('#layerName').val() != "") {
-					for (var j = 1; j <= layerCount; j++) {
+					var countRow = $("#layerBody .row").length;
+					for (var j = 1; j < countRow; j++) {
 						if ($('#layerName').val() == $('#layer' + j).html()) {
 							k++;
 						}
 					}
 					if (k == 0) {
-						addNewLayer($('#layerName').val(), jsonLayer.User, 0,
-								2017, 2017, false);
+						addNewLayer(countRow, $('#layerName').val(),
+								jsonLayer.User, true, 0, 2017, 2017, false);
 					} else {
 						alert("Layer exist");
 					}
 				}
 			});
 
-	$("#okLayer").click(function() {
+	$("#removeLayer").click(function() {
+		if ($('#layerName').val() != "") {
+			var countRow = $("#layerBody .row").length;
+			for (var j = 1; j < countRow; j++) {
+				if ($('#layerName').val() == $('#layer' + j).html()) {
+					return $('#layer' + j).parent().remove();
+				}
+			}
+			alert("Layer isn't exist");
 
+		}
 	});
+
+	$("#renameLayer").click(
+			function() {
+				if ($('#layerName').val() != "") {
+					var countRow = $("#layerBody .row").length;
+					for (var j = 1; j < countRow; j++) {
+						if ($('#layerName').val() == $('#layer' + j).html()) {
+							return alert("Layer name exist");
+						}
+					}
+					for (var j = 1; j < countRow; j++) {
+						if ($('#layerActive').val() == $('#layer' + j).html()) {
+							$(
+									"input[type=radio][name=active][value="
+											+ $('#layer' + j).text() + "]")
+									.attr('value', $('#layerName').val());
+							$('#layer' + j).text($('#layerName').val());
+							$('#layerActive').val($('#layerName').val());
+							return;
+						}
+					}
+				}
+			});
+
+	$("#activeLayer").click(
+			function() {
+				if ($('#layerName').val() != "") {
+					var countRow = $("#layerBody .row").length;
+					for (var j = 1; j < countRow; j++) {
+						if ($('#layerActive').val() == $('#layer' + j).html()) {
+							$('#layerActive').val($('#layerName').val());
+							$("input[type=radio][name=active][value="
+											+ $('#layerName').val() + "]")
+									.prop("checked", true).trigger("click");
+							return; 
+						}
+					}
+					alert("Layer isn't exist");
+				}
+			});
+
+	$("#displayLayer").click(
+			function() {
+				if ($('#layerName').val() != "") {
+					var countRow = $("#layerBody .row").length;
+					for (var j = 1; j < countRow; j++) {
+						if ($('#layerName').val() == $('#layer' + j).html()) {
+							return $(
+									"input[type=checkbox][name=display][value="
+											+ $('#layerName').val() + "]")
+									.trigger("click");
+						}
+					}
+					alert("Layer isn't exist");
+				}
+			});
+
+	$("#okLayer").click(
+			function() {
+				layerCount = $("#layerBody .row").length - 1;
+				for (var j = 1; j <= layerCount; j++) {
+					layerName[j - 1] = $(
+							"div.row:eq(" + j + ") div:nth-child(1)").text();
+					layerOwner[j - 1] = $(
+							"div.row:eq(" + j + ") div:nth-child(2)").text();
+					layerDisplay[j - 1] = $(
+							"div.row:eq(" + j + ") div:nth-child(3) input").is(
+							':checked');					
+					layerItems[j - 1] = $(
+							"div.row:eq(" + j + ") div:nth-child(4)").text();
+					layerModified[j - 1] = $(
+							"div.row:eq(" + j + ") div:nth-child(5)").text();
+					layerCreated[j - 1] = $(
+							"div.row:eq(" + j + ") div:nth-child(6)").text();
+					if ($("div.row:eq(" + j + ") div:nth-child(7) input").is(
+							':checked')) {
+						layerActive = layerName[j - 1];
+					}
+					if($("div.row:eq(" + j + ") div:nth-child(3) input").is(
+							':checked')){
+						$('.'+layerName[j - 1]).css("visibility", "visible");
+					}
+					else{
+						$('.'+layerName[j - 1]).css("visibility", "hidden");
+					}
+				}
+			});
 
 	function printImage(image) {
 		var windowContent = '<!DOCTYPE html>';

@@ -31,4 +31,5 @@ public enum AccessRight {
     AccessRight(int value) {
         this.value = value;
     }
+
 }

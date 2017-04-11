@@ -8,6 +8,7 @@ import co.jp.nej.earth.model.FolderItem;
 import co.jp.nej.earth.model.Layer;
 import co.jp.nej.earth.model.ProcessMap;
 import co.jp.nej.earth.model.TemplateData;
+import co.jp.nej.earth.model.TemplateKey;
 import co.jp.nej.earth.model.WorkItem;
 import co.jp.nej.earth.model.entity.MgrTemplate;
 
@@ -31,15 +32,21 @@ public interface TemplateDao {
 	public TemplateData getLayerTemplateData(String workspaceId, String workItemId, Integer folderItemNo, Integer docNo,
 			Integer layerNo, String templateId, int maxVersion) throws EarthException;
 
-	public int insertProcessTemplateData(String workspaceId, ProcessMap process);
+	public long insertProcessTemplateData(String workspaceId, ProcessMap process, int historyNo) throws EarthException;
 
-	public int insertWorkItemTemplateData(String workspaceId, WorkItem workItem);
+	public long insertWorkItemTemplateData(String workspaceId, WorkItem workItem, int historyNo) throws EarthException;
 
-	public int insertFolderItemTemplateData(String workspaceId, FolderItem folderItem);
+	public long insertFolderItemTemplateData(String workspaceId, FolderItem folderItem, int historyNo) throws EarthException;
 
-	public int insertDocumentTemplateData(String workspaceId, Document document);
+	public long insertDocumentTemplateData(String workspaceId, Document document, int historyNo) throws EarthException;
 
-	public int insertLayerTemplateData(String workspaceId, Layer layer);
+	public long insertLayerTemplateData(String workspaceId, Layer layer, int historyNo) throws EarthException;
 
 	public List<MgrTemplate> getAllByWorkspace(String workspaceId) throws EarthException;
+    public int insertProcessTemplateData(String workspaceId, ProcessMap process);
+    public int insertWorkItemTemplateData(String workspaceId, WorkItem workItem);
+    public int insertFolderItemTemplateData(String workspaceId, FolderItem folderItem);
+    public int insertDocumentTemplateData(String workspaceId, Document document);
+    public int insertLayerTemplateData(String workspaceId, Layer layer);
+    public MgrTemplate getById(TemplateKey templateKey) throws EarthException;
 }

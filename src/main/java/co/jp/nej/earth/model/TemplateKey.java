@@ -1,6 +1,12 @@
 package co.jp.nej.earth.model;
 
-public class TemplateKey {
+import java.io.Serializable;
+
+public class TemplateKey implements Serializable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String workspaceId;
     private String templateId;
     

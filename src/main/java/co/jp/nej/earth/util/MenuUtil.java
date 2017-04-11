@@ -90,29 +90,4 @@ public class MenuUtil {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public static List<UserAccessRight> mixMenuAuthority(List<UserAccessRight> userAccessRights,
-                                                         List<UserAccessRight> userAccessRightByProfiles) {
-        for (UserAccessRight userAccessRightProfile  : userAccessRightByProfiles) {
-            int countMenu =0;
-            for (UserAccessRight userAccessRight: userAccessRights) {
-                if (EStringUtil.Contains(userAccessRight.getUserId(), userAccessRightProfile.getUserId())){
-                    if (userAccessRightProfile.getAccessRight().getValue() < userAccessRight.getAccessRight().getValue()) {
-                        userAccessRight.getAccessRight().setValue(userAccessRightProfile.getAccessRight().getValue());
-                    }
-                    break;
-                }
-                else
-                {
-                    countMenu+=1;
-                }
-
-            }
-            if (countMenu==userAccessRights.size())
-            {
-                userAccessRights.add(userAccessRightProfile);
-            }
-        }
-        return userAccessRights;
-    }
 }

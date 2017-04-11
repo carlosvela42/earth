@@ -16,7 +16,8 @@ public class QMgrSchedule extends RelationalPathBase<MgrSchedule> {
     public final StringPath scheduleId = createString(ColumnNames.SCHEDULE_ID.toString());
     public final StringPath processId = createString(ColumnNames.PROCESS_ID.toString());
     public final StringPath taskId = createString(ColumnNames.TASK_ID.toString());
-    public final StringPath processName = createString(ColumnNames.PROCESS_NAME.toString());
+    public final StringPath hostName = createString(ColumnNames.HOST_NAME.toString());
+    public final StringPath processIseviceId = createString(ColumnNames.PROCESS_ISERVICEID.toString());
     public final StringPath startTime = createString(ColumnNames.START_TIME.toString());
     public final StringPath repeatOption = createString(ColumnNames.REPEAT_OPTION.toString());
     public final StringPath endTime = createString(ColumnNames.END_TIME.toString());
@@ -35,7 +36,8 @@ public class QMgrSchedule extends RelationalPathBase<MgrSchedule> {
         addMetadata(scheduleId, ColumnMetadata.named(ColumnNames.SCHEDULE_ID.toString()));
         addMetadata(processId, ColumnMetadata.named(ColumnNames.PROCESS_ID.toString()));
         addMetadata(taskId, ColumnMetadata.named(ColumnNames.TASK_ID.toString()));
-        addMetadata(processName, ColumnMetadata.named(ColumnNames.PROCESS_NAME.toString()));
+        addMetadata(hostName, ColumnMetadata.named(ColumnNames.HOST_NAME.toString()));
+        addMetadata(processIseviceId, ColumnMetadata.named(ColumnNames.PROCESS_ISERVICEID.toString()));
         addMetadata(startTime, ColumnMetadata.named(ColumnNames.START_TIME.toString()));
         addMetadata(repeatOption, ColumnMetadata.named(ColumnNames.REPEAT_OPTION.toString()));
         addMetadata(endTime, ColumnMetadata.named(ColumnNames.END_TIME.toString()));

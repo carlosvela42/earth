@@ -13,6 +13,7 @@ public enum ColumnNames {
     ,DB_PASSWORD("dbPassword")
     ,DB_SERVER("dbServer")
     ,DB_USER("dbUser")
+    ,PORT("port")
     ,DESCRIPTION("description")
     ,DOCUMENT_DATA("documentData")
     ,DOCUMENT_DATA_PATH("documentDataPath")
@@ -45,6 +46,8 @@ public enum ColumnNames {
     ,PROCESS_DEFINITION("processDefinition")
     ,PROCESS_ID("processId")
     ,PROCESS_NAME("processName")
+    ,HOST_NAME("hostName")
+    ,PROCESS_ISERVICEID("processIdServiceId")
     ,PROCESS_VERSION("processVersion")
     ,PROFILE_ID("profileId")
     ,REPEAT_OPTION("repeatOption")
@@ -58,6 +61,7 @@ public enum ColumnNames {
     ,STATUS("status")
     ,TASK_ID("taskId")
     ,TEMPLATE_FIELD("templateField")
+    ,TEMPLATE_TYPE("templateType")
     ,TEMPLATE_ID("templateId")
     ,TEMPLATE_NAME("templateName")
     ,TEMPLATE_TABLE_NAME("templateTableName")
@@ -69,13 +73,16 @@ public enum ColumnNames {
     ,WORKITEM_ID("workItemId")
     ,WORKSPACE_ID("workspaceId")
     ,WORKSPACE_NAME("workspaceName")
-    ,PROCESS_TIME("processTime");
-    
+    ,PROCESS_TIME("processTime")
+    ,TASK_NAME("taskName")
+    ,CLASS_NAME("className");
+
     private String propertyName;
+
     ColumnNames(String name) {
         propertyName = name;
     }
-    
+
     @Override
     public String toString() {
         return propertyName;

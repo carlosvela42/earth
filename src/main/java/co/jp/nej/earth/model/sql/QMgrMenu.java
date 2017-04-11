@@ -10,7 +10,7 @@ import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
 
-public class QMenu extends RelationalPathBase<MgrMenu>{
+public class QMgrMenu extends RelationalPathBase<MgrMenu>{
 
     /**
      * @author p-tvo-thuynd
@@ -24,11 +24,11 @@ public class QMenu extends RelationalPathBase<MgrMenu>{
     public final NumberPath<Integer> functionSortNo = createNumber(ColumnNames.FUNCTION_SORT_NO.toString(), Integer.class);
     public final StringPath functionInformation = createString(ColumnNames.FUNCTION_INFORMATION.toString());
     
-    public static QMenu newInstance(){
-        return new QMenu(QMenu.class.getSimpleName(), null, TableNames.MGR_MENU.name());
+    public static QMgrMenu newInstance(){
+        return new QMgrMenu(QMgrMenu.class.getSimpleName(), null, TableNames.MGR_MENU.name());
     }
     
-    public QMenu(String path, String schema, String table){
+    public QMgrMenu(String path, String schema, String table){
         super(MgrMenu.class, PathMetadataFactory.forVariable(path), schema, table);
         addMetadata();
     }

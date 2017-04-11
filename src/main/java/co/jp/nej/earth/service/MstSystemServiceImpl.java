@@ -20,4 +20,8 @@ public class MstSystemServiceImpl implements MstSystemService {
 		return mstSystemDao.getMstSystem();
 	}
 
+	@Override
+	public List<MstSystem> getMstSystemBySection(String section) throws EarthException {
+		return mstSystemDao.getMstSystemBySection(section);
+	}
 }

@@ -5,6 +5,7 @@ import co.jp.nej.earth.model.entity.StrLogAccess;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
 import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
 import com.querydsl.sql.RelationalPathBase;
@@ -20,9 +21,9 @@ public class QStrLogAccess extends RelationalPathBase<StrLogAccess> {
     public final StringPath processTime= createString(ColumnNames.PROCESS_TIME.toString());
     public final StringPath userId= createString(ColumnNames.USER_ID.toString());
     public final StringPath workitemId= createString(ColumnNames.WORKITEM_ID.toString());
-    public final StringPath historyNo= createString(ColumnNames.HISTORY_NO.toString());
-    public final StringPath processId= createString(ColumnNames.PROCESS_ID.toString());
-    public final StringPath processVersion= createString(ColumnNames.PROCESS_VERSION.toString());
+    public final NumberPath<Integer> historyNo= createNumber(ColumnNames.HISTORY_NO.toString(),Integer.class);
+    public final NumberPath<Integer> processId= createNumber(ColumnNames.PROCESS_ID.toString(),Integer.class);
+    public final NumberPath<Long> processVersion= createNumber(ColumnNames.PROCESS_VERSION.toString(),long.class);
     public final StringPath taskId= createString(ColumnNames.TASK_ID.toString());
     public final StringPath lastUpdateTime= createString(ColumnNames.LAST_UPDATE_TIME.toString());
 

@@ -285,7 +285,7 @@
 			</div>
 		</div>
 
-		<button type="button" class="btn btn-default" title="grayscale"
+		<button type="button" id="btnGrayscale" class="btn btn-default" title="grayscale"
 			data-toggle="modal" data-target="#myModal2">
 			<img
 				src="${rc.getContextPath()}/resources/images/imageViewer/grayscale.jpg"
@@ -320,7 +320,7 @@
 			</div>
 		</div>
 
-		<button type="button" class="btn btn-default" title="layer"
+		<button type="button" id="btnLayer" class="btn btn-default" title="layer"
 			data-toggle="modal" data-target="#myModal3">
 			<img
 				src="${rc.getContextPath()}/resources/images/imageViewer/layer.png"
@@ -348,7 +348,7 @@
 							<div class="form-group ">
 								<div class="col-lg-12">
 									<label for="active">Active</label> <input type="text"
-										id="layerActive" name="layerActive" class="form-control ">
+										id="layerActive" name="layerActive" class="form-control " disabled>
 								</div>
 							</div>
 						</div>
@@ -368,10 +368,10 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" id="addLayer">Add</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Remove</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Rename</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Active</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Display</button>
+						<button type="button" class="btn btn-default" id="removeLayer">Remove</button>
+						<button type="button" class="btn btn-default" id="renameLayer">Rename</button>
+						<button type="button" class="btn btn-default" id="activeLayer">Active</button>
+						<button type="button" class="btn btn-default" id="displayLayer">Display</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal"
 							id="okLayer">OK</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

@@ -2,6 +2,7 @@ package co.jp.nej.earth.model;
 
 import co.jp.nej.earth.model.entity.MgrMenu;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,11 @@ import java.util.List;
  *      MgrMenu Parent
  *          List MgrMenu
  */
-public class MenuStructure {
+public class MenuStructure implements Serializable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String menuParentId;
     private String menuParentName;
     private List<MgrMenu> mgrMenus;

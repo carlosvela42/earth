@@ -34,7 +34,7 @@ public class PasswordPolicy {
 	public List<String> validate(String password) throws EarthException, FileNotFoundException, IOException {
 		List<String> listResult = null;
 
-		List<MstSystem> mstSystems = mstSystemService.getMstSystem();
+		List<MstSystem> mstSystems = mstSystemService.getMstSystemBySection("passwordPolicy");
 
 		List<Rule> listRule = ruleDefine(mstSystems);
 		MessageResolver mr = messageDefine();

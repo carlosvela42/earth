@@ -21,6 +21,29 @@
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/profile/showList">Profile<span
                     class="fa arrow"></span></a>
         </li>
+        
+        <h3>ThuyND Test</h3>
+        
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/testGetListMenu">Test Get List Menu<span
+                    class="fa arrow"></span></a>
+        </li>
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/testGetMenuAuthority">Test Get Menu Authority<span
+                    class="fa arrow"></span></a>
+        </li>
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/testGetAccessibleTemplates">Test Get Accessible Template<span
+                    class="fa arrow"></span></a>
+        </li>
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/testGetTemplateAuthority">Test Get Template Authority<span
+                    class="fa arrow"></span></a>
+        </li>
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/templateAccessRight/initTemplateListScreen">Initialize Template List Screen<span
+                    class="fa arrow"></span></a>
+        </li>
     </ul>
     </div>
     </div>

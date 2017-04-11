@@ -10,6 +10,7 @@
                 str = str.substring(0, str.length - 1);
             }
             $("#userIds").val(str);
+            console.log(str);
         };
         var checkUser = function () {
             var str = $("#userIds").val();
@@ -25,7 +26,7 @@
         $("input[class=DeleteRow]").on("click", countChecked);
     }
 </script>
-<form action="${rc.getContextPath()}/profile/insertOne" object="mgrUser" method="post" class="form-narrow
+<form action="${rc.getContextPath()}/profile/updateOne" object="mgrUser" method="post" class="form-narrow
 form-horizontal">
     <table style="text-align: left;">
         <tr style="height: 40px; text-align: center">
@@ -52,8 +53,13 @@ form-horizontal">
                 </#if>
             </td>
         </tr>
-        <input type="hidden" id="userIds" name="userIds"   value="<#if userIds??>${userIds}
-        </#if>">
+        <#if userIds??>
+            <input type="hidden" id="userIds" name="userIds"   value="${userIds}">
+
+        <#else >
+            <input type="hidden" id="userIds" name="userIds"   value="">
+        </#if>
+
         <#if mgrProfile??>
             <tr>
                 <td>
@@ -79,9 +85,9 @@ form-horizontal">
                     <label>LDAP識別子</label>
                 </td>
                 <td>
-                    <input type="password" id="txtLDAP" name="ldapIdentifier" height="20px" width="150px"
+                    <input type="text" id="txtLDAP" name="ldapIdentifier" height="20px" width="150px"
                            style="text-align: left"
-                           value="<#if mgrProfile.ldapIdentifier??>{mgrProfile.ldapIdentifier}</#if>">
+                           value="<#if mgrProfile.ldapIdentifier??>${mgrProfile.ldapIdentifier}</#if>">
                 </td>
             </tr>
             <tr>

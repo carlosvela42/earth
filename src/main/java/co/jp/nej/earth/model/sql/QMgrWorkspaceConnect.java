@@ -1,6 +1,7 @@
 package co.jp.nej.earth.model.sql;
 
 import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
 import com.querydsl.sql.RelationalPathBase;
@@ -22,6 +23,7 @@ public class QMgrWorkspaceConnect extends RelationalPathBase<MgrWorkspaceConnect
     public final StringPath dbPassword = createString(ColumnNames.DB_PASSWORD.toString());
     public final StringPath owner = createString(ColumnNames.OWNER.toString());
     public final StringPath dbServer = createString(ColumnNames.DB_SERVER.toString());
+    public final NumberPath<Integer> port= createNumber(ColumnNames.PORT.toString(),Integer.class);
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());
     
     public static QMgrWorkspaceConnect newInstance() {
@@ -40,6 +42,7 @@ public class QMgrWorkspaceConnect extends RelationalPathBase<MgrWorkspaceConnect
         addMetadata(dbPassword, ColumnMetadata.named(ColumnNames.DB_PASSWORD.toString()));
         addMetadata(owner, ColumnMetadata.named(ColumnNames.OWNER.toString()));
         addMetadata(dbServer, ColumnMetadata.named(ColumnNames.DB_SERVER.toString()));
+        addMetadata(port, ColumnMetadata.named(ColumnNames.PORT.toString()));
         addMetadata(lastUpdateTime, ColumnMetadata.named(ColumnNames.LAST_UPDATE_TIME.toString()));
     }
 }

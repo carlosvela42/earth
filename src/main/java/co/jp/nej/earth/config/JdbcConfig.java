@@ -37,128 +37,142 @@ import co.jp.nej.earth.util.EStringUtil;
  * @author p-tvo-khanhnv
  *
  */
-@PropertySource("classpath:application.properties")
 @Configuration
+@PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 public class JdbcConfig {
-	// private static final String ORACLE_DRIVER =
-	// "oracle.jdbc.driver.OracleDriver";
-	//
-	// private static final String SQL_SERVER_DRIVER =
-	// "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    private final String ORACLE_URL_FORMAT = "jdbc:oracle:thin:@{server}:{port}:{schema}";
+    private final String SQL_SERVER_URL_FORMAT = "jdbc:sqlserver://{server}:{port};databaseName={schema};integratedSecurity=false;";
 
-	@Value("${spring.datasource.driver-class-name}")
-	private String driver;
-	@Value("${spring.datasource.url}")
-	private String url;
-	@Value("${spring.datasource.username}")
-	private String username;
-	@Value("${spring.datasource.password}")
-	private String password;
-	@Value("${spring.datasource.maximum-pool-size}")
-	private String maxPoolSize;
+    @Value("${spring.datasource.driver-class-name}")
+    private String driver;
+    @Value("${spring.datasource.url}")
+    private String url;
+    @Value("${spring.datasource.username}")
+    private String username;
+    @Value("${spring.datasource.password}")
+    private String password;
+    @Value("${spring.datasource.maximum-pool-size}")
+    private String maxPoolSize;
 
-	public DataSource dataSource(MgrWorkspaceConnect mgrConnect) {
-		HikariConfig config = new HikariConfig();
-		config.setDriverClassName(driver);
-		if (mgrConnect == null) {
-			config.setJdbcUrl(url);
-			config.setUsername(username);
-			config.setPassword(password);
-		} else {
-			config.setJdbcUrl(createDbUrl(mgrConnect));
-			config.setUsername(mgrConnect.getDbUser());
-			config.setPassword(mgrConnect.getDbPassword());
-		}
-		config.addDataSourceProperty("cachePrepStmts", "true");
-		config.addDataSourceProperty("prepStmtCacheSize", "250");
-		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-		config.addDataSourceProperty("useServerPrepStmts", "true");
-		config.setMaximumPoolSize(Integer.parseInt(maxPoolSize));
-		return new HikariDataSource(config);
-	}
+    public DataSource dataSource(MgrWorkspaceConnect mgrConnect) {
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName(driver);
+        if (mgrConnect == null) {
+            config.setJdbcUrl(url);
+            config.setUsername(username);
+            config.setPassword(password);
+        } else {
+            config.setJdbcUrl(createDbUrl(mgrConnect));
+            config.setUsername(mgrConnect.getDbUser());
+            config.setPassword(mgrConnect.getDbPassword());
+        }
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.addDataSourceProperty("useServerPrepStmts", "true");
+        config.setMaximumPoolSize(Integer.parseInt(maxPoolSize));
+        return new HikariDataSource(config);
+    }
 
-	@Bean(name = "transactionManager")
-	public PlatformTransactionManager getPlatformTransactionManager() {
-		return new DataSourceTransactionManager(dataSource(null));
-	}
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager getPlatformTransactionManager() {
+        return new DataSourceTransactionManager(dataSource(null));
+    }
 
-	private String createDbUrl(MgrWorkspaceConnect mgrConnect) {
-		DatabaseType dbType = databaseType();
-		String dbUrl = EStringUtil.EMPTY;
-		if (DatabaseType.isOracle(dbType)) {
-			dbUrl = url.replace(username, mgrConnect.getSchemaName()).replace("##", "");
-		} else {
-			dbUrl = url.split(";")[0] + "DatabaseName=" + mgrConnect.getSchemaName() + ";integratedSecurity=false;";
-		}
+    private String createDbUrl(MgrWorkspaceConnect mgrConnect) {
+        DatabaseType dbType = databaseType();
+        String dbUrl = EStringUtil.EMPTY;
+        if (DatabaseType.isOracle(dbType)) {
+            dbUrl = url.replace(username, mgrConnect.getSchemaName()).replace("##", "");
+        } else {
+            dbUrl = url.split(";")[0] + "DatabaseName=" + mgrConnect.getSchemaName() + ";integratedSecurity=false;";
+        }
 
-		return dbUrl;
-	}
+        return dbUrl;
+    }
+    
+//    private String createDbUrl(MgrWorkspaceConnect mgrConnect) {
+//        DatabaseType dbType = databaseType();
+//        String dbUrl = EStringUtil.EMPTY;
+//        if (DatabaseType.isOracle(dbType)) {
+//            dbUrl = ORACLE_URL_FORMAT;
+//        } else {
+//            dbUrl = SQL_SERVER_URL_FORMAT;
+//        }
+//
+//        dbUrl = dbUrl.replace("{server}", mgrConnect.getDbServer())
+//                .replace("{port}", String.valueOf(mgrConnect.getPort()))
+//                .replace("{schema}", mgrConnect.getSchemaName())
+//                .replace("c##", EStringUtil.EMPTY);
+//
+//        return dbUrl;
+//    }
 
-	@Bean
-	public DatabaseType databaseType() {
-		if (driver.equals(DatabaseType.ORACLE.toString())) {
-			return DatabaseType.ORACLE;
-		}
-		return DatabaseType.SQL_SERVER;
-	}
+    @Bean
+    public DatabaseType databaseType() {
+        if (driver.equals(DatabaseType.ORACLE.toString())) {
+            return DatabaseType.ORACLE;
+        }
+        return DatabaseType.SQL_SERVER;
+    }
 
-	public com.querydsl.sql.Configuration querydslConfiguration() {
-		DatabaseType dbType = databaseType();
-		SQLTemplates templates = null;
-		if (DatabaseType.isOracle(dbType)) {
-			templates = OracleTemplates.builder().build();
-		} else {
-			templates = SQLServer2012Templates.builder().build();
-		}
+    public com.querydsl.sql.Configuration querydslConfiguration() {
+        DatabaseType dbType = databaseType();
+        SQLTemplates templates = null;
+        if (DatabaseType.isOracle(dbType)) {
+            templates = OracleTemplates.builder().build();
+        } else {
+            templates = SQLServer2012Templates.builder().build();
+        }
 
-		com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
-		configuration.setExceptionTranslator(new SpringExceptionTranslator());
-		configuration.register(new DateTimeType());
-		configuration.register(new LocalDateType());
-		return configuration;
-	}
+        com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
+        configuration.setExceptionTranslator(new SpringExceptionTranslator());
+        configuration.register(new DateTimeType());
+        configuration.register(new LocalDateType());
+        return configuration;
+    }
 
-	@PostConstruct
-	public void createSystemFactory() throws EarthException {
-		// Save System Configuration.
-		ConnectionManager.addQueryFactory(Constant.EARTH_WORKSPACE_ID, createEarthQueryFactory(dataSource(null)));
-	}
+    @PostConstruct
+    public void createSystemFactory() throws EarthException {
+        // Create System Factory.
+        ConnectionManager.addQueryFactory(Constant.EARTH_WORKSPACE_ID, createEarthQueryFactory(dataSource(null)));
+    }
 
-	public EarthQueryFactory createEarthQueryFactory(DataSource dataSource) {
-		Provider<Connection> sysProvider = new SpringConnectionProvider(dataSource);
-		return new EarthQueryFactory(querydslConfiguration(), sysProvider);
-	}
+    public EarthQueryFactory createEarthQueryFactory(DataSource dataSource) {
+        Provider<Connection> sysProvider = new SpringConnectionProvider(dataSource);
+        return new EarthQueryFactory(querydslConfiguration(), sysProvider);
+    }
 
-	public String getDriver() {
-		return driver;
-	}
+    public String getDriver() {
+        return driver;
+    }
 
-	public void setDriver(String driver) {
-		this.driver = driver;
-	}
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

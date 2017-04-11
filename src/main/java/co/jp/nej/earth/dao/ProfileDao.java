@@ -12,7 +12,7 @@ public interface ProfileDao {
 
     public List<MgrProfile> getAll() throws EarthException;
 
-    public boolean deleteList(List<String> profileId) throws EarthException;
+    public boolean deleteList(List<String> profileIds) throws EarthException;
 
     public MgrProfile insertOne(MgrProfile mgrProfile) throws EarthException;
 

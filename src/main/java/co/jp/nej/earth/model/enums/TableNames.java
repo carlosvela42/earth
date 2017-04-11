@@ -36,5 +36,6 @@ public enum TableNames {
 	,MST_CODE
 	,MST_CALENDAR
 	,MGR_MENUCATEGORY
+	,MGR_TASK
 	;
 }

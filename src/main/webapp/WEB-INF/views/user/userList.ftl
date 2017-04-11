@@ -38,6 +38,28 @@
             }
         }
     }
+    function filter() {
+        // Declare variables
+        var pIdInput, pNameInput, filter, i;
+        pIdInput = document.getElementById('idInput').value
+                .toUpperCase();
+        pNameInput = document.getElementById('nameInput').value
+                .toUpperCase();
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < $("#userList tr ").length - 2; i++) {
+
+            if (($("#userId" + i).html().toUpperCase()
+                            .indexOf(pIdInput) > -1)
+                    && ($("#name" + i).html().toUpperCase().indexOf(
+                            pNameInput) > -1)) {
+                $("#row" + i).show();
+
+            } else {
+                $("#row" + i).hide();
+            }
+        }
+    }
 </script>
 <form object="mgrUsers" method="post" style="text-align: left;" class="form-narrow form-horizontal"
       action="${rc.getContextPath()}/user/deleteList">
@@ -59,22 +81,26 @@
     </div>
     <input type="hidden" id="userIds" name="userIds" value="">
     <input type="hidden" id="deleted" name="deleted" value="0">
-    <table border="1" style="text-align: left;">
+    <table border="1" style="text-align: left;" id="userList">
         <tr>
             <th colspan="2">ユーザID</th>
             <th>名前</th>
         </tr>
         <tr style="height: 25px;">
-            <td colspan="2"></td>
-            <td></td>
+            <td colspan="2"><input
+                    type="text" id="idInput" onkeyup="filter()"
+                    placeholder="Search for ID.."></td>
+            <td><input type="text" id="nameInput" onkeyup="filter()"
+                       placeholder="Search for name.."></td>
         </tr>
         <#if mgrUsers??>
             <#list mgrUsers as mgrUser>
-                <tr>
+                <tr id="row${mgrUser?index}">
                     <td><input type="checkbox" id="delRow${mgrUser?index}" name="DeleteRow" value="${mgrUser.userId}"
                                class="DeleteRow"></td>
-                    <td><a href="${rc.getContextPath()}/user/showDetail?userId=${mgrUser.userId}">${mgrUser.userId}</a></td>
-                    <td>${mgrUser.name}</td>
+                    <td><a id="userId${mgrUser?index}" href="${rc.getContextPath()}/user/showDetail?userId=${mgrUser.userId}">${mgrUser
+                    .userId}</a></td>
+                    <td id="name${mgrUser?index}">${mgrUser.name}</td>
                 </tr>
             </#list>
         <#else>

@@ -6,4 +6,6 @@ import co.jp.nej.earth.exception.EarthException;
 
 public interface MstSystemService {
 	public List<MstSystem> getMstSystem() throws EarthException;
+
+	public List<MstSystem> getMstSystemBySection(String section) throws EarthException;
 }

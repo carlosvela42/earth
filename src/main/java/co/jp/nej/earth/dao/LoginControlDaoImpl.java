@@ -22,7 +22,11 @@ import java.util.List;
 import static co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
 
 @Repository
-public class LoginControlDaoImpl implements LoginControlDao {
+public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginControlDao {
+
+    public LoginControlDaoImpl() throws Exception {
+        super();
+    }
 
     public boolean insertOne(CtlLogin ctlLogin) throws EarthException {
         QCtlLogin qCtlLogin = QCtlLogin.newInstance();
@@ -73,7 +77,7 @@ public class LoginControlDaoImpl implements LoginControlDao {
         return suc.execute() > 0L;
     }
 
-    public boolean deleteListByUserIds(List<String> userIds) throws Exception {
+    public boolean deleteListByUserIds(List<String> userIds) throws EarthException {
         try {
             QCtlLogin qcCtlLogin = QCtlLogin.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);

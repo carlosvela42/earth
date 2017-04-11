@@ -48,7 +48,7 @@ public class ConnectionManager {
     public static EarthQueryFactory getEarthQueryFactory(String workspaceId) throws EarthException {
     	
     	if (StringUtils.isEmpty(workspaceId)) {
-    		throw new EarthException(messges.getMessage("E001", new String[] { "workspaceId" }, Locale.ENGLISH));
+    		throw new EarthException(messges.getMessage("E0001", new String[] { "workspaceId" }, Locale.ENGLISH));
     	}
     	
     	if (earthQueryFactories.get(workspaceId) == null) {

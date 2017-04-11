@@ -4,6 +4,7 @@ import java.util.List;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.entity.MgrUser;
+import co.jp.nej.earth.model.entity.MgrUserProfile;
 
 public interface UserDao {
 	public MgrUser getById(String userId) throws EarthException;

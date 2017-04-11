@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import co.jp.nej.earth.exception.EarthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,9 +26,13 @@ public class UserController {
 
     @RequestMapping(value = "/showList", method = RequestMethod.GET)
     public String showList(Model model) {
+        try{
         List<MgrUser> mgrUsers = userService.getAll();
         model.addAttribute("mgrUsers", mgrUsers);
         return "user/userList";
+        } catch (EarthException ex) {
+            return "error/error";
+        }
     }
 
     @RequestMapping(value = "/addNew", method = RequestMethod.GET)
@@ -56,7 +61,7 @@ public class UserController {
                     return "user/addUser";
                 }
             }
-        } catch (Exception ex) {
+        } catch (EarthException ex) {
             mgrUser = setUser(mgrUser);
             model.addAttribute("mgrUser", mgrUser);
             return "user/addUser";
@@ -72,17 +77,20 @@ public class UserController {
             model.addAttribute("mgrUser", mgrUser);
             model.addAttribute("mgrProfiles", mgrProfiles);
             return "user/editUser";
-        } catch (Exception ex) {
+        } catch (EarthException ex) {
             return "redirect: showList";
         }
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
     public String deleteList(@ModelAttribute("userIds") String userIds) {
-        System.out.println(userIds);
+        try {
         List<String> userId = Arrays.asList(userIds.split("\\s*,\\s*"));
         userService.deleteList(userId);
         return "redirect: showList";
+        } catch (EarthException ex) {
+            return "redirect: showList";
+        }
     }
 
     @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
@@ -105,13 +113,11 @@ public class UserController {
                     return "user/editUser";
                 }
             }
-        } catch (Exception ex) {
+        } catch (EarthException ex) {
             model.addAttribute("mgrUser", mgrUser);
             return "user/editUser";
         }
     }
-
-
 
     private MgrUser setUser(MgrUser mgrUser) {
         mgrUser.setPassword("");

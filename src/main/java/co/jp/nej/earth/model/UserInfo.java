@@ -1,6 +1,12 @@
 package co.jp.nej.earth.model;
 
-public class UserInfo {
+import java.io.Serializable;
+
+public class UserInfo implements Serializable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String userId;
     private String userName;
     private String loginToken;

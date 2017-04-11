@@ -6,12 +6,13 @@ import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.entity.CtlLogin;
 import co.jp.nej.earth.model.entity.StrCal;
 
-public interface LoginControlDao {
-    public boolean insertOne(CtlLogin ctlLogin) throws EarthException;
+public interface LoginControlDao extends BaseDao<CtlLogin>{
     
-    public List<StrCal> getNumberOnlineUserByProfile(String userId) throws EarthException;
+    boolean insertOne(CtlLogin ctlLogin) throws EarthException;
     
-    public boolean updateOutTime(String sessionId, String outTime) throws EarthException;
+    List<StrCal> getNumberOnlineUserByProfile(String userId) throws EarthException;
+    
+    boolean updateOutTime(String sessionId, String outTime) throws EarthException;
 
-    public boolean deleteListByUserIds(List<String> userIds) throws Exception;
+    boolean deleteListByUserIds(List<String> userIds) throws EarthException;
 }

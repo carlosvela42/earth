@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface EvidenceLogDao {
     public boolean deleteListByUserIds(List<String> userIds) throws EarthException;
+
+    public boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
 }

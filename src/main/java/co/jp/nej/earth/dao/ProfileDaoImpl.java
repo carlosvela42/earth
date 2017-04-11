@@ -57,8 +57,15 @@ public class ProfileDaoImpl implements ProfileDao {
         }
     }
 
-    public boolean deleteList(List<String> profileId) throws EarthException {
-        return false;
+    public boolean deleteList(List<String> profileIds) throws EarthException {
+        try {
+            QMgrProfile qMgrProfile = QMgrProfile.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            long delete = earthQueryFactory.delete(qMgrProfile).where(qMgrProfile.profileId.in(profileIds)).execute();
+            return delete > 0;
+        } catch (Exception ex) {
+            throw new EarthException(ex.getMessage());
+        }
     }
 
     @Override
@@ -66,7 +73,7 @@ public class ProfileDaoImpl implements ProfileDao {
         try {
             QMgrProfile qMgrProfile = QMgrProfile.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long inserted = earthQueryFactory.insert(qMgrProfile).populate(qMgrProfile).execute();
+            long inserted = earthQueryFactory.insert(qMgrProfile).populate(mgrProfile).execute();
             return inserted > 0 ? mgrProfile : null;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
@@ -76,11 +83,11 @@ public class ProfileDaoImpl implements ProfileDao {
     @Override
     public boolean assignUsers(String profileId, List<String> userIds) throws EarthException {
         try {
-            QMgrUserProfile mgrUserProfile = QMgrUserProfile.newInstance();
+            QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            SQLInsertClause insert = earthQueryFactory.insert(mgrUserProfile);
+            SQLInsertClause insert = earthQueryFactory.insert(qMgrUserProfile);
             for (String userId : userIds) {
-                insert.set(mgrUserProfile.profileId, profileId).set(mgrUserProfile.userId, userId).set(mgrUserProfile
+                insert.set(qMgrUserProfile.profileId, profileId).set(qMgrUserProfile.userId, userId).set(qMgrUserProfile
                         .lastUpdateTime, DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD)).addBatch();
             }
             long inserted = insert.execute();
@@ -108,8 +115,8 @@ public class ProfileDaoImpl implements ProfileDao {
             QMgrProfile qMgrProfile = QMgrProfile.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
             long updated = earthQueryFactory.update(qMgrProfile).set(qMgrProfile.description, mgrProfile
-                    .getDescription()).set(qMgrProfile.ldapIdentifier,mgrProfile.getLdapIdentifier()).set(qMgrProfile
-                    .lastUpdateTime,mgrProfile.getLastUpdateTime())
+                    .getDescription()).set(qMgrProfile.ldapIdentifier, mgrProfile.getLdapIdentifier()).set(qMgrProfile
+                    .lastUpdateTime, mgrProfile.getLastUpdateTime())
                     .where(qMgrProfile.profileId.eq(mgrProfile.getProfileId())).execute();
             return updated > 0 ? mgrProfile : null;
         } catch (Exception ex) {

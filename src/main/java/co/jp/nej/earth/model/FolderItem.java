@@ -17,7 +17,7 @@ public class FolderItem {
      * 
      */
     private String workItemId;
-    private String folderItemNo;
+    private Integer folderItemNo;
     private MgrTemplate mgrTemplate;
     private Integer action;
     private TemplateData folderItemData;
@@ -41,7 +41,7 @@ public class FolderItem {
     /**
      * @return the folderItemNo
      */
-    public String getFolderItemNo() {
+    public Integer getFolderItemNo() {
         return folderItemNo;
     }
 
@@ -49,7 +49,7 @@ public class FolderItem {
      * @param folderItemNo
      *            the folderItemNo to set
      */
-    public void setFolderItemNo(String folderItemNo) {
+    public void setFolderItemNo(Integer folderItemNo) {
         this.folderItemNo = folderItemNo;
     }
 

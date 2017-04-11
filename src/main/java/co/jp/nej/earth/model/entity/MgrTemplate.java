@@ -1,6 +1,3 @@
-/**
- * 
- */
 package co.jp.nej.earth.model.entity;
 
 import java.io.Serializable;
@@ -18,11 +15,14 @@ import co.jp.nej.earth.util.EStringUtil;
  *
  */
 public class MgrTemplate implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Workspace Id.
+	 */
 	private String workspaceId;
+
 	private String templateId;
 	private String templateName;
 	private String templateTableName;

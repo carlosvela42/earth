@@ -25,7 +25,7 @@
         $("input[class=DeleteRow]").on("click", countChecked);
     }
 </script>
-<form action="${rc.getContextPath()}/profile/insertOne" object="mgrUser" method="post" class="form-narrow
+<form action="${rc.getContextPath()}/profile/insertOne" object="mgrProfile" method="post" class="form-narrow
 form-horizontal">
     <table style="text-align: left;">
         <tr style="height: 40px; text-align: center">
@@ -65,7 +65,7 @@ form-horizontal">
                 </td>
                 <td>
                     <input type="text" id="txtProfileId" name="profileId" height="20px" width="150px"
-                           style="text-align: left;background: #EBEBE4;" value="${mgrProfile.profileId}">
+                           style="text-align: left;" value="${mgrProfile.profileId}">
                 </td>
             </tr>
             <tr>
@@ -83,7 +83,7 @@ form-horizontal">
                     <label>LDAP識別子</label>
                 </td>
                 <td>
-                    <input type="password" id="txtLDAP" name="ldapIdentifier" height="20px" width="150px"
+                    <input type="text" id="txtLDAP" name="ldapIdentifier" height="20px" width="150px"
                            style="text-align: left" value="${mgrProfile.ldapIdentifier}">
                 </td>
             </tr>

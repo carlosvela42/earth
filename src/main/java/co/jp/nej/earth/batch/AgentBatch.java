@@ -27,50 +27,55 @@ import co.jp.nej.earth.config.JdbcConfig;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.MgrSchedule;
 import co.jp.nej.earth.service.ScheduleService;
+import co.jp.nej.earth.util.ApplicationContextUtil;
 
 @PropertySource("classpath:application.properties")
 @Configuration
 @Import(JdbcConfig.class)
 @ComponentScan(basePackages = { "co.jp.nej.earth" }, excludeFilters = {
-		@Filter(type = FilterType.ANNOTATION, value = Configuration.class) })
+        @Filter(type = FilterType.ANNOTATION, value = Configuration.class) })
 public class AgentBatch {
 
-	@Autowired
-	private ScheduleService scheduleService;
+    @Autowired
+    private ScheduleService scheduleService;
 
-	// method create scheduleJob
-	@SuppressWarnings("unchecked")
-	public void createJob(String className, String timeStart, String jobKey, String triggerKey)
-			throws SchedulerException, ClassNotFoundException {
-		Class<? extends Job> processClass = (Class<? extends Job>) Class.forName(className);
+    // method create scheduleJob
 
-		JobKey jk = new JobKey(jobKey);
-		JobDetail job = JobBuilder.newJob(processClass).withIdentity(jk).build();
+    @SuppressWarnings("unchecked")
+    public void createJob(String className, String timeStart, String jobKey, String triggerKey)
+            throws SchedulerException, ClassNotFoundException {
+        Class<? extends Job> processClass = (Class<? extends Job>) Class.forName(className);
 
-		TriggerKey tk = new TriggerKey(triggerKey);
-		Trigger trigger = TriggerBuilder.newTrigger().withIdentity(tk)
-				.withSchedule(CronScheduleBuilder.cronSchedule(timeStart)).build();
+        JobKey jk = new JobKey(jobKey);
+        JobDetail job = JobBuilder.newJob(processClass).withIdentity(jk).build();
 
-		Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-		scheduler.start();
-		scheduler.scheduleJob(job, trigger);
-	}
+        TriggerKey tk = new TriggerKey(triggerKey);
+        Trigger trigger = TriggerBuilder.newTrigger().withIdentity(tk)
+                .withSchedule(CronScheduleBuilder.cronSchedule(timeStart)).build();
 
-	public void run() throws ClassNotFoundException, SchedulerException, EarthException {
-		List<MgrSchedule> listSchedule = scheduleService.getSchedules();
+        Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+        scheduler.start();
+        scheduler.scheduleJob(job, trigger);
+    }
 
-		if (!listSchedule.isEmpty()) {
-			for (int i = 0; i < listSchedule.size(); i++) {
-				createJob(listSchedule.get(i).getProcessName(), listSchedule.get(i).getStartTime(),
-						listSchedule.get(i).getProcessName(), listSchedule.get(i).getProcessName());
-			}
-		}
-	}
+    public void run() throws ClassNotFoundException, SchedulerException, EarthException {
+        List<MgrSchedule> listSchedule = scheduleService.getSchedules();
 
-	public static void main(String[] args) throws EarthException, ClassNotFoundException, SchedulerException {
-		ApplicationContext context = new AnnotationConfigApplicationContext(AgentBatch.class);
-		AgentBatch agentBatch = context.getBean(AgentBatch.class);
-		agentBatch.run();
-	}
+        if (!listSchedule.isEmpty()) {
+            for (int i = 0; i < listSchedule.size(); i++) {
+                createJob(listSchedule.get(i).getTaskId(), listSchedule.get(i).getStartTime(),
+                        listSchedule.get(i).getTaskId(), listSchedule.get(i).getTaskId());
+            }
+        }
+    }
+
+    public static void main(String[] args) throws EarthException, ClassNotFoundException, SchedulerException {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AgentBatch.class);
+        ApplicationContextUtil appUtil = new ApplicationContextUtil();
+        appUtil.setApplicationContext(context);
+
+        AgentBatch agentBatch = context.getBean(AgentBatch.class);
+        agentBatch.run();
+    }
 
 }
