@@ -11,28 +11,29 @@ import java.util.Map;
 
 public interface TemplateAuthorityDao {
 
-    public Map<TemplateKey, TemplateAccessRight> getMixAuthority(String userId, String workspaceId)
+    Map<TemplateKey, TemplateAccessRight> getMixAuthority(String userId, String workspaceId)
             throws EarthException;
 
-    public boolean deleteListByUserIds(List<String> userIds) throws EarthException;
+    boolean deleteListByUserIds(List<String> userIds) throws EarthException;
 
-    public boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
+    boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
 
-    public boolean insertMixAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights) throws EarthException;
+    boolean insertMixAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights) throws EarthException;
 
-    public boolean deleteAllMixAuthority(TemplateKey templateKey) throws EarthException;
+    boolean deleteAllMixAuthority(TemplateKey templateKey) throws EarthException;
 
-    public List<TemplateKey> getTemplateKeysByProfile(String profileId) throws EarthException;
+    List<TemplateKey> getTemplateKeysByProfile(String profileId) throws EarthException;
 
-    public List<UserAccessRight> getUserAuthority(TemplateKey templateKey) throws EarthException;
+    List<UserAccessRight> getUserAuthority(TemplateKey templateKey) throws EarthException;
 
-    public List<ProfileAccessRight> getProfileAuthority(TemplateKey templateKey) throws EarthException;
+    List<ProfileAccessRight> getProfileAuthority(TemplateKey templateKey) throws EarthException;
 
-    public boolean deleteAllUserAuthority(TemplateKey templateKey) throws EarthException;
+    boolean deleteAllUserAuthority(TemplateKey templateKey) throws EarthException;
 
-    public boolean insertUserAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights) throws EarthException;
+    boolean insertUserAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights) throws EarthException;
 
-    public boolean deleteAllProfileAuthority(TemplateKey templateKey) throws EarthException;
+    boolean deleteAllProfileAuthority(TemplateKey templateKey) throws EarthException;
 
-    public boolean insertProfileAuthority(TemplateKey templateKey, List<ProfileAccessRight> profileAccessRights) throws EarthException;
+    boolean insertProfileAuthority(TemplateKey templateKey, List<ProfileAccessRight> profileAccessRights)
+            throws EarthException;
 }

@@ -2,6 +2,11 @@ package co.jp.nej.earth.model;
 
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import co.jp.nej.earth.model.xml.MapAdapter;
+
 public class TemplateData {
     private Integer historyNo;
     private String lastUpdateTime;
@@ -9,21 +14,25 @@ public class TemplateData {
     /**
      * Map containing data: Key is field name, value is value of field.
      */
-    private Map<String,Object> dataMap;
+    private Map<String, Object> dataMap;
+
+    public TemplateData() {
+        super();
+    }
 
     /**
-	 * @param historyNo
-	 * @param lastUpdateTime
-	 * @param dataMap
-	 */
-	public TemplateData(Integer historyNo, String lastUpdateTime, Map<String, Object> dataMap) {
-		super();
-		this.historyNo = historyNo;
-		this.lastUpdateTime = lastUpdateTime;
-		this.dataMap = dataMap;
-	}
+     * @param historyNo
+     * @param lastUpdateTime
+     * @param dataMap
+     */
+    public TemplateData(Integer historyNo, String lastUpdateTime, Map<String, Object> dataMap) {
+        super();
+        this.historyNo = historyNo;
+        this.lastUpdateTime = lastUpdateTime;
+        this.dataMap = dataMap;
+    }
 
-	/**
+    /**
      * @param dataMap
      */
     public TemplateData(Map<String, Object> dataMap) {
@@ -39,27 +48,29 @@ public class TemplateData {
     }
 
     /**
-     * @param historyNo the historyNo to set
+     * @param historyNo
+     *            the historyNo to set
      */
     public void setHistoryNo(Integer historyNo) {
         this.historyNo = historyNo;
     }
 
     /**
-	 * @return the lastUpdateTime
-	 */
-	public String getLastUpdateTime() {
-		return lastUpdateTime;
-	}
+     * @return the lastUpdateTime
+     */
+    public String getLastUpdateTime() {
+        return lastUpdateTime;
+    }
 
-	/**
-	 * @param lastUpdateTime the lastUpdateTime to set
-	 */
-	public void setLastUpdateTime(String lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
+    /**
+     * @param lastUpdateTime
+     *            the lastUpdateTime to set
+     */
+    public void setLastUpdateTime(String lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
 
-	/**
+    /**
      * @return the dataMap
      */
     public Map<String, Object> getDataMap() {
@@ -67,8 +78,11 @@ public class TemplateData {
     }
 
     /**
-     * @param dataMap the dataMap to set
+     * @param dataMap
+     *            the dataMap to set
      */
+    @XmlElement
+    @XmlJavaTypeAdapter(MapAdapter.class)
     public void setDataMap(Map<String, Object> dataMap) {
         this.dataMap = dataMap;
     }

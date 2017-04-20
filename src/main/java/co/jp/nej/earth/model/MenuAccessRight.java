@@ -7,7 +7,7 @@ import co.jp.nej.earth.model.enums.AccessRight;
 
 public class MenuAccessRight implements Serializable{
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private MgrMenu mgrMenu;

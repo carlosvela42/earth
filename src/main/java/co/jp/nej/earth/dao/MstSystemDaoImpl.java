@@ -11,8 +11,8 @@ import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
 import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.entity.MstSystem;
 import co.jp.nej.earth.model.sql.QMstSystem;
-import co.jp.nej.earth.service.MstSystem;
 
 @Repository
 public class MstSystemDaoImpl implements MstSystemDao {

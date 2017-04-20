@@ -13,7 +13,7 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 /**
- * 
+ *
  * @author p-tvo-sonta
  *
  */
@@ -26,21 +26,22 @@ public class MapAdapter extends XmlAdapter<MapWrapper, Map<String, Object>> {
         List<Object> elements = new ArrayList<>();
         for (Map.Entry<String, Object> property : m.entrySet()) {
 
-            if (property.getValue() instanceof Map)
-                elements.add(new JAXBElement<MapWrapper>(new QName(getCleanLabel(property.getKey())), MapWrapper.class,
-                        marshal((Map<String, Object>) property.getValue())));
-            else
-                elements.add(new JAXBElement<String>(new QName(getCleanLabel(property.getKey())), String.class,
-                        property.getValue().toString()));
+            if (property.getValue() instanceof Map) {
+                elements.add(new JAXBElement<MapWrapper>(new QName(getCleanLabel(property.getKey())),
+                        MapWrapper.class,marshal((Map<String, Object>) property.getValue())));
+            } else {
+                elements.add(new JAXBElement<String>(new QName(getCleanLabel(property.getKey())),
+                        String.class,property.getValue().toString()));
+            }
         }
-        wrapper.elements = elements;
+        wrapper.setElements(elements);
         return wrapper;
     }
 
     @Override
     public Map<String, Object> unmarshal(MapWrapper v) throws Exception {
         Map<String, Object> result = new HashMap<>();
-        for (Object ob : v.elements) {
+        for (Object ob : v.getElements()) {
             Element e = (Element) ob;
             result.put(e.getNodeName(), e.getFirstChild().getNodeValue());
         }
@@ -49,12 +50,21 @@ public class MapAdapter extends XmlAdapter<MapWrapper, Map<String, Object>> {
 
     // Return a XML-safe attribute. Might want to add camel case support
     private String getCleanLabel(String attributeLabel) {
-        attributeLabel = attributeLabel.replaceAll("[()]", "").replaceAll("[^\\w\\s]", "_").replaceAll(" ", "_");
+        attributeLabel = attributeLabel.replaceAll("[()]", "").replaceAll("[^\\w\\s]", "_").
+                replaceAll(" ", "_");
         return attributeLabel;
     }
 }
 
 class MapWrapper {
     @XmlAnyElement
-    List<Object> elements;
+    private List<Object> elements;
+
+    public List<Object> getElements() {
+        return elements;
+    }
+
+    public void setElements(List<Object> elements) {
+        this.elements = elements;
+    }
 }

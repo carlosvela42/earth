@@ -96,11 +96,11 @@
         <#if mgrUsers??>
             <#list mgrUsers as mgrUser>
                 <tr id="row${mgrUser?index}">
-                    <td><input type="checkbox" id="delRow${mgrUser?index}" name="DeleteRow" value="${mgrUser.userId}"
+                    <td><input type="checkbox" id="delRow${mgrUser?index}" name="DeleteRow" value="${mgrUser.userId!""}"
                                class="DeleteRow"></td>
                     <td><a id="userId${mgrUser?index}" href="${rc.getContextPath()}/user/showDetail?userId=${mgrUser.userId}">${mgrUser
                     .userId}</a></td>
-                    <td id="name${mgrUser?index}">${mgrUser.name}</td>
+                    <td id="name${mgrUser?index}">${mgrUser.name!""}</td>
                 </tr>
             </#list>
         <#else>

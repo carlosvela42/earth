@@ -10,28 +10,32 @@ import co.jp.nej.earth.model.entity.StrCal;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
 
-public class QStrCal extends RelationalPathBase<StrCal>{
+public class QStrCal extends RelationalPathBase<StrCal> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
-    
+
+    public final StringPath division = createString(ColumnNames.DIVISION.toString());
     public final StringPath processTime = createString(ColumnNames.PROCESS_TIME.toString());
     public final StringPath profileId = createString(ColumnNames.PROFILE_ID.toString());
-    public final NumberPath<Integer> availableLicenseCount = createNumber(ColumnNames.AVAILABLE_LICENSE_COUNT.toString(), Integer.class);
-    public final NumberPath<Integer> useLicenseCount = createNumber(ColumnNames.USE_LICENSE_COUNT.toString(), Integer.class);
-    
+    public final NumberPath<Integer> availableLicenseCount = createNumber(
+            ColumnNames.AVAILABLE_LICENSE_COUNT.toString(), Integer.class);
+    public final NumberPath<Integer> useLicenseCount = createNumber(ColumnNames.USE_LICENSE_COUNT.toString(),
+            Integer.class);
+
     public static QStrCal newInstance() {
-    	return new QStrCal(QStrCal.class.getSimpleName(), null, TableNames.STR_CAL.name());
+        return new QStrCal(QStrCal.class.getSimpleName(), null, TableNames.STR_CAL.name());
     }
-    
-    public QStrCal(String path, String schema, String table){
-    	super(StrCal.class, PathMetadataFactory.forVariable(path), schema, table);
+
+    public QStrCal(String path, String schema, String table) {
+        super(StrCal.class, PathMetadataFactory.forVariable(path), schema, table);
         addMetadata();
     }
-    
-    protected void addMetadata(){
+
+    protected void addMetadata() {
+        addMetadata(division, ColumnMetadata.named(ColumnNames.DIVISION.toString()));
         addMetadata(processTime, ColumnMetadata.named(ColumnNames.PROCESS_TIME.toString()));
         addMetadata(profileId, ColumnMetadata.named(ColumnNames.PROFILE_ID.toString()));
         addMetadata(availableLicenseCount, ColumnMetadata.named(ColumnNames.AVAILABLE_LICENSE_COUNT.toString()));

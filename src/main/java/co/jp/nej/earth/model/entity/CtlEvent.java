@@ -1,10 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QCtlEvent;
+import co.jp.nej.earth.util.DateUtil;
 
-public class CtlEvent implements Serializable {
+public class CtlEvent extends BaseModel<CtlEvent> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String eventId;
@@ -13,7 +15,11 @@ public class CtlEvent implements Serializable {
     private String status;
     private String taskId;
     private String workitemData;
-    private String lastUpdateTime;
+
+    public CtlEvent() {
+        this.setqObj(QCtlEvent.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
 
     public String getEventId() {
         return eventId;
@@ -63,11 +69,4 @@ public class CtlEvent implements Serializable {
         this.workitemData = workitemData;
     }
 
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
 }

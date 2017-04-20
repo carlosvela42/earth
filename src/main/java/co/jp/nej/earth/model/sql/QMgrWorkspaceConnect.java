@@ -11,7 +11,7 @@ import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
 
 public class QMgrWorkspaceConnect extends RelationalPathBase<MgrWorkspaceConnect> {
-    
+
     /**
      * Serial Version UID.
      */
@@ -23,13 +23,14 @@ public class QMgrWorkspaceConnect extends RelationalPathBase<MgrWorkspaceConnect
     public final StringPath dbPassword = createString(ColumnNames.DB_PASSWORD.toString());
     public final StringPath owner = createString(ColumnNames.OWNER.toString());
     public final StringPath dbServer = createString(ColumnNames.DB_SERVER.toString());
-    public final NumberPath<Integer> port= createNumber(ColumnNames.PORT.toString(),Integer.class);
+    public final NumberPath<Integer> port = createNumber(ColumnNames.PORT.toString(), Integer.class);
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());
-    
+
     public static QMgrWorkspaceConnect newInstance() {
-        return new QMgrWorkspaceConnect(QMgrWorkspaceConnect.class.getSimpleName(), null, TableNames.MGR_WORKSPACE_CONNECT.name());
+        return new QMgrWorkspaceConnect(QMgrWorkspaceConnect.class.getSimpleName(), null,
+                TableNames.MGR_WORKSPACE_CONNECT.name());
     }
-    
+
     public QMgrWorkspaceConnect(String path, String schema, String tableName) {
         super(MgrWorkspaceConnect.class, PathMetadataFactory.forVariable(path), schema, tableName);
         addMetadata();

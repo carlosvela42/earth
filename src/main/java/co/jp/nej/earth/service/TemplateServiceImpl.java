@@ -1,6 +1,24 @@
 package co.jp.nej.earth.service;
 
-import co.jp.nej.earth.dao.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.QBean;
+
+import co.jp.nej.earth.dao.ProfileDao;
+import co.jp.nej.earth.dao.TemplateAuthorityDao;
+import co.jp.nej.earth.dao.TemplateDao;
+import co.jp.nej.earth.dao.UserDao;
+import co.jp.nej.earth.dao.UserProfileDao;
+import co.jp.nej.earth.dao.WorkspaceDao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
@@ -17,38 +35,28 @@ import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.sql.QMgrTemplate;
 import co.jp.nej.earth.model.sql.QMgrTemplateP;
 import co.jp.nej.earth.util.CommonUtil;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
 public class TemplateServiceImpl implements TemplateService {
 
     @Autowired
-    TemplateDao templateDao;
+    private TemplateDao templateDao;
 
     @Autowired
-    WorkspaceDao workspaceDao;
+    private WorkspaceDao workspaceDao;
 
     @Autowired
-    TemplateAuthorityDao templateAuthorityDao;
+    private TemplateAuthorityDao templateAuthorityDao;
 
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
 
     @Autowired
-    UserProfileDao userProfileDao;
+    private UserProfileDao userProfileDao;
 
     @Autowired
-    ProfileDao profileDao;
+    private ProfileDao profileDao;
 
     public List<MgrWorkspace> getAllWorkspace() throws EarthException {
         return workspaceDao.getAll();
@@ -107,20 +115,23 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public List<MgrTemplate> getAllByWorkspace(String workspaceId) throws EarthException {
         // TODO Auto-generated method stub
-        return null;
+        return templateDao.getAllByWorkspace(workspaceId);
     }
-    
+
     /**
-     * @author p-tvo-thuynd
-     * this method is to save authority of user/profile to template to equivalent table
-     * @param templateKey determine which template are being executed
-     * @param tUser list of UserAccessRight object to be inserted into table
-     * @param tProfile list of ProfileAccessRight object to be inserted into table
+     * @author p-tvo-thuynd this method is to save authority of user/profile to
+     *         template to equivalent table
+     * @param templateKey
+     *            determine which template are being executed
+     * @param tUser
+     *            list of UserAccessRight object to be inserted into table
+     * @param tProfile
+     *            list of ProfileAccessRight object to be inserted into table
      * @return boolean type
      */
     @Override
     public boolean saveAuthority(TemplateKey templateKey, List<UserAccessRight> tUser,
-                                 List<ProfileAccessRight> tProfile) throws EarthException {
+            List<ProfileAccessRight> tProfile) throws EarthException {
         templateAuthorityDao.deleteAllUserAuthority(templateKey);
         templateAuthorityDao.insertUserAuthority(templateKey, tUser);
         templateAuthorityDao.deleteAllProfileAuthority(templateKey);
@@ -140,5 +151,15 @@ public class TemplateServiceImpl implements TemplateService {
         List<UserAccessRight> templateAccessRights = CommonUtil.mixAuthority(tUser, userAccessRights);
         templateAuthorityDao.insertMixAuthority(templateKey, templateAccessRights);
         return true;
+    }
+
+    @Override
+    public List<MgrTemplate> getTemplateByType(String workspaceId, String templateType) throws EarthException {
+        return templateDao.getTemplateByType(workspaceId, templateType);
+    }
+
+    @Override
+    public boolean deleteTemplates(List<String> templateIds, String workspaceId) throws EarthException {
+        return templateDao.deleteTemplates(templateIds, workspaceId);
     }
 }

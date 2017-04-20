@@ -60,11 +60,9 @@ public class AgentBatch {
 
     public void run() throws ClassNotFoundException, SchedulerException, EarthException {
         List<MgrSchedule> listSchedule = scheduleService.getSchedules();
-
         if (!listSchedule.isEmpty()) {
-            for (int i = 0; i < listSchedule.size(); i++) {
-                createJob(listSchedule.get(i).getTaskId(), listSchedule.get(i).getStartTime(),
-                        listSchedule.get(i).getTaskId(), listSchedule.get(i).getTaskId());
+            for (MgrSchedule schedule : listSchedule) {
+                createJob(schedule.getTaskId(), schedule.getStartTime(), schedule.getTaskId(), schedule.getTaskId());
             }
         }
     }

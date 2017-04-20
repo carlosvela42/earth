@@ -1,12 +1,16 @@
 package co.jp.nej.earth.model;
 
-import java.util.List;
-
 import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.sql.QLayer;
+import co.jp.nej.earth.util.DateUtil;
 
-public class Layer {
+public class Layer extends BaseModel<Layer> {
 
-    private String workItemId;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private String workitemId;
     private Integer folderItemNo;
     private Integer documentNo;
     private Integer layerNo;
@@ -14,21 +18,27 @@ public class Layer {
     private String ownerId;
     private Integer action;
     private TemplateData layerData;
-    private List<Annotation> annotations;
+    private String templateId;
+    private String annotations;
 
-    /**
-     * @return the workItemId
-     */
-    public String getWorkItemId() {
-        return workItemId;
+    public Layer() {
+        this.setqObj(QLayer.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**
-     * @param workItemId
-     *            the workItemId to set
+     * @return the workitemId
      */
-    public void setWorkItemId(String workItemId) {
-        this.workItemId = workItemId;
+    public String getWorkitemId() {
+        return workitemId;
+    }
+
+    /**
+     * @param workitemId
+     *            the workitemId to set
+     */
+    public void setWorkitemId(String workitemId) {
+        this.workitemId = workitemId;
     }
 
     /**
@@ -130,9 +140,24 @@ public class Layer {
     }
 
     /**
+     * @return the templateId
+     */
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    /**
+     * @param templateId
+     *            the templateId to set
+     */
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
+    }
+
+    /**
      * @return the annotations
      */
-    public List<Annotation> getAnnotations() {
+    public String getAnnotations() {
         return annotations;
     }
 
@@ -140,7 +165,7 @@ public class Layer {
      * @param annotations
      *            the annotations to set
      */
-    public void setAnnotations(List<Annotation> annotations) {
+    public void setAnnotations(String annotations) {
         this.annotations = annotations;
     }
 

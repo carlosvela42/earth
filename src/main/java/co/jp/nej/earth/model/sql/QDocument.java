@@ -13,11 +13,11 @@ import co.jp.nej.earth.model.enums.TableNames;
 public class QDocument extends RelationalPathBase<Document> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
-    public final StringPath workItemId = createString(ColumnNames.WORKITEM_ID.toString());
+    public final StringPath workitemId = createString(ColumnNames.WORKITEM_ID.toString());
     public final NumberPath<Integer> folderItemNo = createNumber(ColumnNames.FOLDER_ITEM_NO.toString(), Integer.class);
     public final NumberPath<Integer> documentNo = createNumber(ColumnNames.DOCUMENT_NO.toString(), Integer.class);
     public final StringPath templateId = createString(ColumnNames.TEMPLATE_ID.toString());
@@ -36,7 +36,7 @@ public class QDocument extends RelationalPathBase<Document> {
     }
 
     protected void addMetadata() {
-        addMetadata(workItemId, ColumnMetadata.named(ColumnNames.WORKITEM_ID.toString()));
+        addMetadata(workitemId, ColumnMetadata.named(ColumnNames.WORKITEM_ID.toString()));
         addMetadata(folderItemNo, ColumnMetadata.named(ColumnNames.FOLDER_ITEM_NO.toString()));
         addMetadata(documentNo, ColumnMetadata.named(ColumnNames.DOCUMENT_NO.toString()));
         addMetadata(templateId, ColumnMetadata.named(ColumnNames.TEMPLATE_ID.toString()));

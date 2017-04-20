@@ -13,7 +13,7 @@ import co.jp.nej.earth.model.enums.TableNames;
 public class QProcessMap extends RelationalPathBase<ProcessMap> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 

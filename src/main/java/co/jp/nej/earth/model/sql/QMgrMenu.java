@@ -10,30 +10,31 @@ import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
 
-public class QMgrMenu extends RelationalPathBase<MgrMenu>{
+public class QMgrMenu extends RelationalPathBase<MgrMenu> {
 
     /**
      * @author p-tvo-thuynd
      */
     private static final long serialVersionUID = 1L;
-    
+
     public final StringPath functionId = createString(ColumnNames.FUNCTION_ID.toString());
     public final StringPath functionName = createString(ColumnNames.FUNCTION_NAME.toString());
     public final StringPath functionCategoryId = createString(ColumnNames.FUNCTION_CATEGORY_ID.toString());
     public final StringPath functionCategoryName = createString(ColumnNames.FUNCTION_CATEGORY_NAME.toString());
-    public final NumberPath<Integer> functionSortNo = createNumber(ColumnNames.FUNCTION_SORT_NO.toString(), Integer.class);
+    public final NumberPath<Integer> functionSortNo = createNumber(ColumnNames.FUNCTION_SORT_NO.toString(),
+            Integer.class);
     public final StringPath functionInformation = createString(ColumnNames.FUNCTION_INFORMATION.toString());
-    
-    public static QMgrMenu newInstance(){
+
+    public static QMgrMenu newInstance() {
         return new QMgrMenu(QMgrMenu.class.getSimpleName(), null, TableNames.MGR_MENU.name());
     }
-    
-    public QMgrMenu(String path, String schema, String table){
+
+    public QMgrMenu(String path, String schema, String table) {
         super(MgrMenu.class, PathMetadataFactory.forVariable(path), schema, table);
         addMetadata();
     }
-    
-    protected void addMetadata(){
+
+    protected void addMetadata() {
         addMetadata(functionId, ColumnMetadata.named(ColumnNames.FUNCTION_ID.toString()));
         addMetadata(functionName, ColumnMetadata.named(ColumnNames.FUNCTION_NAME.toString()));
         addMetadata(functionCategoryId, ColumnMetadata.named(ColumnNames.FUNCTION_CATEGORY_ID.toString()));

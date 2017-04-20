@@ -23,7 +23,7 @@ public class LoginUtil {
     public static boolean checkAuthen(HttpSession session) {
         return session.getAttribute(Session.USER_INFO) != null;
     }
-    
+
     public static boolean isUserExisted(String password, MgrUser mgrUser){
         return mgrUser.getPassword().equals(password);
     }

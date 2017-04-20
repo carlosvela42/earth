@@ -6,5 +6,5 @@ import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.MgrSchedule;
 
 public interface ScheduleService {
-    public List<MgrSchedule> getSchedules() throws EarthException;
+    List<MgrSchedule> getSchedules() throws EarthException;
 }

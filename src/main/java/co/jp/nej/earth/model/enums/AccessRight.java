@@ -10,7 +10,7 @@ package co.jp.nej.earth.model.enums;
  *  5: Full
  */
 public enum AccessRight {
-    
+
     NONE(0)
     ,CAN_HIDE_MASKING(1)
     ,SO(2)
@@ -19,7 +19,7 @@ public enum AccessRight {
     ,FULL(5);
 
     private int value;
-    
+
     public int getValue() {
         return value;
     }

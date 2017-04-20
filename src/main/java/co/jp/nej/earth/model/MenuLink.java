@@ -8,13 +8,13 @@ import co.jp.nej.earth.model.enums.LinkType;
 
 public class MenuLink implements Serializable{
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     @SerializedName("linkType")
     private LinkType linkType;
     private String url;
-    
+
     public LinkType getLinkType() {
         return linkType;
     }

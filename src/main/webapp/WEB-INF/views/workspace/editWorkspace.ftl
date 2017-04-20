@@ -1,4 +1,13 @@
 <@standard.standardPage title="ADDNEWWORKSPACE">
+<script type="text/javascript">
+    function input() {
+        // Declare variables
+        var schemaNameInput;
+        schemaNameInput = document.getElementById('txtSchemaName').value;
+        $("#txtDBuser").val(schemaNameInput);
+      
+    }
+</script>
 <form action="${rc.getContextPath()}/workspace/updateOne"
 	object="mgrWorkspaceConnect" method="post">
 	<table>
@@ -13,7 +22,7 @@
 	                <label>ワークスペースID：</label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtWorkspace" name="workspaceId" value="${mgrWorkspaceConnect.workspaceId}" readonly height="20px" width="150px" style="text-align: left">
+	                <input type="text" id="txtWorkspace" name="workspaceId" value="${mgrWorkspaceConnect.workspaceId}" readonly="readonly" height="20px" width="150px" style="text-align: left">
 	            </td>
 	        </tr>
 	        <tr>
@@ -26,7 +35,7 @@
 	                <label>スキーマ名： </label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtSchemaName" name="schemaName" value="${mgrWorkspaceConnect.schemaName}" height="20px" width="150px" style="text-align: left">  
+	                <input type="text" id="txtSchemaName" name="schemaName" value="${mgrWorkspaceConnect.schemaName}" height="20px" width="150px" style="text-align: left" onkeyup="input()">  
 	            </td>
 	        </tr>
 	         <tr>
@@ -34,7 +43,7 @@
 	                <label>DBユーザ： </label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtDBuser" name="dbUser" value="${mgrWorkspaceConnect.dbUser}" height="20px" width="150px" style="text-align: left"> 
+	                <input type="text" id="txtDBuser" name="dbUser" value="${mgrWorkspaceConnect.dbUser}" height="20px" width="150px" style="text-align: left" readonly="readonly"> 
 	            </td>
 	        </tr>
 	         <tr>
@@ -58,7 +67,7 @@
 	                <label>DBサーバ： </label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtDBserver" name="dbServer" value="${mgrWorkspaceConnect.dbServer}" readonly height="20px" width="150px" style="text-align: left">
+	                <input type="text" id="txtDBserver" name="dbServer" value="${mgrWorkspaceConnect.dbServer}" readonly="readonly" height="20px" width="150px" style="text-align: left">
 	            </td>
 	        </tr>
          </#if>

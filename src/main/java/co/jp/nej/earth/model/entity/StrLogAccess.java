@@ -1,10 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QStrLogAccess;
+import co.jp.nej.earth.util.DateUtil;
 
-public class StrLogAccess implements Serializable {
+public class StrLogAccess extends BaseModel<StrLogAccess> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String eventId;
@@ -15,7 +17,24 @@ public class StrLogAccess implements Serializable {
     private int processId;
     private long processVersion;
     private String taskId;
-    private String lastUpdateTime;
+
+    public StrLogAccess() {
+        this.setqObj(QStrLogAccess.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
+
+    public StrLogAccess(String eventId, String processTime, String userId, String workitemId, int historyNo,
+            int processId, long processVersion, String taskId) {
+        this();
+        this.eventId = eventId;
+        this.processTime = processTime;
+        this.userId = userId;
+        this.workitemId = workitemId;
+        this.historyNo = historyNo;
+        this.processId = processId;
+        this.processVersion = processVersion;
+        this.taskId = taskId;
+    }
 
     public String getEventId() {
         return eventId;
@@ -81,11 +100,4 @@ public class StrLogAccess implements Serializable {
         this.taskId = taskId;
     }
 
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
 }

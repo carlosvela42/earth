@@ -1,12 +1,14 @@
 package co.jp.nej.earth.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.EventControl;
 
-@Transactional
 @Service
+@Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
 public class ProcessServiceImpl implements ProcessService {
 
     public String openProcess(String token, String workspaceId, String processId, String workItemId) {

@@ -1,3 +1,13 @@
+<@standard.standardPage title="ADDNEWWORKSPACE">
+<script type="text/javascript">
+	function input() {
+	    // Declare variables
+	    var schemaNameInput;
+	    schemaNameInput = document.getElementById('txtSchemaName').value;
+	    $("#txtDBuser").val(schemaNameInput);
+	  
+	}
+</script>
 <form action="${rc.getContextPath()}/workspace/insertOne"
 	object="mgrWorkspaceConnect" method="post">
 	<table>
@@ -8,18 +18,18 @@
 		<tr>
 			<td><label>ワークスペースID：</label></td>
 			<td><input type="text" id="txtWorkspace" name="workspaceId"
-				height="20px" width="150px" style="text-align: left"></td>
+				value="${mgrWorkspaceConnect.workspaceId}" height="20px" width="150px" style="text-align: left" readonly="readonly"></td>
 		</tr>
 		<tr>
 			<td><label>スキーマ名： </label></td>
-			<td><input type="text" id="txtSchemaName"
+			<td><input type="text" id="txtSchemaName" onkeyup="input()"
 				name="schemaName" height="20px" width="150px"
 				style="text-align: left"></td>
 		</tr>
 		<tr>
 			<td><label>DBユーザ： </label></td>
 			<td><input type="text" id="txtDBuser" name="dbUser"
-				height="20px" width="150px" style="text-align: left"></td>
+				height="20px" width="150px" style="text-align: left" readonly="readonly"></td>
 		</tr>
 		<tr>
 			<td><label>DBユーザパスワード： </label></td>
@@ -47,3 +57,4 @@
 	</div>
 	</#list> </#if>
 </form>
+</@standard.standardPage>

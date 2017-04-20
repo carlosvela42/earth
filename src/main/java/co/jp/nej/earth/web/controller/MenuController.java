@@ -15,34 +15,33 @@ import co.jp.nej.earth.util.MenuUtil;
 import co.jp.nej.earth.util.TemplateUtil;
 
 /**
- * 
  * @author p-tvo-thuynd
  *
  */
 @Controller
 @RequestMapping("/")
 public class MenuController {
-    
+
     @RequestMapping(value = "/testGetListMenu", method = RequestMethod.GET)
-    public void testTetListMenu(HttpServletRequest request){
+    public void testTetListMenu(HttpServletRequest request) {
         List<MgrMenu> lst = MenuUtil.getListMenu(request.getSession());
         System.out.println("testGetListMenu : Listmenu size: " + lst.size());
     }
-    
-    @RequestMapping(value="/testGetMenuAuthority")
-    public void testGetMenuAuthority(HttpServletRequest request){
+
+    @RequestMapping(value = "/testGetMenuAuthority")
+    public void testGetMenuAuthority(HttpServletRequest request) {
         AccessRight accessRight = MenuUtil.getAuthority(request.getSession(), "functionId_1");
         System.out.println("testGetMenuAuthority : AccessRight: " + accessRight);
     }
-    
-    @RequestMapping(value="/testGetAccessibleTemplates")
-    public void testGetAccessibleTemplates(HttpServletRequest request){
+
+    @RequestMapping(value = "/testGetAccessibleTemplates")
+    public void testGetAccessibleTemplates(HttpServletRequest request) {
         List<String> lst = TemplateUtil.getAccessibleTemplates(request.getSession(), "001");
         System.out.println("testGetAccessibleTemplates : ListTemplate size: " + lst.size());
     }
-    
-    @RequestMapping(value="/testGetTemplateAuthority")
-    public void testGetTemplateAuthority(HttpServletRequest request){
+
+    @RequestMapping(value = "/testGetTemplateAuthority")
+    public void testGetTemplateAuthority(HttpServletRequest request) {
         TemplateKey templateKey = new TemplateKey();
         templateKey.setTemplateId("template1");
         templateKey.setWorkspaceId("001");

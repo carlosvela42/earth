@@ -4,36 +4,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.sql.QDocument;
+import co.jp.nej.earth.util.DateUtil;
 
-public class Document {
+public class Document extends BaseModel<Document> {
 
-    private String workItemId;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private String workitemId;
     private Integer folderItemNo;
     private Integer documentNo;
     private MgrTemplate mgrTemplate;
-    private int pageCount;
-    private String displayInformation;
-    private int documentType;
+    private Integer pageCount;
+    private String viewInformation;
+    private String documentType;
     private String lastUpdateTime;
     private Integer action;
     private TemplateData documentData;
     private String documentPath;
     private byte[] documentBinary;
+    private String templateId;
     private List<Layer> layers = new ArrayList<Layer>();
 
-    /**
-     * @return the workItemId
-     */
-    public String getWorkItemId() {
-        return workItemId;
+    public Document() {
+        this.setqObj(QDocument.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**
-     * @param workItemId
-     *            the workItemId to set
+     * @return the workitemId
      */
-    public void setWorkItemId(String workItemId) {
-        this.workItemId = workItemId;
+    public String getWorkitemId() {
+        return workitemId;
+    }
+
+    /**
+     * @param workitemId
+     *            the workitemId to set
+     */
+    public void setWorkitemId(String workitemId) {
+        this.workitemId = workitemId;
     }
 
     /**
@@ -77,7 +89,7 @@ public class Document {
     /**
      * @return the pageCount
      */
-    public int getPageCount() {
+    public Integer getPageCount() {
         return pageCount;
     }
 
@@ -85,29 +97,29 @@ public class Document {
      * @param pageCount
      *            the pageCount to set
      */
-    public void setPageCount(int pageCount) {
+    public void setPageCount(Integer pageCount) {
         this.pageCount = pageCount;
     }
 
     /**
-     * @return the displayInformation
+     * @return the viewInformation
      */
-    public String getDisplayInformation() {
-        return displayInformation;
+    public String getViewInformation() {
+        return viewInformation;
     }
 
     /**
-     * @param displayInformation
-     *            the displayInformation to set
+     * @param viewInformation
+     *            the viewInformation to set
      */
-    public void setDisplayInformation(String displayInformation) {
-        this.displayInformation = displayInformation;
+    public void setViewInformation(String viewInformation) {
+        this.viewInformation = viewInformation;
     }
 
     /**
      * @return the documentType
      */
-    public int getDocumentType() {
+    public String getDocumentType() {
         return documentType;
     }
 
@@ -115,7 +127,7 @@ public class Document {
      * @param documentType
      *            the documentType to set
      */
-    public void setDocumentType(int documentType) {
+    public void setDocumentType(String documentType) {
         this.documentType = documentType;
     }
 
@@ -195,6 +207,21 @@ public class Document {
     }
 
     /**
+     * @return the templateId
+     */
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    /**
+     * @param templateId
+     *            the templateId to set
+     */
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
+    }
+
+    /**
      * @return the layers
      */
     public List<Layer> getLayers() {
@@ -209,6 +236,4 @@ public class Document {
         this.layers = layers;
     }
 
-    
-    
 }

@@ -4,7 +4,6 @@ public class WorkItemDataUpdateBatch implements Runnable {
     private Long id;
     private String tableName;
     private String[] selectColumns;
-    
     /**
      * @param tableNames
      * @param selectColumns
@@ -17,6 +16,5 @@ public class WorkItemDataUpdateBatch implements Runnable {
     }
 
     public void run() {
-        
     }
 }

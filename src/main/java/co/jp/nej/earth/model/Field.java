@@ -7,9 +7,9 @@ public class Field {
     private int size;
     private boolean required;
     private boolean encrypted;
-    
+
     /**
-     * 
+     *
      */
     public Field() {
         super();

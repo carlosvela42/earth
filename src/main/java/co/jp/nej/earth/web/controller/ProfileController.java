@@ -1,24 +1,22 @@
 package co.jp.nej.earth.web.controller;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.service.ProfileService;
 import co.jp.nej.earth.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.HttpRequestHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/profile")
@@ -61,9 +59,9 @@ public class ProfileController {
 
     @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
     public String updateOne(@ModelAttribute("mgrProfile") MgrProfile mgrProfile,
-                            @ModelAttribute("userIds") String userIds, Model model) {
+            @ModelAttribute("userIds") String userIds, Model model) {
         try {
-            List<Message> messages = profileService.validate(mgrProfile,false);
+            List<Message> messages = profileService.validate(mgrProfile, false);
             if (messages != null && messages.size() > 0) {
                 model.addAttribute("messages", messages);
                 model.addAttribute("mgrUsers", userService.getAll());
@@ -109,7 +107,7 @@ public class ProfileController {
     @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
     public String insertOne(@ModelAttribute("mgrProfile") MgrProfile mgrProfile, String userIds, Model model) {
         try {
-            List<Message> messages = profileService.validate(mgrProfile,true);
+            List<Message> messages = profileService.validate(mgrProfile, true);
             if (messages != null && messages.size() > 0) {
                 model.addAttribute("messages", messages);
                 model.addAttribute("mgrUsers", userService.getAll());

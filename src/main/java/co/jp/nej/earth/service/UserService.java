@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
@@ -36,11 +37,16 @@ public interface UserService {
 
     CtlLogin getCtlLoginDetail(Map<Path<?>, Object> condition) throws EarthException;
 
-    boolean deleteCtlLogin(Map<Path<?>, Object> condition) throws EarthException;
+    long deleteCtlLogin(Map<Path<?>, Object> condition) throws EarthException;
 
-    boolean deleteCtlLogins(List<Map<Path<?>, Object>> condition) throws EarthException;
+    long deleteCtlLogins(List<Map<Path<?>, Object>> condition) throws EarthException;
 
-    boolean addCtlLogin(CtlLogin login) throws EarthException;
+    long deleteAllCtlLogins() throws EarthException;
 
-    boolean updateCtlLogin(Map<Path<?>, Object> condition, Map<Path<?>, Object> updateMap) throws EarthException;
+    long addCtlLogin(CtlLogin login) throws EarthException;
+
+    long updateCtlLogin(Map<Path<?>, Object> condition, Map<Path<?>, Object> updateMap) throws EarthException;
+
+    List<CtlLogin> searchMgrLogin(String workspaceId, Predicate condition, Long offset, Long limit,
+            OrderSpecifier<String> orderByColumn) throws EarthException;
 }

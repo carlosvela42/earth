@@ -10,6 +10,10 @@
                     class="fa arrow"></span></a>
         </li>
         <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/template/dataMenu">Template<span
+                    class="fa arrow"></span></a>
+        </li>
+        <li>
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/imageviewer">Image Viewer New<span
                     class="fa arrow"></span></a>
         </li>
@@ -42,6 +46,10 @@
         </li>
         <li>
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/templateAccessRight/initTemplateListScreen">Initialize Template List Screen<span
+                    class="fa arrow"></span></a>
+        </li>
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/licenseHistory/initLicenseHistoryScreen">License History<span
                     class="fa arrow"></span></a>
         </li>
     </ul>

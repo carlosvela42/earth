@@ -1,14 +1,14 @@
 package co.jp.nej.earth.dao;
 
-import co.jp.nej.earth.exception.EarthException;
-
 import java.util.List;
+
+import co.jp.nej.earth.exception.EarthException;
 
 /**
  * Created by minhtv on 3/29/2017.
  */
 public interface EvidenceLogDao {
-    public boolean deleteListByUserIds(List<String> userIds) throws EarthException;
+    boolean deleteListByUserIds(List<String> userIds) throws EarthException;
 
-    public boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
+    boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
 }

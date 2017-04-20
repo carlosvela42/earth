@@ -3,7 +3,7 @@ package co.jp.nej.earth.config;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
-    
+
     @Override
     protected String[] getServletMappings() {
         return new String[] { "/" };

@@ -3,19 +3,19 @@ package co.jp.nej.earth.model.entity;
 import java.io.Serializable;
 
 /**
- * 
+ *
  * @author p-tvo-thuynd
  *
  */
 public class MgrMenuCategory implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String functionCategoryId;
     private String functionCategoryName;
     private int functionSortNo;
-    
+
     public String getFunctionCategoryId() {
         return functionCategoryId;
     }

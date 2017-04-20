@@ -17,7 +17,7 @@ public class MgrSchedule {
     }
 
     public MgrSchedule(String scheduleId, String processId, String taskId, String hostName, String processIseviceId,
-            String startTime, String repeatOption, String endTime, String lastUpdateTime) {
+            String startTime, String repeatOption, String endTime, String lastUpdateTime){
         super();
         this.scheduleId = scheduleId;
         this.processId = processId;

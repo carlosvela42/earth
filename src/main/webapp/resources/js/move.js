@@ -3,8 +3,9 @@ var currentX = 0;
 var currentY = 0;
 var currentMatrix = 0;
 function startMove(event, moveType) {
-	x1 = event.clientX;
-	y1 = event.clientY;
+	mode = "move";
+	x1m = event.clientX;
+	y1m = event.clientY;
 	document.documentElement.setAttribute("onmousemove", "moveIt(event)")
 
 	if (moveType == 'single') {
@@ -21,10 +22,10 @@ function moveIt(event) {
 
 	C
 			.setAttributeNS(null, "transform", "translate("
-					+ (sx + event.clientX - x1) + " "
-					+ (sy + event.clientY - y1) + ")");
-	x1 = event.clientX;
-	y1 = event.clientY;
+					+ (sx + event.clientX - x1m) + " "
+					+ (sy + event.clientY - y1m) + ")");
+	x1m = event.clientX;
+	y1m = event.clientY;
 }
 
 function endMove() {

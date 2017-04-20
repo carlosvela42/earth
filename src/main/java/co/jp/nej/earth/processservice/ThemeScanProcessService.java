@@ -24,12 +24,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.xml.WorkItem;
+import co.jp.nej.earth.model.WorkItem;
 import co.jp.nej.earth.service.EventControlService;
 import co.jp.nej.earth.util.ApplicationContextUtil;
 
 /**
- * 
+ *
  * @author p-tvo-sonta
  *
  */
@@ -44,6 +44,14 @@ public class ThemeScanProcessService implements Job {
      * service
      */
     private EventControlService service;
+    /**
+     * folder input
+     */
+    private static final String FOLDER_INPUT = "themeScan";
+    /**
+     * folder output
+     */
+    private static final String FOLDER_OUTPUT = "temp/themeScan/";
 
     /**
      * execute
@@ -59,7 +67,7 @@ public class ThemeScanProcessService implements Job {
 
     /**
      * run logic
-     * 
+     *
      * @throws EarthException
      * @throws IOException
      */
@@ -69,33 +77,39 @@ public class ThemeScanProcessService implements Job {
         List<File> fileChildren = scanFolderImport();
         for (File child : fileChildren) {
             if (importThemeScan(child)) {
-                // TODO
-                copyFile(child, "C:\\temp\\");
+                copyFile(child, FOLDER_OUTPUT);
             }
         }
     }
 
     /**
      * scan folder import
-     * 
+     *
      * @return
      * @throws EarthException
      * @throws IOException
      */
     private List<File> scanFolderImport() throws EarthException, IOException {
-        // TODO
-        File file = new File("fileImport");
-        String[] names = file.list();
-
+        File file = new File(FOLDER_INPUT);
         List<File> result = new ArrayList<>();
-        for (String name : names) {
-            File fileChild = new File(file.getAbsolutePath() + File.separator + name);
-            if (fileChild.isDirectory()) {
-                result.add(fileChild);
-            } else {
-                if (importThemeScan(fileChild)) {
-                    // TODO
-                    copyFile(fileChild, "C:\\temp\\");
+        if (file.isDirectory()) {
+            String[] names = file.list();
+            for (String name : names) {
+                File fileChild = new File(file.getAbsolutePath() + File.separator + name);
+                if (fileChild.isDirectory()) {
+                    result.add(fileChild);
+                } else {
+                    String extension = name.substring(name.lastIndexOf('.') + 1);
+                    // check file is xml or not
+                    if (extension.equals("xml")) {
+                        try {
+                            service.insertEvent(parseXml(fileChild));
+                            copyFile(fileChild, FOLDER_OUTPUT);
+                        } catch (JAXBException e) {
+                            // write log when xml's type is wrong
+                            LOG.error(e.getMessage());
+                        }
+                    }
                 }
             }
         }
@@ -104,7 +118,7 @@ public class ThemeScanProcessService implements Job {
 
     /**
      * import theme scan
-     * 
+     *
      * @param file
      * @return
      * @throws EarthException
@@ -121,12 +135,10 @@ public class ThemeScanProcessService implements Job {
                 // check file is xml or not
                 if (extension.equals("xml")) {
                     try {
-                        long insertNum = service.insertEvent(parseXml(fileChild));
-                        if (insertNum < 1) {
+                        if (!service.insertEvent(parseXml(fileChild))) {
                             break;
                         }
                     } catch (JAXBException e) {
-                        // TODO
                         // write log when xml's type is wrong
                         LOG.error(e.getMessage());
                     }
@@ -138,7 +150,7 @@ public class ThemeScanProcessService implements Job {
 
     /**
      * parse Xml file to workItem class
-     * 
+     *
      * @param fileChild
      * @return
      * @throws JAXBException
@@ -152,7 +164,7 @@ public class ThemeScanProcessService implements Job {
 
     /**
      * copy file in folder
-     * 
+     *
      * @param source
      * @param dest
      * @return
@@ -185,7 +197,7 @@ public class ThemeScanProcessService implements Job {
 
     /**
      * copy file to file
-     * 
+     *
      * @param source
      * @param dest
      * @param name
@@ -200,7 +212,7 @@ public class ThemeScanProcessService implements Job {
 
     /**
      * delete folder
-     * 
+     *
      * @param source
      * @throws IOException
      */

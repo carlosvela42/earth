@@ -1,7 +1,7 @@
 package co.jp.nej.earth.model.entity;
 
 /**
- * 
+ *
  * @author p-tvo-sonta
  *
  */

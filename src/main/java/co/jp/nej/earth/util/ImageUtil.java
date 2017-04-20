@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 public class ImageUtil {
     public static final String JPG_TYPE = "jpg";
     public static final String PNG_TYPE = "png";
-    
+
     public static byte[] getThumbnail(byte[] imageData, int width, int height, String outPutType) {
         ByteArrayInputStream in = new ByteArrayInputStream(imageData);
         try {

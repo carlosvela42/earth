@@ -10,12 +10,12 @@ import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
 
 public class QMgrTemplate extends RelationalPathBase<MgrTemplate> {
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
-    
+
     public final StringPath templateId = createString(ColumnNames.TEMPLATE_ID.toString());
     public final StringPath templateName = createString(ColumnNames.TEMPLATE_NAME.toString());
     public final StringPath templateTableName = createString(ColumnNames.TEMPLATE_TABLE_NAME.toString());

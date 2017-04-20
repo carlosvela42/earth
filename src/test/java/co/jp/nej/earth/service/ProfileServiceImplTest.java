@@ -1,4 +1,4 @@
-package co.jp.nej.earth.service;
+/*package co.jp.nej.earth.service;
 
 import co.jp.nej.earth.BaseTest;
 import co.jp.nej.earth.exception.EarthException;
@@ -43,3 +43,4 @@ public class ProfileServiceImplTest extends BaseTest {
 //        Assert.assertTrue(mgrProfiles != null && mgrProfiles.size() > 0);
     }
 }
+*/

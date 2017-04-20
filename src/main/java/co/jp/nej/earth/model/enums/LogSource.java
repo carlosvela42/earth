@@ -26,12 +26,12 @@ public enum LogSource {
     ,THEMESCAN_IMPORT_SERVICE("Themescan import service")
     ,OPERATION_DATE_CHANGE_SERVICE("Operation Date change service")
     ;
-    
+
     private String propertyName;
     LogSource(String name) {
         propertyName = name;
     }
-    
+
     @Override
     public String toString() {
         return propertyName;

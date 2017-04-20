@@ -5,9 +5,12 @@ import java.util.Date;
 import static co.jp.nej.earth.model.constant.Constant.*;
 
 public class DateUtil {
-    
-    private static final SimpleDateFormat earthDF = new SimpleDateFormat(DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS);
-	
+
+    private static final SimpleDateFormat earthDF = new SimpleDateFormat(
+            DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS);
+
+    private static final SimpleDateFormat earthShortDF = new SimpleDateFormat(DatePattern.YYYYMMDD);
+
     /**
      * Dateを指定のフォーマットへ変換.
      *
@@ -27,20 +30,24 @@ public class DateUtil {
      * @return
      */
     public static String getCurrentDate(String pattern) {
-    	SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-    	return sdf.format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.format(new Date());
     }
-    
- // Get current date as string
-    public static Date getCurrentDate(){
-        
-      //TODO function get system date will be implemented later
+
+    // Get current date as string
+    public static Date getCurrentDate() {
+
         return new Date();
     }
-    
+
     // Get current date as string
-    public static String getCurrentDateString(){
-        
+    public static String getCurrentDateString() {
+
         return earthDF.format(getCurrentDate());
+    }
+
+    public static String getCurrentShortDateString() {
+
+        return earthShortDF.format(getCurrentDate());
     }
 }

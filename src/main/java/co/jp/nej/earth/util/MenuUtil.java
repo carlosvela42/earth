@@ -8,7 +8,6 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
-import co.jp.nej.earth.model.UserAccessRight;
 import org.springframework.util.ObjectUtils;
 
 import co.jp.nej.earth.model.MenuAccessRight;
@@ -32,7 +31,8 @@ public class MenuUtil {
             }
         }
         Map<String, String> sortedMapStructure = new TreeMap<String, String>(mapStructure);
-        Map<String, MenuAccessRight> sortedMenuAccessRightMap = new TreeMap<String, MenuAccessRight>(menuAccessRightMap);
+        Map<String, MenuAccessRight> sortedMenuAccessRightMap = new TreeMap<String, MenuAccessRight>(
+                menuAccessRightMap);
         for (Map.Entry<String, String> map : sortedMapStructure.entrySet()) {
             List<MgrMenu> mgrMenus = new ArrayList<MgrMenu>();
             menuStructure = new MenuStructure();

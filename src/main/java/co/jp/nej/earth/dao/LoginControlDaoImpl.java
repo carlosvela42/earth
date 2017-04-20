@@ -1,5 +1,19 @@
 package co.jp.nej.earth.dao;
 
+import static co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
+
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
@@ -10,19 +24,12 @@ import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.sql.QCtlLogin;
 import co.jp.nej.earth.model.sql.QMgrProfile;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
-import com.querydsl.sql.dml.SQLInsertClause;
-import com.querydsl.sql.dml.SQLUpdateClause;
-import org.springframework.stereotype.Repository;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
+import com.querydsl.core.types.Path;
 
 @Repository
 public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginControlDao {
+
+    private static final QCtlLogin qcCtlLogin = QCtlLogin.newInstance();
 
     public LoginControlDaoImpl() throws Exception {
         super();
@@ -36,7 +43,7 @@ public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginC
     }
 
     /**
-     * 
+     *
      */
     public List<StrCal> getNumberOnlineUserByProfile(String userId) throws EarthException {
         QCtlLogin qCtlLogin = QCtlLogin.newInstance();
@@ -79,10 +86,15 @@ public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginC
 
     public boolean deleteListByUserIds(List<String> userIds) throws EarthException {
         try {
-            QCtlLogin qcCtlLogin = QCtlLogin.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            earthQueryFactory.delete(qcCtlLogin).where(qcCtlLogin.userId.in(userIds)).execute();
-            return true;
+
+            List<Map<Path<?>, Object>> conditions = new ArrayList<>();
+            for (String userId : userIds) {
+                Map<Path<?>, Object> condition = new HashMap<>();
+                condition.put(qcCtlLogin.userId, userId);
+                conditions.add(condition);
+            }
+            return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions) >= 0;
+
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }

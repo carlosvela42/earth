@@ -13,9 +13,9 @@ import co.jp.nej.earth.util.DateUtil;
 public class CtlLogin extends BaseModel<CtlLogin> implements Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CtlLogin.class);
-    
+
     /**
-     * Serial number 
+     * Serial number
      */
     private static final long serialVersionUID = 1L;
 
@@ -25,7 +25,7 @@ public class CtlLogin extends BaseModel<CtlLogin> implements Serializable {
     private String logoutTime;
 
     private Long testLong;
-    
+
     private Date testDate;
 
     public CtlLogin() {

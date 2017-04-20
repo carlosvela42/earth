@@ -22,7 +22,8 @@ public class TemplateUtil {
     public static List<String> getAccessibleTemplates(HttpSession session, String workspaceId) {
         List<String> listTemplate = new ArrayList<String>();
         if (session.getAttribute(Session.TEMPLATE_ACCESS_RIGHT_MAP) != null) {
-            Map<TemplateKey, TemplateAccessRight> templateAccessRightMap = (Map<TemplateKey, TemplateAccessRight>) session
+            Map<TemplateKey, TemplateAccessRight> templateAccessRightMap =
+                    (Map<TemplateKey, TemplateAccessRight>) session
                     .getAttribute(Session.TEMPLATE_ACCESS_RIGHT_MAP);
             for (TemplateKey templateKey : templateAccessRightMap.keySet()) {
                 if (templateKey.getWorkspaceId().equals(workspaceId)) {
@@ -36,10 +37,12 @@ public class TemplateUtil {
     @SuppressWarnings("unchecked")
     public static AccessRight getAuthority(HttpSession session, TemplateKey tKey) {
         if (session.getAttribute(Session.TEMPLATE_ACCESS_RIGHT_MAP) != null) {
-            Map<TemplateKey, TemplateAccessRight> templateAccessRightMap = (Map<TemplateKey, TemplateAccessRight>) session
+            Map<TemplateKey, TemplateAccessRight> templateAccessRightMap =
+                    (Map<TemplateKey, TemplateAccessRight>) session
                     .getAttribute(Session.TEMPLATE_ACCESS_RIGHT_MAP);
             for (TemplateKey templateKey : templateAccessRightMap.keySet()) {
-                if (templateKey.getTemplateId().equals(tKey.getTemplateId()) && templateKey.getWorkspaceId().equals(tKey.getWorkspaceId())) {
+                if (templateKey.getTemplateId().equals(tKey.getTemplateId())
+                        && templateKey.getWorkspaceId().equals(tKey.getWorkspaceId())) {
                     TemplateAccessRight templateAccessRight = templateAccessRightMap.get(templateKey);
                     if (!ObjectUtils.isEmpty(templateAccessRight)) {
                         return templateAccessRight.getAccessRight();

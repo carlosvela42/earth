@@ -1,19 +1,33 @@
 package co.jp.nej.earth.service;
 
-import co.jp.nej.earth.dao.ProfileDao;
-import co.jp.nej.earth.dao.UserDao;
-import co.jp.nej.earth.dao.MenuAuthorityDao;
-import co.jp.nej.earth.dao.TemplateAuthorityDao;
-import co.jp.nej.earth.dao.UserProfileDao;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import co.jp.nej.earth.dao.EvidenceLogDao;
+import co.jp.nej.earth.dao.MenuAuthorityDao;
+import co.jp.nej.earth.dao.ProfileDao;
+import co.jp.nej.earth.dao.TemplateAuthorityDao;
+import co.jp.nej.earth.dao.UserDao;
+import co.jp.nej.earth.dao.UserProfileDao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.ProfileAccessRight;
 import co.jp.nej.earth.model.TemplateKey;
 import co.jp.nej.earth.model.UserAccessRight;
 import co.jp.nej.earth.model.constant.Constant;
-import co.jp.nej.earth.model.constant.Constant.Error_Code;
-import co.jp.nej.earth.model.constant.Constant.Screen_Item;
+import co.jp.nej.earth.model.constant.Constant.ErrorCode;
+import co.jp.nej.earth.model.constant.Constant.ScreenItem;
 import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUserProfile;
@@ -21,21 +35,9 @@ import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.util.CommonUtil;
 import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EStringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Locale;
-
-@Transactional
 @Service
+@Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
 public class ProfileServiceImpl implements ProfileService {
 
     @Autowired
@@ -84,7 +86,9 @@ public class ProfileServiceImpl implements ProfileService {
             for (String s : users) {
                 userIds += s + ",";
             }
-            if (userIds.length() > 0) userIds = userIds.substring(0, userIds.length() - 1);
+            if (userIds.length() > 0) {
+                userIds = userIds.substring(0, userIds.length() - 1);
+            }
             detail.put("userIds", userIds);
             detail.put("mgrUsers", userDao.getAll());
             return detail;
@@ -99,29 +103,30 @@ public class ProfileServiceImpl implements ProfileService {
         List<Message> listMessage = new ArrayList<Message>();
         try {
             if (EStringUtil.isEmpty(mgrProfile.getProfileId())) {
-                Message message = new Message(Constant.MessageUser.USR_BLANK,
-                        messageSource.getMessage(Error_Code.E0001, new String[]{Screen_Item.PROFILE_ID}, Locale.ENGLISH));
+                Message message = new Message(Constant.MessageUser.USR_BLANK, messageSource.getMessage(ErrorCode.E0001,
+                        new String[] { ScreenItem.PROFILE_ID }, Locale.ENGLISH));
                 listMessage.add(message);
                 return listMessage;
             }
             if (insert) {
                 if (!EStringUtil.checkAlphabet(mgrProfile.getProfileId())) {
-                    Message message = new Message(Constant.MessageUser.USR_SPECIAL,
-                            messageSource.getMessage(Error_Code.E0007, new String[]{Screen_Item.PROFILE_ID}, Locale.ENGLISH));
+                    Message message = new Message(Constant.MessageUser.USR_SPECIAL, messageSource
+                            .getMessage(ErrorCode.E0007, new String[] { ScreenItem.PROFILE_ID }, Locale.ENGLISH));
                     listMessage.add(message);
                     return listMessage;
                 }
             }
             if (EStringUtil.isEmpty(mgrProfile.getDescription())) {
-                Message message = new Message(Constant.MessageUser.NAME_BLANK,
-                        messageSource.getMessage(Error_Code.E0001, new String[]{Screen_Item.DESCRIPTION}, Locale.ENGLISH));
+                Message message = new Message(Constant.MessageUser.NAME_BLANK, messageSource
+                        .getMessage(ErrorCode.E0001, new String[] { ScreenItem.DESCRIPTION }, Locale.ENGLISH));
                 listMessage.add(message);
                 return listMessage;
             }
             if (insert) {
                 if (isExist(mgrProfile.getProfileId())) {
-                    Message message = new Message(Constant.MessageUser.USR_EXIST, messageSource.getMessage(Error_Code.E0005,
-                            new String[]{mgrProfile.getProfileId(), Screen_Item.PROFILE}, Locale.ENGLISH));
+                    Message message = new Message(Constant.MessageUser.USR_EXIST,
+                            messageSource.getMessage(ErrorCode.E0005,
+                                    new String[] { mgrProfile.getProfileId(), ScreenItem.PROFILE }, Locale.ENGLISH));
                     listMessage.add(message);
                     return listMessage;
                 }
@@ -129,7 +134,7 @@ public class ProfileServiceImpl implements ProfileService {
             return listMessage;
         } catch (Exception ex) {
             Message message = new Message("",
-                    messageSource.getMessage(Error_Code.E1009, new String[]{""}, Locale.ENGLISH));
+                    messageSource.getMessage(ErrorCode.E1009, new String[] { "" }, Locale.ENGLISH));
             listMessage.add(message);
             return listMessage;
         }
@@ -138,7 +143,8 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public boolean insertAndAssignUsers(MgrProfile mgrProfile, List<String> userIds) throws EarthException {
         try {
-            mgrProfile.setLastUpdateTime(DateUtil.getCurrentDate(DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD)));
+            mgrProfile.setLastUpdateTime(
+                    DateUtil.getCurrentDate(DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD)));
             MgrProfile insertProfile = profileDao.insertOne(mgrProfile);
             boolean assignUser = true;
             if (userIds.size() > 0) {
@@ -158,9 +164,6 @@ public class ProfileServiceImpl implements ProfileService {
         try {
             MgrProfile updateProfile = profileDao.updateOne(mgrProfile);
             boolean unAssignUser = profileDao.unAssignAllUsers(mgrProfile.getProfileId());
-            if (userIds.size() > 0) {
-                boolean assignUser = profileDao.assignUsers(mgrProfile.getProfileId(), userIds);
-            }
             List<String> profileIds = new ArrayList<>();
             profileIds.add(mgrProfile.getProfileId());
             List<MgrMenu> mgrMenus = menuService.getMenuByProfileId(profileIds);
@@ -169,8 +172,8 @@ public class ProfileServiceImpl implements ProfileService {
              */
             for (MgrMenu mgrMenu : mgrMenus) {
                 menuAuthorityDao.deleteAllMixAuthority(mgrMenu.getFunctionId());
-                List<UserAccessRight> userAccessRightByProfiles = menuAuthorityDao.getUserAuthorityByProfiles(mgrMenu
-                        .getFunctionId());
+                List<UserAccessRight> userAccessRightByProfiles = menuAuthorityDao
+                        .getUserAuthorityByProfiles(mgrMenu.getFunctionId());
                 List<UserAccessRight> userAccessRights = menuAuthorityDao.getUserAuthority(mgrMenu.getFunctionId());
                 List<UserAccessRight> menuAccessRights = CommonUtil.mixAuthority(userAccessRights,
                         userAccessRightByProfiles);
@@ -180,7 +183,7 @@ public class ProfileServiceImpl implements ProfileService {
             List<TemplateKey> templateKeys = templateAuthorityDao.getTemplateKeysByProfile(mgrProfile.getProfileId());
             List<MgrUserProfile> mgrUserProfiles = userProfileDao.getListByProfileIds(profileIds);
             /**
-             *  insert mix authority for template
+             * insert mix authority for template
              */
             for (TemplateKey templateKey : templateKeys) {
                 templateAuthorityDao.deleteAllMixAuthority(templateKey);
@@ -189,8 +192,8 @@ public class ProfileServiceImpl implements ProfileService {
                 for (ProfileAccessRight profileAccessRight : profileAccessRights) {
                     mapAccessRightP.put(profileAccessRight.getProfileId(), profileAccessRight.getAccessRight());
                 }
-                List<UserAccessRight> userAccessRightByProfiles = CommonUtil.getUserAccessRightProfiles
-                        (mgrUserProfiles, mapAccessRightP);
+                List<UserAccessRight> userAccessRightByProfiles = CommonUtil.getUserAccessRightProfiles(mgrUserProfiles,
+                        mapAccessRightP);
                 List<UserAccessRight> userAccessRights = templateAuthorityDao.getUserAuthority(templateKey);
                 List<UserAccessRight> templateAccessRights = CommonUtil.mixAuthority(userAccessRights,
                         userAccessRightByProfiles);

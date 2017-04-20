@@ -6,23 +6,25 @@ import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.jp.nej.earth.dao.MstSystemDao;
 import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.constant.Constant.OperationDateProcess;
+import co.jp.nej.earth.model.constant.Constant.AgentBatch;
+import co.jp.nej.earth.model.entity.MstSystem;
 
 /**
- * 
+ *
  * @author p-tvo-sonta
  *
  */
-@Transactional
 @Service
+@Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
 public class SystemConfigurationServiceImpl implements SystemConfigurationService {
 
     @Autowired
-    MstSystemDao mstSystemDao;
+    private MstSystemDao mstSystemDao;
 
     /**
      * {@inheritDoc}
@@ -30,9 +32,9 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
     @Override
     public int updateSystemConfig() throws EarthException {
         // get system config from db
-        MstSystem mstSystem = mstSystemDao.getMstSystemBySectionAndVariable(OperationDateProcess.OPERATION_DATE,
-                OperationDateProcess.CURRENT_DATE);
-        SimpleDateFormat formatter = new SimpleDateFormat(OperationDateProcess.DATE_FORMAT);
+        MstSystem mstSystem = mstSystemDao.getMstSystemBySectionAndVariable(AgentBatch.OPERATION_DATE,
+                AgentBatch.CURRENT_DATE);
+        SimpleDateFormat formatter = new SimpleDateFormat(AgentBatch.DATE_FORMAT);
         Calendar configDate = Calendar.getInstance();
         try {
             // set value of configDate by system date
@@ -43,8 +45,8 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
         // add systemdate to 1 day
         configDate.add(Calendar.DATE, 1);
         // update system date to system config
-        return (int) mstSystemDao.updateMstSystem(OperationDateProcess.OPERATION_DATE,
-                OperationDateProcess.CURRENT_DATE, formatter.format(configDate.getTime()));
+        return (int) mstSystemDao.updateMstSystem(AgentBatch.OPERATION_DATE,
+                AgentBatch.CURRENT_DATE, formatter.format(configDate.getTime()));
     }
 
 }

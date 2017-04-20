@@ -23,9 +23,12 @@ public class ProfileDaoImpl implements ProfileDao {
             QMgrProfile qMgrProfile = QMgrProfile.newInstance();
             QBean<MgrProfile> selectList = Projections.bean(MgrProfile.class, qMgrProfile.all());
             QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
-            List<MgrProfile> profiles = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select
-                    (selectList).from(qMgrProfile).innerJoin(qMgrUserProfile).on(qMgrProfile.profileId.eq(qMgrUserProfile.profileId)).where
-                    (qMgrUserProfile.userId.eq(userid)).fetch();
+            List<MgrProfile> profiles = ConnectionManager
+                    .getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID)
+                    .select(selectList).from(qMgrProfile)
+                    .innerJoin(qMgrUserProfile)
+                        .on(qMgrProfile.profileId.eq(qMgrUserProfile.profileId))
+                    .where(qMgrUserProfile.userId.eq(userid)).fetch();
             return profiles;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
@@ -36,8 +39,10 @@ public class ProfileDaoImpl implements ProfileDao {
         try {
             QMgrProfile qMgrProfile = QMgrProfile.newInstance();
             QBean<MgrProfile> selectList = Projections.bean(MgrProfile.class, qMgrProfile.all());
-            MgrProfile mgrProfile = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select
-                    (selectList).from(qMgrProfile).where(qMgrProfile.profileId.eq(profileId))
+            MgrProfile mgrProfile = ConnectionManager
+                    .getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID)
+                    .select(selectList).from(qMgrProfile)
+                    .where(qMgrProfile.profileId.eq(profileId))
                     .fetchOne();
             return mgrProfile;
         } catch (Exception ex) {
@@ -49,7 +54,8 @@ public class ProfileDaoImpl implements ProfileDao {
         try {
             QMgrProfile qMgrProfile = QMgrProfile.newInstance();
             QBean<MgrProfile> selectList = Projections.bean(MgrProfile.class, qMgrProfile.all());
-            return ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select(selectList).from(qMgrProfile)
+            return ConnectionManager
+                    .getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select(selectList).from(qMgrProfile)
                     .fetch();
 
         } catch (Exception ex) {
@@ -87,8 +93,11 @@ public class ProfileDaoImpl implements ProfileDao {
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
             SQLInsertClause insert = earthQueryFactory.insert(qMgrUserProfile);
             for (String userId : userIds) {
-                insert.set(qMgrUserProfile.profileId, profileId).set(qMgrUserProfile.userId, userId).set(qMgrUserProfile
-                        .lastUpdateTime, DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD)).addBatch();
+                insert.set(qMgrUserProfile.profileId, profileId)
+                      .set(qMgrUserProfile.userId, userId)
+                      .set(qMgrUserProfile.lastUpdateTime, DateUtil.getCurrentDate(
+                              Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD))
+                      .addBatch();
             }
             long inserted = insert.execute();
             return inserted > 0;

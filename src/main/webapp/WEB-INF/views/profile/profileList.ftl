@@ -103,8 +103,8 @@
                     <td><a id="profileId${mgrProfile?index}"
                            href="${rc.getContextPath()}/profile/showDetail?profileId=${mgrProfile
                            .profileId}">${mgrProfile
-                    .profileId}</a></td>
-                    <td id="description${mgrProfile?index}">${mgrProfile.description}</td>
+                    .profileId!""}</a></td>
+                    <td id="description${mgrProfile?index}">${mgrProfile.description!""}</td>
                 </tr>
             </#list>
         <#else>

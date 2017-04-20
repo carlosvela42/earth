@@ -10,10 +10,8 @@ public class ProfileAccessRight implements Serializable{
      * @author p-tvo-thuynd
      */
     private static final long serialVersionUID = 1L;
-    
     private String profileId;
     private AccessRight accessRight;
-    
     public String getProfileId() {
         return profileId;
     }

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public enum LinkType {
     @SerializedName("1")
-    LINK, 
+    LINK,
     @SerializedName("2")
     BUTTON
 }

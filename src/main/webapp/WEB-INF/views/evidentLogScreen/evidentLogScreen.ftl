@@ -1,6 +1,12 @@
 <@standard.standardPage title="EVIDENT LOG">
+
+<script type="text/javascript" src="../resources/js/jquery.min.js"></script>
+<script type="text/javascript"
+        src="../resources/js/handlebars-v4.0.5.js"></script>
+
 <form action="${rc.getContextPath()}/evidentLog/evidentLogScreen" object="mgrWorkspace" method="get" class="form-narrow
 form-horizontal">
+<#--// action="${rc.getContextPath()}/licenseHistory/evidentLogScreen"-->
     <label>証跡ログ</label>
     <#if mgrWorkspaces??>
         <select onchange="this.form.submit()" id="mgrWorkspaceList" name="workspaceId">
@@ -31,46 +37,14 @@ form-horizontal">
         <#if strLogAccesses??>
             <#list strLogAccesses as strLogAccess>
                 <tr>
-                    <#if strLogAccess.eventId??>
-                        <td style="text-align: right;">${strLogAccess.eventId}</td>
-                    <#else >
-                        <td></td>
-                    </#if>
-                    <#if strLogAccess.processTime??>
-                        <td style="text-align: left;">${strLogAccess.processTime}</td>
-                    <#else >
-                        <td></td>
-                    </#if>
-                    <#if strLogAccess.userId??>
-                        <td style="text-align: left;">${strLogAccess.userId}</td>
-                    <#else >
-                        <td></td>
-                    </#if>
-                    <#if strLogAccess.workitemId??>
-                        <td style="text-align: right;">${strLogAccess.workitemId}</td>
-                    <#else >
-                        <td></td>
-                    </#if>
-                    <#if strLogAccess.historyNo??>
-                        <td style="text-align: right;">${strLogAccess.historyNo}</td>
-                    <#else >
-                        <td></td>
-                    </#if>
-                    <#if strLogAccess.processId??>
-                        <td style="text-align: right;">${strLogAccess.processId}</td>
-                    <#else >
-                        <td></td>
-                    </#if>
-                    <#if strLogAccess.processVersion??>
-                        <td style="text-align: right;">${strLogAccess.processVersion}</td>
-                    <#else >
-                        <td></td>
-                    </#if>
-                    <#if strLogAccess.taskId??>
-                        <td style="text-align: right;">${strLogAccess.taskId}</td>
-                    <#else >
-                        <td></td>
-                    </#if>
+                    <td style="text-align: right;">${strLogAccess.eventId!""}</td>
+                    <td style="text-align: left;">${strLogAccess.processTime!""}</td>
+                    <td style="text-align: left;">${strLogAccess.userId!""}</td>
+                    <td style="text-align: right;">${strLogAccess.workitemId!""}</td>
+                    <td style="text-align: right;">${strLogAccess.historyNo!""}</td>
+                    <td style="text-align: right;">${strLogAccess.processId!""}</td>
+                    <td style="text-align: right;">${strLogAccess.processVersion!""}</td>
+                    <td style="text-align: right;">${strLogAccess.taskId!""}</td>
                 </tr>
             </#list>
         <#else>
@@ -85,7 +59,43 @@ form-horizontal">
                 <td></td>
             </tr>
         </#if>
-
     </table>
+    <script id="some-template" type="text/x-handlebars-template">
+        <table>
+            <thead>
+            <th>Name</th>
+            </thead>
+            <tbody>
+            {{#strLogAccesses}}
+            <tr>
+                <td>{{eventId}}</td>
+            </tr>
+            {{/strLogAccesses}}
+            </tbody>
+        </table>
+    </script>
+    <script>
+        var source = $("#some-template").html();
+        var template = Handlebars.compile(source);
+        function searchText() {
+            $.ajax({
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                headers: {
+                    Accept: 'application/json'
+                },
+                url: "${rc.getContextPath()}/evidentLog/searchLicenseHistory",
+                data: {workspaceId: "001"},
+                success: function (strLogAccesses) {
+//                    var context = {
+//                        strLogAccesses: JSON.parse(strLogAccesses)
+//                    }
+                    console.log(strLogAccesses);
+//                    $('body').append(template(context));
+                }
+            });
+        }
+    </script>
 </form>
 </@standard.standardPage>

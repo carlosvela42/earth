@@ -26,7 +26,8 @@ var jsonLayer = {
 				"y2" : "50",
 				"id" : "6",
 				"stroke" : "black",
-				"strokew" : "white",
+				"strokew" : "1",
+				"fill" : "white",
 				"class" : "svgElement"
 			} ]
 		}, {

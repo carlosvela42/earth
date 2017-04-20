@@ -19,18 +19,18 @@ import co.jp.nej.earth.model.constant.Constant.Session;
 @Controller
 public class HomeController {
 
-	@GetMapping("/")
-	public String index(HttpServletRequest request)
-			throws ClassNotFoundException, SchedulerException, FileNotFoundException, EarthException, IOException {
+    @GetMapping("/")
+    public String index(HttpServletRequest request)
+            throws ClassNotFoundException, SchedulerException, FileNotFoundException, EarthException, IOException {
 
-		HttpSession session = request.getSession();
-		UserInfo userInfo = (UserInfo) session.getAttribute(Session.USER_INFO);
-		return userInfo != null ? "home/home" : "login/login";
-	}
+        HttpSession session = request.getSession();
+        UserInfo userInfo = (UserInfo) session.getAttribute(Session.USER_INFO);
+        return userInfo != null ? "home/home" : "login/login";
+    }
 
-	@RequestMapping(value = "/imageviewer", method = RequestMethod.GET)
-	public String displayWorkspace() {
-		return "imageViewer/ImageViewer";
-	}
+    @RequestMapping(value = "/imageviewer", method = RequestMethod.GET)
+    public String displayWorkspace() {
+        return "imageViewer/ImageViewer";
+    }
 
 }

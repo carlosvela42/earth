@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class CtlTemplate implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String userId;
     private String templateId;
     private int accessAuthority;
     private String lastUpdateTime;
-    
+
     public String getUserId() {
         return userId;
     }

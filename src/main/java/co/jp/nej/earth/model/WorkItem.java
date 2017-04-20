@@ -1,143 +1,183 @@
 /**
- * 
+ *
  */
 package co.jp.nej.earth.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.sql.QWorkItem;
+import co.jp.nej.earth.util.DateUtil;
 
 /**
  * @author p-dcv-khanhnv
  *
  */
-public class WorkItem {
+@XmlRootElement
+public class WorkItem extends BaseModel<WorkItem> {
     /**
-     * 
+     *
      */
-    private String workspaceId;
-    private String workItemId;
-    private Integer eventStatus;
-    private String taskId;
-    private MgrTemplate mgrTemplate;
-    private TemplateData workItemData;
-    private Long templateId;
-    private List<FolderItem> folderItems = new ArrayList<FolderItem>();
-    
-    public WorkItem() {
-    }
+private static final long serialVersionUID = 1L;
+/**
+ *
+ */
+private String workspaceId;
+private String workitemId;
+private Integer eventStatus;
+private String taskId;
+private MgrTemplate mgrTemplate;
+private TemplateData workItemData;
+private String templateId;
+private List<FolderItem> folderItems = new ArrayList<FolderItem>();
+private int lastHistoryNo;
 
-    /**
-     * @return the workspaceId
-     */
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
+public WorkItem() {
+    this.setqObj(QWorkItem.newInstance());
+    this.setLastUpdateTime(DateUtil.getCurrentDateString());
+}
 
-    /**
-     * @param workspaceId the workspaceId to set
-     */
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
+/**
+ * @return the workspaceId
+ */
+public String getWorkspaceId() {
+    return workspaceId;
+}
 
-    /**
-     * @return the workItemId
-     */
-    public String getWorkItemId() {
-        return workItemId;
-    }
+/**
+ * @param workspaceId
+ *            the workspaceId to set
+ */
+@XmlElement
+public void setWorkspaceId(String workspaceId) {
+    this.workspaceId = workspaceId;
+}
 
-    /**
-     * @param workItemId the workItemId to set
-     */
-    public void setWorkItemId(String workItemId) {
-        this.workItemId = workItemId;
-    }
+/**
+ * @return the workitemId
+ */
+public String getWorkitemId() {
+    return workitemId;
+}
 
-    /**
-     * @return the eventStatus
-     */
-    public Integer getEventStatus() {
-        return eventStatus;
-    }
+/**
+ * @param workitemId
+ *            the workitemId to set
+ */
+@XmlElement
+public void setWorkitemId(String workitemId) {
+  this.workitemId = workitemId;
+}
 
-    /**
-     * @param eventStatus the eventStatus to set
-     */
-    public void setEventStatus(Integer eventStatus) {
-        this.eventStatus = eventStatus;
-    }
+/**
+ * @return the eventStatus
+ */
+public Integer getEventStatus() {
+    return eventStatus;
+}
 
-    /**
-     * @return the taskId
-     */
-    public String getTaskId() {
-        return taskId;
-    }
+/**
+ * @param eventStatus
+ *            the eventStatus to set
+ */
+public void setEventStatus(Integer eventStatus) {
+    this.eventStatus = eventStatus;
+}
 
-    /**
-     * @param taskId the taskId to set
-     */
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
+/**
+ * @return the taskId
+ */
+public String getTaskId() {
+  return taskId;
+}
 
-    public MgrTemplate getMgrTemplate() {
-        return mgrTemplate;
-    }
+/**
+ * @param taskId
+ *            the taskId to set
+ */
+@XmlElement
+public void setTaskId(String taskId) {
+  this.taskId = taskId;
+}
 
-    public void setMgrTemplate(MgrTemplate mgrTemplate) {
-        this.mgrTemplate = mgrTemplate;
-    }
+public MgrTemplate getMgrTemplate() {
+    return mgrTemplate;
+}
 
-    /**
-     * @return the workItemData
-     */
-    public TemplateData getWorkItemData() {
-        return workItemData;
-    }
+public void setMgrTemplate(MgrTemplate mgrTemplate) {
+    this.mgrTemplate = mgrTemplate;
+}
 
-    /**
-     * @param workItemData the workItemData to set
-     */
-    public void setWorkItemData(TemplateData workItemData) {
-        this.workItemData = workItemData;
-    }
+/**
+ * @return the workItemData
+ */
+public TemplateData getWorkItemData() {
+    return workItemData;
+}
 
-    /**
-     * @return the templateId
-     */
-    public Long getTemplateId() {
-        return templateId;
-    }
+/**
+ * @param workItemData
+ *            the workItemData to set
+ */
+public void setWorkItemData(TemplateData workItemData) {
+    this.workItemData = workItemData;
+}
 
+/**
+ * @return the templateId
+ */
+public String getTemplateId() {
+    return templateId;
+}
 
-    /**
-     * @param templateId the templateId to set
-     */
-    public void setTemplateId(Long templateId) {
-        this.templateId = templateId;
-    }
+/**
+ * @param templateId
+ *            the templateId to set
+ */
+@XmlElement
+public void setTemplateId(String templateId) {
+    this.templateId = templateId;
+}
 
-    /**
-     * @return the folderItems
-     */
-    public List<FolderItem> getFolderItems() {
-        return folderItems;
-    }
+/**
+ * @return the folderItems
+ */
+public List<FolderItem> getFolderItems() {
+    return folderItems;
+}
 
-    /**
-     * @param folderItems the folderItems to set
-     */
-    public void setFolderItems(List<FolderItem> folderItems) {
-        this.folderItems = folderItems;
-    }
+/**
+ * @param folderItems
+ *            the folderItems to set
+ */
+@XmlElement
+public void setFolderItems(List<FolderItem> folderItems) {
+    this.folderItems = folderItems;
+}
 
-    public void addFolderItem(FolderItem folderItem) {
-        if (!folderItems.contains(folderItem)) {
-            folderItems.add(folderItem);
-        }
+public void addFolderItem(FolderItem folderItem) {
+    if (!folderItems.contains(folderItem)) {
+        folderItems.add(folderItem);
     }
+}
+
+/**
+ * @return the lastHistoryNo
+ */
+public int getLastHistoryNo() {
+    return lastHistoryNo;
+}
+
+/**
+ * @param lastHistoryNo
+ *            the lastHistoryNo to set
+ */
+public void setLastHistoryNo(int lastHistoryNo) {
+    this.lastHistoryNo = lastHistoryNo;
+}
+
 }

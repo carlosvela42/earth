@@ -2,7 +2,6 @@ package co.jp.nej.earth.dao;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
-import co.jp.nej.earth.manager.connection.EarthQueryFactory;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.model.sql.QMgrUser;
@@ -13,18 +12,24 @@ import com.querydsl.core.types.QBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl extends BaseDaoImpl<MgrUser> implements UserDao {
+
+    private static final QMgrUser qMgrUser = QMgrUser.newInstance();
+
+    public UserDaoImpl() throws Exception {
+        super();
+    }
 
     public MgrUser getById(String userId) throws EarthException {
         try {
-            QMgrUser qMgrUser = QMgrUser.newInstance();
-            QBean<MgrUser> selectList = Projections.bean(MgrUser.class, qMgrUser.all());
-            MgrUser user = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select(selectList)
-                    .from(qMgrUser).where(qMgrUser.userId.eq(userId)).fetchOne();
-            return user;
+            Map<Path<?>, Object> condition = new HashMap<>();
+            condition.put(qMgrUser.userId, userId);
+            return this.findOne(Constant.EARTH_WORKSPACE_ID, condition);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
@@ -32,21 +37,7 @@ public class UserDaoImpl implements UserDao {
 
     public List<MgrUser> getAll() throws EarthException {
         try {
-            QMgrUser qMgrUser = QMgrUser.newInstance();
-            QBean<MgrUser> selectList = Projections.bean(MgrUser.class, qMgrUser.all());
-            return ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select(selectList).from(qMgrUser)
-                    .fetch();
-        } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
-        }
-    }
-
-    public MgrUser insertOne(MgrUser mgrUser) throws EarthException {
-        try {
-            QMgrUser qUser = QMgrUser.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long inserted = earthQueryFactory.insert(qUser).populate(mgrUser).execute();
-            return inserted > 0 ? mgrUser : null;
+            return this.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
@@ -54,28 +45,19 @@ public class UserDaoImpl implements UserDao {
 
     public MgrUser updateOne(MgrUser mgrUser) throws EarthException {
         try {
-            QMgrUser qMgrUser = QMgrUser.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long updated;
+            mgrUser = new MgrUser(mgrUser.getUserId(), mgrUser.getName(), mgrUser.getPassword(), mgrUser
+                    .getConfirmPassword(), mgrUser.isChangePassword());
+            Map<Path<?>, Object> condition = new HashMap<>();
+            condition.put(qMgrUser.userId, mgrUser.getUserId());
+            Map<Path<?>, Object> valueMap = new HashMap<>();
             if (mgrUser.isChangePassword()) {
-                List<Path<?>> paths = new ArrayList<Path<?>>();
-                paths.add(qMgrUser.name);
-                paths.add(qMgrUser.password);
-                List<String> values = new ArrayList<String>();
-                values.add(mgrUser.getName());
-                values.add(mgrUser.getPassword());
-                updated = earthQueryFactory.update(qMgrUser).set(paths, values)
-                        .where(qMgrUser.userId.eq(mgrUser.getUserId())).execute();
-            } else {
-                updated = earthQueryFactory.update(qMgrUser).set(qMgrUser.name, mgrUser.getName())
-                        .where(qMgrUser.userId.eq(mgrUser.getUserId())).execute();
-            }
+                valueMap.put(qMgrUser.name, mgrUser.getName());
+                valueMap.put(qMgrUser.password, mgrUser.getPassword());
 
-            if (updated > 0) {
-                return mgrUser;
             } else {
-                return null;
+                valueMap.put(qMgrUser.name, mgrUser.getName());
             }
+            return this.update(Constant.EARTH_WORKSPACE_ID, condition, valueMap) >= 0 ? mgrUser : null;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
@@ -83,10 +65,13 @@ public class UserDaoImpl implements UserDao {
 
     public boolean deleteList(List<String> userIds) throws EarthException {
         try {
-            QMgrUser qMgrUser = QMgrUser.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long delete = earthQueryFactory.delete(qMgrUser).where(qMgrUser.userId.in(userIds)).execute();
-            return delete > 0;
+            List<Map<Path<?>, Object>> conditions = new ArrayList<>();
+            for (String userId : userIds) {
+                Map<Path<?>, Object> condition = new HashMap<>();
+                condition.put(qMgrUser.userId, userId);
+                conditions.add(condition);
+            }
+            return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions) > 0;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
@@ -94,13 +79,11 @@ public class UserDaoImpl implements UserDao {
 
     public List<MgrUser> getUsersByProfileId(String profileId) throws EarthException {
         try {
-            QMgrUser qMgrUser = QMgrUser.newInstance();
             QBean<MgrUser> selectList = Projections.bean(MgrUser.class, qMgrUser.all());
             QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
-            List<MgrUser> mgrUsers = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select
-                    (selectList).from(qMgrUser).innerJoin(qMgrUserProfile).on(qMgrUser.userId.eq(qMgrUserProfile
-                    .userId)).where
-                    (qMgrUserProfile.profileId.eq(profileId)).fetch();
+            List<MgrUser> mgrUsers = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select(
+                    selectList).from(qMgrUser).innerJoin(qMgrUserProfile).on(qMgrUser.userId.eq(qMgrUserProfile
+                    .userId)).where(qMgrUserProfile.profileId.eq(profileId)).fetch();
             return mgrUsers;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
@@ -109,12 +92,11 @@ public class UserDaoImpl implements UserDao {
 
     public List<String> getUserIdsByProfileId(String profileId) throws EarthException {
         try {
-            QMgrUser qMgrUser = QMgrUser.newInstance();
             QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
-            List<String> userIds = (List<String>) ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select
-                    (qMgrUser.userId).from(qMgrUser).innerJoin(qMgrUserProfile).on(qMgrUser.userId.eq(qMgrUserProfile
-                    .userId)).where
-                    (qMgrUserProfile.profileId.eq(profileId)).fetch();
+            List<String> userIds = (List<String>) ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID)
+                    .select(
+                qMgrUser.userId).from(qMgrUser).innerJoin(qMgrUserProfile).on(qMgrUser.userId.eq(qMgrUserProfile
+                    .userId)).where(qMgrUserProfile.profileId.eq(profileId)).fetch();
             return userIds;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());

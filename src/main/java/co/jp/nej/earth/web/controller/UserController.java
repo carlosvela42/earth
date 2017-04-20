@@ -1,10 +1,8 @@
 package co.jp.nej.earth.web.controller;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import co.jp.nej.earth.exception.EarthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +10,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.service.UserService;
+import co.jp.nej.earth.util.EStringUtil;
 
 @Controller
 @RequestMapping("/user")
@@ -26,10 +26,10 @@ public class UserController {
 
     @RequestMapping(value = "/showList", method = RequestMethod.GET)
     public String showList(Model model) {
-        try{
-        List<MgrUser> mgrUsers = userService.getAll();
-        model.addAttribute("mgrUsers", mgrUsers);
-        return "user/userList";
+        try {
+            List<MgrUser> mgrUsers = userService.getAll();
+            model.addAttribute("mgrUsers", mgrUsers);
+            return "user/userList";
         } catch (EarthException ex) {
             return "error/error";
         }
@@ -53,8 +53,7 @@ public class UserController {
                 boolean insertUser = userService.insertOne(mgrUser);
                 if (insertUser) {
                     return "redirect: showList";
-                } else
-                {
+                } else {
                     model.addAttribute("messageError", "E1009");
                     mgrUser = setUser(mgrUser);
                     model.addAttribute("mgrUser", mgrUser);
@@ -85,9 +84,9 @@ public class UserController {
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
     public String deleteList(@ModelAttribute("userIds") String userIds) {
         try {
-        List<String> userId = Arrays.asList(userIds.split("\\s*,\\s*"));
-        userService.deleteList(userId);
-        return "redirect: showList";
+            List<String> userId = EStringUtil.getListString(userIds, "\\s*,\\s*");
+            userService.deleteList(userId);
+            return "redirect: showList";
         } catch (EarthException ex) {
             return "redirect: showList";
         }

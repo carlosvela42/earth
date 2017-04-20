@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class MgrProfile implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String profileId;

@@ -1,16 +1,30 @@
 package co.jp.nej.earth.model.entity;
 
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrUserProfile;
+import co.jp.nej.earth.util.DateUtil;
+
 import java.io.Serializable;
 
-public class MgrUserProfile implements Serializable {
+public class MgrUserProfile extends BaseModel<MgrUserProfile> implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String profileId;
     private String userId;
-    private String lastUpdateTime;
-    
+
+    public MgrUserProfile(){
+        this.setqObj(QMgrUserProfile.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
+
+    public MgrUserProfile(String userId,String profileId){
+        this();
+        this.userId=userId;
+        this.profileId=profileId;
+    }
+
     public String getProfileId() {
         return profileId;
     }
@@ -22,11 +36,5 @@ public class MgrUserProfile implements Serializable {
     }
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 }

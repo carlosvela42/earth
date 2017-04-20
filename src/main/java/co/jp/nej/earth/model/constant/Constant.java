@@ -6,7 +6,7 @@ package co.jp.nej.earth.model.constant;
 /**
  * @author p-tvo-khanhnv
  */
-public interface Constant {
+public class Constant {
 
     // Salt for encryptOneWay using SHA-512.
     public static final String SALT = "Earth123";
@@ -26,7 +26,7 @@ public interface Constant {
 
     /**
      * Message Code and Message Content using in Login function
-     * 
+     *
      * @author p-tvo-thuynd
      *
      */
@@ -61,6 +61,7 @@ public interface Constant {
         public static final String MENU_STRUCTURE = "menuStructures";
         public static final String TEMPLATE_ACCESS_RIGHT_MAP = "templateAccessRightMap";
         public static final String MENU_ACCESS_RIGHT_MAP = "menuAccessRightMap";
+        public static final String WORKSPACES = "workspaces";
     }
 
     public static class DatePattern {
@@ -75,15 +76,22 @@ public interface Constant {
         public static final String DATE_FORMAT_YYYY_MM_DD = "yyyy/MM/dd";
 
         public static final String YYYYMMDD_JA_FORMAT = "yyyy年MM月dd日";
+
+        /** yyyyMMdd  形式 */
+        public static final String YYYYMMDD = "yyyyMMdd";
     }
 
-    public static class OperationDateProcess {
+    public static class AgentBatch {
         public static final String OPERATION_DATE = "OperationDate";
 
         public static final String CURRENT_DATE = "currentDate";
 
         /** dd/MM/yyyy 形式 */
         public static final String DATE_FORMAT = "dd/MM/yyyy";
+
+        public static final String STATUS_EDIT = "EDIT";
+
+        public static final String STATUS_EDITTING = "EDITTING";
     }
 
     public static class RuleDefilePasswordPolicy {
@@ -95,24 +103,10 @@ public interface Constant {
         public static final String PASS_LONG = "TOO_LONG";
         public static final String PASS_SHORT = "TOO_SHORT";
 
-        // định nghĩa không cho phép nhập khoảng trắng
-        public enum WhileSpace {
-            WhileSpace("no");
-
-            private String propertyName;
-
-            WhileSpace(String name) {
-                propertyName = name;
-            }
-
-            @Override
-            public String toString() {
-                return propertyName;
-            }
-        }
+        public static final String NO_WHITE_SPACE = "no";
     }
 
-    public static class Error_Code {
+    public static class ErrorCode {
         public static final String E0001 = "E0001";
         public static final String E0002 = "E0002";
         public static final String E0003 = "E0003";
@@ -136,9 +130,10 @@ public interface Constant {
 
         public static final String E1008 = "E1008";
         public static final String E1009 = "E1009";
+        public static final String E1012 = "E1012";
     }
 
-    public static class Screen_Item {
+    public static class ScreenItem {
         public static final String CODE_ID = "codeId";
         public static final String CODE_VALUE = "codeValue";
         public static final String CONFIG_VALUE = "configValue";
@@ -211,4 +206,84 @@ public interface Constant {
         public static final String PROCESS_TIME = "processTime";
     }
 
+    public static class WorkSpace {
+        public static final String ID_BLANK = "ID_BLANK";
+        public static final String SCHEMA_BLANK = "SCHEMA_BLANK";
+        public static final String DBUSER_BLANK = "DBUSER_BLANK";
+        public static final String DBPASS_BLANK = "DBPASS_BLANK";
+        public static final String DBSERVER_BLANK = "DBSERVER_BLANK";
+        public static final String OWNER_BLANK = "OWNER_BLANK";
+        public static final String ISEXIT_WORKSPACE = "ISEXIT_WORKSPACE";
+        public static final String ISUSE_WORKSPACE = "ISUSE_WORKSPACE";
+        public static final String CHARACTER_COMMON = "c##";
+        public static final String CHARACTER_REPLACE = "##";
+        public static final String ORACLE = "ORACLE";
+        public static final String SQL = "SQL";
+        public static final String CREATE_USER = "Create User ";
+        public static final String IDENTIFIED_BY = " identified By ";
+        public static final String GRANT_SESSION = "Grant Create Session to ";
+        public static final String DROP_USER = "Drop User ";
+        public static final String CASCADE = " Cascade ";
+        public static final String ALTER_USER = " ALTER USER ";
+    }
+
+    public static class Template {
+        public static final String NOT_DELETE = "NOT_DELETE";
+    }
+
+    public static class EnCryption {
+        public static final int _0X45 = 0x45;
+        public static final int _0X4F = 0x4f;
+        public static final int _0X43 = 0x43;
+        public static final int _0X41 = 0x41;
+        public static final int _0X44 = 0x44;
+        public static final int _0X4C = 0x4c;
+        public static final int _0X49 = 0x49;
+        public static final int _0X55 = 0x55;
+        public static final int _0X42 = 0x42;
+        public static final int _0X2A = 0x2a;
+        public static final int _0X2D = 0x2d;
+        public static final int RADIUS = 16;
+        public static final int _0X100 = 0x100;
+        public static final int _0XFF = 0xff;
+        public static final String SHA_512 = "SHA-512";
+        public static final String PKCS5PADDING = "AES/ECB/PKCS5Padding";
+        public static final String AES = "AES";
+        public static final byte[] KEY = { _0X2D, _0X2A, _0X2D, _0X42, _0X55, _0X49, _0X4C, _0X44, _0X41, _0X43, _0X4F,
+                _0X44, _0X45, _0X2D, _0X2A, _0X2D };
+    }
+
+    public enum EarthId {
+
+        PROCESS(1),
+        WORKITEM(2),
+        TEMPLATE(3),
+        //PROFILE(4),
+        //USER(5),
+        WORKSPACE(6),
+        DIRECTORY(7),
+        SITE(8),
+        CODE(9),
+        SCHEDULE(10),
+        EVENT(11),
+        SESSION(12),
+        // FUNCTION(13),
+        // FUNCTIONCLASS(14),
+        // HISTORYNO(15),
+        LATEST_HISTORY_NO(16),
+        FOLDER_ITEM_NO(17),
+        DOCUMENT_NO(18),
+        LAYER_NO(19);
+
+        private int value;
+        EarthId(int value) {
+            this.setValue(value);
+        }
+        public int getValue() {
+            return value;
+        }
+        public void setValue(int value) {
+            this.value = value;
+        }
+    }
 }

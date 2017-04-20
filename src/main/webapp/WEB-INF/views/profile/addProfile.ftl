@@ -27,6 +27,7 @@
 </script>
 <form action="${rc.getContextPath()}/profile/insertOne" object="mgrProfile" method="post" class="form-narrow
 form-horizontal">
+ <input type="hidden" id="userIds" name="userIds" value="${userIds!""}">
     <table style="text-align: left;">
         <tr style="height: 40px; text-align: center">
             <td><input type="submit" value="決定" class="button"></td>
@@ -52,12 +53,7 @@ form-horizontal">
                 </#if>
             </td>
         </tr>
-        <input type="hidden" id="userIds" name="userIds" <#if userIds??>
-               value="${userIds}"
-        <#else>
-               value=""
-        </#if>
-        >
+       
         <#if mgrProfile??>
             <tr>
                 <td>

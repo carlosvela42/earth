@@ -17,7 +17,7 @@ public class CommonUtil {
     /**
      * Compare access right of same user from 2 list, then keep the<br>
      * UserAccessRight object which has lower access right.
-     * 
+     *
      * @param userAccessRights first list of UserAccessRight object.
      * @param userAccessRightByProfiles second kist of UserAccessRight object.
      * @return list of UserAccessRight objects which have lowest access right from 2 list above.
@@ -28,7 +28,7 @@ public class CommonUtil {
         for (UserAccessRight userAccessRightProfile : userAccessRightByProfiles) {
             int countMenu = 0;
             for (UserAccessRight userAccessRight : userAccessRights) {
-                if (EStringUtil.Contains(userAccessRight.getUserId(), userAccessRightProfile.getUserId())) {
+                if (EStringUtil.contains(userAccessRight.getUserId(), userAccessRightProfile.getUserId())) {
                     if (userAccessRightProfile.getAccessRight().getValue() < userAccessRight.getAccessRight()
                             .getValue()) {
                         userAccessRight.setAccessRight(userAccessRightProfile.getAccessRight());

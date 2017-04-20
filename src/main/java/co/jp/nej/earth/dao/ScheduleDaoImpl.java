@@ -7,9 +7,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.model.MgrSchedule;

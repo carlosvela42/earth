@@ -69,13 +69,17 @@ public enum ColumnNames {
     ,USER_ID("userId")
     ,VARIABLE_NAME("variableName")
     ,VIEW_INFORMATION("viewInformation")
-    ,WORKITEM_DATA("workItemData")
-    ,WORKITEM_ID("workItemId")
+    ,WORKITEM_DATA("workitemData")
+    ,WORKITEM_ID("workitemId")
     ,WORKSPACE_ID("workspaceId")
     ,WORKSPACE_NAME("workspaceName")
     ,PROCESS_TIME("processTime")
     ,TASK_NAME("taskName")
-    ,CLASS_NAME("className");
+    ,CLASS_NAME("className")
+    ,NEW_CREATE_FILE("newCreateFile")
+    ,RESERVED_DISK_VOL_SIZE("reservedDiskVolSize")
+    ,DISK_VOL_SIZE("diskVolSize")
+    ,DIVISION("division");
 
     private String propertyName;
 

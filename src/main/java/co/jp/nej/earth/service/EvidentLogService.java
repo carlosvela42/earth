@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface EvidentLogService {
 
-    public List<StrLogAccess> getListByWorkspaceId(String workspaceId) throws EarthException;
+    List<StrLogAccess> getListByWorkspaceId(String workspaceId) throws EarthException;
 }

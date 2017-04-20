@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class CtlMenu implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String functionId;
     private String userId;
     private int accessAuthority;
     private String lastUpdateTime;
-    
+
     public String getFunctionId() {
         return functionId;
     }

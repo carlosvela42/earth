@@ -24,7 +24,6 @@ import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.service.TemplateService;
 
 /**
- * 
  * @author p-tvo-thuynd
  *
  */
@@ -34,7 +33,7 @@ import co.jp.nej.earth.service.TemplateService;
 public class TemplateAuthorityController {
 
     @Autowired
-    TemplateService templateService;
+    private TemplateService templateService;
 
     /**
      * @author p-tvo-thuynd this method is to show list of workspace in openning
@@ -56,10 +55,12 @@ public class TemplateAuthorityController {
     }
 
     /**
-     * @author p-tvo-thuynd
-     * this method is to get list of template based on workspace id
-     * @param mgrWorkspace object workspace passed from screen
-     * @param model to hold model attribute
+     * @author p-tvo-thuynd this method is to get list of template based on
+     *         workspace id
+     * @param mgrWorkspace
+     *            object workspace passed from screen
+     * @param model
+     *            to hold model attribute
      * @return path of screen
      */
     @RequestMapping(value = "/chooseWorkspace", method = RequestMethod.GET)
@@ -83,11 +84,13 @@ public class TemplateAuthorityController {
     }
 
     /**
-     * @author p-tvo-thuynd 
-     * this method is to show detail infor of an template
-     * @param model to hold model attribute
-     * @param templateId id of choosen template
-     * @param workspaceId id of workspace which template belongs to
+     * @author p-tvo-thuynd this method is to show detail infor of an template
+     * @param model
+     *            to hold model attribute
+     * @param templateId
+     *            id of choosen template
+     * @param workspaceId
+     *            id of workspace which template belongs to
      * @return path of screen
      */
     @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
@@ -118,13 +121,17 @@ public class TemplateAuthorityController {
     }
 
     /**
-     * @author p-tvo-thuynd
-     * this method is to update info of a template into DB
-     * @param userIdAccessRight string of userId and access right to template of them
-     * @param profileIdAccessRight string of profileId and access right to template of them
-     * @param templateId id of choosen template
-     * @param workspaceId id of workspace which template belongs to
-     * @param model to hold model attribute
+     * @author p-tvo-thuynd this method is to update info of a template into DB
+     * @param userIdAccessRight
+     *            string of userId and access right to template of them
+     * @param profileIdAccessRight
+     *            string of profileId and access right to template of them
+     * @param templateId
+     *            id of choosen template
+     * @param workspaceId
+     *            id of workspace which template belongs to
+     * @param model
+     *            to hold model attribute
      * @return path of screen
      */
     @RequestMapping(value = "/updateTemplateAccessRight", method = RequestMethod.POST)
@@ -137,7 +144,8 @@ public class TemplateAuthorityController {
             templateKey.setTemplateId(templateId);
             templateKey.setWorkspaceId(workspaceId);
 
-            //convert string userIdAccessRight to list of UserAccessRight object
+            // convert string userIdAccessRight to list of UserAccessRight
+            // object
             List<UserAccessRight> userAccessRights = new ArrayList<UserAccessRight>();
             if (!StringUtils.isEmpty(userIdAccessRight)) {
                 String[] userIdArr = userIdAccessRight.split(",");
@@ -147,15 +155,17 @@ public class TemplateAuthorityController {
                             String[] userAccessRightArr = userId.split("\\|");
                             UserAccessRight userAccessRight = new UserAccessRight();
                             userAccessRight.setUserId(userAccessRightArr[0]);
-                            if (!StringUtils.isEmpty(userAccessRightArr[1]))
+                            if (!StringUtils.isEmpty(userAccessRightArr[1])){
                                 userAccessRight.setAccessRight(AccessRight.valueOf(userAccessRightArr[1]));
+                            }
                             userAccessRights.add(userAccessRight);
                         }
                     }
                 }
             }
 
-            //convert string profileIdAccessRight to list of ProfileAccessRight object
+            // convert string profileIdAccessRight to list of ProfileAccessRight
+            // object
             List<ProfileAccessRight> profileAccessRights = new ArrayList<ProfileAccessRight>();
             if (!StringUtils.isEmpty(profileIdAccessRight)) {
                 String[] profileIdArr = profileIdAccessRight.split(",");
@@ -165,15 +175,16 @@ public class TemplateAuthorityController {
                             String[] profileAccessRightArr = profileId.split("\\|");
                             ProfileAccessRight profileAccessRight = new ProfileAccessRight();
                             profileAccessRight.setProfileId(profileAccessRightArr[0]);
-                            if (!StringUtils.isEmpty(profileAccessRightArr[1]))
+                            if (!StringUtils.isEmpty(profileAccessRightArr[1])){
                                 profileAccessRight.setAccessRight(AccessRight.valueOf(profileAccessRightArr[1]));
+                            }
                             profileAccessRights.add(profileAccessRight);
                         }
                     }
                 }
             }
 
-            //save user authority to template to CTL_TEMPLATE table
+            // save user authority to template to CTL_TEMPLATE table
             templateService.saveAuthority(templateKey, userAccessRights, profileAccessRights);
             List<MgrTemplate> mgrTemplates = templateService.getTemplateListInfo(workspaceId);
             model.addAttribute("workspaceId", workspaceId);

@@ -41,7 +41,7 @@ form-horizontal">
                 </td>
                 <td>
                     <input type="text" id="txtUserID" name="userId" height="20px" width="150px"
-                           style="text-align: left;background: #EBEBE4;" value="${mgrUser.userId}" readonly>
+                           style="text-align: left;background: #EBEBE4;" value="${mgrUser.userId!""}" readonly>
                 </td>
             </tr>
             <tr>
@@ -50,7 +50,7 @@ form-horizontal">
                 </td>
                 <td>
                     <input type="text" id="txtName" name="name" height="20px" width="150px" style="text-align: left"
-                           value="${mgrUser.name}">
+                           value="${mgrUser.name!""}">
                 </td>
             </tr>
             <tr>
@@ -92,8 +92,8 @@ form-horizontal">
                         <#if mgrProfiles??>
                             <#list mgrProfiles as mgrProfile>
                                 <tr>
-                                    <td><#if mgrProfile.profileId??>${mgrProfile.profileId}</#if></td>
-                                    <td><#if mgrProfile.description??>${mgrProfile.description}</#if></td>
+                                    <td>${mgrProfile.profileId!""}</td>
+                                    <td>${mgrProfile.description!""}</td>
                                 </tr>
                             </#list>
                         </#if>

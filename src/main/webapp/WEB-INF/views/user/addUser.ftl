@@ -40,7 +40,7 @@
                 </td>
                 <td>
                     <input type="text" id="txtUserID" name="userId" height="20px" width="150px"
-                           style="text-align: left" value="${mgrUser.userId}">
+                           style="text-align: left" value="${mgrUser.userId!""}">
                 </td>
             </tr>
             <tr>
@@ -49,7 +49,7 @@
                 </td>
                 <td>
                     <input type="text" id="txtName" name="name" height="20px" width="150px" style="text-align: left"
-                           value="${mgrUser.name}">
+                           value="${mgrUser.name!""}">
                 </td>
             </tr>
             <tr>

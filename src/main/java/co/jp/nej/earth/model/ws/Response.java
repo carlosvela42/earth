@@ -1,8 +1,8 @@
 package co.jp.nej.earth.model.ws;
 
 public class Response {
-    protected boolean result;
-    protected String message;
+    private boolean result;
+    private String message;
 
     /**
      * @return the result

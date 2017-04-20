@@ -8,8 +8,26 @@ import co.jp.nej.earth.model.entity.CtlEvent;
 /**
  * Created by minhtv on 3/29/2017.
  */
-public interface EventDao {
-    public boolean deleteListByUserIds(List<String> userIds) throws EarthException;
+public interface EventDao extends BaseDao<CtlEvent> {
+    boolean deleteListByUserIds(List<String> userIds) throws EarthException;
 
-    public long insertEvent(CtlEvent event) throws EarthException;
+    /**
+     * get list ctlEvent by status
+     *
+     * @param status
+     * @param workSpaceId
+     * @return
+     * @throws EarthException
+     */
+    List<String> getListCtlEventIdByStatus(String status, String workSpaceId) throws EarthException;
+
+    /**
+     * update bulk event status
+     *
+     * @param eventIds
+     * @param workSpaceId
+     * @return
+     * @throws EarthException
+     */
+    boolean updateBulkEventStatus(List<String> eventIds, String workSpaceId) throws EarthException;
 }

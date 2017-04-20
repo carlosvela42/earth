@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package co.jp.nej.earth.model;
 
@@ -7,35 +7,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.sql.QFolderItem;
+import co.jp.nej.earth.util.DateUtil;
 
 /**
  * @author p-tvo-khanhnv
  *
  */
-public class FolderItem {
+public class FolderItem extends BaseModel<FolderItem> {
     /**
-     * 
+     *
      */
-    private String workItemId;
+    private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private String workitemId;
     private Integer folderItemNo;
     private MgrTemplate mgrTemplate;
     private Integer action;
     private TemplateData folderItemData;
+    private String templateId;
     private List<Document> documents = new ArrayList<Document>();
 
-    /**
-     * @return the workItemId
-     */
-    public String getWorkItemId() {
-        return workItemId;
+    public FolderItem() {
+        this.setqObj(QFolderItem.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**
-     * @param workItemId
-     *            the workItemId to set
+     * @return the workitemId
      */
-    public void setWorkItemId(String workItemId) {
-        this.workItemId = workItemId;
+    public String getWorkitemId() {
+        return workitemId;
+    }
+
+    /**
+     * @param workitemId
+     *            the workitemId to set
+     */
+    public void setWorkitemId(String workitemId) {
+        this.workitemId = workitemId;
     }
 
     /**
@@ -89,6 +101,21 @@ public class FolderItem {
      */
     public void setFolderItemData(TemplateData folderItemData) {
         this.folderItemData = folderItemData;
+    }
+
+    /**
+     * @return the templateId
+     */
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    /**
+     * @param templateId
+     *            the templateId to set
+     */
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 
     /**

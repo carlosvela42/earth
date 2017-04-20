@@ -38,7 +38,8 @@ public class LoginController {
     public String loginSubmit(@ModelAttribute("User") MgrUser mgrUser, Model model, HttpServletRequest request) {
         String result = "";
         try {
-            List<Message> messages = userService.login(mgrUser.getUserId(), mgrUser.getPassword(), request.getSession());
+            List<Message> messages = userService.login(mgrUser.getUserId(), mgrUser.getPassword(),
+                    request.getSession());
             model.addAttribute("MgrUser", mgrUser);
             if (messages != null && messages.size() > 0) {
                 model.addAttribute("messages", messages);

@@ -10,7 +10,7 @@ public class DbConnection {
     private String dbServer;
     private Integer port;
     private DatabaseType dbType;
-    
+
     public DbConnection() {
         super();
     }
@@ -72,6 +72,14 @@ public class DbConnection {
 
     public void setDbType(DatabaseType dbType) {
         this.dbType = dbType;
+    }
+
+    public void setDbType(String dbType) {
+        if (dbType.equals(DatabaseType.ORACLE.name())) {
+            setDbType(DatabaseType.ORACLE);
+        } else if (dbType.equals(DatabaseType.SQL_SERVER.name())) {
+            setDbType(DatabaseType.SQL_SERVER);
+        }
     }
 
     public String getDbServer() {
