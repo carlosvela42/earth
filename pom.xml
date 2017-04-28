@@ -41,6 +41,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -151,11 +152,15 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.5</version>
 		</dependency>
-		<!-- Used for redis -->
 		<dependency>
-			<groupId>biz.paluch.redis</groupId>
-			<artifactId>lettuce</artifactId>
-			<version>3.2.Final</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
 		</dependency>
 	</dependencies>
 	<reporting>

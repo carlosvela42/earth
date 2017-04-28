@@ -66,7 +66,7 @@ public class EarthQueryFactory extends SQLQueryFactory {
      * @param maxVersion
      */
     public TemplateData getTemplateData(MgrTemplate template, String processId, String workItemId, Integer folderItemNo,
-                                        Integer documentNo, Integer layerNo, int maxVersion) throws EarthException {
+            Integer documentNo, Integer layerNo, int maxVersion) throws EarthException {
         if (template == null || EStringUtil.isEmpty(template.getTemplateId())) {
             return null;
         }

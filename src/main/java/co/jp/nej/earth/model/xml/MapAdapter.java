@@ -27,11 +27,11 @@ public class MapAdapter extends XmlAdapter<MapWrapper, Map<String, Object>> {
         for (Map.Entry<String, Object> property : m.entrySet()) {
 
             if (property.getValue() instanceof Map) {
-                elements.add(new JAXBElement<MapWrapper>(new QName(getCleanLabel(property.getKey())),
-                        MapWrapper.class,marshal((Map<String, Object>) property.getValue())));
+                elements.add(new JAXBElement<MapWrapper>(new QName(getCleanLabel(property.getKey())), MapWrapper.class,
+                        marshal((Map<String, Object>) property.getValue())));
             } else {
-                elements.add(new JAXBElement<String>(new QName(getCleanLabel(property.getKey())),
-                        String.class,property.getValue().toString()));
+                elements.add(new JAXBElement<String>(new QName(getCleanLabel(property.getKey())), String.class,
+                        property.getValue().toString()));
             }
         }
         wrapper.setElements(elements);
@@ -50,20 +50,20 @@ public class MapAdapter extends XmlAdapter<MapWrapper, Map<String, Object>> {
 
     // Return a XML-safe attribute. Might want to add camel case support
     private String getCleanLabel(String attributeLabel) {
-        attributeLabel = attributeLabel.replaceAll("[()]", "").replaceAll("[^\\w\\s]", "_").
-                replaceAll(" ", "_");
+        attributeLabel = attributeLabel.replaceAll("[()]", "").replaceAll("[^\\w\\s]", "_").replaceAll(" ", "_");
         return attributeLabel;
     }
 }
 
 class MapWrapper {
-    @XmlAnyElement
+
     private List<Object> elements;
 
     public List<Object> getElements() {
         return elements;
     }
 
+    @XmlAnyElement
     public void setElements(List<Object> elements) {
         this.elements = elements;
     }

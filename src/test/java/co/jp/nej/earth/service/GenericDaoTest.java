@@ -37,9 +37,9 @@ public class GenericDaoTest extends BaseTest {
 
     private static final QCtlLogin qObject = QCtlLogin.newInstance();
 
-    private static final String SESSIONID1 = "TEST1";
-    private static final String SESSIONID2 = "TEST2";
-    private static final String SESSIONID3 = "TEST3";
+    private static final String SESSIONID1 = "GenericDaoTest1";
+    private static final String SESSIONID2 = "GenericDaoTest2";
+    private static final String SESSIONID3 = "GenericDaoTest3";
     private static final String UPDATELVAUE = "UP";
 
     private static final int NO_OF_TEST_DATA = 2;
@@ -62,7 +62,7 @@ public class GenericDaoTest extends BaseTest {
     @After
     public void truncateData() throws EarthException {
 
-        LOG.info("truncateData");
+        LOG.info("cleanData");
         List<Map<Path<?>, Object>> conditions = new ArrayList<>();
 
         Map<Path<?>, Object> condition1 = new HashMap<>();
@@ -71,8 +71,12 @@ public class GenericDaoTest extends BaseTest {
         Map<Path<?>, Object> condition2 = new HashMap<>();
         condition2.put(qObject.sessionId, SESSIONID2);
 
+        Map<Path<?>, Object> condition3 = new HashMap<>();
+        condition2.put(qObject.sessionId, SESSIONID3);
+
         conditions.add(condition1);
         conditions.add(condition2);
+        conditions.add(condition3);
 
         userService.deleteCtlLogins(conditions);
     }
@@ -172,17 +176,18 @@ public class GenericDaoTest extends BaseTest {
 
     @Test
     public void testGenericSearch() throws EarthException {
-//
-//        BooleanBuilder condition = new BooleanBuilder();
-//        Predicate pre1 = qObject.sessionId.like("TEST%");
-//        Predicate pre2 = qObject.userId.endsWith("2");
-//
-//        // build condition
-//        condition.and(pre1).and(pre2);
-//
-//        List<CtlLogin> ctlLogins = userService.searchMgrLogin(Constant.EARTH_WORKSPACE_ID, condition.getValue(), null,
-//                null, new OrderSpecifier<>(Order.ASC, qObject.userId));
-//
-//        Assert.assertTrue(ctlLogins.size() == NO_OF_TEST_DATA);
+
+        BooleanBuilder condition = new BooleanBuilder();
+        Predicate pre1 = qObject.sessionId.like("GenericDaoTest%");
+        //Predicate pre2 = qObject.userId.endsWith("2");
+
+        // build condition
+        //condition.and(pre1).and(pre2);
+        condition.and(pre1);
+
+        List<CtlLogin> ctlLogins = userService.searchMgrLogin(Constant.EARTH_WORKSPACE_ID, condition.getValue(), null,
+                null, new OrderSpecifier<>(Order.ASC, qObject.userId));
+
+        Assert.assertTrue(ctlLogins.size() == NO_OF_TEST_DATA);
     }
 }

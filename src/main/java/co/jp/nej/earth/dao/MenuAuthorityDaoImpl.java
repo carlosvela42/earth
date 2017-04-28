@@ -12,7 +12,7 @@ import co.jp.nej.earth.model.entity.MgrMenuU;
 import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.sql.*;
-import co.jp.nej.earth.util.CommonUtil;
+import co.jp.nej.earth.util.UserAcessRightUtil;
 import co.jp.nej.earth.util.DateUtil;
 import com.google.gson.Gson;
 import com.querydsl.core.types.Projections;
@@ -170,7 +170,7 @@ public class MenuAuthorityDaoImpl implements MenuAuthorityDao {
                         .on(qMgrMenuP.profileId.eq(qMgrUserProfile.profileId))
                     .where(qMgrMenuP.functionId.eq(menuId)).getResults();
 
-            List<UserAccessRight> userAccessRights = CommonUtil.getUserAccessRightsFromResult(resultSet);
+            List<UserAccessRight> userAccessRights = UserAcessRightUtil.getUserAccessRightsFromResult(resultSet);
             return userAccessRights;
         } catch (Exception ex) {
             ex.printStackTrace();

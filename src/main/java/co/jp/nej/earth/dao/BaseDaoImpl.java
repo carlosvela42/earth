@@ -153,10 +153,8 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
         int nSuccess = 0;
         for (Map<Path<?>, Object> keyMap : keyMaps) {
 
-            // Count number of success delete
-            if (delete(workspaceId, keyMap) > 0) {
-                nSuccess++;
-            }
+            // Count number of success record delete
+            nSuccess += delete(workspaceId, keyMap);
         }
         return nSuccess;
     }

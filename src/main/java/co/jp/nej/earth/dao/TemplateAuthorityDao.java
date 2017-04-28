@@ -5,11 +5,12 @@ import co.jp.nej.earth.model.ProfileAccessRight;
 import co.jp.nej.earth.model.TemplateAccessRight;
 import co.jp.nej.earth.model.TemplateKey;
 import co.jp.nej.earth.model.UserAccessRight;
+import co.jp.nej.earth.model.entity.CtlTemplate;
 
 import java.util.List;
 import java.util.Map;
 
-public interface TemplateAuthorityDao {
+public interface TemplateAuthorityDao extends BaseDao<CtlTemplate> {
 
     Map<TemplateKey, TemplateAccessRight> getMixAuthority(String userId, String workspaceId)
             throws EarthException;

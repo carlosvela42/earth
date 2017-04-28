@@ -20,7 +20,6 @@ public class Document extends BaseModel<Document> {
     private Integer pageCount;
     private String viewInformation;
     private String documentType;
-    private String lastUpdateTime;
     private Integer action;
     private TemplateData documentData;
     private String documentPath;
@@ -129,21 +128,6 @@ public class Document extends BaseModel<Document> {
      */
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
-    }
-
-    /**
-     * @return the lastUpdateTime
-     */
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    /**
-     * @param lastUpdateTime
-     *            the lastUpdateTime to set
-     */
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 
     /**

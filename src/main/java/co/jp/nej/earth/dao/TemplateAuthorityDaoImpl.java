@@ -9,6 +9,7 @@ import co.jp.nej.earth.model.MgrWorkspace;
 import co.jp.nej.earth.model.UserAccessRight;
 import co.jp.nej.earth.model.ProfileAccessRight;
 import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.entity.CtlTemplate;
 import co.jp.nej.earth.model.entity.MgrTemplateU;
 import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.enums.ColumnNames;
@@ -34,11 +35,22 @@ import java.util.Map;
  *         action related to authority of user/profile to template
  */
 @Repository
-public class TemplateAuthorityDaoImpl implements TemplateAuthorityDao {
+public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implements TemplateAuthorityDao {
+
+    public TemplateAuthorityDaoImpl() throws Exception {
+        super();
+    }
 
     @Autowired
     private WorkspaceDao workspaceDao;
 
+    /**
+     * get map of TemplateAccessRight object from DB.
+     *
+     * @param userId id of current user.
+     * @param workspaceId id of working workspace.
+     * @return map of TemplateAccessRight object with key is TemplateKey object.
+     */
     @Override
     public Map<TemplateKey, TemplateAccessRight> getMixAuthority(String userId, String workspaceId)
             throws EarthException {

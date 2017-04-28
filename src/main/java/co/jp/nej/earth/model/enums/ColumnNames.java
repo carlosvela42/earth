@@ -17,7 +17,7 @@ public enum ColumnNames {
     ,DESCRIPTION("description")
     ,DOCUMENT_DATA("documentData")
     ,DOCUMENT_DATA_PATH("documentDataPath")
-    ,DOCUMENT_DATASAVE_PATH("")
+    ,DOCUMENT_DATASAVE_PATH("documentDataSavePath")
     ,DOCUMENT_NO("documentNo")
     ,DOCUMENT_TYPE("documentType")
     ,END_TIME("endTime")
@@ -79,7 +79,11 @@ public enum ColumnNames {
     ,NEW_CREATE_FILE("newCreateFile")
     ,RESERVED_DISK_VOL_SIZE("reservedDiskVolSize")
     ,DISK_VOL_SIZE("diskVolSize")
-    ,DIVISION("division");
+    ,DIVISION("division")
+    ,DB_TYPE("dbType")
+    ,DB_PORT("dbPort")
+    ,ISSUE_DATE("issueDate")
+    ,COUNT("count");
 
     private String propertyName;
 

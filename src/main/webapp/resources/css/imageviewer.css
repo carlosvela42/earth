@@ -69,3 +69,6 @@ label span.olive {
 label span.blue {
   background: #0000FF;
 }
+label span.none {
+  background: #FFF;
+}

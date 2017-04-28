@@ -23,24 +23,28 @@ public class DateUtil {
         return sdf.format(date);
     }
 
+    public static String getCurrentDate(String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.format(new Date());
+    }
+
     /**
      * Get System Date.
      *
      * @param pattern
      * @return
      */
-    public static String getCurrentDate(String pattern) {
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        return sdf.format(new Date());
-    }
-
     // Get current date as string
-    public static Date getCurrentDate() {
-
+    public static Date getCurrentDate(){
         return new Date();
     }
 
-    // Get current date as string
+    /**
+     * Get current date as string.
+     *
+     * @param pattern
+     * @return
+     */
     public static String getCurrentDateString() {
 
         return earthDF.format(getCurrentDate());

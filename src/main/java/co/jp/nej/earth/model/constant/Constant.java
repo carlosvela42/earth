@@ -62,6 +62,13 @@ public class Constant {
         public static final String TEMPLATE_ACCESS_RIGHT_MAP = "templateAccessRightMap";
         public static final String MENU_ACCESS_RIGHT_MAP = "menuAccessRightMap";
         public static final String WORKSPACES = "workspaces";
+        public static final String LAST_PATH = "lastPath";
+    }
+
+    public static class View {
+        public static final String HOME = "home/home";
+        public static final String LOGIN = "login/login";
+        public static final String IMAGE_VIEWER = "imageViewer/ImageViewer";
     }
 
     public static class DatePattern {
@@ -127,10 +134,13 @@ public class Constant {
         public static final String E0018 = "E0018";
         public static final String E0019 = "E0019";
         public static final String E0020 = "E0020";
+        public static final String E0021 = "E0021";
 
         public static final String E1008 = "E1008";
         public static final String E1009 = "E1009";
         public static final String E1012 = "E1012";
+
+        public static final String SESSION_INVALID = "session.invalid";
     }
 
     public static class ScreenItem {

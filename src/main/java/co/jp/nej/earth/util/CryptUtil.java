@@ -10,7 +10,6 @@ import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.constant.Constant.EnCryption;
 
 public class CryptUtil {
-
     /**
      *
      * @param passwordToHash

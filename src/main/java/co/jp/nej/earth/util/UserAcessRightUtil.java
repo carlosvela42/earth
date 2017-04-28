@@ -1,26 +1,30 @@
 package co.jp.nej.earth.util;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.UserAccessRight;
-import co.jp.nej.earth.model.entity.MgrUserProfile;
-import co.jp.nej.earth.model.enums.AccessRight;
-import co.jp.nej.earth.model.enums.ColumnNames;
-import org.springframework.util.StringUtils;
-
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CommonUtil {
+import org.springframework.util.StringUtils;
+
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.UserAccessRight;
+import co.jp.nej.earth.model.entity.MgrUserProfile;
+import co.jp.nej.earth.model.enums.AccessRight;
+import co.jp.nej.earth.model.enums.ColumnNames;
+
+public class UserAcessRightUtil {
 
     /**
      * Compare access right of same user from 2 list, then keep the<br>
      * UserAccessRight object which has lower access right.
      *
-     * @param userAccessRights first list of UserAccessRight object.
-     * @param userAccessRightByProfiles second kist of UserAccessRight object.
-     * @return list of UserAccessRight objects which have lowest access right from 2 list above.
+     * @param userAccessRights
+     *            first list of UserAccessRight object.
+     * @param userAccessRightByProfiles
+     *            second kist of UserAccessRight object.
+     * @return list of UserAccessRight objects which have lowest access right
+     *         from 2 list above.
      */
 
     public static List<UserAccessRight> mixAuthority(List<UserAccessRight> userAccessRights,
@@ -49,7 +53,8 @@ public class CommonUtil {
     /**
      * get list of UserAccessRight object from resultSet.
      *
-     * @param resultSet query result from DB.
+     * @param resultSet
+     *            query result from DB.
      * @return list of UserAccessRight object.
      * @throws EarthException.
      */
@@ -70,12 +75,17 @@ public class CommonUtil {
     }
 
     /**
-     * Assign access right for user based on profile's access right which user <br>
+     * Assign access right for user based on profile's access right which user
+     * <br>
      * belongs to.
      *
-     * @param mgrUserProfiles list of MgrUserProfile object.
-     * @param mapAccessRightProfile map with key is profile id, and value is access right to template of that profile.
-     * @return list of UserAccessRight object with access right of the profile which that user belong to.
+     * @param mgrUserProfiles
+     *            list of MgrUserProfile object.
+     * @param mapAccessRightProfile
+     *            map with key is profile id, and value is access right to
+     *            template of that profile.
+     * @return list of UserAccessRight object with access right of the profile
+     *         which that user belong to.
      * @throws EarthException
      */
     public static List<UserAccessRight> getUserAccessRightProfiles(List<MgrUserProfile> mgrUserProfiles,

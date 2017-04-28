@@ -13,7 +13,7 @@ import co.jp.nej.earth.service.WorkItemService;
 
 @RestController
 @RequestMapping("/WS")
-public class ProcessRestController {
+public class ProcessRestController extends BaseRestController{
     @Autowired
     private WorkItemService workItemService;
 

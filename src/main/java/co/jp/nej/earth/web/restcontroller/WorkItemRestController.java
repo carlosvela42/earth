@@ -11,7 +11,7 @@ import co.jp.nej.earth.service.WorkItemService;
 
 @RestController
 @RequestMapping("/WS")
-public class WorkItemRestController {
+public class WorkItemRestController extends BaseRestController  {
     @Autowired
     private WorkItemService workItemService;
 

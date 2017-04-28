@@ -27,7 +27,7 @@ public class ConnectionManager {
 
     private static Map<String, DataSource> dataSources = new HashMap<String, DataSource>();
     private static Map<String, PlatformTransactionManager> mgrTransactions
-                                    = new HashMap<String, PlatformTransactionManager>();
+                                                                = new HashMap<String, PlatformTransactionManager>();
 
     private static JdbcConfig config;
     private static WorkspaceService wkService;
@@ -58,13 +58,11 @@ public class ConnectionManager {
         return dataSources.get(id);
     }
 
-    public static PlatformTransactionManager getTransactionManager(String id) throws EarthException {
-        if (!exists(id)) {
-            // Get DataSource from Database.
-            getDataSourceFromDb(id);
+    public static void remove(String id) {
+        if (exists(id)) {
+            dataSources.remove(id);
+            mgrTransactions.remove(id);
         }
-
-        return mgrTransactions.get(id);
     }
 
     public static EarthQueryFactory getEarthQueryFactory(String id) throws EarthException {
@@ -82,17 +80,6 @@ public class ConnectionManager {
         return earthQueryFactory;
     }
 
-    private static void getDataSourceFromDb(String id) throws EarthException {
-        MgrWorkspaceConnect connection = wkService.getMgrConnectionByWorkspaceId(id);
-        if (connection == null) {
-            throw new EarthException(
-                    messges.getMessage("connection.notfound", new String[] { "workspaceId" }, Locale.ENGLISH));
-        } else {
-            DataSource dataSource = config.dataSource(connection.getWorkspaceId(), connection);
-            addDataSource(id, dataSource);
-        }
-    }
-
     public static boolean exists(String id) {
         return (dataSources.containsKey(id));
     }
@@ -102,10 +89,23 @@ public class ConnectionManager {
         return new EarthQueryFactory(config.querydslConfiguration(), sysProvider);
     }
 
-    public static void remove(String id) {
-        if (exists(id)) {
-            dataSources.remove(id);
-            mgrTransactions.remove(id);
+    public static PlatformTransactionManager getTransactionManager(String id) throws EarthException {
+        if (!exists(id)) {
+            // Get DataSource from Database.
+            getDataSourceFromDb(id);
+        }
+
+        return mgrTransactions.get(id);
+    }
+
+    private static void getDataSourceFromDb(String id) throws EarthException {
+        MgrWorkspaceConnect connection = wkService.getMgrConnectionByWorkspaceId(id);
+        if (connection == null) {
+            throw new EarthException(
+                    messges.getMessage("connection.notfound", new String[] { "workspaceId" }, Locale.ENGLISH));
+        } else {
+            DataSource dataSource = config.dataSource(connection.getWorkspaceId(), connection);
+            addDataSource(id, dataSource);
         }
     }
 }

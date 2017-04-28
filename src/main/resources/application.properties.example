@@ -5,7 +5,7 @@
 #spring.datasource.password=Earth12345
 #spring.datasource.maximum-pool-size=1
 #spring.datasource.db-type=SQL_SERVER
-#spring.datasource.port=1443
+#spring.datasource.port=1433
 
 # ORACLE
 spring.datasource.schema-name=c##earth

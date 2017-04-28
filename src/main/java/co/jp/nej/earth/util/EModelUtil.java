@@ -4,11 +4,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.RelationalPathBase;
 import com.querydsl.sql.SQLBindings;
 
@@ -39,10 +43,17 @@ public class EModelUtil {
             Path<?> colName = pair.getKey();
             Object colValue = pair.getValue();
 
-            // use getString to get a String path
+            Predicate predicate = null;
+            if (colValue == null) {
+                predicate = entityPath.get(colName).isNull();
+            } else if (colValue instanceof String) {
+                colValue = ((String) colValue).trim();
+                StringExpression express = entityPath.get((StringPath) colName).trim();
+                predicate = express.eq(Expressions.asSimple(colValue));
+            } else {
+                predicate = entityPath.get(colName).eq(Expressions.asSimple(colValue));
+            }
 
-            Predicate predicate = colValue != null ? entityPath.get(colName).eq(Expressions.asSimple(colValue))
-                    : entityPath.get(colName).isNull();
             condition.and(predicate);
         }
 
@@ -51,10 +62,16 @@ public class EModelUtil {
 
     public static String cleanQuery(SQLBindings bindings) {
         String query = bindings.getSQL();
+        String tmp = StringUtils.EMPTY;
         for (Object binding : bindings.getBindings()) {
-            query = query.replaceFirst("\\?", binding.toString());
+
+            if (binding instanceof String) {
+                tmp = "'" + binding.toString() + "'";
+            } else {
+                tmp = binding.toString();
+            }
+            query = query.replaceFirst("\\?", tmp);
         }
         return query;
     }
-
 }

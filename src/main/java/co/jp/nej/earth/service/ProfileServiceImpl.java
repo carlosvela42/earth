@@ -32,7 +32,7 @@ import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUserProfile;
 import co.jp.nej.earth.model.enums.AccessRight;
-import co.jp.nej.earth.util.CommonUtil;
+import co.jp.nej.earth.util.UserAcessRightUtil;
 import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EStringUtil;
 
@@ -175,7 +175,7 @@ public class ProfileServiceImpl implements ProfileService {
                 List<UserAccessRight> userAccessRightByProfiles = menuAuthorityDao
                         .getUserAuthorityByProfiles(mgrMenu.getFunctionId());
                 List<UserAccessRight> userAccessRights = menuAuthorityDao.getUserAuthority(mgrMenu.getFunctionId());
-                List<UserAccessRight> menuAccessRights = CommonUtil.mixAuthority(userAccessRights,
+                List<UserAccessRight> menuAccessRights = UserAcessRightUtil.mixAuthority(userAccessRights,
                         userAccessRightByProfiles);
                 menuAuthorityDao.insertMixAuthority(mgrMenu.getFunctionId(), menuAccessRights);
             }
@@ -192,10 +192,10 @@ public class ProfileServiceImpl implements ProfileService {
                 for (ProfileAccessRight profileAccessRight : profileAccessRights) {
                     mapAccessRightP.put(profileAccessRight.getProfileId(), profileAccessRight.getAccessRight());
                 }
-                List<UserAccessRight> userAccessRightByProfiles = CommonUtil.getUserAccessRightProfiles(mgrUserProfiles,
-                        mapAccessRightP);
+                List<UserAccessRight> userAccessRightByProfiles = UserAcessRightUtil.getUserAccessRightProfiles(
+                        mgrUserProfiles, mapAccessRightP);
                 List<UserAccessRight> userAccessRights = templateAuthorityDao.getUserAuthority(templateKey);
-                List<UserAccessRight> templateAccessRights = CommonUtil.mixAuthority(userAccessRights,
+                List<UserAccessRight> templateAccessRights = UserAcessRightUtil.mixAuthority(userAccessRights,
                         userAccessRightByProfiles);
                 templateAuthorityDao.insertMixAuthority(templateKey, templateAccessRights);
             }

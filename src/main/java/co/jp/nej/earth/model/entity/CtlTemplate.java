@@ -2,7 +2,15 @@ package co.jp.nej.earth.model.entity;
 
 import java.io.Serializable;
 
-public class CtlTemplate implements Serializable {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QCtlTemplate;
+import co.jp.nej.earth.util.DateUtil;
+
+public class CtlTemplate extends BaseModel<CtlTemplate> implements Serializable {
+    private static final Logger LOG = LoggerFactory.getLogger(CtlTemplate.class);
     /**
      *
      */
@@ -10,30 +18,43 @@ public class CtlTemplate implements Serializable {
     private String userId;
     private String templateId;
     private int accessAuthority;
-    private String lastUpdateTime;
+
+    public CtlTemplate() {
+        LOG.debug("Call to blank contructor");
+        this.setqObj(QCtlTemplate.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
+
+    public CtlTemplate(String userId, String templateId, int accessAuthority) {
+        this();
+        LOG.debug("Call to (userId, templateId, accessAuthority) " + "contructor");
+        this.userId = userId;
+        this.userId = userId;
+        this.templateId = templateId;
+        this.accessAuthority = accessAuthority;
+    }
 
     public String getUserId() {
         return userId;
     }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public String getTemplateId() {
         return templateId;
     }
+
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
     }
+
     public int getAccessAuthority() {
         return accessAuthority;
     }
+
     public void setAccessAuthority(int accessAuthority) {
         this.accessAuthority = accessAuthority;
-    }
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 }

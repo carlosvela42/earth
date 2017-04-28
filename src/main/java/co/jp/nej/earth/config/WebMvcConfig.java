@@ -1,14 +1,17 @@
 package co.jp.nej.earth.config;
 
+import java.util.Locale;
 import java.util.Properties;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
@@ -17,11 +20,6 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     private static final int CACHE_SECONDS = 5;
     private static final String MESSAGE_SOURCE = "/WEB-INF/i18n/messages";
-    private static final String VIEWS = "/WEB-INF/views/";
-
-    private static final String RESOURCES_LOCATION = "/resources/";
-    // private static final String RESOURCES_HANDLER = RESOURCES_LOCATION +
-    // "**";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -31,18 +29,29 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean(name = "messageSource")
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename(MESSAGE_SOURCE);
 
+        messageSource.setBasename(MESSAGE_SOURCE);
         messageSource.setCacheSeconds(CACHE_SECONDS);
+        messageSource.setUseCodeAsDefaultMessage(true);
         return messageSource;
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+        localeResolver.setDefaultLocale(Locale.JAPAN); // change this
+        return localeResolver;
     }
 
     @Bean(name = "freemarkerConfig")
     public FreeMarkerConfigurer freemarkerConfig() {
         FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
-        configurer.setTemplateLoaderPath("/WEB-INF/views/");
+        // configurer.setTemplateLoaderPaths("/WEB-INF/views/","/WEB-INF/freemarker/");
+        configurer.setTemplateLoaderPaths("/WEB-INF/views/");
+
         Properties settings = new Properties();
-        settings.put("auto_import", "/common/standardPage.ftl as standard");
+        settings.put("auto_import", "/common/standardPage.ftl as standard, spring.ftl as spring");
+        //settings.put("auto_import", "/common/standardPage.ftl as standard");
         configurer.setFreemarkerSettings(settings);
         configurer.setDefaultEncoding("UTF-8");
         return configurer;

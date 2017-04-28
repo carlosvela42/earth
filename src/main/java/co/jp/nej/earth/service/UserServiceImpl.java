@@ -1,5 +1,22 @@
 package co.jp.nej.earth.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
+
 import co.jp.nej.earth.dao.EventDao;
 import co.jp.nej.earth.dao.LicenseHistoryDao;
 import co.jp.nej.earth.dao.LoginControlDao;
@@ -34,24 +51,7 @@ import co.jp.nej.earth.util.LoginUtil;
 import co.jp.nej.earth.util.MenuUtil;
 import co.jp.nej.earth.util.PasswordPolicy;
 import co.jp.nej.earth.util.TemplateUtil;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Predicate;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-@Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -100,6 +100,7 @@ public class UserServiceImpl implements UserService {
      *            HttpSession object
      * @return list message determined that user log in successfully or not
      */
+    @Transactional
     public List<Message> login(String userId, String password, HttpSession session) throws EarthException {
         List<Message> listMessage = new ArrayList<Message>();
         if (EStringUtil.isEmpty(userId)) {
@@ -107,16 +108,19 @@ public class UserServiceImpl implements UserService {
                     messageSource.getMessage(ErrorCode.E0001, new String[] { ScreenItem.USER_ID }, Locale.ENGLISH));
             listMessage.add(message);
         }
+
         if (EStringUtil.isEmpty(password)) {
             Message message = new Message(MessageCodeLogin.PWD_BLANK,
                     messageSource.getMessage(ErrorCode.E0001, new String[] { ScreenItem.PASSWORD }, Locale.ENGLISH));
             listMessage.add(message);
         }
-        if (!EStringUtil.checkAlphabet(userId)) {
+
+        if (!EStringUtil.isEmpty(userId) && !EStringUtil.checkAlphabet(userId)) {
             Message message = new Message(MessageUser.USR_SPECIAL,
                     messageSource.getMessage(ErrorCode.E0007, new String[] { ScreenItem.USER_ID }, Locale.ENGLISH));
             listMessage.add(message);
         }
+
         if (!EStringUtil.isEmpty(userId) && !EStringUtil.isEmpty(password)) {
             try {
                 String encryptedPassword = CryptUtil.encryptOneWay(password);
@@ -146,8 +150,8 @@ public class UserServiceImpl implements UserService {
                             countAndUpdateLicenseHistory(userId);
                         }
 
-                        Map<TemplateKey, TemplateAccessRight> templateAccessRightMap =
-                                new HashMap<TemplateKey, TemplateAccessRight>();
+                        Map<TemplateKey, TemplateAccessRight> templateAccessRightMap
+                                                                    = new HashMap<TemplateKey, TemplateAccessRight>();
                         List<MgrWorkspace> mgrWorkspaces = workspaceDao.getAll();
 
                         for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
@@ -170,9 +174,11 @@ public class UserServiceImpl implements UserService {
                 throw new EarthException(e.getMessage());
             }
         }
+
         return listMessage;
     }
 
+    @Transactional
     public boolean logout(HttpSession session) throws EarthException {
         boolean isLogout = false;
         if (session.getAttribute(Session.USER_INFO) != null) {
@@ -218,14 +224,14 @@ public class UserServiceImpl implements UserService {
         List<Message> listMessage = new ArrayList<Message>();
         try {
             if (EStringUtil.isEmpty(mgrUser.getUserId())) {
-                Message message = new Message(MessageUser.USR_BLANK, messageSource.getMessage(ErrorCode.E0001,
-                        new String[] { ScreenItem.USER_ID }, Locale.ENGLISH));
+                Message message = new Message(MessageUser.USR_BLANK,
+                        messageSource.getMessage(ErrorCode.E0001, new String[] { ScreenItem.USER_ID }, Locale.ENGLISH));
                 listMessage.add(message);
                 return listMessage;
             }
             if (!EStringUtil.checkAlphabet(mgrUser.getUserId())) {
-                Message message = new Message(MessageUser.USR_SPECIAL, messageSource.getMessage(ErrorCode.E0007,
-                        new String[] { ScreenItem.USER_ID }, Locale.ENGLISH));
+                Message message = new Message(MessageUser.USR_SPECIAL,
+                        messageSource.getMessage(ErrorCode.E0007, new String[] { ScreenItem.USER_ID }, Locale.ENGLISH));
                 listMessage.add(message);
                 return listMessage;
             }
@@ -237,10 +243,8 @@ public class UserServiceImpl implements UserService {
             }
             if (insert) {
                 if (!mgrUser.isChangePassword()) {
-                    Message message = new Message(MessageUser.CHANGEPWD_BLANK,
-                            messageSource.getMessage(ErrorCode.E0001,
-                                    new String[] { ScreenItem.CHANGE_PASSWORD, ScreenItem.CREATE_USER },
-                                    Locale.ENGLISH));
+                    Message message = new Message(MessageUser.CHANGEPWD_BLANK, messageSource.getMessage(ErrorCode.E0001,
+                            new String[] { ScreenItem.CHANGE_PASSWORD, ScreenItem.CREATE_USER }, Locale.ENGLISH));
                     listMessage.add(message);
                     return listMessage;
                 }
@@ -289,10 +293,8 @@ public class UserServiceImpl implements UserService {
                         return listMessage;
                     }
                     if (!EStringUtil.contains(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
-                        Message message = new Message(MessageUser.PWD_CORRECT,
-                                messageSource.getMessage(ErrorCode.E1008,
-                                        new String[] { ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD },
-                                        Locale.ENGLISH));
+                        Message message = new Message(MessageUser.PWD_CORRECT, messageSource.getMessage(ErrorCode.E1008,
+                                new String[] { ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD }, Locale.ENGLISH));
                         listMessage.add(message);
                         return listMessage;
                     }
@@ -372,28 +374,31 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     public List<CtlLogin> getAllMgrLogin(String workspaceId, Long offset, Long limit,
             OrderSpecifier<String> orderByColumn) throws EarthException {
         return loginControlDao.findAll(Constant.EARTH_WORKSPACE_ID, offset, limit, orderByColumn);
     }
 
+    @Transactional
     public CtlLogin getCtlLoginDetail(Map<Path<?>, Object> condition) throws EarthException {
 
         return loginControlDao.findOne(Constant.EARTH_WORKSPACE_ID, condition);
     }
 
-    @Override
+    @Transactional
     public long deleteCtlLogin(Map<Path<?>, Object> condition) throws EarthException {
 
         return loginControlDao.delete(Constant.EARTH_WORKSPACE_ID, condition);
     }
 
-    @Override
+    @Transactional
     public long deleteCtlLogins(List<Map<Path<?>, Object>> condition) throws EarthException {
 
         return loginControlDao.deleteList(Constant.EARTH_WORKSPACE_ID, condition);
     }
 
+    @Transactional
     public long deleteAllCtlLogins() throws EarthException {
         try {
             return loginControlDao.deleteAll(Constant.EARTH_WORKSPACE_ID);
@@ -404,11 +409,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public long addCtlLogin(CtlLogin login) throws EarthException {
         return loginControlDao.add(Constant.EARTH_WORKSPACE_ID, login);
     }
 
     @Override
+    @Transactional
     public long updateCtlLogin(Map<Path<?>, Object> condition, Map<Path<?>, Object> updateMap) throws EarthException {
         return loginControlDao.update(Constant.EARTH_WORKSPACE_ID, condition, updateMap);
     }
@@ -424,6 +431,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<CtlLogin> searchMgrLogin(String workspaceId, Predicate condition, Long offset, Long limit,
             OrderSpecifier<String> orderByColumn) throws EarthException {
 

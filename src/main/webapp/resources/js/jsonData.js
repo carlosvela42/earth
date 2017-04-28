@@ -1,11 +1,9 @@
 var jsonLayer = {
-		"User" : "ADMIN",
+		"User" : "DEV2",
 		"Image" : "resources/images/imageViewer/bc.jpg",
-		"Active" : "DEF0",
 		"Layer" : [ {
 			"Name" : "DEF0",
-			"Owner" : "ADMIN",			
-			"Items" : "2",
+			"Owner" : "DEV2",
 			"Modified" : "2012",
 			"Created" : "2012",			
 			"Annotations" : [ {
@@ -27,13 +25,12 @@ var jsonLayer = {
 				"id" : "6",
 				"stroke" : "black",
 				"strokew" : "1",
-				"fill" : "white",
+				"fill" : "none",
 				"class" : "svgElement"
 			} ]
 		}, {
 			"Name" : "DEF1",
-			"Owner" : "DEV1",		
-			"Items" : "1",
+			"Owner" : "DEV2",
 			"Modified" : "2013",
 			"Created" : "2013",			
 			"Annotations" : [ {

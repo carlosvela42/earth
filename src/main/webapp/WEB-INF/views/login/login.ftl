@@ -14,7 +14,7 @@
 <script src="${rc.getContextPath()}/resources/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<form action="${rc.getContextPath()}/login" object="mgrUser"
+	<form action="${rc.getContextPath()}/login" object="loginForm"
 		method="post">
 		<div class="div_page">
 			<table>
@@ -26,13 +26,16 @@
 				<tr>
 					<td><label>ユーザID：</label></td>
 					<td><input type="text" id="txtUser" name="userId"
-						height="20px" width="150px" style="text-align: left"></td>
+						height="20px" width="150px" style="text-align: left">
+						</td>
 				</tr>
 				<tr>
 					<td><label>パスワード： </label></td>
 					<td><input type="password" id="txtPassWord" name="password"
 						height="20px" width="150px" style="text-align: left"></td>
 				</tr>
+				<tr>
+                </tr>
 				<tr>
 					<td colspan="2"><#if messages??> <#list messages as message>
 						<div>

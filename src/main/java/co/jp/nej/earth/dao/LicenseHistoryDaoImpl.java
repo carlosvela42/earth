@@ -1,6 +1,5 @@
 package co.jp.nej.earth.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -27,7 +26,7 @@ public class LicenseHistoryDaoImpl extends BaseDaoImpl<StrCal> implements Licens
         QStrCal qStrCal = QStrCal.newInstance();
         QBean<StrCal> selectList = Projections.bean(StrCal.class, qStrCal.all());
         EarthQueryFactory query = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-        List<StrCal> strCals = new ArrayList<StrCal>();
+        List<StrCal> strCals = null;
         if (EStringUtil.isEmpty(fromTime) && EStringUtil.isEmpty(toTime)) {
             strCals = query.select(selectList).from(qStrCal).orderBy(qStrCal.processTime.asc(), qStrCal.profileId.asc())
                     .fetch();

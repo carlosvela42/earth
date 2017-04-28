@@ -37,5 +37,9 @@ public enum TableNames {
     ,MST_CALENDAR
     ,MGR_MENUCATEGORY
     ,MGR_TASK
+    ,MGR_INCREMENT
+    ,MGR_WORKITEMINCREMENT
+    ,MGR_WORKITEMID
+    ,MGR_EVENTID
     ;
 }

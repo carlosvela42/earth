@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>System Error!</title>
 </head>
-<body>
-$END$
+<body>Internal system error. Please contact administrator if the problem persists.
 </body>
 </html>

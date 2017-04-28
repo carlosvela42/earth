@@ -1,6 +1,12 @@
 package co.jp.nej.earth.model;
 
-public class MgrWorkspace {
+import java.io.Serializable;
+
+public class MgrWorkspace implements Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private String workspaceId;
     private String workspaceName;
     private String lastUpdateTime;

@@ -19,6 +19,7 @@
 	href="${rc.getContextPath()}/resources/css/jquery.contextMenu.css">
 <!-- Latest compiled and minified JavaScript -->
 <script src="${rc.getContextPath()}/resources/js/bootstrap.min.js"></script>
+<script src="${rc.getContextPath()}/resources/js/scrollbarWidth.js"></script>
 <script src="${rc.getContextPath()}/resources/js/decimalAdjust.js"></script>
 <script src="${rc.getContextPath()}/resources/js/jquery.contextMenu.js"></script>
 <script src="${rc.getContextPath()}/resources/js/jsonData.js"></script>
@@ -43,12 +44,12 @@
 						width="20" /> <span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu">
-					<li><a href="#">Full page</a></li>
-					<li><a href="#">Full width</a></li>
+					<li><a href="#" id="zoomFullPage">Full page</a></li>
+					<li><a href="#" id="zoomFullWidth">Full width</a></li>
 					<li><a href="#" id="zoom200">200%</a></li>
-					<li><a href="#">100%</a></li>
-					<li><a href="#">75%</a></li>
-					<li><a href="#">50%</a></li>
+					<li><a href="#" id="zoom100">100%</a></li>
+					<li><a href="#" id="zoom75">75%</a></li>
+					<li><a href="#" id="zoom50">50%</a></li>
 					<li><input type="range" id="controlZoom" value="50" min="5"
 						max="100" maxlength="3"> <label id="lbZoom">100%</label></li>
 				</ul>
@@ -70,12 +71,12 @@
 					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
 					title="draw">
 					<img
-						src="${rc.getContextPath()}/resources/images/imageViewer/draw.png"
-						width="20" /> <span class="caret"></span>
+						src="${rc.getContextPath()}/resources/images/imageViewer/rectangle.png"
+						width="20" id="imgDraw" /> <span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu">
 					<li><input type="radio" id="line" name="toolOption"
-						data-tool="line" checked>LINE</li>
+						data-tool="line">LINE</li>
 					<li><input type="radio" id="rectangle" name="toolOption"
 						data-tool="rectangle">RECTANGLE</li>
 					<li><input type="radio" id="text" name="toolOption"
@@ -116,12 +117,19 @@
 					title="print">
 					<img
 						src="${rc.getContextPath()}/resources/images/imageViewer/print.png"
-						width="20" /> <span class="caret"></span>
+						width="20" /> 
 				</button>
+				<span class="caret"></span>
 				<ul class="dropdown-menu">
 					<li><a href="#" id="print">Include Annotations</a></li>
 					<li><a href="#" id="print0">Only Image</a></li>
 				</ul>
+				  <div class="form-check">
+    <label class="form-check-label dropdown-menu">
+      <input type="checkbox" class="form-check-input">
+      Check me out
+    </label>
+  </div>
 			</div>
 			<button type="button" class="btn btn-default" title="cut" id="cut">
 				<img
@@ -225,6 +233,7 @@
 						Font: <select id="font">
 							<option value="serif">Serif</option>
 							<option value="Arial">Arial</option>
+							<option value='"Times New Roman"'>Times New Roman</option>
 						</select>
 					</div>
 					<div class="form-group">
@@ -238,7 +247,7 @@
 							<option value="normal">Regular</option>
 							<option value="bold">Bold</option>
 							<option value="italic">Italic</option>
-							<option value="underline">Underline</option>
+							<option value="boldItalic">Bold Italic</option>
 						</select>
 					</div>
 				</div>
@@ -296,9 +305,9 @@
 						</ul>
 						<div class="tab-content">
 							<div id="home" class="tab-pane fade in active">
-								<input type="radio" name="color" id="black" value="black" /> <label
-									for="black"><span class="black"></span></label> <input
-									type="radio" name="color" id="red" value="red" /> <label
+								<input type="radio" name="color" id="black" value="black"
+									checked /> <label for="black"><span class="black"></span></label>
+								<input type="radio" name="color" id="red" value="red" /> <label
 									for="red"><span class="red"></span></label> <input type="radio"
 									name="color" id="green" value="green" /> <label for="green"><span
 									class="green"></span></label> <input type="radio" name="color"
@@ -313,8 +322,8 @@
 									value="blue" /> <label for="blue"><span class="blue"></span></label>
 								<input type="radio" name="color" id="violet" value="violet" />
 								<label for="violet"><span class="violet"></span></label> <input
-									type="radio" name="color" id="purple" value="purple" /> <label
-									for="purple"><span class="purple"></span></label>
+									type="radio" name="color" id="none" value="none" /> <label
+									for="none"><span class="none"></span></label>
 							</div>
 							<div id="menu1" class="tab-pane fade">
 								<h3>Menu 1</h3>
@@ -335,8 +344,8 @@
 									value="blue" /> <label for="blue"><span class="blue"></span></label>
 								<input type="radio" name="fill" id="1violet" value="violet" />
 								<label for="violet"><span class="violet"></span></label> <input
-									type="radio" name="fill" id="1purple" value="purple" /> <label
-									for="purple"><span class="purple"></span></label>
+									type="radio" name="fill" id="1none" value="none" /> <label
+									for="none"><span class="none"></span></label>
 							</div>
 							<div id="menu2" class="tab-pane fade">
 								<h3>Menu 2</h3>
@@ -366,6 +375,7 @@
 					<div class="col-md-4">
 						Line Size <br /> <input type="number" min="1" max="100" value="1"
 							id="width">
+						<svg><ellipse cx="60" cy="60" rx="50" ry="25" fill="none" stroke="black" stroke-width="1" id="example"/></svg>
 
 					</div>
 				</div>

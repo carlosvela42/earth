@@ -51,7 +51,7 @@ public class ThemeScanProcessService implements Job {
     /**
      * folder output
      */
-    private static final String FOLDER_OUTPUT = "temp/themeScan/";
+    private static final String FOLDER_OUTPUT = "temp/themeScan";
 
     /**
      * execute
@@ -104,10 +104,24 @@ public class ThemeScanProcessService implements Job {
                     if (extension.equals("xml")) {
                         try {
                             service.insertEvent(parseXml(fileChild));
-                            copyFile(fileChild, FOLDER_OUTPUT);
+                            fileChild.delete();
                         } catch (JAXBException e) {
                             // write log when xml's type is wrong
                             LOG.error(e.getMessage());
+                        }
+                    } else {
+                        Image image = ImageIO.read(new File(fileChild.getAbsolutePath() + File.separator + name));
+                        if (image == null) {
+                            break;
+                        }
+                        // check destination folder
+                        File destination = new File(FOLDER_OUTPUT + fileChild.getName());
+                        if (destination.exists()) {
+                            copy(fileChild, destination, name);
+                        } else {
+                            if (destination.mkdir()) {
+                                copy(fileChild, destination, name);
+                            }
                         }
                     }
                 }

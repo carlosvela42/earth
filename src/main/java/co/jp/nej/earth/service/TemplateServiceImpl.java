@@ -34,7 +34,7 @@ import co.jp.nej.earth.model.entity.MgrUserProfile;
 import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.sql.QMgrTemplate;
 import co.jp.nej.earth.model.sql.QMgrTemplateP;
-import co.jp.nej.earth.util.CommonUtil;
+import co.jp.nej.earth.util.UserAcessRightUtil;
 
 @Service
 @Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
@@ -146,9 +146,9 @@ public class TemplateServiceImpl implements TemplateService {
         for (ProfileAccessRight profileAccessRight : tProfile) {
             mapAccessRightP.put(profileAccessRight.getProfileId(), profileAccessRight.getAccessRight());
         }
-        List<UserAccessRight> userAccessRights = CommonUtil.getUserAccessRightProfiles(mgrUserProfiles,
+        List<UserAccessRight> userAccessRights = UserAcessRightUtil.getUserAccessRightProfiles(mgrUserProfiles,
                 mapAccessRightP);
-        List<UserAccessRight> templateAccessRights = CommonUtil.mixAuthority(tUser, userAccessRights);
+        List<UserAccessRight> templateAccessRights = UserAcessRightUtil.mixAuthority(tUser, userAccessRights);
         templateAuthorityDao.insertMixAuthority(templateKey, templateAccessRights);
         return true;
     }
