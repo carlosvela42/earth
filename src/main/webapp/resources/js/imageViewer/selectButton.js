@@ -1,10 +1,7 @@
 $("#select").click(function() {
 	$("#drawSelect").prop("checked", true).trigger("click");
-	//$('[name=toolOption]').prop('checked', false);
-<<<<<<< HEAD
-	$('#svg').css('cursor','auto');
-=======
->>>>>>> master
+	// $('[name=toolOption]').prop('checked', false);
+	$('#svg').css('cursor', 'auto');
 });
 
 function selectBefore() {
@@ -14,13 +11,17 @@ function selectBefore() {
 	$("#4").remove();
 	$("#" + selectId).attr("onmousedown", null);
 	$("#" + selectId).attr("onmouseup", null);
-	$("#" + selectId).on("click", selectClick);
+	if ($("#r" + selectId).length==0) {
+		$("#" + selectId).on("click", selectClick);
+	} else {
+		$("#r" + selectId).on("click", selectClick);
+	}
 	selectId = -1;
 }
 
 function selectClick(event) {
 	$("#drawSelect").prop("checked", true).trigger("click");
-	//$('[name=toolOption]').prop('checked', false);
+	// $('[name=toolOption]').prop('checked', false);
 	var g;
 	if ($(this).parent().attr("transform") == null) {
 		g = vis.append("g").attr("transform", "translate(0 0)");
@@ -39,6 +40,20 @@ function selectClick(event) {
 				$(this).attr("class")).attr("onmousedown",
 				"startMove(event, 'group')").attr("onmouseup", "endMove()")
 				.attr("transform", $(this).attr("transform"));
+		g.append("rect").attr("x", $("#r" + selectId).attr("x")).attr("y",
+				$("#r" + selectId).attr("y")).attr("width",
+				$("#r" + selectId).attr("width")).attr("height",
+				$("#r" + selectId).attr("height")).attr("id", "r" + selectId)
+				.attr("fill", $("#r" + selectId).attr("fill")).attr("stroke",
+						$("#r" + selectId).attr("stroke")).attr("stroke-width",
+						$("#r" + selectId).attr("stroke-width"))
+				.attr("fill-opacity", $("#r" + selectId).attr("fill-opacity"))
+				.attr("class", $("#r" + selectId).attr("class")).attr(
+						"onmousedown", "startMove(event, 'group')").attr(
+						"onmouseup", "endMove()").attr("transform",
+						$("#r" + selectId).attr("transform")).attr(
+						"pointer-events", "all");
+		$("#r" + selectId).remove();
 		g.append("rect").attr("x", $(this).attr("x1") - 5).attr("y",
 				$(this).attr("y1") - 5).attr("width", "10")
 				.attr("height", "10").attr("fill", "yellow").attr("stroke",
@@ -66,46 +81,58 @@ function selectClick(event) {
 				$(this).attr("fill-opacity")).attr("class",
 				$(this).attr("class")).attr("onmousedown",
 				"startMove(event, 'group')").attr("onmouseup", "endMove()")
-				.attr("transform", $(this).attr("transform"));
-		g.append("rect").attr("x", $(this).attr("x") - 5).attr("y",
-				$(this).attr("y") - 5).attr("width", "10").attr("height", "10")
-				.attr("fill", "yellow").attr("stroke", "red").attr(
-						"onmousedown", "startMove(event, 'group')").attr(
-						"onmouseup", "endMove()").attr("id", "1").attr(
-						"transform", $(this).attr("transform"));
-		x1[1] = x1[selectId] - 5;
-		y1[1] = y1[selectId] - 5;
-		g.append("rect").attr(
-				"x",
-				parseInt($(this).attr("x")) + parseInt($(this).attr("width"))
-						- 5).attr("y", $(this).attr("y") - 5).attr("width",
-				"10").attr("height", "10").attr("fill", "yellow").attr(
-				"stroke", "red").attr("onmousedown",
-				"startMove(event, 'group')").attr("onmouseup", "endMove()")
-				.attr("id", "2").attr("transform", $(this).attr("transform"));
-		x1[2] = x1[selectId] + parseInt($(this).attr("width")) - 5;
-		y1[2] = y1[selectId] - 5;
-		g.append("rect").attr("x", $(this).attr("x") - 5).attr(
-				"y",
-				parseInt($(this).attr("y")) + parseInt($(this).attr("height"))
-						- 5).attr("width", "10").attr("height", "10").attr(
-				"fill", "yellow").attr("stroke", "red").attr("onmousedown",
-				"startMove(event, 'group')").attr("onmouseup", "endMove()")
-				.attr("id", "3").attr("transform", $(this).attr("transform"));
-		x1[3] = x1[selectId] - 5;
-		y1[3] = y1[selectId] + parseInt($(this).attr("height")) - 5;
-		g.append("rect").attr(
-				"x",
-				parseInt($(this).attr("x")) + parseInt($(this).attr("width"))
-						- 5).attr(
-				"y",
-				parseInt($(this).attr("y")) + parseInt($(this).attr("height"))
-						- 5).attr("width", "10").attr("height", "10").attr(
-				"fill", "yellow").attr("stroke", "red").attr("onmousedown",
-				"startMove(event, 'group')").attr("onmouseup", "endMove()")
-				.attr("id", "4").attr("transform", $(this).attr("transform"));
-		x1[4] = x1[selectId] + parseInt($(this).attr("width")) - 5;
-		y1[4] = y1[selectId] + parseInt($(this).attr("height")) - 5;
+				.attr("transform", $(this).attr("transform")).attr(
+						"pointer-events", "all");
+		if (selectId.charAt(0) != "r") {
+			g.append("rect").attr("x", $(this).attr("x") - 5).attr("y",
+					$(this).attr("y") - 5).attr("width", "10").attr("height",
+					"10").attr("fill", "yellow").attr("stroke", "red").attr(
+					"onmousedown", "startMove(event, 'group')").attr(
+					"onmouseup", "endMove()").attr("id", "1").attr("transform",
+					$(this).attr("transform"));
+			x1[1] = x1[selectId] - 5;
+			y1[1] = y1[selectId] - 5;
+			g.append("rect").attr(
+					"x",
+					parseInt($(this).attr("x"))
+							+ parseInt($(this).attr("width")) - 5).attr("y",
+					$(this).attr("y") - 5).attr("width", "10").attr("height",
+					"10").attr("fill", "yellow").attr("stroke", "red").attr(
+					"onmousedown", "startMove(event, 'group')").attr(
+					"onmouseup", "endMove()").attr("id", "2").attr("transform",
+					$(this).attr("transform"));
+			x1[2] = x1[selectId] + parseInt($(this).attr("width")) - 5;
+			y1[2] = y1[selectId] - 5;
+			g.append("rect").attr("x", $(this).attr("x") - 5).attr(
+					"y",
+					parseInt($(this).attr("y"))
+							+ parseInt($(this).attr("height")) - 5).attr(
+					"width", "10").attr("height", "10").attr("fill", "yellow")
+					.attr("stroke", "red").attr("onmousedown",
+							"startMove(event, 'group')").attr("onmouseup",
+							"endMove()").attr("id", "3").attr("transform",
+							$(this).attr("transform"));
+			x1[3] = x1[selectId] - 5;
+			y1[3] = y1[selectId] + parseInt($(this).attr("height")) - 5;
+			g.append("rect").attr(
+					"x",
+					parseInt($(this).attr("x"))
+							+ parseInt($(this).attr("width")) - 5).attr(
+					"y",
+					parseInt($(this).attr("y"))
+							+ parseInt($(this).attr("height")) - 5).attr(
+					"width", "10").attr("height", "10").attr("fill", "yellow")
+					.attr("stroke", "red").attr("onmousedown",
+							"startMove(event, 'group')").attr("onmouseup",
+							"endMove()").attr("id", "4").attr("transform",
+							$(this).attr("transform"));
+			x1[4] = x1[selectId] + parseInt($(this).attr("width")) - 5;
+			y1[4] = y1[selectId] + parseInt($(this).attr("height")) - 5;
+		} else {
+			$("#" + selectId).remove();
+			$("#" + selectId.slice(1)).on("click", selectClick);
+			$("#" + selectId.slice(1)).trigger("click");
+		}
 	}
 	if ($(this).prop("tagName") == "foreignObject") {
 		g.append("foreignObject").attr("x", $(this).attr("x")).attr("y",

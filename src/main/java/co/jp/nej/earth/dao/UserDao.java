@@ -10,9 +10,9 @@ public interface UserDao extends BaseDao<MgrUser> {
 
     List<MgrUser> getAll() throws EarthException;
 
-    MgrUser updateOne(MgrUser mgrUser) throws EarthException;
+    long updateOne(MgrUser mgrUser) throws EarthException;
 
-    boolean deleteList(List<String> userIds) throws EarthException;
+    long deleteList(List<String> userIds) throws EarthException;
 
     List<MgrUser> getUsersByProfileId(String profileId) throws EarthException;
 

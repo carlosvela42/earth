@@ -1,8 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QCtlMenu;
+import co.jp.nej.earth.util.DateUtil;
+
 import java.io.Serializable;
 
-public class CtlMenu implements Serializable {
+public class CtlMenu extends BaseModel<CtlMenu> implements Serializable {
     /**
      *
      */
@@ -10,30 +14,40 @@ public class CtlMenu implements Serializable {
     private String functionId;
     private String userId;
     private int accessAuthority;
-    private String lastUpdateTime;
+
+    public CtlMenu(){
+        this.setqObj(QCtlMenu.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
+
+    public CtlMenu(String functionId,String userId,int accessAuthority){
+        this();
+        this.functionId=functionId;
+        this.userId=userId;
+        this.accessAuthority=accessAuthority;
+    }
 
     public String getFunctionId() {
         return functionId;
     }
+
     public void setFunctionId(String functionId) {
         this.functionId = functionId;
     }
+
     public String getUserId() {
         return userId;
     }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public int getAccessAuthority() {
         return accessAuthority;
     }
+
     public void setAccessAuthority(int accessAuthority) {
         this.accessAuthority = accessAuthority;
-    }
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 }

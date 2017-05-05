@@ -16,7 +16,7 @@ public class EStringUtil extends StringUtils {
 
     public static boolean checkAlphabet(String string) {
         for (char c : string.toCharArray()) {
-            if (!(Character.isLetter(c)) && !(Character.isDigit(c))){
+            if (!(Character.isLetter(c)) && !(Character.isDigit(c))) {
                 return false;
             }
         }
@@ -35,7 +35,7 @@ public class EStringUtil extends StringUtils {
         return false;
     }
 
-    public static List<String> getListString(String str,String stringIndex) {
+    public static List<String> getListFromString(String str, String stringIndex) {
         List<String> strings = new ArrayList<String>();
         try {
             strings = Arrays.asList(str.split(stringIndex));
@@ -43,8 +43,20 @@ public class EStringUtil extends StringUtils {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            LOG.error(" Convert string to list string : "+ex.getMessage());
+            LOG.error(" Convert string to list string : " + ex.getMessage());
             return strings;
+        }
+    }
+
+    public static String getStringFromList(String stringIndex, List<String> strings) {
+        String string = "";
+        try {
+            string = String.join(stringIndex, strings);
+            return string;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LOG.error(" Convert list to string : " + ex.getMessage());
+            return string;
         }
     }
 }

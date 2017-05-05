@@ -30,4 +30,14 @@ public interface EventDao extends BaseDao<CtlEvent> {
      * @throws EarthException
      */
     boolean updateBulkEventStatus(List<String> eventIds, String workSpaceId) throws EarthException;
+
+    /**
+     * Count clEvent by list User
+     *
+     * @param userIds
+     * @param workspaceId
+     * @return
+     * @throws EarthException
+     */
+    long countEventByUserIds(List<String> userIds,String workspaceId) throws EarthException;
 }

@@ -31,8 +31,8 @@ form-horizontal">
     <input type="hidden" id="userIds" name="userIds"   value="${userIds!""}">
     <table style="text-align: left;">
         <tr style="height: 40px; text-align: center">
-            <td><input type="submit" value="豎ｺ螳�" class="button"></td>
-            <td><a href="${rc.getContextPath()}/profile/showList" class="button">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</a></td>
+            <td><input type="submit" value="決定" class="button"></td>
+            <td><a href="${rc.getContextPath()}/profile/showList" class="button">キャンセル</a></td>
         </tr>
         <tr>
             <td colspan="2">
@@ -58,7 +58,7 @@ form-horizontal">
         <#if mgrProfile??>
             <tr>
                 <td>
-                    <label>繝励Ο繝輔ぃ繧､繝ｫID</label>
+                    <label>プロファイルID</label>
                 </td>
                 <td>
                     <input type="text" id="txtProfileId" name="profileId" height="20px" width="150px"
@@ -67,7 +67,7 @@ form-horizontal">
             </tr>
             <tr>
                 <td>
-                    <label>隱ｬ譏�</label>
+                    <label>説明</label>
                 </td>
                 <td>
                     <input type="text" id="txtDescription" name="description" height="20px" width="150px"
@@ -77,7 +77,7 @@ form-horizontal">
             </tr>
             <tr>
                 <td>
-                    <label>LDAP隴伜挨蟄�</label>
+                    <label>LDAP識別子</label>
                 </td>
                 <td>
                     <input type="text" id="txtLDAP" name="ldapIdentifier" height="20px" width="150px"
@@ -87,13 +87,13 @@ form-horizontal">
             </tr>
             <tr>
                 <td>
-                    <label>繝ｦ繝ｼ繧ｶ荳�隕ｧ</label>
+                    <label>ユーザ一覧</label>
                 </td>
                 <td>
                     <table border="1px solid black">
                         <tr>
-                            <th colspan="2">繝ｦ繝ｼ繧ｶID</th>
-                            <th>蜷榊燕</th>
+                            <th colspan="2">ユーザID</th>
+                            <th>名前</th>
                         </tr>
                         <#if mgrUsers??>
                             <#list mgrUsers as mgrUser>

@@ -78,7 +78,9 @@ public class BaseTest {
 
     @Test
     public void testResetSystemDataSource() {
+
         // resetSystemDataSource();
         Assert.assertTrue(ConnectionManager.exists(Constant.EARTH_WORKSPACE_ID));
+
     }
 }

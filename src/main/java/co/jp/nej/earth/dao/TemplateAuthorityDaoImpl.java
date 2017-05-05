@@ -3,11 +3,11 @@ package co.jp.nej.earth.dao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
-import co.jp.nej.earth.model.TemplateKey;
-import co.jp.nej.earth.model.TemplateAccessRight;
 import co.jp.nej.earth.model.MgrWorkspace;
-import co.jp.nej.earth.model.UserAccessRight;
 import co.jp.nej.earth.model.ProfileAccessRight;
+import co.jp.nej.earth.model.TemplateAccessRight;
+import co.jp.nej.earth.model.TemplateKey;
+import co.jp.nej.earth.model.UserAccessRight;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.CtlTemplate;
 import co.jp.nej.earth.model.entity.MgrTemplateU;
@@ -17,6 +17,9 @@ import co.jp.nej.earth.model.sql.QCtlTemplate;
 import co.jp.nej.earth.model.sql.QMgrTemplateP;
 import co.jp.nej.earth.model.sql.QMgrTemplateU;
 import co.jp.nej.earth.util.DateUtil;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.dml.SQLInsertClause;
@@ -30,24 +33,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author p-tvo-thuynd this class implements TemplateAuthorityDao, to do some
  *         action related to authority of user/profile to template
  */
 @Repository
 public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implements TemplateAuthorityDao {
 
-    public TemplateAuthorityDaoImpl() throws Exception {
-        super();
-    }
+    public static final QCtlTemplate qCtlTemplate = QCtlTemplate.newInstance();
 
     @Autowired
     private WorkspaceDao workspaceDao;
 
+    public TemplateAuthorityDaoImpl() throws Exception {
+        super();
+    }
+
     /**
      * get map of TemplateAccessRight object from DB.
      *
-     * @param userId id of current user.
+     * @param userId      id of current user.
      * @param workspaceId id of working workspace.
      * @return map of TemplateAccessRight object with key is TemplateKey object.
      */
@@ -56,8 +60,8 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
             throws EarthException {
         Map<TemplateKey, TemplateAccessRight> templateAccessRightMap = new HashMap<TemplateKey, TemplateAccessRight>();
         try {
-            QCtlTemplate qCtlTemplate = QCtlTemplate.newInstance();
-            ResultSet resultSet = ConnectionManager.getEarthQueryFactory(workspaceId)
+            EarthQueryFactory factory = ConnectionManager.getEarthQueryFactory(workspaceId);
+            ResultSet resultSet = factory
                     .select(qCtlTemplate.templateId, qCtlTemplate.accessAuthority).from(qCtlTemplate)
                     .where(qCtlTemplate.userId.eq(userId)).getResults();
             TemplateAccessRight templateAccessRight = null;
@@ -95,9 +99,20 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
     }
 
     @Override
+    public long deleteListByProfileIds(String workspaceId, List<String> profileIds) throws EarthException {
+        try {
+            QMgrTemplateP qMgrTemplateP = QMgrTemplateP.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager
+                    .getEarthQueryFactory(workspaceId);
+            return earthQueryFactory.delete(qMgrTemplateP).where(qMgrTemplateP.profileId.in(profileIds)).execute();
+        } catch (Exception ex) {
+            throw new EarthException(ex.getMessage());
+        }
+    }
+
+    @Override
     public boolean deleteListByUserIds(List<String> userIds) throws EarthException {
         try {
-            QCtlTemplate qCtlTemplate = QCtlTemplate.newInstance();
             QMgrTemplateU qMgrTemplateU = QMgrTemplateU.newInstance();
             List<MgrWorkspace> mgrWorkspaces = workspaceDao.getAll();
             for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
@@ -113,37 +128,71 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
     }
 
     @Override
-    public boolean insertMixAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights)
-            throws EarthException {
+    public long deleteListByUserIds(String workspaceId, List<String> userIds) throws EarthException {
         try {
-            QCtlTemplate qCtlTemplate = QCtlTemplate.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(templateKey.getWorkspaceId());
-            SQLInsertClause insert = earthQueryFactory.insert(qCtlTemplate);
-            for (UserAccessRight userAccessRight : userAccessRights) {
-                insert.set(qCtlTemplate.templateId, templateKey.getTemplateId())
-                        .set(qCtlTemplate.userId, userAccessRight.getUserId())
-                        .set(qCtlTemplate.accessAuthority, userAccessRight.getAccessRight().getValue())
-                        .set(qCtlTemplate.lastUpdateTime,
-                                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS))
-                        .addBatch();
-            }
-            long inserted = insert.execute();
-            return inserted > 0;
+            QMgrTemplateU qMgrTemplateU = QMgrTemplateU.newInstance();
+            List<MgrWorkspace> mgrWorkspaces = workspaceDao.getAll();
+            EarthQueryFactory earthQueryFactory = ConnectionManager
+                    .getEarthQueryFactory(workspaceId);
+            earthQueryFactory.delete(qMgrTemplateU).where(qMgrTemplateU.userId.in(userIds)).execute();
+            return earthQueryFactory.delete(qCtlTemplate).where(qCtlTemplate.userId.in(userIds)).execute();
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
     }
 
     @Override
-    public boolean deleteAllMixAuthority(TemplateKey templateKey) throws EarthException {
+    public long insertMixAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights)
+            throws EarthException {
+        EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(templateKey.getWorkspaceId());
+        SQLInsertClause insert = earthQueryFactory.insert(qCtlTemplate);
+        for (UserAccessRight userAccessRight : userAccessRights) {
+            insert.set(qCtlTemplate.templateId, templateKey.getTemplateId())
+                    .set(qCtlTemplate.userId, userAccessRight.getUserId())
+                    .set(qCtlTemplate.accessAuthority, userAccessRight.getAccessRight().getValue())
+                    .set(qCtlTemplate.lastUpdateTime,
+                            DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS))
+                    .addBatch();
+        }
+        long inserted = insert.execute();
+        return inserted;
+    }
+
+    @Override
+    public long searchAllMixAuthority(TemplateKey templateKey) throws EarthException {
+        BooleanBuilder condition = new BooleanBuilder();
+        Predicate pre1 = qCtlTemplate.templateId.eq(templateKey.getTemplateId());
+        condition.and(pre1);
+        return search(templateKey.getWorkspaceId(), condition, null, null, null).size();
+    }
+
+
+    @Override
+    public long deleteAllMixAuthority(TemplateKey templateKey) throws EarthException {
+        Map<Path<?>, Object> condition = new HashMap<>();
+        condition.put(qCtlTemplate.userId, templateKey.getTemplateId());
+        return delete(templateKey.getWorkspaceId(), condition);
+    }
+
+    @Override
+    public List<TemplateKey> getTemplateKeysByProfile(String workspaceId, String profileId) throws EarthException {
         try {
-            QCtlTemplate qCtlTemplate = QCtlTemplate.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(templateKey.getWorkspaceId());
-            long delete = earthQueryFactory.delete(qCtlTemplate)
-                    .where(qCtlTemplate.templateId.eq(templateKey.getTemplateId())).execute();
-            return delete > 0;
+            QMgrTemplateP qMgrTemplateP = QMgrTemplateP.newInstance();
+            List<TemplateKey> templateKeys = new ArrayList<TemplateKey>();
+            EarthQueryFactory earthQueryFactory = ConnectionManager
+                    .getEarthQueryFactory(workspaceId);
+            List<String> templateIds = (List<String>) earthQueryFactory.select(qMgrTemplateP.templateId)
+                    .from(qMgrTemplateP).where(qMgrTemplateP.profileId.eq(profileId)).fetch();
+            for (String templateId : templateIds) {
+                TemplateKey templateKey = new TemplateKey();
+                templateKey.setTemplateId(templateId);
+                templateKey.setWorkspaceId(workspaceId);
+                templateKeys.add(templateKey);
+            }
+            return templateKeys;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
+
         }
     }
 

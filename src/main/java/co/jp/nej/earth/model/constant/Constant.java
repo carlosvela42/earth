@@ -63,6 +63,7 @@ public class Constant {
         public static final String MENU_ACCESS_RIGHT_MAP = "menuAccessRightMap";
         public static final String WORKSPACES = "workspaces";
         public static final String LAST_PATH = "lastPath";
+        public static final String MESSAGES = "messages";
     }
 
     public static class View {

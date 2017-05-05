@@ -1,8 +1,11 @@
 package co.jp.nej.earth.web.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import co.jp.nej.earth.model.MgrWorkspace;
+import co.jp.nej.earth.model.entity.StrLogAccess;
+import co.jp.nej.earth.service.EvidentLogService;
+import co.jp.nej.earth.service.WorkspaceService;
+import co.jp.nej.earth.util.EStringUtil;
+import com.querydsl.core.types.OrderSpecifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -13,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import co.jp.nej.earth.model.MgrWorkspace;
-import co.jp.nej.earth.model.entity.StrLogAccess;
-import co.jp.nej.earth.service.EvidentLogService;
-import co.jp.nej.earth.service.WorkspaceService;
-import co.jp.nej.earth.util.EStringUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/evidentLog")
@@ -46,9 +46,13 @@ public class EvidentLogController {
             List<MgrWorkspace> mgrWorkspaces = workspaceService.getAll();
             model.addAttribute("mgrWorkspaces", mgrWorkspaces);
             String workspaceId = "";
+            Long offset = null;
+            Long limit = null;
+            OrderSpecifier<String> orderByColumn = null;
             if (!EStringUtil.isEmpty(mgrWorkspace.getWorkspaceId())) {
                 workspaceId = mgrWorkspace.getWorkspaceId();
-                model.addAttribute("strLogAccesses", evidentLogService.getListByWorkspaceId(workspaceId));
+                model.addAttribute("strLogAccesses", evidentLogService.getListByWorkspaceId(workspaceId, offset, limit,
+                        orderByColumn));
             }
             model.addAttribute("workspaceId", workspaceId);
             return "evidentLogScreen/evidentLogScreen";
@@ -57,15 +61,15 @@ public class EvidentLogController {
         }
     }
 
-
-    @RequestMapping(value = "/evidentLogScreenNew", method = RequestMethod.POST,produces = MediaType
+    @RequestMapping(value = "/evidentLogScreenNew", method = RequestMethod.POST, produces = MediaType
             .APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    List<StrLogAccess> evidentLogScreenNew(@RequestParam("workspaceId") String workspaceId,Model model) {
+    public
+    @ResponseBody
+    List<StrLogAccess> evidentLogScreenNew(@RequestParam("workspaceId") String workspaceId, Model model) {
         List<StrLogAccess> strLogAccesses = new ArrayList<StrLogAccess>();
         try {
-            strLogAccesses = evidentLogService.getListByWorkspaceId(workspaceId);
-            model.addAttribute("strLogAccesses",strLogAccesses);
+//            strLogAccesses = evidentLogService.getListByWorkspaceId(workspaceId);
+            model.addAttribute("strLogAccesses", strLogAccesses);
             return strLogAccesses;
         } catch (Exception ex) {
             ex.printStackTrace();

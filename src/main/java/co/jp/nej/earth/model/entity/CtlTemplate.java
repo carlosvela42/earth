@@ -1,13 +1,15 @@
 package co.jp.nej.earth.model.entity;
 
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QCtlTemplate;
+import co.jp.nej.earth.util.DateUtil;
+
 import java.io.Serializable;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QCtlTemplate;
-import co.jp.nej.earth.util.DateUtil;
 
 public class CtlTemplate extends BaseModel<CtlTemplate> implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(CtlTemplate.class);

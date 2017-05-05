@@ -40,7 +40,7 @@
 //    public void testConnectionSQLServer() {
 //        try {
 //            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-//            String URL = "jdbc:sqlserver://172.20.108.60:1433;";
+//            String URL = "jdbc:sqlserver://172.20.108.60:1433;databaseName=WORKSPACE1;integratedSecurity=false;";
 //            String USER = "earth";
 //            String PASS = "earth123";
 //            Connection conn = DriverManager.getConnection(URL, USER, PASS);

@@ -17,13 +17,21 @@ public interface TemplateAuthorityDao extends BaseDao<CtlTemplate> {
 
     boolean deleteListByUserIds(List<String> userIds) throws EarthException;
 
+    long deleteListByUserIds(String workspaceId, List<String> userIds) throws EarthException;
+
     boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
 
-    boolean insertMixAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights) throws EarthException;
+    long deleteListByProfileIds(String workspaceId, List<String> profileIds) throws EarthException;
 
-    boolean deleteAllMixAuthority(TemplateKey templateKey) throws EarthException;
+    long insertMixAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights) throws EarthException;
+
+    long deleteAllMixAuthority(TemplateKey templateKey) throws EarthException;
+
+    long searchAllMixAuthority(TemplateKey templateKey) throws EarthException;
 
     List<TemplateKey> getTemplateKeysByProfile(String profileId) throws EarthException;
+
+    List<TemplateKey> getTemplateKeysByProfile(String workspaceId, String profileId) throws EarthException;
 
     List<UserAccessRight> getUserAuthority(TemplateKey templateKey) throws EarthException;
 

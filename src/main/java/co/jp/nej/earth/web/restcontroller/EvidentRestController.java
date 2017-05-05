@@ -26,7 +26,7 @@ public class EvidentRestController {
     public List<StrLogAccess> evidentLogScreenNew(@RequestParam("workspaceId") String workspaceId, Model model) {
         List<StrLogAccess> strLogAccesses = new ArrayList<StrLogAccess>();
         try {
-            strLogAccesses = evidentLogService.getListByWorkspaceId(workspaceId);
+            strLogAccesses = evidentLogService.getListByWorkspaceId(workspaceId,null,null,null);
             model.addAttribute("strLogAccesses", strLogAccesses);
 
             Gson gson = new Gson();

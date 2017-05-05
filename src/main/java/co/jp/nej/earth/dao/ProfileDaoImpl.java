@@ -8,27 +8,35 @@ import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.sql.QMgrProfile;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
 import co.jp.nej.earth.util.DateUtil;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.dml.SQLInsertClause;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
-public class ProfileDaoImpl implements ProfileDao {
+public class ProfileDaoImpl extends BaseDaoImpl<MgrProfile> implements ProfileDao {
+    private static final QMgrProfile qMgrProfile = QMgrProfile.newInstance();
+    private static final QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
 
-    public List<MgrProfile> getProfilesByUserId(String userid) throws EarthException {
+    public ProfileDaoImpl() throws Exception {
+        super();
+    }
+
+    public List<MgrProfile> getProfilesByUserId(String userId) throws EarthException {
         try {
-            QMgrProfile qMgrProfile = QMgrProfile.newInstance();
             QBean<MgrProfile> selectList = Projections.bean(MgrProfile.class, qMgrProfile.all());
-            QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
             List<MgrProfile> profiles = ConnectionManager
                     .getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID)
                     .select(selectList).from(qMgrProfile)
                     .innerJoin(qMgrUserProfile)
-                        .on(qMgrProfile.profileId.eq(qMgrUserProfile.profileId))
-                    .where(qMgrUserProfile.userId.eq(userid)).fetch();
+                    .on(qMgrProfile.profileId.eq(qMgrUserProfile.profileId))
+                    .where(qMgrUserProfile.userId.eq(userId)).fetch();
             return profiles;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
@@ -37,14 +45,9 @@ public class ProfileDaoImpl implements ProfileDao {
 
     public MgrProfile getById(String profileId) throws EarthException {
         try {
-            QMgrProfile qMgrProfile = QMgrProfile.newInstance();
-            QBean<MgrProfile> selectList = Projections.bean(MgrProfile.class, qMgrProfile.all());
-            MgrProfile mgrProfile = ConnectionManager
-                    .getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID)
-                    .select(selectList).from(qMgrProfile)
-                    .where(qMgrProfile.profileId.eq(profileId))
-                    .fetchOne();
-            return mgrProfile;
+            Map<Path<?>, Object> condition = new HashMap<>();
+            condition.put(qMgrProfile.profileId, profileId);
+            return this.findOne(Constant.EARTH_WORKSPACE_ID, condition);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
@@ -52,84 +55,74 @@ public class ProfileDaoImpl implements ProfileDao {
 
     public List<MgrProfile> getAll() throws EarthException {
         try {
-            QMgrProfile qMgrProfile = QMgrProfile.newInstance();
-            QBean<MgrProfile> selectList = Projections.bean(MgrProfile.class, qMgrProfile.all());
-            return ConnectionManager
-                    .getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID).select(selectList).from(qMgrProfile)
-                    .fetch();
-
+            return this.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
     }
 
-    public boolean deleteList(List<String> profileIds) throws EarthException {
+    public long deleteList(List<String> profileIds) throws EarthException {
+        long del= 0L;
         try {
-            QMgrProfile qMgrProfile = QMgrProfile.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long delete = earthQueryFactory.delete(qMgrProfile).where(qMgrProfile.profileId.in(profileIds)).execute();
-            return delete > 0;
+            List<Map<Path<?>, Object>> conditions = new ArrayList<>();
+            for (String profileId : profileIds) {
+                Map<Path<?>, Object> condition = new HashMap<>();
+                condition.put(qMgrProfile.profileId, profileId);
+                conditions.add(condition);
+            }
+            del= this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions) ;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
-    }
-
-    @Override
-    public MgrProfile insertOne(MgrProfile mgrProfile) throws EarthException {
-        try {
-            QMgrProfile qMgrProfile = QMgrProfile.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long inserted = earthQueryFactory.insert(qMgrProfile).populate(mgrProfile).execute();
-            return inserted > 0 ? mgrProfile : null;
-        } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
-        }
+        return del;
     }
 
     @Override
-    public boolean assignUsers(String profileId, List<String> userIds) throws EarthException {
+    public long insertOne(MgrProfile mgrProfile) throws EarthException {
+        return this.add(Constant.EARTH_WORKSPACE_ID, mgrProfile);
+    }
+
+    @Override
+    public long assignUsers(String profileId, List<String> userIds) throws EarthException {
+        long a = 0L;
         try {
-            QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
             SQLInsertClause insert = earthQueryFactory.insert(qMgrUserProfile);
             for (String userId : userIds) {
                 insert.set(qMgrUserProfile.profileId, profileId)
-                      .set(qMgrUserProfile.userId, userId)
-                      .set(qMgrUserProfile.lastUpdateTime, DateUtil.getCurrentDate(
-                              Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD))
-                      .addBatch();
+                        .set(qMgrUserProfile.userId, userId)
+                        .set(qMgrUserProfile.lastUpdateTime, DateUtil.getCurrentDate(
+                                Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD))
+                        .addBatch();
             }
-            long inserted = insert.execute();
-            return inserted > 0;
+            a = insert.execute();
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
+        return a;
     }
 
-    @Override
-    public boolean unAssignAllUsers(String profileIds) throws EarthException {
-        try {
-            QMgrUserProfile mgrUserProfile = QMgrUserProfile.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            earthQueryFactory.delete(mgrUserProfile).where(mgrUserProfile.profileId.eq(profileIds)).execute();
-            return true;
-        } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
-        }
-    }
+//    @Override
+//    public long unAssignAllUsers(String profileIds) throws EarthException {
+//        long unAssign=0L;
+//        try {
+//
+//            unAssign=qMgrUserProfile;
+//        } catch (Exception ex) {
+//            throw new EarthException(ex.getMessage());
+//        }
+//        return unAssign;
+//    }
 
     @Override
-    public MgrProfile updateOne(MgrProfile mgrProfile) throws EarthException {
-        try {
-            QMgrProfile qMgrProfile = QMgrProfile.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long updated = earthQueryFactory.update(qMgrProfile).set(qMgrProfile.description, mgrProfile
-                    .getDescription()).set(qMgrProfile.ldapIdentifier, mgrProfile.getLdapIdentifier()).set(qMgrProfile
-                    .lastUpdateTime, mgrProfile.getLastUpdateTime())
-                    .where(qMgrProfile.profileId.eq(mgrProfile.getProfileId())).execute();
-            return updated > 0 ? mgrProfile : null;
-        } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
-        }
+    public long updateOne(MgrProfile mgrProfile) throws EarthException {
+            Map<Path<?>, Object> condition = new HashMap<>();
+            condition.put(qMgrProfile.profileId, mgrProfile.getProfileId());
+            Map<Path<?>, Object> valueMap = new HashMap<>();
+            valueMap.put(qMgrProfile.description, mgrProfile.getDescription());
+            valueMap.put(qMgrProfile.availableLicenseCount, mgrProfile.getAvailableLicenceCount());
+            valueMap.put(qMgrProfile.ldapIdentifier, mgrProfile.getLdapIdentifier());
+            valueMap.put(qMgrProfile.lastUpdateTime, mgrProfile.getLastUpdateTime());
+            return this.update(Constant.EARTH_WORKSPACE_ID, condition, valueMap);
     }
 }

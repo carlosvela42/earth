@@ -29,7 +29,8 @@ form-horizontal">
             <td colspan="2">
                 <#if messageError??>
                     <div>
-                        <b style="color: red;">${rc.getMessage("${messageError}")}</b>
+                        <b style="color: red;">${rc.getMessage("${messageError}")}
+                        </b>
                     </div>
                 </#if>
             </td>

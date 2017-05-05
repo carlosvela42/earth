@@ -22,6 +22,7 @@ import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Field;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.MgrWorkspace;
+import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.constant.Constant.Template;
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.enums.TemplateType;
@@ -122,7 +123,7 @@ public class TemplateController {
                 Message message = new Message(Template.NOT_DELETE,
                         messageSource.getMessage("E0022", new String[] { "ID" }, Locale.ENGLISH));
                 messages.add(message);
-                model.addAttribute("messages", messages);
+                model.addAttribute(Session.MESSAGES, messages);
             }
             result = "redirect:showList";
         } catch (EarthException ex) {

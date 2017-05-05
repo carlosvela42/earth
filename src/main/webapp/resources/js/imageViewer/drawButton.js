@@ -29,15 +29,20 @@ function mousedown() {
 	i = parseInt(i);
 	x = m[0];
 	y = m[1];
+	if ($("#testLine").prop("checked")) {
+		i++;
+		anno = vis.append("line").attr("x1", x).attr("y1", y).attr("x2", x)
+				.attr("y2", y).attr("id", i).attr("stroke", penColor).attr(
+						"stroke-width", scale).attr("class", layerActive).on(
+								"click", selectClick);
+		vis.on("mousemove", mousemove);
+	}
 	if ($("#line").prop("checked")) {
 		i++;
-		anno = vis.append("foreignObject").attr("x", x).attr("y", y).attr(
-				"width", 0).attr("height", 0).attr("id", "arround"+i).attr("class",
-				layerActive).on("click", selectClick);
-		$('#arround' + i).append("line").attr("x1", x).attr("y1", y).attr("x2", x)
+		anno = vis.append("line").attr("x1", x).attr("y1", y).attr("x2", x)
 				.attr("y2", y).attr("id", i).attr("stroke", penColor).attr(
-						"stroke-width", scale * lineSize).attr("class",
-						layerActive).on("click", selectClick);
+						"stroke-width", scale).attr("class", layerActive).on(
+						"click", selectClick);
 		vis.on("mousemove", mousemove);
 	}
 	if ($("#rectangle").prop("checked")) {
@@ -90,7 +95,6 @@ function mousedown() {
 		$("#i" + i).css("height", 0);
 		vis.on("mousemove", mousemove);
 	}
-<<<<<<< HEAD
 	// if ($("#drawSelect").prop("checked") && mode == "select") {
 	// i++;
 	// anno = vis.append("rect").attr("x", x).attr("y", y).attr("width", 0)
@@ -98,15 +102,6 @@ function mousedown() {
 	// .attr("id", i);
 	// vis.on("mousemove", mousemove);
 	// }
-=======
-	if ($("#drawSelect").prop("checked") && mode == "select") {
-		i++;
-		anno = vis.append("rect").attr("x", x).attr("y", y).attr("width", 0)
-				.attr("height", 0).attr("fill", "none").attr("stroke", "black")
-				.attr("id", i);
-		vis.on("mousemove", mousemove);
-	}
->>>>>>> master
 }
 
 function mousemove() {
@@ -114,18 +109,12 @@ function mousemove() {
 	if (0 <= m[0] <= $('#svg').attr('width')
 			&& 0 <= m[1] <= $('#svg').attr('height')) {
 		if ($("#line").prop("checked")) {
-			if (m[1] - y < 0) {
-				anno.attr("y", m[1]);
-			}
-			if (m[0] - x < 0) {
-				anno.attr("x", m[0]);
-			}
-			anno.attr("width", Math.abs(m[0] - x));
-			anno.attr("height", Math.abs(m[1] - y));
-			$('#' + i).attr("x2", m[0]).attr("y2", m[1]);
+			anno.attr("x2", m[0]).attr("y2", m[1]);
 		}
-		if ($("#rectangle").prop("checked") || $("#highlight").prop("checked")
-				|| $("#drawSelect").prop("checked")) {
+		if ($("#testLine").prop("checked")) {
+			anno.attr("x2", m[0]).attr("y2", m[1]);
+		}
+		if ($("#rectangle").prop("checked") || $("#highlight").prop("checked")) {
 			if (m[1] - y < 0)
 				anno.attr("y", m[1]);
 			if (m[0] - x < 0)
@@ -165,6 +154,97 @@ function mousemove() {
 function mouseup() {
 	vis.on("mousemove", null);
 	$('#' + i).attr("transform", "rotate(" + rotate + ") scale(" + scale + ")");
+	if ($("#testLine").prop("checked")) {
+		if (parseInt($('#' + i).attr("x1")) == parseInt($('#' + i).attr("x2"))
+				&& parseInt($('#' + i).attr("y1")) == parseInt($('#' + i).attr(
+						"y2"))) {
+			$("#" + i).remove();
+			i--;
+			if ($("#" + i).attr("transform")) {
+				return;
+			} else {
+				$("#" + i).attr("transform",
+						"rotate(" + rotate + ") scale(" + scale + ")");
+			}
+		}
+		x1[i] = parseInt($('#' + i).attr("x1")) / scale;
+		x2[i] = parseInt($('#' + i).attr("x2")) / scale;
+		y1[i] = parseInt($('#' + i).attr("y1")) / scale;
+		y2[i] = parseInt($('#' + i).attr("y2")) / scale;
+		$('#' + i).attr("stroke-width", lineSize);
+		var tempX,tempY;
+		switch (rotate) {
+		case 0:			
+			$('#' + i).attr("x1", x1[i]);
+			$('#' + i).attr("x2", x2[i]);
+			$('#' + i).attr("y1", y1[i]);
+			$('#' + i).attr("y2", y2[i]);
+			if(x2[i]>=x1[i]){ tempX = x1[i];}else{tempX = x2[i];}
+			if(y2[i]>=y1[i]){ tempY = y1[i];}else{tempY = y2[i];}
+			vis.append("rect").attr("x", tempX).attr("y", tempY).attr("width", Math.abs(x2[i]-x1[i]))
+			.attr("height", Math.abs(y2[i]-y1[i])).attr("id", "r"+i).attr("fill", "none").on(
+					"click", selectClick).attr("pointer-events", "all").attr("transform",
+							"rotate(" + rotate + ") scale(" + scale + ")");
+			break;
+		case 90:
+			$('#' + i).attr("x1", y1[i]);
+			$('#' + i).attr("x2", y2[i]);
+			$('#' + i).attr("y1", -x1[i]);
+			$('#' + i).attr("y2", -x2[i]);
+			if(x2[i]>=x1[i]){ tempX = x2[i];}else{tempX = x1[i];}
+			if(y2[i]>=y1[i]){ tempY = y1[i];}else{tempY = y2[i];}
+			vis.append("rect").attr("x", tempY).attr("y", -tempX).attr("width", Math.abs(y2[i]-y1[i]))
+			.attr("height", Math.abs(x2[i]-x1[i])).attr("id", "r"+i).attr("fill", "none").on(
+					"click", selectClick).attr("pointer-events", "all").attr("transform",
+							"rotate(" + rotate + ") scale(" + scale + ")");
+			break;
+		case 180:
+			$('#' + i).attr("x1", -x1[i]);
+			$('#' + i).attr("x2", -x2[i]);
+			$('#' + i).attr("y1", -y1[i]);
+			$('#' + i).attr("y2", -y2[i]);
+			if(x2[i]>=x1[i]){ tempX = x2[i];}else{tempX = x1[i];}
+			if(y2[i]>=y1[i]){ tempY = y2[i];}else{tempY = y1[i];}
+			vis.append("rect").attr("x", -tempX).attr("y", -tempY).attr("width", Math.abs(x2[i]-x1[i]))
+			.attr("height", Math.abs(y2[i]-y1[i])).attr("id", "r"+i).attr("fill", "none").on(
+					"click", selectClick).attr("pointer-events", "all").attr("transform",
+							"rotate(" + rotate + ") scale(" + scale + ")");
+			break;
+		case 270:
+			$('#' + i).attr("x1", -y1[i]);
+			$('#' + i).attr("x2", -y2[i]);
+			$('#' + i).attr("y1", x1[i]);
+			$('#' + i).attr("y2", x2[i]);
+			if(x2[i]>=x1[i]){ tempX = x1[i];}else{tempX = x2[i];}
+			if(y2[i]>=y1[i]){ tempY = y2[i];}else{tempY = y1[i];}
+			vis.append("rect").attr("x", -tempY).attr("y", tempX).attr("width", Math.abs(y2[i]-y1[i]))
+			.attr("height", Math.abs(x2[i]-x1[i])).attr("id", "r"+i).attr("fill", "none").on(
+					"click", selectClick).attr("pointer-events", "all").attr("transform",
+							"rotate(" + rotate + ") scale(" + scale + ")");
+			break;
+		}
+		x1[i] = parseInt($('#' + i).attr("x1"));
+		x2[i] = parseInt($('#' + i).attr("x2"));
+		y1[i] = parseInt($('#' + i).attr("y1"));
+		y2[i] = parseInt($('#' + i).attr("y2"));
+		switch (rotate) {
+		case 90:
+			y1[i] -= y2[0];
+			y2[i] -= y2[0];
+			break;
+		case 180:
+			x1[i] -= x2[0];
+			x2[i] -= x2[0];
+			y1[i] -= y2[0];
+			y2[i] -= y2[0];
+			break;
+		case 270:
+			x1[i] -= x2[0];
+			x2[i] -= x2[0];
+			break;
+		}
+		// $('#' + i).wrap('<foreignObject x="" y="361" width="87" height="118" id="11" class="text DEF0" transform="rotate(0) scale(1)"></foreignObject>');
+	}
 	if ($("#line").prop("checked")) {
 		if (parseInt($('#' + i).attr("x1")) == parseInt($('#' + i).attr("x2"))
 				&& parseInt($('#' + i).attr("y1")) == parseInt($('#' + i).attr(
@@ -232,20 +312,12 @@ function mouseup() {
 		// $('#' + i).wrap('<foreignObject x="" y="361" width="87" height="118" id="11" class="text DEF0" transform="rotate(0) scale(1)"></foreignObject>');
 	}
 	if (($("#rectangle").prop("checked") || $("#text").prop("checked")
-<<<<<<< HEAD
 			|| $("#highlight").prop("checked") || $("#comment").prop("checked")
 	// || $( "#drawSelect").prop("checked")
 	)) {
 		// if (mode == "move") {
 		// return mode = "select";
 		// }
-=======
-			|| $("#highlight").prop("checked") || $("#comment").prop("checked") || $(
-			"#drawSelect").prop("checked"))) {
-		if (mode == "move") {
-			return mode = "select";
-		}
->>>>>>> master
 		if (parseInt($('#' + i).attr("width")) == 0
 				|| parseInt($('#' + i).attr("height")) == 0) {
 			$("#" + i).remove();
@@ -342,7 +414,6 @@ function mouseup() {
 			x1[i] -= x2[0];
 			break;
 		}
-<<<<<<< HEAD
 		// if ($("#drawSelect").prop("checked")) {
 		// rotate += 90;
 		// startAnnotation();
@@ -547,212 +618,6 @@ function mouseup() {
 		// $("#" + i).remove();
 		// i--;
 		// }
-=======
-		if ($("#drawSelect").prop("checked")) {
-			rotate += 90;
-			startAnnotation();
-			rotate -= 90;
-			redraw();
-			var rectangle = document.getElementById(i);
-			var svg = document.getElementById("svg");
-			var g = vis.append("g").attr("transform", "translate(0 0)").attr(
-					"id", "gSelect");
-			for (var j = 5; j < i; j++) {
-				var closedPath = document.getElementById(j);
-				if (closedPath != null) {
-					var svgRoot = closedPath.farthestViewportElement;
-					var rect = svgRoot.createSVGRect();
-					rect.x = rectangle.x.animVal.value;
-					rect.y = rectangle.y.animVal.value;
-					rect.height = rectangle.height.animVal.value;
-					rect.width = rectangle.width.animVal.value;
-					var hasIntersection = svgRoot.checkIntersection(closedPath,
-							rect);
-					if (hasIntersection) {
-						$('#' + j).attr("class", $('#' + j).attr("class"))
-								.attr("onmousedown",
-										"startMove(event, 'group')").attr(
-										"onmouseup", "endMove()");
-						$('#gSelect').append($('#' + j));
-						if ($('#' + j).prop("tagName") == "line") {
-							g.append("rect").attr("x",
-									$('#' + j).attr("x1") - 5).attr("y",
-									$('#' + j).attr("y1") - 5).attr("width",
-									"10").attr("height", "10").attr("fill",
-									"yellow").attr("stroke", "red").attr(
-									"onmousedown", "startMove(event, 'group')")
-									.attr("onmouseup", "endMove()").attr("id",
-											"1").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[1] = x1[selectId] - 5;
-							y1[1] = y1[selectId] - 5;
-							g.append("rect").attr("x",
-									$('#' + j).attr("x2") - 5).attr("y",
-									$('#' + j).attr("y2") - 5).attr("width",
-									"10").attr("height", "10").attr("fill",
-									"yellow").attr("stroke", "red").attr(
-									"onmousedown", "startMove(event, 'group')")
-									.attr("onmouseup", "endMove()").attr("id",
-											"2").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[2] = x2[selectId] - 5;
-							y1[2] = y2[selectId] - 5;
-						}
-						if ($('#' + j).prop("tagName") == "rect") {
-							g.append("rect")
-									.attr("x", $('#' + j).attr("x") - 5).attr(
-											"y", $('#' + j).attr("y") - 5)
-									.attr("width", "10").attr("height", "10")
-									.attr("fill", "yellow").attr("stroke",
-											"red").attr("onmousedown",
-											"startMove(event, 'group')").attr(
-											"onmouseup", "endMove()").attr(
-											"id", "1").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[1] = x1[selectId] - 5;
-							y1[1] = y1[selectId] - 5;
-							g.append("rect")
-									.attr(
-											"x",
-											parseInt($('#' + j).attr("x"))
-													+ parseInt($('#' + j).attr(
-															"width")) - 5)
-									.attr("y", $('#' + j).attr("y") - 5).attr(
-											"width", "10").attr("height", "10")
-									.attr("fill", "yellow").attr("stroke",
-											"red").attr("onmousedown",
-											"startMove(event, 'group')").attr(
-											"onmouseup", "endMove()").attr(
-											"id", "2").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[2] = x1[selectId]
-									+ parseInt($('#' + j).attr("width")) - 5;
-							y1[2] = y1[selectId] - 5;
-							g.append("rect")
-									.attr("x", $('#' + j).attr("x") - 5).attr(
-											"y",
-											parseInt($('#' + j).attr("y"))
-													+ parseInt($('#' + j).attr(
-															"height")) - 5)
-									.attr("width", "10").attr("height", "10")
-									.attr("fill", "yellow").attr("stroke",
-											"red").attr("onmousedown",
-											"startMove(event, 'group')").attr(
-											"onmouseup", "endMove()").attr(
-											"id", "3").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[3] = x1[selectId] - 5;
-							y1[3] = y1[selectId]
-									+ parseInt($('#' + j).attr("height")) - 5;
-							g.append("rect")
-									.attr(
-											"x",
-											parseInt($('#' + j).attr("x"))
-													+ parseInt($('#' + j).attr(
-															"width")) - 5)
-									.attr(
-											"y",
-											parseInt($('#' + j).attr("y"))
-													+ parseInt($('#' + j).attr(
-															"height")) - 5)
-									.attr("width", "10").attr("height", "10")
-									.attr("fill", "yellow").attr("stroke",
-											"red").attr("onmousedown",
-											"startMove(event, 'group')").attr(
-											"onmouseup", "endMove()").attr(
-											"id", "4").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[4] = x1[selectId]
-									+ parseInt($('#' + j).attr("width")) - 5;
-							y1[4] = y1[selectId]
-									+ parseInt($('#' + j).attr("height")) - 5;
-						}
-						if ($('#' + j).prop("tagName") == "foreignObject") {
-							g.append("rect")
-									.attr("x", $('#' + j).attr("x") - 5).attr(
-											"y", $('#' + j).attr("y") - 5)
-									.attr("width", "10").attr("height", "10")
-									.attr("fill", "yellow").attr("stroke",
-											"red").attr("onmousedown",
-											"startMove(event, 'group')").attr(
-											"onmouseup", "endMove()").attr(
-											"id", "1").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[1] = x1[selectId] - 5;
-							y1[1] = y1[selectId] - 5;
-							g.append("rect")
-									.attr(
-											"x",
-											parseInt($('#' + j).attr("x"))
-													+ parseInt($('#' + j).attr(
-															"width")) - 5)
-									.attr("y", $('#' + j).attr("y") - 5).attr(
-											"width", "10").attr("height", "10")
-									.attr("fill", "yellow").attr("stroke",
-											"red").attr("onmousedown",
-											"startMove(event, 'group')").attr(
-											"onmouseup", "endMove()").attr(
-											"id", "2").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[2] = x1[selectId]
-									+ parseInt($('#' + j).attr("width")) - 5;
-							y1[2] = y1[selectId] - 5;
-							g.append("rect")
-									.attr("x", $('#' + j).attr("x") - 5).attr(
-											"y",
-											parseInt($('#' + j).attr("y"))
-													+ parseInt($('#' + j).attr(
-															"height")) - 5)
-									.attr("width", "10").attr("height", "10")
-									.attr("fill", "yellow").attr("stroke",
-											"red").attr("onmousedown",
-											"startMove(event, 'group')").attr(
-											"onmouseup", "endMove()").attr(
-											"id", "3").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[3] = x1[selectId] - 5;
-							y1[3] = y1[selectId]
-									+ parseInt($('#' + j).attr("height")) - 5;
-							g.append("rect")
-									.attr(
-											"x",
-											parseInt($('#' + j).attr("x"))
-													+ parseInt($('#' + j).attr(
-															"width")) - 5)
-									.attr(
-											"y",
-											parseInt($('#' + j).attr("y"))
-													+ parseInt($('#' + j).attr(
-															"height")) - 5)
-									.attr("width", "10").attr("height", "10")
-									.attr("fill", "yellow").attr("stroke",
-											"red").attr("onmousedown",
-											"startMove(event, 'group')").attr(
-											"onmouseup", "endMove()").attr(
-											"id", "4").attr("transform",
-											$('#' + j).attr("transform")).attr(
-											"class", $('#' + j).attr("class"));
-							x1[4] = x1[selectId]
-									+ parseInt($('#' + j).attr("width")) - 5;
-							y1[4] = y1[selectId]
-									+ parseInt($('#' + j).attr("height")) - 5;
-						}
-					}
-				}
-			}
-			$("#" + i).remove();
-			i--;
-		}
->>>>>>> master
 	}
 }
 var container = d3.select('body').append('div').attr('id', 'container');

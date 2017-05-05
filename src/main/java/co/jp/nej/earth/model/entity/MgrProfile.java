@@ -1,8 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrProfile;
+import co.jp.nej.earth.util.DateUtil;
+
 import java.io.Serializable;
 
-public class MgrProfile implements Serializable {
+public class MgrProfile extends BaseModel<MgrProfile> implements Serializable {
     /**
      *
      */
@@ -11,8 +15,19 @@ public class MgrProfile implements Serializable {
     private int availableLicenceCount;
     private String description;
     private String ldapIdentifier;
-    private String lastUpdateTime;
 
+    public MgrProfile(){
+        this.setqObj(QMgrProfile.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
+
+    public MgrProfile(String profileId, int availableLicenceCount,String description,String ldapIdentifier){
+        this();
+        this.profileId=profileId;
+        this.availableLicenceCount=availableLicenceCount;
+        this.description=description;
+        this.ldapIdentifier=ldapIdentifier;
+    }
 
     public String getProfileId() {
         return profileId;
@@ -46,11 +61,4 @@ public class MgrProfile implements Serializable {
         this.ldapIdentifier = ldapIdentifier;
     }
 
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
 }

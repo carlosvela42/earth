@@ -1,14 +1,12 @@
 package co.jp.nej.earth.dao;
 
 import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.manager.connection.ConnectionManager;
-import co.jp.nej.earth.manager.connection.EarthQueryFactory;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrUserProfile;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -26,7 +24,7 @@ public class UserProfileDaoImpl extends BaseDaoImpl<MgrUserProfile> implements U
         super();
     }
 
-    public boolean deleteListByUserIds(List<String> userIds) throws EarthException {
+    public long deleteListByUserIds(List<String> userIds) throws EarthException {
         try {
             List<Map<Path<?>, Object>> conditions = new ArrayList<>();
             for (String userId : userIds) {
@@ -34,19 +32,22 @@ public class UserProfileDaoImpl extends BaseDaoImpl<MgrUserProfile> implements U
                 condition.put(qMgrUserProfile.userId, userId);
                 conditions.add(condition);
             }
-            return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions) > 0;
+            return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
     }
 
     @Override
-    public boolean deleteListByProfileIds(List<String> profileIds) throws EarthException {
+    public long deleteListByProfileIds(List<String> profileIds) throws EarthException {
         try {
-            QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            earthQueryFactory.delete(qMgrUserProfile).where(qMgrUserProfile.profileId.in(profileIds)).execute();
-            return true;
+            List<Map<Path<?>, Object>> conditions = new ArrayList<>();
+            for (String profileId : profileIds) {
+                Map<Path<?>, Object> condition = new HashMap<>();
+                condition.put(qMgrUserProfile.profileId, profileId);
+                conditions.add(condition);
+            }
+            return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
@@ -55,12 +56,10 @@ public class UserProfileDaoImpl extends BaseDaoImpl<MgrUserProfile> implements U
     @Override
     public List<MgrUserProfile> getListByProfileIds(List<String> profileIds) throws EarthException {
         try {
-            QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
-            QBean<MgrUserProfile> selectList = Projections.bean(MgrUserProfile.class, qMgrUserProfile.all());
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            List<MgrUserProfile> mgrUserProfiles = earthQueryFactory.select(selectList).from(qMgrUserProfile).where(
-                    qMgrUserProfile.profileId.in(profileIds)).fetch();
-            return mgrUserProfiles;
+            BooleanBuilder condition = new BooleanBuilder();
+            Predicate pre1 = qMgrUserProfile.profileId.in(profileIds);
+            condition.and(pre1);
+            return this.search(Constant.EARTH_WORKSPACE_ID, condition, null, null, null);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }

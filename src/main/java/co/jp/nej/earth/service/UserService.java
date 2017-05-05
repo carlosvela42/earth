@@ -25,6 +25,8 @@ public interface UserService {
 
     boolean insertOne(MgrUser mgrUser) throws EarthException;
 
+    boolean insertList(String workspaceId, List<MgrUser> mgrUser) throws EarthException;
+
     boolean updateOne(MgrUser mgrUser) throws EarthException;
 
     boolean deleteList(List<String> userIds) throws EarthException;
@@ -44,6 +46,8 @@ public interface UserService {
     long deleteAllCtlLogins() throws EarthException;
 
     long addCtlLogin(CtlLogin login) throws EarthException;
+
+//    boolean deleteListNew(List<String> userIds) throws EarthException;
 
     long updateCtlLogin(Map<Path<?>, Object> condition, Map<Path<?>, Object> updateMap) throws EarthException;
 

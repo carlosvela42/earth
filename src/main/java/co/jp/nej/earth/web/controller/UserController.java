@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
+import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.service.UserService;
@@ -45,7 +46,7 @@ public class UserController {
         try {
             List<Message> messages = userService.validate(mgrUser, true);
             if (messages != null && messages.size() > 0) {
-                model.addAttribute("messages", messages);
+                model.addAttribute(Session.MESSAGES, messages);
                 mgrUser = setUser(mgrUser);
                 model.addAttribute("mgrUser", mgrUser);
                 return "user/addUser";
@@ -84,7 +85,7 @@ public class UserController {
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
     public String deleteList(@ModelAttribute("userIds") String userIds) {
         try {
-            List<String> userId = EStringUtil.getListString(userIds, "\\s*,\\s*");
+            List<String> userId = EStringUtil.getListFromString(userIds, "\\s*,\\s*");
             userService.deleteList(userId);
             return "redirect: showList";
         } catch (EarthException ex) {
@@ -97,7 +98,7 @@ public class UserController {
         try {
             List<Message> messages = userService.validate(mgrUser, false);
             if (messages != null && messages.size() > 0) {
-                model.addAttribute("messages", messages);
+                model.addAttribute(Session.MESSAGES, messages);
                 mgrUser = setUser(mgrUser);
                 model.addAttribute("mgrUser", mgrUser);
                 return "user/editUser";

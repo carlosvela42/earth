@@ -16,6 +16,7 @@ import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.MgrWorkspace;
 import co.jp.nej.earth.model.MgrWorkspaceConnect;
+import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.enums.DatabaseType;
 import co.jp.nej.earth.service.WorkspaceService;
 import co.jp.nej.earth.util.EStringUtil;
@@ -76,7 +77,7 @@ public class WorkspaceController {
         List<Message> messages = workspaceService.validateInsert(mgrWorkspaceConnect);
 
         if (messages != null && messages.size() > 0) {
-            model.addAttribute("messages", messages);
+            model.addAttribute(Session.MESSAGES, messages);
             model.addAttribute("mgrWorkspaceConnect", mgrWorkspaceConnect);
             result = "workspace/addNewWorkspace";
         } else {
@@ -97,7 +98,7 @@ public class WorkspaceController {
         List<Message> messages = workspaceService.validateUpdate(mgrWorkspaceConnect);
 
         if (messages != null && messages.size() > 0) {
-            model.addAttribute("messages", messages);
+            model.addAttribute(Session.MESSAGES, messages);
             model.addAttribute("mgrWorkspaceConnect", mgrWorkspaceConnect);
             result = "workspace/editWorkspace";
         } else {
@@ -129,11 +130,11 @@ public class WorkspaceController {
         try {
             messages = workspaceService.deleteList(workspaceIdList);
             if (messages != null || messages.size() > 0) {
-                model.addAttribute("messages", messages);
+                model.addAttribute(Session.MESSAGES, messages);
             }
 
         } catch (EarthException ex) {
-            model.addAttribute("messages", "Cannot Delete");
+            model.addAttribute(Session.MESSAGES, "Cannot Delete");
             ex.getMessage();
         }
         return result;

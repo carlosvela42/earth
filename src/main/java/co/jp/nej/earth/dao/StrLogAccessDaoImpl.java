@@ -63,6 +63,4 @@ public class StrLogAccessDaoImpl extends BaseDaoImpl<StrLogAccess> implements St
             throw new EarthException(ex.getMessage());
         }
     }
-
-
 }

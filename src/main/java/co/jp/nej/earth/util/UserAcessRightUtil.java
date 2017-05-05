@@ -29,6 +29,7 @@ public class UserAcessRightUtil {
 
     public static List<UserAccessRight> mixAuthority(List<UserAccessRight> userAccessRights,
             List<UserAccessRight> userAccessRightByProfiles) {
+
         for (UserAccessRight userAccessRightProfile : userAccessRightByProfiles) {
             int countMenu = 0;
             for (UserAccessRight userAccessRight : userAccessRights) {

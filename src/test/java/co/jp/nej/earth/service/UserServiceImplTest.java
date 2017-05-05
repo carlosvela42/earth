@@ -1,4 +1,4 @@
-/*package co.jp.nej.earth.service;
+package co.jp.nej.earth.service;
 
 import co.jp.nej.earth.BaseTest;
 import co.jp.nej.earth.exception.EarthException;
@@ -6,119 +6,181 @@ import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
+import co.jp.nej.earth.model.entity.MgrUserProfile;
+import co.jp.nej.earth.util.EStringUtil;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-*//**
- * Test UserService.
- *//*
 public class UserServiceImplTest extends BaseTest {
 
-    MgrUser mgrUser = new MgrUser();
-    MgrUser mgrUserUdpate = new MgrUser();
-    List<String> userIds = new ArrayList<String>();
+    private static final Logger LOG = LoggerFactory.getLogger(UserServiceImplTest.class);
+
+    public static final int RECORD = 5;
+    public static final int RECORDFALSE = 8;
+    public static final String USER = "MinhTVUser";
+    public static final String NAME = "MinhTVName";
+    public static final String PASS = "User!23";
+    public static final String PROFILE = "MinhTVProfile_";
+    public static final String DESCRIPTION = "MinhTVDescription_";
+    public static final String LAP = "Lap_";
+    private List<MgrUser> mgrUsers = new ArrayList<MgrUser>();
+    private List<MgrProfile> mgrProfiles = new ArrayList<MgrProfile>();
+    private List<MgrUserProfile> mgrUserProfiles = new ArrayList<MgrUserProfile>();
+    private List<String> userIds = new ArrayList<String>();
+    private List<String> profileIds = new ArrayList<String>();
 
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    ProfileService profileService;
+    private ProfileService profileService;
 
     @Autowired
-    HttpSession session;
+    private PreparingDataService preparingDataService;
 
     @Before
-    public void before() {
-        try {
-            mgrUser.setUserId("test");
-            mgrUser.setName("test");
-            mgrUser.setPassword("Test!2345");
-            mgrUser.setConfirmPassword("Test!2345");
-            mgrUser.setChangePassword(true);
-            mgrUserUdpate.setUserId("admin");
-            mgrUserUdpate.setName("Administrator");
-            mgrUserUdpate.setChangePassword(false);
-            userIds.add(mgrUser.getUserId());
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            Assert.assertTrue(1 < 0);
-        }
+    public void before() throws EarthException {
+        MgrUser mgrUser;
+        MgrProfile mgrProfile;
 
+        for (Integer i = 1; i <= RECORD; i++) {
+            String userId = USER + i.toString();
+            String name = NAME + i.toString();
+            String password = PASS + i.toString();
+            boolean changePassword = true;
+            mgrUser = new MgrUser(userId, name, password, password, changePassword);
+            userService.insertOne(mgrUser);
+            String profileId = PROFILE + i.toString();
+            String description = DESCRIPTION + i.toString();
+            String ldapIdentifier = LAP + i.toString();
+            mgrProfile = new MgrProfile(profileId, i, description, ldapIdentifier);
+            profileService.insertOne(mgrProfile);
+            mgrUsers.add(mgrUser);
+            mgrProfiles.add(mgrProfile);
+            userIds.add(userId);
+            profileIds.add(profileId);
+        }
+        MgrUserProfile mgrUserProfile;
+        for (MgrProfile mgrProfile1 : mgrProfiles) {
+            mgrUserProfile = new MgrUserProfile(mgrUsers.get(0).getUserId(), mgrProfile1.getProfileId());
+            profileService.assignUsers(mgrProfile1.getProfileId(), new ArrayList<>(
+                    Arrays.asList(mgrUsers.get(0).getUserId())));
+            mgrUserProfiles.add(mgrUserProfile);
+        }
+    }
+
+    @After
+    public void after() throws EarthException {
+        LOG.info("After : " + userIds.size());
+        preparingDataService.deleteUserProfile(userIds);
+        preparingDataService.deleteListUsers(userIds);
+        preparingDataService.deleteListProfiles(profileIds);
+        LOG.info("After : " + userIds.size());
     }
 
     @Test
-    public void getAllTest() {
+    public void getAll() throws EarthException {
         List<MgrUser> mgrUsers = null;
-        try {
-            mgrUsers = userService.getAll();
-            Assert.assertTrue(mgrUsers != null && mgrUsers.size() > 0);
-        } catch (EarthException ex) {
-            Assert.assertTrue(mgrUsers == null);
-        }
+        mgrUsers = userService.getAll();
+        LOG.info("Get All user : " + userIds.size() + " records");
+        Assert.assertTrue(mgrUsers.size() >= RECORD);
     }
 
     @Test
-    public void getByIdTest() {
-        Map<String, Object> detail=null;
-        try {
-            detail = userService.getDetail("admin");
-            MgrUser mgrUser = (MgrUser) detail.get("mgrUser");
-            List<MgrProfile> mgrProfiles = (List<MgrProfile>) detail.get("mgrProfiles");
-            Assert.assertTrue(mgrUser != null && mgrProfiles.size() > 0);
-        } catch (EarthException ex) {
-            System.out.println(ex.getMessage());
-            Assert.assertTrue(detail==null);
-        }
+    public void getById() throws EarthException {
+        Map<String, Object> detail = null;
+        LOG.info("UserId: " + mgrUsers.get(0).getUserId());
+        detail = userService.getDetail(mgrUsers.get(0).getUserId());
+        MgrUser mgrUser = (MgrUser) detail.get("mgrUser");
+        List<MgrProfile> mgrProfiles = (List<MgrProfile>) detail.get("mgrProfiles");
+        LOG.info("UserId: " + mgrUser.getUserId() + " " + mgrProfiles.size());
+        Assert.assertTrue(EStringUtil.contains(mgrUser.getUserId(), mgrUsers.get(0).getUserId())
+                && mgrProfiles.size() == RECORD);
     }
 
     @Test
-    public void insertOneTest() {
+    public void insertOne() throws EarthException {
         boolean insertUser = false;
-        try {
-            List<Message> messages = userService.validate(mgrUser, true);
-            Assert.assertFalse(messages != null && messages.size() > 0);
-            insertUser = userService.insertOne(mgrUser);
-            Assert.assertTrue(insertUser);
-        } catch (EarthException ex) {
-            System.out.println(ex.getMessage());
-            Assert.assertFalse(insertUser);
-        }
+        String userId = USER + (RECORD + 1);
+        String name = NAME + (RECORD + 1);
+        String password = PASS + (RECORD + 1);
+        boolean changePassword = true;
+        MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword);
+        List<Message> messages = userService.validate(mgrUser, changePassword);
+        Assert.assertFalse(messages != null && messages.size() > 0);
+        insertUser = userService.insertOne(mgrUser);
+        userIds.add(userId);
+        LOG.info("Insert User : " + mgrUser.getUserId());
+        Assert.assertTrue(insertUser);
     }
 
     @Test
-    public void updateOneTest() {
+    public void updateOne() throws EarthException {
         boolean updateUser = false;
-        try {
-            List<Message> messages = userService.validate(mgrUser, false);
-            Assert.assertFalse(messages != null && messages.size() > 0);
-            updateUser = userService.updateOne(mgrUserUdpate);
-            Assert.assertTrue(updateUser);
+        String userId = USER + (RECORD);
+        String name = NAME + (RECORD + 1);
+        String password = PASS + (RECORD + 1);
+        boolean changePassword = false;
+        MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword);
+        List<Message> messages = userService.validate(mgrUser, false);
+        Assert.assertFalse(messages != null && messages.size() > 0);
+        updateUser = userService.updateOne(mgrUser);
+        Assert.assertTrue(updateUser);
 
-        } catch (EarthException ex) {
-            System.out.println(ex.getMessage());
-            Assert.assertFalse(updateUser);
-        }
+        changePassword = false;
+        messages = userService.validate(mgrUser, false);
+        mgrUser = new MgrUser(userId, name, password, password, changePassword);
+        Assert.assertFalse(messages != null && messages.size() > 0);
+        updateUser = userService.updateOne(mgrUser);
+        Assert.assertTrue(updateUser);
     }
 
     @Test
-    public void deleteListTest() {
-        boolean deleteUser=false;
-        try {
-            deleteUser = userService.deleteList(userIds);
-            Assert.assertTrue(deleteUser);
-        } catch (EarthException e) {
-            e.printStackTrace();
-            Assert.assertFalse(deleteUser);
+    public void deleteList() throws EarthException {
+        boolean deleteUser = false;
+        deleteUser = userService.deleteList(userIds);
+        LOG.info("Delete true: " + deleteUser);
+        Assert.assertTrue(deleteUser);
+        userIds=new ArrayList<String>();
+    }
+
+    @Test
+    public void deleteListFalse() throws EarthException {
+        boolean deleteUser = false;
+        List<String> userIdsFalse = new ArrayList<>();
+        userIdsFalse.add(USER+RECORDFALSE);
+        deleteUser = userService.deleteList(userIdsFalse);
+        LOG.info("Delete false: " + deleteUser);
+        Assert.assertFalse(deleteUser);
+    }
+
+    @Test
+    public void insertOneTest() throws EarthException {
+        boolean insertUser = false;
+        List<MgrUser> mgrUsers1 = new ArrayList<MgrUser>();
+        for (int i = 1; i <= 2; i++) {
+            String userId = USER + (RECORD + i);
+            String name = NAME + (RECORD + i);
+            String password = PASS + (RECORD + i);
+            boolean changePassword = true;
+            MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword);
+            mgrUsers1.add(mgrUser);
+            userIds.add(userId);
+            LOG.info("Insert User : " + mgrUser.getUserId());
         }
+        insertUser = userService.insertList(Constant.EARTH_WORKSPACE_ID, mgrUsers1);
+        Assert.assertTrue(insertUser);
     }
 
 }
-*/

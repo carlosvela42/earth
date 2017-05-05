@@ -7,14 +7,21 @@ import co.jp.nej.earth.model.MenuAccessRight;
 import co.jp.nej.earth.model.MenuLink;
 import co.jp.nej.earth.model.UserAccessRight;
 import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.entity.CtlMenu;
 import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.entity.MgrMenuU;
 import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.enums.ColumnNames;
-import co.jp.nej.earth.model.sql.*;
-import co.jp.nej.earth.util.UserAcessRightUtil;
+import co.jp.nej.earth.model.sql.QCtlMenu;
+import co.jp.nej.earth.model.sql.QMgrMenu;
+import co.jp.nej.earth.model.sql.QMgrMenuCategory;
+import co.jp.nej.earth.model.sql.QMgrMenuP;
+import co.jp.nej.earth.model.sql.QMgrMenuU;
+import co.jp.nej.earth.model.sql.QMgrUserProfile;
 import co.jp.nej.earth.util.DateUtil;
+import co.jp.nej.earth.util.UserAcessRightUtil;
 import com.google.gson.Gson;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.dml.SQLInsertClause;
@@ -32,12 +39,17 @@ import java.util.Map;
  */
 
 @Repository
-public class MenuAuthorityDaoImpl implements MenuAuthorityDao {
+public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAuthorityDao {
+
+    private static final QCtlMenu qCtlMenu = QCtlMenu.newInstance();
+
+    public MenuAuthorityDaoImpl() throws Exception {
+        super();
+    }
 
     public Map<String, MenuAccessRight> getMixAuthority(String userId) throws EarthException {
         Map<String, MenuAccessRight> menuAccessRightMap = new HashMap<String, MenuAccessRight>();
         try {
-            QCtlMenu qCtlMenu = QCtlMenu.newInstance();
             QMgrMenu qMgrMenu = QMgrMenu.newInstance();
             QMgrMenuCategory qMgrMenuCategory = QMgrMenuCategory.newInstance();
 
@@ -78,59 +90,72 @@ public class MenuAuthorityDaoImpl implements MenuAuthorityDao {
     }
 
     @Override
-    public boolean deleteListByUserIds(List<String> userIds) throws EarthException {
+    public long deleteListByUserIds(List<String> userIds) throws EarthException {
         try {
             QCtlMenu qCtlMenu = QCtlMenu.newInstance();
             QMgrMenuU qMgrMenuU = QMgrMenuU.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            earthQueryFactory.delete(qCtlMenu).where(qCtlMenu.userId.in(userIds)).execute();
             earthQueryFactory.delete(qMgrMenuU).where(qMgrMenuU.userId.in(userIds)).execute();
-            return true;
+            return  earthQueryFactory.delete(qCtlMenu).where(qCtlMenu.userId.in(userIds)).execute();
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
     }
 
     @Override
-    public boolean deleteListByProfileIds(List<String> profileIds) throws EarthException {
+    public long deleteListByUserIds(String workspaceId, List<String> userIds) throws EarthException {
+        try {
+            QCtlMenu qCtlMenu = QCtlMenu.newInstance();
+            QMgrMenuU qMgrMenuU = QMgrMenuU.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
+            earthQueryFactory.delete(qMgrMenuU).where(qMgrMenuU.userId.in(userIds)).execute();
+            return earthQueryFactory.delete(qCtlMenu).where(qCtlMenu.userId.in(userIds)).execute();
+        } catch (Exception ex) {
+            throw new EarthException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public long deleteListByProfileIds(List<String> profileIds) throws EarthException {
         try {
             QMgrMenuP qMgrMenuP = QMgrMenuP.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long deleted = earthQueryFactory.delete(qMgrMenuP).where(qMgrMenuP.profileId.in(profileIds)).execute();
-            return deleted > 0;
+            return earthQueryFactory.delete(qMgrMenuP).where(qMgrMenuP.profileId.in(profileIds)).execute();
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
     }
 
     @Override
-    public boolean insertMixAuthority(String menuId, List<UserAccessRight> userAccessRights) throws EarthException {
+    public long insertMixAuthority(String menuId, List<UserAccessRight> userAccessRights) throws EarthException {
         try {
             QCtlMenu qCtlMenu = QCtlMenu.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
             SQLInsertClause insert = earthQueryFactory.insert(qCtlMenu);
             for (UserAccessRight userAccessRight : userAccessRights) {
                 insert.set(qCtlMenu.functionId, menuId)
-                      .set(qCtlMenu.userId, userAccessRight.getUserId())
-                      .set(qCtlMenu.accessAuthority, userAccessRight.getAccessRight().getValue())
-                      .set(qCtlMenu.lastUpdateTime, DateUtil.getCurrentDate(
-                              Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD))
-                      .addBatch();
+                        .set(qCtlMenu.userId, userAccessRight.getUserId())
+                        .set(qCtlMenu.accessAuthority, userAccessRight.getAccessRight().getValue())
+                        .set(qCtlMenu.lastUpdateTime, DateUtil.getCurrentDate(
+                                Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD))
+                        .addBatch();
             }
-            long inserted = insert.execute();
-            return inserted > 0;
+            return insert.execute();
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
     }
 
     @Override
-    public boolean deleteAllMixAuthority(String menuId) throws EarthException {
+    public long deleteAllMixAuthority(List<String> menuIds) throws EarthException {
         try {
-            QCtlMenu qCtlMenu = QCtlMenu.newInstance();
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            long delete = earthQueryFactory.delete(qCtlMenu).where(qCtlMenu.functionId.eq(menuId)).execute();
-            return delete > 0;
+            List<Map<Path<?>, Object>> conditions = new ArrayList<>();
+            for (String menuId : menuIds) {
+                Map<Path<?>, Object> condition = new HashMap<>();
+                condition.put(qCtlMenu.functionId, menuId);
+                conditions.add(condition);
+            }
+            return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions) ;
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }
@@ -167,7 +192,7 @@ public class MenuAuthorityDaoImpl implements MenuAuthorityDao {
             ResultSet resultSet = earthQueryFactory.select(qMgrMenuP.functionId, qMgrUserProfile
                     .userId, qMgrMenuP.accessAuthority, qMgrMenuP.lastUpdateTime).from(qMgrMenuP)
                     .innerJoin(qMgrUserProfile)
-                        .on(qMgrMenuP.profileId.eq(qMgrUserProfile.profileId))
+                    .on(qMgrMenuP.profileId.eq(qMgrUserProfile.profileId))
                     .where(qMgrMenuP.functionId.eq(menuId)).getResults();
 
             List<UserAccessRight> userAccessRights = UserAcessRightUtil.getUserAccessRightsFromResult(resultSet);

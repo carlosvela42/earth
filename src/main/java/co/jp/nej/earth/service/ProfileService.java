@@ -11,10 +11,21 @@ import co.jp.nej.earth.model.entity.MgrProfile;
  * Created by minhtv on 3/30/2017.
  */
 public interface ProfileService {
-    List<MgrProfile> getAll()  throws EarthException;
-    Map<String,Object> getDetail(String profileId) throws EarthException;
-    List<Message> validate(MgrProfile mgrProfile, boolean insert) ;
-    boolean insertAndAssignUsers(MgrProfile mgrProfile,List<String> userIds) throws EarthException ;
-    boolean updateAndAssignUsers(MgrProfile mgrProfile,List<String> userIds) throws EarthException  ;
-    boolean deleteList(List<String> profileIds) throws EarthException   ;
+    List<MgrProfile> getAll() throws EarthException;
+
+    Map<String, Object> getDetail(String profileId) throws EarthException;
+
+    List<Message> validate(MgrProfile mgrProfile, boolean insert);
+
+    boolean insertAndAssignUsers(MgrProfile mgrProfile, List<String> userIds) throws EarthException;
+
+    boolean insertOne(MgrProfile mgrProfile) throws EarthException;
+
+    boolean updateAndAssignUsers(MgrProfile mgrProfile, List<String> userIds) throws EarthException;
+
+    boolean deleteList(List<String> profileIds) throws EarthException;
+
+//    boolean deleteListProfiles(List<String> profileIds) throws EarthException;
+
+    boolean assignUsers(String profileId, List<String> userIds) throws EarthException;
 }

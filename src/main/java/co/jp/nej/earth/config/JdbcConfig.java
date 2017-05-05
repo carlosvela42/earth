@@ -63,9 +63,9 @@ public class JdbcConfig {
         if (ConnectionManager.exists(workspaceId)) {
             return ConnectionManager.getDataSource(workspaceId);
         } else {
-            if (DatabaseType.ORACLE.equals(mgrConnect.getDbType())) {
+            if (DatabaseType.ORACLE.name().equals(dbType)) {
                 config.setDriverClassName(DatabaseType.ORACLE.toString());
-            } else if (dbType.equals(DatabaseType.SQL_SERVER.name())) {
+            } else if (DatabaseType.SQL_SERVER.name().equals(dbType)) {
                 config.setDriverClassName(DatabaseType.SQL_SERVER.toString());
             }
 

@@ -9,9 +9,9 @@ import java.util.List;
  * Created by minhtv on 3/29/2017.
  */
 public interface UserProfileDao extends BaseDao<MgrUserProfile> {
-    boolean deleteListByUserIds(List<String> userIds) throws EarthException;
+    long deleteListByUserIds(List<String> userIds) throws EarthException;
 
-    boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
+    long deleteListByProfileIds(List<String> profileIds) throws EarthException;
 
     List<MgrUserProfile> getListByProfileIds(List<String> profileIds) throws EarthException;
 

@@ -3,9 +3,9 @@
 <meta http-equiv="content-type" content="text/html;">
 <title></title>
 <script type="text/javascript"
-	src="${rc.getContextPath()}/resources/js/d3.v3.js"></script>
+	src="${rc.getContextPath()}/resources/js/lib/d3.v3.js"></script>
 <script type="text/javascript"
-	src="${rc.getContextPath()}/resources/js/jquery.min.js"></script>
+	src="${rc.getContextPath()}/resources/js/lib/jquery.min.js"></script>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
 	href="${rc.getContextPath()}/resources/css/bootstrap.min.css">
@@ -18,13 +18,13 @@
 <link rel="stylesheet"
 	href="${rc.getContextPath()}/resources/css/jquery.contextMenu.css">
 <!-- Latest compiled and minified JavaScript -->
-<script src="${rc.getContextPath()}/resources/js/bootstrap.min.js"></script>
-<script src="${rc.getContextPath()}/resources/js/scrollbarWidth.js"></script>
-<script src="${rc.getContextPath()}/resources/js/decimalAdjust.js"></script>
-<script src="${rc.getContextPath()}/resources/js/jquery.contextMenu.js"></script>
-<script src="${rc.getContextPath()}/resources/js/jsonData.js"></script>
-<script src="${rc.getContextPath()}/resources/js/common.js"></script>
-<script src="${rc.getContextPath()}/resources/js/move.js"></script>
+<script src="${rc.getContextPath()}/resources/js/lib/bootstrap.min.js"></script>
+<script src="${rc.getContextPath()}/resources/js/lib/scrollbarWidth.js"></script>
+<script src="${rc.getContextPath()}/resources/js/lib/decimalAdjust.js"></script>
+<script src="${rc.getContextPath()}/resources/js/lib/jquery.contextMenu.js"></script>
+<script src="${rc.getContextPath()}/resources/js/imageViewer/jsonData.js"></script>
+<script src="${rc.getContextPath()}/resources/js/imageViewer/common.js"></script>
+<script src="${rc.getContextPath()}/resources/js/imageViewer/move.js"></script>
 </head>
 <body style="padding-top: 70px">
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -85,6 +85,8 @@
 						data-tool="highlight"> HIGHLIGHT</li>
 					<li><input type="radio" id="comment" name="toolOption"
 						data-tool="comment"> COMMENT</li>
+						<li><input type="radio" id="testLine" name="toolOption"
+                        data-tool="testLine"> TESTLINE</li>
 					<li style="display: none"><input type="radio" id="drawSelect"
 						name="toolOption" data-tool="drawSelect"></li>
 				</ul>
@@ -117,19 +119,18 @@
 					title="print">
 					<img
 						src="${rc.getContextPath()}/resources/images/imageViewer/print.png"
-						width="20" /> 
+						width="20" /> <span class="caret"></span>
 				</button>
-				<span class="caret"></span>
+
 				<ul class="dropdown-menu">
 					<li><a href="#" id="print">Include Annotations</a></li>
 					<li><a href="#" id="print0">Only Image</a></li>
 				</ul>
-				  <div class="form-check">
-    <label class="form-check-label dropdown-menu">
-      <input type="checkbox" class="form-check-input">
-      Check me out
-    </label>
-  </div>
+				<div class="form-check">
+					<label class="form-check-label dropdown-menu"> <input
+						type="checkbox" class="form-check-input"> Check me out
+					</label>
+				</div>
 			</div>
 			<button type="button" class="btn btn-default" title="cut" id="cut">
 				<img
@@ -375,7 +376,9 @@
 					<div class="col-md-4">
 						Line Size <br /> <input type="number" min="1" max="100" value="1"
 							id="width">
-						<svg><ellipse cx="60" cy="60" rx="50" ry="25" fill="none" stroke="black" stroke-width="1" id="example"/></svg>
+						<svg>
+							<ellipse cx="60" cy="60" rx="50" ry="25" fill="none"
+								stroke="black" stroke-width="1" id="example" /></svg>
 
 					</div>
 				</div>
@@ -466,18 +469,18 @@
 			</div>
 		</div>
 	</div>
-	<script src="${rc.getContextPath()}/resources/js/select.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/zoom.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/draw.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/properties.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/grayscale.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/layer.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/load.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/print.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/cut.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/copy.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/paste.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/rotate.js"></script>
-	<script src="${rc.getContextPath()}/resources/js/rightClick.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/selectButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/zoomButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/drawButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/propertiesButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/grayscaleButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/layerButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/load.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/printButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/cutButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/copyButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/pasteButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/rotateButton.js"></script>
+	<script src="${rc.getContextPath()}/resources/js/imageViewer/rightClick.js"></script>
 </body>
 </html>

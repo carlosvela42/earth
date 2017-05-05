@@ -31,6 +31,13 @@ window.onload = function() {
 								counter.class + " " + layer.Name).attr(
 								"transform", "rotate(0) scale(1)").on("click",
 								selectClick);
+				var tempX,tempY;
+				if(counter.x2>=counter.x1){ tempX = counter.x1;}else{tempX = counter.x2;}
+				if(counter.y2>=counter.y1){ tempY = counter.y1;}else{tempY = counter.y2;}
+				vis.append("rect").attr("x", tempX).attr("y", tempY).attr("width", Math.abs(counter.x2-counter.x1))
+				.attr("height", Math.abs(counter.y2-counter.y1)).attr("id", "r"+counter.id).attr("fill", "none").attr("class", counter.class + " " + layer.Name).on(
+						"click", selectClick).attr("pointer-events", "all").attr("transform",
+								"rotate(0) scale(1)");
 			}
 			if (counter.type == "rect") {
 				vis.append("rect").attr("x", counter.x1).attr("y", counter.y1)

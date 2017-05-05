@@ -17,12 +17,16 @@
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/imageviewer">Image Viewer New<span
                     class="fa arrow"></span></a>
         </li>
+        <h3>MINHTV</h3>
         <li>
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/user/showList">User<span
                     class="fa arrow"></span></a>
         </li>
         <li>
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/profile/showList">Profile<span
+                    class="fa arrow"></span></a>
+        </li> <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/evidentLog/evidentLog">Evident Log<span
                     class="fa arrow"></span></a>
         </li>
         

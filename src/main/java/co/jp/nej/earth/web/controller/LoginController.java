@@ -1,6 +1,5 @@
 package co.jp.nej.earth.web.controller;
 
-import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +20,7 @@ import co.jp.nej.earth.model.constant.Constant.View;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.service.UserService;
 import co.jp.nej.earth.util.EStringUtil;
+import co.jp.nej.earth.util.ValidatorUtil;
 import co.jp.nej.earth.util.ViewUtil;
 import co.jp.nej.earth.web.form.LoginForm;
 
@@ -33,29 +33,35 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ValidatorUtil validationUtil;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String showLogin(Model model, HttpServletRequest request) throws URISyntaxException {
+    public String showLogin(Model model, HttpServletRequest request) {
         MgrUser mgrUser = new MgrUser();
         model.addAttribute("mgrUser", mgrUser);
         return ViewUtil.requiredLoginView(View.HOME, request.getSession());
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String loginSubmit(@Valid @ModelAttribute("LoginForm") LoginForm loginForm, BindingResult result
-            ,Model model, HttpServletRequest request) {
+    public String loginSubmit(@Valid @ModelAttribute("LoginForm") LoginForm loginForm, BindingResult result,
+            Model model, HttpServletRequest request) {
         try {
+            if (!validationUtil.validate(model, result)) {
+                return View.LOGIN;
+            }
+
             List<Message> messages = userService.login(loginForm.getUserId(), loginForm.getPassword(),
                     request.getSession());
             if (messages != null && messages.size() > 0) {
-                model.addAttribute("messages", messages);
+                model.addAttribute(Session.MESSAGES, messages);
                 return View.LOGIN;
             } else {
                 String lastPath = (String) request.getSession().getAttribute(Session.LAST_PATH);
                 return EStringUtil.isEmpty(lastPath) ? View.HOME : lastPath;
             }
         } catch (EarthException e) {
-            model.addAttribute("messages", "Error occured!");
+            model.addAttribute(Session.MESSAGES, "Error occured!");
         }
 
         return View.LOGIN;

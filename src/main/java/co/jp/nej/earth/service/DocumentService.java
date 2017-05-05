@@ -27,4 +27,7 @@ public interface DocumentService {
 
     DocumentSavingInfo getDocumentSavingInfo(long processId, long siteId) throws EarthException;
 
+    boolean getDocumentListInfo(String workspaceId, String workitemId, String folderItemNo, String documentNo)
+            throws EarthException;
+
 }

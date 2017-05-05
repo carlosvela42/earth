@@ -15,7 +15,6 @@ var layerDisplay = [];
 var layerModified = [];
 var layerCreated = [];
 var mode = "select";
-<<<<<<< HEAD
 var layerActive;
 var penColor = "black";
 var fillColor = "none";
@@ -26,9 +25,6 @@ var brightness = 100;
 var checkGrayscale = true;
 var existUser = false;
 
-=======
-var layerActive = jsonLayer.Active;
->>>>>>> master
 x1[0] = 0;
 y1[0] = 0;
 function startAnnotation() {
@@ -113,6 +109,7 @@ function redraw() {
 	for (var k = 0; k <= i; k++) {
 		var transform = $('#' + k).attr("transform");
 		if (transform != null) {
+			var tempX,tempY;
 			switch ($("#" + k).prop("tagName")) {
 			case "line":
 				switch (rotate) {
@@ -123,6 +120,12 @@ function redraw() {
 					$('#' + k).attr("x2", x2[k]);
 					$('#' + k).attr("y1", y1[k]);
 					$('#' + k).attr("y2", y2[k]);
+					$('#r' + k).attr("transform",
+							"rotate(0) scale(" + scale + ")");
+					if(x2[k]>=x1[k]){ tempX = x1[k];}else{tempX = x2[k];}
+					if(y2[k]>=y1[k]){ tempY = y1[k];}else{tempY = y2[k];}
+					$('#r' + k).attr("x", tempX);
+					$('#r' + k).attr("y", tempY);
 					break;
 				case 90:
 					$('#' + k).attr("transform",
@@ -131,6 +134,12 @@ function redraw() {
 					$('#' + k).attr("x2", x2[k]);
 					$('#' + k).attr("y1", y1[k] + y2[0]);
 					$('#' + k).attr("y2", y2[k] + y2[0]);
+					$('#r' + k).attr("transform",
+							"rotate(90) scale(" + scale + ")");
+					if(x2[k]>=x1[k]){ tempX = x1[k];}else{tempX = x2[k];}
+					if(y2[k]>=y1[k]){ tempY = y1[k];}else{tempY = y2[k];}
+					$('#r' + k).attr("x", tempX);
+					$('#r' + k).attr("y", tempY+ y2[0]);
 					break;
 				case 180:
 					$('#' + k).attr("transform",
@@ -139,6 +148,12 @@ function redraw() {
 					$('#' + k).attr("x2", x2[k] + x2[0]);
 					$('#' + k).attr("y1", y1[k] + y2[0]);
 					$('#' + k).attr("y2", y2[k] + y2[0]);
+					$('#r' + k).attr("transform",
+							"rotate(180) scale(" + scale + ")");
+					if(x2[k]>=x1[k]){ tempX = x1[k];}else{tempX = x2[k];}
+					if(y2[k]>=y1[k]){ tempY = y1[k];}else{tempY = y2[k];}
+					$('#r' + k).attr("x", tempX+ x2[0]);
+					$('#r' + k).attr("y", tempY+ y2[0]);
 					break;
 				case 270:
 					$('#' + k).attr("transform",
@@ -147,6 +162,12 @@ function redraw() {
 					$('#' + k).attr("x2", x2[k] + x2[0]);
 					$('#' + k).attr("y1", y1[k]);
 					$('#' + k).attr("y2", y2[k]);
+					$('#r' + k).attr("transform",
+							"rotate(270) scale(" + scale + ")");
+					if(x2[k]>=x1[k]){ tempX = x1[k];}else{tempX = x2[k];}
+					if(y2[k]>=y1[k]){ tempY = y1[k];}else{tempY = y2[k];}
+					$('#r' + k).attr("x", tempX+ x2[0]);
+					$('#r' + k).attr("y", tempY);
 					break;
 				}
 				break;

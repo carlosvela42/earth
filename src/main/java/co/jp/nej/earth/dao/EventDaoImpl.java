@@ -7,7 +7,9 @@ import co.jp.nej.earth.model.MgrWorkspace;
 import co.jp.nej.earth.model.constant.Constant.AgentBatch;
 import co.jp.nej.earth.model.entity.CtlEvent;
 import co.jp.nej.earth.model.sql.QCtlEvent;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,5 +65,13 @@ public class EventDaoImpl extends BaseDaoImpl<CtlEvent> implements EventDao {
         earthQueryFactory.update(qCtlEvent).set(qCtlEvent.status, AgentBatch.STATUS_EDITTING)
                 .where(qCtlEvent.eventId.in(eventIds)).execute();
         return true;
+    }
+
+    @Override
+    public long countEventByUserIds(List<String> userIds, String workspaceId) throws EarthException {
+        BooleanBuilder condition = new BooleanBuilder();
+        Predicate pre1 = qCtlEvent.userId.in(userIds);
+        condition.and(pre1);
+        return this.search(workspaceId,condition,null,null,null).size();
     }
 }

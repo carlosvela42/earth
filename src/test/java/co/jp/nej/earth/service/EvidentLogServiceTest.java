@@ -37,7 +37,7 @@
 //        List<StrLogAccess> strLogAccesses = null;
 //        try {
 ////            strLogAccesses = strLogAccessDao.getListByWorkspaceId(workspaceId);
-//            strLogAccesses = evidentLogService.getListByWorkspaceId(workspaceId);
+//            strLogAccesses = evidentLogService.getListByWorkspaceId(workspaceId,null,null,null);
 //            LOG.info("EvidentLog record : " + Integer.toString(strLogAccesses.size()));
 //            Assert.assertTrue(strLogAccesses.size() > 0);
 //        } catch (Exception ex) {

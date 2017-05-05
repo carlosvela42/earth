@@ -83,6 +83,7 @@ public class ProcessServiceImpl implements ProcessService {
     @Override
     public List<MgrProcess> getAllByWorkspace(String workspaceId) throws EarthException {
         return processDao.findAll(workspaceId, null, null, null);
+
     }
 
     /**
