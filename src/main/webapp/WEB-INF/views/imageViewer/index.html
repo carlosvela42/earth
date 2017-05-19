@@ -390,10 +390,16 @@
 					<h4 class="modal-title">Image adjustment dialog</h4>
 				</div>
 				<div class="modal-body">
-					Contrast<br /> <input type="range" id="controls1" value="100"
-						min="0" max="100" maxlength="3"> Brightness<br /> <input
-						type="range" id="controls" value="100" min="0" max="100"
-						maxlength="3">
+					<div>
+					   <label>Contrast</label>
+					   <input type="text" name="contrastValue" id="contrastValue" style="float: right; text-align: center;">
+					   <input type="range" id="controls1" value="1000" min="0" max="3000" maxlength="4">
+					</div>
+					<div>
+					   <label>Brightness</label>
+					   <input type="text" name="brightnessValue" id="brightnessValue" style="float: right; text-align: center;">
+					   <input type="range" id="controls" value="0" min="-1000" max="1000" maxlength="4">
+					</div>
 				</div>
 				<div class="modal-footer">
 					<label style="display: block; text-align: left;"><input

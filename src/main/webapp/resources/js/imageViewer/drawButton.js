@@ -24,13 +24,22 @@ $("#text").click(function() {
 			$("#imgDraw").attr("src").lastIndexOf("/") + 1);
 	$("#imgDraw").attr("src", src + "text.png");
 });
-function mousedown() {
+IV.prototype.mousedown = function () {	
 	var m = d3.mouse(this);
-	i = parseInt(i);
+	i = parseInt(imageViewer.i);
 	x = m[0];
 	y = m[1];
+	var vis = imageViewer.vis;
+	var penColor = imageViewer.penColor;
+	var fillColor = imageViewer.fillColor;
+	var highlightColor = imageViewer.highlightColor;
+	var lineSize = imageViewer.lineSize;
+	var scale = imageViewer.scale;
+	var selectClick = imageViewer.selectClick;
+	var layerActive = imageViewer.layerActive;
+	
 	if ($("#testLine").prop("checked")) {
-		i++;
+		i++;		
 		anno = vis.append("line").attr("x1", x).attr("y1", y).attr("x2", x)
 				.attr("y2", y).attr("id", i).attr("stroke", penColor).attr(
 						"stroke-width", scale).attr("class", layerActive).on(
@@ -87,8 +96,9 @@ function mousedown() {
 		$('#' + i).append(
 				'<img id="i' + i
 						+ '" src="resources/images/imageViewer/comment.jpg"/>');
+		var userInfo = $('#userInfo').text();
 		$('#' + i).append(
-				'<textarea id="t' + i + '">' + jsonLayer.User + '</textarea>');
+				'<textarea id="t' + i + '">' + userInfo.slice(0,userInfo.indexOf("/")) + '</textarea>');
 		$("#t" + i).css("width", 0);
 		$("#t" + i).css("height", 0);
 		$("#i" + i).css("width", 0);
@@ -105,7 +115,7 @@ function mousedown() {
 }
 
 function mousemove() {
-	var m = d3.mouse(this);
+	var m = d3.mouse(this);	
 	if (0 <= m[0] <= $('#svg').attr('width')
 			&& 0 <= m[1] <= $('#svg').attr('height')) {
 		if ($("#line").prop("checked")) {
@@ -152,7 +162,17 @@ function mousemove() {
 }
 
 function mouseup() {
-	vis.on("mousemove", null);
+	var vis = imageViewer.vis;
+	var scale = imageViewer.scale;
+	var x1 = imageViewer.x1;
+	var x2 = imageViewer.x2;
+	var y1 = imageViewer.y1;
+	var y2 = imageViewer.y2;
+	var lineSize = imageViewer.lineSize;
+	var rotate = imageViewer.rotate;
+	var selectClick = imageViewer.selectClick;
+	var i = imageViewer.i;
+	vis.on("mousemove", null);	
 	$('#' + i).attr("transform", "rotate(" + rotate + ") scale(" + scale + ")");
 	if ($("#testLine").prop("checked")) {
 		if (parseInt($('#' + i).attr("x1")) == parseInt($('#' + i).attr("x2"))
@@ -342,12 +362,12 @@ function mouseup() {
 			$('#' + i).attr("y", y1[i]);
 			$('#' + i).attr("width", x2[i]);
 			$('#' + i).attr("height", y2[i]);
-			$("#t" + i).css("width", x2[i] * scale);
+			$("#t" + i).css("width", x2[i]);
 			if ($("<b></b>").addClass($("#" + i).attr("class"))
 					.hasClass("text")) {
-				$("#t" + i).css("height", y2[i] * scale);
+				$("#t" + i).css("height", y2[i]);
 			} else {
-				$("#t" + i).css("height", y2[i] * scale / 2);
+				$("#t" + i).css("height", y2[i]/ 2);
 				$("#i" + i).css("width", x2[i] * scale);
 				$("#i" + i).css("height", y2[i] * scale / 2);
 			}
@@ -623,6 +643,3 @@ function mouseup() {
 var container = d3.select('body').append('div').attr('id', 'container');
 $('#container').width('800px');
 $('#container').height('800px');
-var vis = container.append('svg').on("mousedown", mousedown).on("mouseup",
-		mouseup).attr("id", "svg");
-$("input[name=toolOption]").on("click", selectBefore);

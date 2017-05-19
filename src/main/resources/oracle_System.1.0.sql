@@ -1,0 +1,246 @@
+CREATE TABLE "##"."STR_CAL" 
+   ("PROCESSTIME" nchar(50) NOT NULL,
+    "DIVISION" nvarchar2(20), 
+    "PROFILEID" nvarchar2(255) NOT NULL,
+    "AVAILABLELICENSECOUNT" int, 
+    "USELICENSECOUNT" int, 
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (PROCESSTIME,PROFILEID)
+   );
+   
+   CREATE TABLE "##"."CTL_LOGIN" 
+   ("SESSIONID" nvarchar2(255) NOT NULL,
+    "USERID" nvarchar2(255) NOT NULL, 
+    "LOGINTIME" nchar(50),
+    "LOGOUTTIME" nchar(50), 
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (SESSIONID)
+   );
+   
+   CREATE TABLE "##"."CTL_MENU" 
+   ("FUNCTIONID" nvarchar2(255) NOT NULL,
+    "USERID" nvarchar2(255) NOT NULL, 
+    "ACCESSAUTHORITY" int,
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (FUNCTIONID,USERID)
+   );
+   
+   CREATE TABLE "##"."MGR_MENU_P" 
+   ("FUNCTIONID" nvarchar2(255) NOT NULL,
+    "PROFILEID" nvarchar2(255) NOT NULL, 
+    "ACCESSAUTHORITY" int,
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (FUNCTIONID,PROFILEID)
+   );
+   
+   CREATE TABLE "##"."MGR_MENU_U" 
+   ("FUNCTIONID" nvarchar2(255) NOT NULL,
+    "USERID" nvarchar2(255) NOT NULL, 
+    "ACCESSAUTHORITY" int,
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (FUNCTIONID,USERID)
+   );
+   
+    CREATE TABLE "##"."MGR_SITE" 
+   ("SITEID" int NOT NULL,
+    "DATADIRECTORYID" int NOT NULL, 
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (SITEID,DATADIRECTORYID)
+   );
+   
+    CREATE TABLE "##"."MGR_DIRECTORY" 
+   ("DATADIRECTORYID" int NOT NULL,
+    "FOLDERPATH" nvarchar2(260), 
+    "NEWCREATEFILE" nchar(1),
+    "RESERVEDDISKVOLSIZE" nvarchar2(255),
+    "DISKVOLSIZE" nvarchar2(255),
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (DATADIRECTORYID)
+   );
+   
+   CREATE TABLE "##"."MGR_WORKSPACE" 
+   ("WORKSPACEID" int NOT NULL,
+    "WORKSPACENAME" nvarchar2(255), 
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (WORKSPACEID)
+   );
+   
+    CREATE TABLE "##"."MGR_WORKSPACE_CONNECT" 
+   ("WORKSPACEID" int NOT NULL,
+    "SCHEMANAME" nvarchar2(255), 
+    "PORT" int,
+    "DBUSER" nvarchar2(255),
+    "DBPASSWORD" nvarchar2(515),
+    "OWNER" nvarchar2(255),
+    "DBSERVER" nvarchar2(255),
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (WORKSPACEID)
+   );
+   
+   CREATE TABLE "##"."MGR_STRAGE_FILE" 
+   ("PROCESSID" int NOT NULL,
+    "SITEID" int NOT NULL, 
+    "SITEMANAGEMENTTYPE" nvarchar2(2000),
+    "LASTUPDATETIME" nchar(50),
+    CONSTRAINT "ENSURE_JSON1" CHECK (SITEMANAGEMENTTYPE IS JSON) ENABLE,
+     PRIMARY KEY (PROCESSID,SITEID)
+   );
+   
+   CREATE TABLE "##"."MGR_STRAGE_DB" 
+   ("PROCESSID" int NOT NULL,
+    "SCHEMANAME" nvarchar2(255) NOT NULL, 
+    "DBUSER" nvarchar2(255),
+    "DBPASSWORD" nvarchar2(255),
+    "OWNER" nvarchar2(255),
+    "DBSERVER" nvarchar2(255),
+    "LASTUPDATETIME" nchar(50),
+     PRIMARY KEY (PROCESSID,SCHEMANAME)
+   );
+   
+   CREATE TABLE "##"."MGR_USER" 
+   ("USERID" NVARCHAR2(255) NOT NULL, 
+    "NAME" NVARCHAR2(255), 
+    "PASSWORD" NVARCHAR2(515), 
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (USERID)
+   ) 
+   
+   CREATE TABLE "##"."MGR_PROFILE" 
+   ("PROFILEID" NVARCHAR2(255) NOT NULL, 
+    "DESCRIPTION" NVARCHAR2(255), 
+    "LDAPIDENTIFIER" NVARCHAR2(2048), 
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (PROFILEID)
+   ) 
+   
+   CREATE TABLE "##"."MGR_USER_PROFILE" 
+   ("PROFILEID" NVARCHAR2(255) NOT NULL, 
+    "USERID" NVARCHAR2(255) NOT NULL, 
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (PROFILEID,USERID)
+   )
+   
+   CREATE TABLE "##"."MGR_MENU" 
+   ("FUNCTIONID" nvarchar2(255) NOT NULL,
+    "FUNCTIONNAME" nvarchar2(255), 
+    "FUNCTIONCATEGORYID" nvarchar2(255) NOT NULL,
+    "FUNCTIONCATEGORYNAME" nvarchar2(255),
+    "FUNCTIONSORTNO" int,
+    "FUNCTIONINFORMATION" nvarchar2(2000),
+     CONSTRAINT "ENSURE_JSON1" CHECK (FUNCTIONINFORMATION IS JSON) ENABLE,
+     PRIMARY KEY (FUNCTIONID)
+   );
+   
+   CREATE TABLE "##"."MGR_MENUCATEGORY" 
+   ("FUNCTIONCATEGORYID" NVARCHAR2(255) NOT NULL, 
+    "FUNCTIONCATEGORYNAME" NVARCHAR2(255), 
+    "FUNCTIONSORTNO" int,
+    PRIMARY KEY (FUNCTIONCATEGORYID)
+   )
+   
+   CREATE TABLE "##"."MGR_TASK" 
+   ("TASKID" NVARCHAR2(20) NOT NULL, 
+    "TASKNAME" NVARCHAR2(255), 
+    "CLASSNAME" NVARCHAR2(255),
+    "PROCESSID" int,
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (TASKID)
+   )
+   
+   CREATE TABLE "##"."MGR_INCREMENT" 
+   ("PROCESSID" int NOT NULL, 
+    "TEMPLATEID" NVARCHAR2(20), 
+    "WORKSPACEID" int,
+    "DATADIRECTORYID" int,
+    "SITEID" int,
+    "SCHEDULEID" int,
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (PROCESSID)
+   )
+   
+   CREATE TABLE "##"."MGR_WORKITEMINCREMENT" 
+   ("WORKITEMID" NVARCHAR2(20) NOT NULL, 
+    "FOLDERITEMNO" int, 
+    "DOCUMENTNO" int,
+    "LAYERNO" int,
+    "LASTHISTORYNO" int,
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (WORKITEMID)
+   )
+   
+   CREATE TABLE "##"."MGR_WORKITEMID" 
+   ("ISSUEDATE" nchar(50) NOT NULL, 
+    "COUNT" int, 
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (ISSUEDATE)
+   )
+   
+   CREATE TABLE "##"."MGR_EVENTID" 
+   ("ISSUEDATE" nchar(50) NOT NULL, 
+    "COUNT" int, 
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (ISSUEDATE)
+   )
+   
+   CREATE TABLE "##"."MST_SYSTEM" 
+   ("SECTION" nvarchar2(255) NOT NULL, 
+    "VARIABLENAME" nvarchar2(255), 
+    "CONFIGVALUE" nvarchar2(255),
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (SECTION)
+   )
+   
+   CREATE TABLE "##"."MST_CODE" 
+   ("CODEID" nvarchar2(20) NOT NULL, 
+    "CODEVALUE" nvarchar2(255), 
+    "SECTION" nvarchar2(20),
+    "SECTIONVALUE" nvarchar2(255),
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (CODEID)
+   )
+   
+   CREATE TABLE "##"."MST_CALENDAR" 
+   ("BUSINESSDAY" nvarchar2(8) NOT NULL, 
+    "BUSINESSDAYFLAG" nchar(1), 
+    "LASTUPDATETIME" nchar(50),
+    PRIMARY KEY (BUSINESSDAY)
+   )
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   

@@ -40,7 +40,7 @@ public class UserDaoImpl extends BaseDaoImpl<MgrUser> implements UserDao {
     }
 
     public List<MgrUser> getAll() throws EarthException {
-        return this.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null);
+        return this.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null, null);
     }
 
     public long updateOne(MgrUser mgrUser) throws EarthException {

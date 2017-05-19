@@ -7,6 +7,8 @@ import co.jp.nej.earth.model.MgrWorkspace;
 import co.jp.nej.earth.model.constant.Constant.AgentBatch;
 import co.jp.nej.earth.model.entity.CtlEvent;
 import co.jp.nej.earth.model.sql.QCtlEvent;
+import co.jp.nej.earth.util.ConversionUtil;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
@@ -54,17 +56,22 @@ public class EventDaoImpl extends BaseDaoImpl<CtlEvent> implements EventDao {
     @Override
     public List<String> getListCtlEventIdByStatus(String status, String workSpaceId) throws EarthException {
         QBean<CtlEvent> selectList = Projections.bean(CtlEvent.class, qCtlEvent.all());
-        List<CtlEvent> ctlEvents = ConnectionManager.getEarthQueryFactory(workSpaceId).select(selectList)
-                .from(qCtlEvent).where(qCtlEvent.status.eq(status)).fetch();
-        return ctlEvents.stream().map(event -> event.getEventId()).collect(Collectors.toList());
+        EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workSpaceId);
+        return ConversionUtil.castList(executeWithException(() -> {
+            List<CtlEvent> ctlEvents = earthQueryFactory.select(selectList)
+                    .from(qCtlEvent).where(qCtlEvent.status.eq(status)).fetch();
+            return ctlEvents.stream().map(event -> event.getEventId()).collect(Collectors.toList());
+        }), String.class);
     }
 
     @Override
     public boolean updateBulkEventStatus(List<String> eventIds, String workSpaceId) throws EarthException {
         EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workSpaceId);
-        earthQueryFactory.update(qCtlEvent).set(qCtlEvent.status, AgentBatch.STATUS_EDITTING)
-                .where(qCtlEvent.eventId.in(eventIds)).execute();
-        return true;
+        return (boolean) executeWithException(() -> {
+            earthQueryFactory.update(qCtlEvent).set(qCtlEvent.status, AgentBatch.STATUS_EDITTING)
+                    .where(qCtlEvent.eventId.in(eventIds)).execute();
+            return true;
+        });
     }
 
     @Override
@@ -72,6 +79,7 @@ public class EventDaoImpl extends BaseDaoImpl<CtlEvent> implements EventDao {
         BooleanBuilder condition = new BooleanBuilder();
         Predicate pre1 = qCtlEvent.userId.in(userIds);
         condition.and(pre1);
-        return this.search(workspaceId,condition,null,null,null).size();
+
+        return this.search(workspaceId,condition).size();
     }
 }

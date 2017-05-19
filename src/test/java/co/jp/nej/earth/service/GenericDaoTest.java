@@ -83,9 +83,9 @@ public class GenericDaoTest extends BaseTest {
 
     @Test
     public void testGenericFindAll() throws EarthException {
-
-        List<CtlLogin> ctlLogins = userService.getAllMgrLogin(Constant.EARTH_WORKSPACE_ID, null, null,
-                new OrderSpecifier<>(Order.ASC, qObject.userId));
+        List<OrderSpecifier<?>> orderBys = new ArrayList<>();
+        orderBys.add(new OrderSpecifier<>(Order.ASC, qObject.userId));
+        List<CtlLogin> ctlLogins = userService.getAllMgrLogin(Constant.EARTH_WORKSPACE_ID, null, null, orderBys);
 
         LOG.info("Found " + (ctlLogins != null ? ctlLogins.size() : 0));
         Assert.assertTrue(ctlLogins != null && ctlLogins.size() > 0);
@@ -179,14 +179,15 @@ public class GenericDaoTest extends BaseTest {
 
         BooleanBuilder condition = new BooleanBuilder();
         Predicate pre1 = qObject.sessionId.like("GenericDaoTest%");
-        //Predicate pre2 = qObject.userId.endsWith("2");
+        // Predicate pre2 = qObject.userId.endsWith("2");
 
         // build condition
-        //condition.and(pre1).and(pre2);
+        // condition.and(pre1).and(pre2);
         condition.and(pre1);
-
+        List<OrderSpecifier<?>> orderBys = new ArrayList<>();
+        orderBys.add(new OrderSpecifier<>(Order.ASC, qObject.userId));
         List<CtlLogin> ctlLogins = userService.searchMgrLogin(Constant.EARTH_WORKSPACE_ID, condition.getValue(), null,
-                null, new OrderSpecifier<>(Order.ASC, qObject.userId));
+                null, orderBys);
 
         Assert.assertTrue(ctlLogins.size() == NO_OF_TEST_DATA);
     }

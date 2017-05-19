@@ -1,6 +1,7 @@
 package co.jp.nej.earth.model.sql;
 
 import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
 import com.querydsl.sql.RelationalPathBase;
@@ -14,13 +15,18 @@ public class QMgrSchedule extends RelationalPathBase<MgrSchedule> {
     private static final long serialVersionUID = 1L;
 
     public final StringPath scheduleId = createString(ColumnNames.SCHEDULE_ID.toString());
-    public final StringPath processId = createString(ColumnNames.PROCESS_ID.toString());
+    public final NumberPath<Integer> processId = createNumber(ColumnNames.PROCESS_ID.toString(),Integer.class);
     public final StringPath taskId = createString(ColumnNames.TASK_ID.toString());
     public final StringPath hostName = createString(ColumnNames.HOST_NAME.toString());
-    public final StringPath processIseviceId = createString(ColumnNames.PROCESS_ISERVICEID.toString());
+    public final StringPath processIServiceId = createString(ColumnNames.PROCESS_ISERVICEID.toString());
     public final StringPath startTime = createString(ColumnNames.START_TIME.toString());
-    public final StringPath repeatOption = createString(ColumnNames.REPEAT_OPTION.toString());
     public final StringPath endTime = createString(ColumnNames.END_TIME.toString());
+    public final StringPath enableDisable = createString(ColumnNames.ENABLE_DISABLE.toString());
+    public final StringPath nextRunDate = createString(ColumnNames.NEXT_RUN_DATE.toString());
+    public final StringPath runIntervalDay = createString(ColumnNames.RUN_INTERVAL_DAY.toString());
+    public final StringPath runIntervalHour = createString(ColumnNames.RUN_INTERVAL_HOUR.toString());
+    public final StringPath runIntervalMinute = createString(ColumnNames.RUN_INTERVAL_MINUTE.toString());
+    public final StringPath runIntervalSecond = createString(ColumnNames.RUN_INTERVAL_SECOND.toString());
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());
 
     public static QMgrSchedule newInstance() {
@@ -37,10 +43,15 @@ public class QMgrSchedule extends RelationalPathBase<MgrSchedule> {
         addMetadata(processId, ColumnMetadata.named(ColumnNames.PROCESS_ID.toString()));
         addMetadata(taskId, ColumnMetadata.named(ColumnNames.TASK_ID.toString()));
         addMetadata(hostName, ColumnMetadata.named(ColumnNames.HOST_NAME.toString()));
-        addMetadata(processIseviceId, ColumnMetadata.named(ColumnNames.PROCESS_ISERVICEID.toString()));
+        addMetadata(processIServiceId, ColumnMetadata.named(ColumnNames.PROCESS_ISERVICEID.toString()));
         addMetadata(startTime, ColumnMetadata.named(ColumnNames.START_TIME.toString()));
-        addMetadata(repeatOption, ColumnMetadata.named(ColumnNames.REPEAT_OPTION.toString()));
         addMetadata(endTime, ColumnMetadata.named(ColumnNames.END_TIME.toString()));
+        addMetadata(enableDisable, ColumnMetadata.named(ColumnNames.ENABLE_DISABLE.toString()));
+        addMetadata(nextRunDate, ColumnMetadata.named(ColumnNames.NEXT_RUN_DATE.toString()));
+        addMetadata(runIntervalDay, ColumnMetadata.named(ColumnNames.RUN_INTERVAL_DAY.toString()));
+        addMetadata(runIntervalHour, ColumnMetadata.named(ColumnNames.RUN_INTERVAL_HOUR.toString()));
+        addMetadata(runIntervalMinute, ColumnMetadata.named(ColumnNames.RUN_INTERVAL_MINUTE.toString()));
+        addMetadata(runIntervalSecond, ColumnMetadata.named(ColumnNames.RUN_INTERVAL_SECOND.toString()));
         addMetadata(lastUpdateTime, ColumnMetadata.named(ColumnNames.LAST_UPDATE_TIME.toString()));
     }
 }

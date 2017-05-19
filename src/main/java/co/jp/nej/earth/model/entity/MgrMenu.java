@@ -31,7 +31,7 @@ public class MgrMenu extends BaseModel<MgrMenu> implements Serializable {
     }
 
     public MgrMenu(String functionId, String functionName, String functionCategoryId, String functionCategoryName,
-            int functionSortNo, String functionInformation, MenuLink menuInformation) {
+            int functionSortNo, String functionInformation) {
         this();
         LOG.debug(
                 "Call to (functionId, functionName, functionCategoryId, functionCategoryName, functionSortNo, "

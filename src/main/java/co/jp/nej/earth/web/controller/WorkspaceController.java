@@ -17,7 +17,6 @@ import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.MgrWorkspace;
 import co.jp.nej.earth.model.MgrWorkspaceConnect;
 import co.jp.nej.earth.model.constant.Constant.Session;
-import co.jp.nej.earth.model.enums.DatabaseType;
 import co.jp.nej.earth.service.WorkspaceService;
 import co.jp.nej.earth.util.EStringUtil;
 
@@ -33,40 +32,27 @@ public class WorkspaceController {
     @Autowired
     private WorkspaceService workspaceService;
 
-    @Autowired
-    private DatabaseType databaseType;
-
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String displayWorkspace(Model model) throws EarthException {
-        String result = EStringUtil.EMPTY;
-        try {
-            List<MgrWorkspace> mgrWorkspaces = workspaceService.getAll();
-            model.addAttribute("mgrWorkspaces", mgrWorkspaces);
-            result = "workspace/workspaceList";
-        } catch (EarthException ex) {
-            result = ex.getMessage();
-        }
-        return result;
+        List<MgrWorkspace> mgrWorkspaces = workspaceService.getAll();
+        model.addAttribute("mgrWorkspaces", mgrWorkspaces);
+        return "workspace/workspaceList";
     }
 
     @RequestMapping(value = "/addNew", method = RequestMethod.GET)
-    public String addNew(Model model) {
+    public String addNew(Model model) throws EarthException {
         MgrWorkspaceConnect mgrWorkspaceConnect = new MgrWorkspaceConnect();
         List<String> workspaceIds = new ArrayList<>();
         String result = EStringUtil.EMPTY;
-        try {
-            List<MgrWorkspace> mgrWorkspaces = workspaceService.getAll();
-            for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
-                workspaceIds.add(mgrWorkspace.getWorkspaceId());
-            }
-            int max = Integer.parseInt(Collections.max(workspaceIds)) + 1;
-            String workspaceIdNew = String.valueOf(max);
-            mgrWorkspaceConnect.setWorkspaceId(workspaceIdNew);
-            model.addAttribute("mgrWorkspaceConnect", mgrWorkspaceConnect);
-            result = "workspace/addNewWorkspace";
-        } catch (EarthException ex) {
-            result = ex.getMessage();
+        List<MgrWorkspace> mgrWorkspaces = workspaceService.getAll();
+        for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
+            workspaceIds.add(mgrWorkspace.getWorkspaceId());
         }
+        int max = Integer.parseInt(Collections.max(workspaceIds)) + 1;
+        String workspaceIdNew = String.valueOf(max);
+        mgrWorkspaceConnect.setWorkspaceId(workspaceIdNew);
+        model.addAttribute("mgrWorkspaceConnect", mgrWorkspaceConnect);
+        result = "workspace/addNewWorkspace";
         return result;
     }
 
@@ -121,21 +107,14 @@ public class WorkspaceController {
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public String deleteList(@ModelAttribute("workspaceIds") String workspaceIds, Model model) {
+    public String deleteList(@ModelAttribute("workspaceIds") String workspaceIds, Model model) throws EarthException {
 
         String result = "redirect:list";
-        List<Message> messages = new ArrayList<>();
-
         List<String> workspaceIdList = Arrays.asList(workspaceIds.split("\\s*,\\s*"));
-        try {
-            messages = workspaceService.deleteList(workspaceIdList);
-            if (messages != null || messages.size() > 0) {
-                model.addAttribute(Session.MESSAGES, messages);
-            }
-
-        } catch (EarthException ex) {
-            model.addAttribute(Session.MESSAGES, "Cannot Delete");
-            ex.getMessage();
+        List<Message> messages = workspaceService.deleteList(workspaceIdList);
+        if (messages.size() > 0) {
+            model.addAttribute("messages", messages);
+            return displayWorkspace(model);
         }
         return result;
     }

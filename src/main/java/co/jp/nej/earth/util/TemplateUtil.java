@@ -41,8 +41,7 @@ public class TemplateUtil {
                     (Map<TemplateKey, TemplateAccessRight>) session
                     .getAttribute(Session.TEMPLATE_ACCESS_RIGHT_MAP);
             for (TemplateKey templateKey : templateAccessRightMap.keySet()) {
-                if (templateKey.getTemplateId().equals(tKey.getTemplateId())
-                        && templateKey.getWorkspaceId().equals(tKey.getWorkspaceId())) {
+                if(templateKey.equals(tKey)){
                     TemplateAccessRight templateAccessRight = templateAccessRightMap.get(templateKey);
                     if (!ObjectUtils.isEmpty(templateAccessRight)) {
                         return templateAccessRight.getAccessRight();

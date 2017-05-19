@@ -63,7 +63,11 @@ public class MstSystemDaoImpl implements MstSystemDao {
         QMstSystem qMstSystem = QMstSystem.newInstance();
         EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
         // update system date
-        return (int) earthQueryFactory.update(qMstSystem).set(qMstSystem.configValue, configValue)
-                .where(qMstSystem.section.eq(section).and(qMstSystem.variableName.eq(variable))).execute();
+        try {
+            return (int) earthQueryFactory.update(qMstSystem).set(qMstSystem.configValue, configValue)
+                    .where(qMstSystem.section.eq(section).and(qMstSystem.variableName.eq(variable))).execute();
+        } catch (Exception ex) {
+            throw new EarthException(ex.getMessage());
+        }
     }
 }

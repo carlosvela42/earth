@@ -2,7 +2,15 @@ package co.jp.nej.earth.model.entity;
 
 import java.io.Serializable;
 
-public class MgrTemplateP implements Serializable {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrTemplateP;
+import co.jp.nej.earth.util.DateUtil;
+
+public class MgrTemplateP extends BaseModel<MgrTemplateP> implements Serializable {
+    private static final Logger LOG = LoggerFactory.getLogger(MgrTemplateP.class);
     /**
      *
      */
@@ -10,7 +18,20 @@ public class MgrTemplateP implements Serializable {
     private String profileId;
     private String templateId;
     private int accessAuthority;
-    private String lastUpdateTime;
+
+    public MgrTemplateP() {
+        LOG.debug("Call to blank constructor");
+        this.setqObj(QMgrTemplateP.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
+
+    public MgrTemplateP(String profileId, String templateId, int accessAuthority) {
+        this();
+        LOG.debug("Call to (profileId, templateId, accessAuthority) constructor");
+        this.profileId = profileId;
+        this.templateId = templateId;
+        this.accessAuthority = accessAuthority;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -38,13 +59,5 @@ public class MgrTemplateP implements Serializable {
 
     public void setAccessAuthority(int accessAuthority) {
         this.accessAuthority = accessAuthority;
-    }
-
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 }

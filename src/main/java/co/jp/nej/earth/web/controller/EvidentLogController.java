@@ -1,11 +1,8 @@
 package co.jp.nej.earth.web.controller;
 
-import co.jp.nej.earth.model.MgrWorkspace;
-import co.jp.nej.earth.model.entity.StrLogAccess;
-import co.jp.nej.earth.service.EvidentLogService;
-import co.jp.nej.earth.service.WorkspaceService;
-import co.jp.nej.earth.util.EStringUtil;
-import com.querydsl.core.types.OrderSpecifier;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -16,8 +13,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.MgrWorkspace;
+import co.jp.nej.earth.model.entity.StrLogAccess;
+import co.jp.nej.earth.service.EvidentLogService;
+import co.jp.nej.earth.service.WorkspaceService;
+import co.jp.nej.earth.util.EStringUtil;
 
 @Controller
 @RequestMapping("/evidentLog")
@@ -30,14 +31,10 @@ public class EvidentLogController {
     private WorkspaceService workspaceService;
 
     @RequestMapping(value = "/evidentLog", method = RequestMethod.GET)
-    public String evidentLog(Model model) {
-        try {
-            List<MgrWorkspace> mgrWorkspaces = workspaceService.getAll();
-            model.addAttribute("mgrWorkspaces", mgrWorkspaces);
-            return "evidentLogScreen/evidentLogScreen";
-        } catch (Exception ex) {
-            return "redirect: /";
-        }
+    public String evidentLog(Model model) throws EarthException {
+        List<MgrWorkspace> mgrWorkspaces = workspaceService.getAll();
+        model.addAttribute("mgrWorkspaces", mgrWorkspaces);
+        return "evidentLogScreen/evidentLogScreen";
     }
 
     @RequestMapping(value = "/evidentLogScreen", method = RequestMethod.GET)
@@ -48,11 +45,10 @@ public class EvidentLogController {
             String workspaceId = "";
             Long offset = null;
             Long limit = null;
-            OrderSpecifier<String> orderByColumn = null;
             if (!EStringUtil.isEmpty(mgrWorkspace.getWorkspaceId())) {
                 workspaceId = mgrWorkspace.getWorkspaceId();
-                model.addAttribute("strLogAccesses", evidentLogService.getListByWorkspaceId(workspaceId, offset, limit,
-                        orderByColumn));
+                model.addAttribute("strLogAccesses",
+                        evidentLogService.getListByWorkspaceId(workspaceId, offset, limit, null));
             }
             model.addAttribute("workspaceId", workspaceId);
             return "evidentLogScreen/evidentLogScreen";

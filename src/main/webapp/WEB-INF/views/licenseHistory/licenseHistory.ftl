@@ -1,22 +1,20 @@
 <script type="text/javascript" src="../resources/js/jquery.min.js"></script>
-<script type="text/javascript"
-	src="../resources/js/handlebars-v4.0.5.js"></script>
 
 
 <form id="searchForm" method="post" object="strCals" action="searchLicenseHistory">
-	<label>処理時刻</label> <input type="text" name="fromDate" id="fromDateId" value="<#if fromDate??>${fromDate}</#if>">
-	<label>処理時刻</label> <input type="text" name="toDate" id="toDateId" value="<#if toDate??>${toDate}</#if>">
+	<label>蜃ｦ逅�譎ょ綾</label> <input type="text" name="fromDate" id="fromDateId" value="<#if fromDate??>${fromDate}</#if>">
+	<label>蜃ｦ逅�譎ょ綾</label> <input type="text" name="toDate" id="toDateId" value="<#if toDate??>${toDate}</#if>">
 	<input type="submit" id="searchBtn" value="Search">
 </form>
 <#if message??>${message}</#if>
 <table border="1">
 	<thead>
 		<tr>
-			<th>区分</th>
-			<th>処理時刻</th>
-			<th>プロファイルID</th>
-			<th>使用可能ライセンス数</th>
-			<th>使用ライセンス数</th>
+			<th>蛹ｺ蛻�</th>
+			<th>蜃ｦ逅�譎ょ綾</th>
+			<th>繝励Ο繝輔ぃ繧､繝ｫID</th>
+			<th>菴ｿ逕ｨ蜿ｯ閭ｽ繝ｩ繧､繧ｻ繝ｳ繧ｹ謨ｰ</th>
+			<th>菴ｿ逕ｨ繝ｩ繧､繧ｻ繝ｳ繧ｹ謨ｰ</th>
 		</tr>
 	</thead>
 	<tbody>

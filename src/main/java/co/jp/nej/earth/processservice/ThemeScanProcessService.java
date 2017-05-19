@@ -53,6 +53,8 @@ public class ThemeScanProcessService implements Job {
      */
     private static final String FOLDER_OUTPUT = "temp/themeScan";
 
+    private String workspaceId;
+
     /**
      * execute
      */
@@ -73,6 +75,7 @@ public class ThemeScanProcessService implements Job {
      */
     private void logic() throws EarthException, IOException {
         ApplicationContext context = ApplicationContextUtil.getApplicationContext();
+        workspaceId = ApplicationContextUtil.getWorkspaceId();
         service = context.getBean(EventControlService.class);
         List<File> fileChildren = scanFolderImport();
         for (File child : fileChildren) {
@@ -103,7 +106,7 @@ public class ThemeScanProcessService implements Job {
                     // check file is xml or not
                     if (extension.equals("xml")) {
                         try {
-                            service.insertEvent(parseXml(fileChild));
+                            service.insertEvent(workspaceId, parseXml(fileChild));
                             fileChild.delete();
                         } catch (JAXBException e) {
                             // write log when xml's type is wrong
@@ -149,7 +152,7 @@ public class ThemeScanProcessService implements Job {
                 // check file is xml or not
                 if (extension.equals("xml")) {
                     try {
-                        if (!service.insertEvent(parseXml(fileChild))) {
+                        if (!service.insertEvent(workspaceId, parseXml(fileChild))) {
                             break;
                         }
                     } catch (JAXBException e) {

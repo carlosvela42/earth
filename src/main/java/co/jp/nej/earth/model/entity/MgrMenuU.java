@@ -1,19 +1,37 @@
 package co.jp.nej.earth.model.entity;
 
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrMenuU;
+import co.jp.nej.earth.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 
 /**
  * Created by minhtv on 3/29/2017.
  */
-public class MgrMenuU implements Serializable {
-    /**
-     *
-     */
+public class MgrMenuU extends BaseModel<MgrMenuU> implements Serializable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MgrMenuU.class);
+
     private static final long serialVersionUID = 1L;
     private String functionId;
     private String userId;
     private int accessAuthority;
-    private String lastUpdateTime;
+
+    public MgrMenuU() {
+        LOG.debug("Call to blank constructor");
+        this.setqObj(QMgrMenuU.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
+
+    public MgrMenuU(String functionId, String userId, int accessAuthority) {
+        this();
+        this.functionId = functionId;
+        this.userId = userId;
+        this.accessAuthority = accessAuthority;
+    }
 
     public String getFunctionId() {
         return functionId;
@@ -32,11 +50,5 @@ public class MgrMenuU implements Serializable {
     }
     public void setAccessAuthority(int accessAuthority) {
         this.accessAuthority = accessAuthority;
-    }
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 }

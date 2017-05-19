@@ -20,7 +20,7 @@ public interface EventControlService {
      * @return
      * @throws EarthException
      */
-    boolean insertEvent(WorkItem workItem) throws EarthException;
+    boolean insertEvent(String workspaceId, WorkItem workItem) throws EarthException;
 
     /**
      * get list event by status
@@ -54,6 +54,7 @@ public interface EventControlService {
 
     /**
      * delete event
+     *
      * @param event
      * @param workSpaceId
      * @return

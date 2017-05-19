@@ -1,40 +1,121 @@
 package co.jp.nej.earth.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-
+import co.jp.nej.earth.dao.MenuAuthorityDao;
+import co.jp.nej.earth.dao.MenuDao;
+import co.jp.nej.earth.dao.UserProfileDao;
 import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.manager.connection.ConnectionManager;
-import co.jp.nej.earth.manager.connection.EarthQueryFactory;
+import co.jp.nej.earth.model.ProfileAccessRight;
+import co.jp.nej.earth.model.UserAccessRight;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrMenu;
+import co.jp.nej.earth.model.entity.MgrUserProfile;
+import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.sql.QMgrMenu;
-import co.jp.nej.earth.model.sql.QMgrMenuP;
+import co.jp.nej.earth.util.ConversionUtil;
+import co.jp.nej.earth.util.UserAccessRightUtil;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
-@Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
-public class MenuServiceImpl implements MenuService {
+public class MenuServiceImpl extends BaseService implements MenuService {
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private MenuAuthorityDao menuAuthorityDao;
+
+    @Autowired
+    private UserProfileDao userProfileDao;
 
     @Override
     public List<MgrMenu> getMenuByProfileId(List<String> profileIds) throws EarthException {
-        try {
+        return ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return menuDao.getMenuByProfileId(profileIds);
+        }), MgrMenu.class);
+    }
+
+    @Override
+    public List<MgrMenu> getAll() throws EarthException {
+        return ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
             QMgrMenu qMgrMenu = QMgrMenu.newInstance();
-            QMgrMenuP qMgrMenuP = QMgrMenuP.newInstance();
-            QBean<MgrMenu> selectList = Projections.bean(MgrMenu.class, qMgrMenu.all());
-            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-            List<MgrMenu> mgrMenus = earthQueryFactory.select(selectList).from(qMgrMenu).innerJoin(qMgrMenuP).on(
-                            qMgrMenu.functionId.eq(qMgrMenuP.functionId))
-                    .where(qMgrMenuP.profileId.in(profileIds))
-                    .fetch();
-            return mgrMenus;
-        } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
-        }
+            List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+            orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, qMgrMenu.functionCategoryId));
+            orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, qMgrMenu.functionId));
+            orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, qMgrMenu.functionSortNo));
+
+            return menuDao.findAll(Constant.EARTH_WORKSPACE_ID, null, null, orderSpecifiers, null);
+        }), MgrMenu.class);
+    }
+
+    @Override
+    public MgrMenu getDetail(String functionId) throws EarthException {
+        return (MgrMenu) executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            QMgrMenu qMgrMenu = QMgrMenu.newInstance();
+            Map<Path<?>, Object> condition = new HashMap<>();
+            condition.put(qMgrMenu.functionId, functionId);
+            return menuDao.findOne(Constant.EARTH_WORKSPACE_ID, condition);
+        });
+    }
+
+    @Override
+    public List<UserAccessRight> getUserAuthority(String functionId) throws EarthException {
+        return ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return menuAuthorityDao.getUserAuthority(functionId);
+        }), UserAccessRight.class);
+    }
+
+    @Override
+    public List<ProfileAccessRight> getProfileAuthority(String functionId) throws EarthException {
+        return ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return menuAuthorityDao.getProfileAuthority(functionId);
+        }), ProfileAccessRight.class);
+    }
+
+    @Override
+    public long saveAuthority(String functionId, List<UserAccessRight> userAccessRights,
+                              List<ProfileAccessRight> profileAccessRights)
+            throws EarthException {
+        return (long) executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            menuAuthorityDao.deleteAllUserAuthority(functionId);
+
+            if (userAccessRights.size() > 0) {
+                menuAuthorityDao.insertUserAuthority(functionId, userAccessRights);
+            }
+
+            menuAuthorityDao.deleteAllProfileAuthority(functionId);
+
+            if (profileAccessRights.size() > 0) {
+                menuAuthorityDao.insertProfileAuthority(functionId, profileAccessRights);
+            }
+            menuAuthorityDao.deleteAllMixAuthority(Arrays.asList(functionId));
+
+            List<String> profileIds = new ArrayList<>();
+            for (ProfileAccessRight profileAccessRight : profileAccessRights) {
+                profileIds.add(profileAccessRight.getProfileId());
+            }
+            List<MgrUserProfile> mgrUserProfiles = userProfileDao.getListByProfileIds(profileIds);
+
+            Map<String, AccessRight> accessRightPMap = new HashMap<>();
+            for (ProfileAccessRight profileAccessRight : profileAccessRights) {
+                accessRightPMap.put(profileAccessRight.getProfileId(), profileAccessRight.getAccessRight());
+            }
+
+            List<UserAccessRight> userAccessRightByProfiles = UserAccessRightUtil.getUserAccessRightProfiles(
+                    mgrUserProfiles, accessRightPMap);
+            List<UserAccessRight> menuAccessRights = UserAccessRightUtil.mixAuthority(userAccessRights,
+                    userAccessRightByProfiles);
+
+            return menuAuthorityDao.insertMixAuthority(functionId, menuAccessRights);
+        });
     }
 }

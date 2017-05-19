@@ -62,24 +62,21 @@ public class TemplateAuthorityController {
      * @param model
      *            to hold model attribute
      * @return path of screen
+     * @throws EarthException
      */
     @RequestMapping(value = "/chooseWorkspace", method = RequestMethod.GET)
-    public String getListTemplate(@ModelAttribute("mgrWorkspace") MgrWorkspace mgrWorkspace, Model model) {
-        try {
-            List<MgrWorkspace> mgrWorkspaces = templateService.getAllWorkspace();
-            model.addAttribute("mgrWorkspaces", mgrWorkspaces);
-            List<MgrTemplate> mgrTemplates = new ArrayList<MgrTemplate>();
-            String workspaceId = "";
-            if (!StringUtils.isEmpty(mgrWorkspace.getWorkspaceId())) {
-                workspaceId = mgrWorkspace.getWorkspaceId();
-                mgrTemplates = templateService.getTemplateListInfo(workspaceId);
-            }
-            model.addAttribute("workspaceId", workspaceId);
-            model.addAttribute("mgrTemplates", mgrTemplates);
-        } catch (EarthException e) {
-            String message = "Error: Can not get template list";
-            model.addAttribute("message", message);
+    public String getListTemplate(@ModelAttribute("mgrWorkspace") MgrWorkspace mgrWorkspace, Model model)
+            throws EarthException {
+        List<MgrWorkspace> mgrWorkspaces = templateService.getAllWorkspace();
+        model.addAttribute("mgrWorkspaces", mgrWorkspaces);
+        List<MgrTemplate> mgrTemplates = new ArrayList<MgrTemplate>();
+        String workspaceId = "";
+        if (!StringUtils.isEmpty(mgrWorkspace.getWorkspaceId())) {
+            workspaceId = mgrWorkspace.getWorkspaceId();
+            mgrTemplates = templateService.getTemplateListInfo(workspaceId);
         }
+        model.addAttribute("workspaceId", workspaceId);
+        model.addAttribute("mgrTemplates", mgrTemplates);
         return "templateAccessRight/showList";
     }
 
@@ -92,31 +89,27 @@ public class TemplateAuthorityController {
      * @param workspaceId
      *            id of workspace which template belongs to
      * @return path of screen
+     * @throws EarthException
      */
     @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
-    public String showDetail(Model model, String templateId, String workspaceId) {
-        try {
-            TemplateKey templateKey = new TemplateKey();
-            templateKey.setTemplateId(templateId);
-            templateKey.setWorkspaceId(workspaceId);
-            MgrTemplate mgrTemplate = templateService.getById(templateKey);
-            List<UserAccessRight> userAccessRights = templateService.getUserAuthority(templateKey);
-            List<ProfileAccessRight> profileAccessRights = templateService.getProfileAuthority(templateKey);
-            List<MgrUser> mgrUsers = templateService.getAllUser();
-            List<MgrProfile> mgrProfiles = templateService.getAllProfile();
-            List<AccessRight> accessRights = new ArrayList<AccessRight>(Arrays.asList(AccessRight.values()));
-            model.addAttribute("userAccessRights", userAccessRights);
-            model.addAttribute("profileAccessRights", profileAccessRights);
-            model.addAttribute("mgrTemplate", mgrTemplate);
-            model.addAttribute("mgrUsers", mgrUsers);
-            model.addAttribute("mgrProfiles", mgrProfiles);
-            model.addAttribute("accessRights", accessRights);
-            model.addAttribute("templateId", templateId);
-            model.addAttribute("workspaceId", workspaceId);
-        } catch (EarthException e) {
-            String message = "Error: Can not get user/profile access right list";
-            model.addAttribute("message", message);
-        }
+    public String showDetail(Model model, String templateId, String workspaceId) throws EarthException {
+        TemplateKey templateKey = new TemplateKey();
+        templateKey.setTemplateId(templateId);
+        templateKey.setWorkspaceId(workspaceId);
+        MgrTemplate mgrTemplate = templateService.getById(templateKey);
+        List<UserAccessRight> userAccessRights = templateService.getUserAuthority(templateKey);
+        List<ProfileAccessRight> profileAccessRights = templateService.getProfileAuthority(templateKey);
+        List<MgrUser> mgrUsers = templateService.getAllUser();
+        List<MgrProfile> mgrProfiles = templateService.getAllProfile();
+        List<AccessRight> accessRights = new ArrayList<AccessRight>(Arrays.asList(AccessRight.values()));
+        model.addAttribute("userAccessRights", userAccessRights);
+        model.addAttribute("profileAccessRights", profileAccessRights);
+        model.addAttribute("mgrTemplate", mgrTemplate);
+        model.addAttribute("mgrUsers", mgrUsers);
+        model.addAttribute("mgrProfiles", mgrProfiles);
+        model.addAttribute("accessRights", accessRights);
+        model.addAttribute("templateId", templateId);
+        model.addAttribute("workspaceId", workspaceId);
         return "templateAccessRight/editTemplateAccessRight";
     }
 
@@ -155,7 +148,7 @@ public class TemplateAuthorityController {
                             String[] userAccessRightArr = userId.split("\\|");
                             UserAccessRight userAccessRight = new UserAccessRight();
                             userAccessRight.setUserId(userAccessRightArr[0]);
-                            if (!StringUtils.isEmpty(userAccessRightArr[1])){
+                            if (!StringUtils.isEmpty(userAccessRightArr[1])) {
                                 userAccessRight.setAccessRight(AccessRight.valueOf(userAccessRightArr[1]));
                             }
                             userAccessRights.add(userAccessRight);
@@ -175,7 +168,7 @@ public class TemplateAuthorityController {
                             String[] profileAccessRightArr = profileId.split("\\|");
                             ProfileAccessRight profileAccessRight = new ProfileAccessRight();
                             profileAccessRight.setProfileId(profileAccessRightArr[0]);
-                            if (!StringUtils.isEmpty(profileAccessRightArr[1])){
+                            if (!StringUtils.isEmpty(profileAccessRightArr[1])) {
                                 profileAccessRight.setAccessRight(AccessRight.valueOf(profileAccessRightArr[1]));
                             }
                             profileAccessRights.add(profileAccessRight);

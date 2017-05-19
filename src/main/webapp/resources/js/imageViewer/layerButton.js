@@ -1,4 +1,4 @@
-function addNewLayer(countLayer, layerName, layerOwner, layerDisplay,
+IV.addNewLayer = function(countLayer, layerName, layerOwner, layerDisplay,
 		 layerModified, layerCreated, layerActive) {
 	var layerBody = "";
 	layerBody += '<div class="row">' + '<div class="col-md-1" id="layer'

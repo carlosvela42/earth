@@ -1,27 +1,26 @@
 package co.jp.nej.earth.dao;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.manager.connection.ConnectionManager;
+import co.jp.nej.earth.manager.connection.EarthQueryFactory;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.util.EModelUtil;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.RelationalPathBase;
+import com.querydsl.sql.SQLQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.manager.connection.ConnectionManager;
-import co.jp.nej.earth.manager.connection.EarthQueryFactory;
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.util.EModelUtil;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> {
 
@@ -39,92 +38,82 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
     }
 
     /**
+     * Find all without any conditions: group by, order by, limit, offset.
+     */
+    public List<T> findAll(String workspaceId) throws EarthException {
+        return findAll(workspaceId, null, null, null, null);
+    }
+
+    /**
      * Find all entity record
      */
-    @SuppressWarnings("unchecked")
-    public List<T> findAll(String workspaceId, Long offset, Long limit, OrderSpecifier<String> orderByColumn)
-            throws EarthException {
+    public List<T> findAll(String workspaceId, Long offset, Long limit, List<OrderSpecifier<?>> orderBys,
+                           Path<?>[] groupbys) throws EarthException {
+        return search(workspaceId, null, offset, limit, orderBys, groupbys);
+    }
 
-        if (offset == null || offset < 0) {
-            offset = 0L;
-        }
-
-        if (limit == null || limit < 0) {
-            limit = SEARCH_LIMIT_DEFAULT;
-        }
-
-        LOG.debug("Call {}.findAll with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
-
-        RelationalPathBase<T> qObj = this.instance.getqObj();
-
-        EarthQueryFactory queryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
-
-        @SuppressWarnings("rawtypes")
-        QBean<T> selectList = (QBean) Projections.bean(instance.getClass(), qObj.all());
-
-        if (orderByColumn != null) {
-            LOG.debug(EModelUtil.cleanQuery(queryFactory.select(selectList).from(qObj).offset(offset).limit(limit)
-                    .orderBy(orderByColumn).getSQL()));
-
-            return queryFactory.select(selectList).from(qObj).offset(offset).limit(limit).orderBy(orderByColumn)
-                    .fetch();
-        } else {
-            return queryFactory.select(selectList).from(qObj).offset(offset).limit(limit).fetch();
-        }
+    /**
+     * Search without any conditions: group by, order by, limit, offset.
+     */
+    public List<T> search(String workspaceId, Predicate condition) throws EarthException {
+        return search(workspaceId, condition, null, null, null, null);
     }
 
     @SuppressWarnings("unchecked")
     public List<T> search(String workspaceId, Predicate condition, Long offset, Long limit,
-            OrderSpecifier<String> orderByColumn) throws EarthException {
-
-        if (offset == null || offset < 0) {
-            offset = 0L;
-        }
-
-        if (limit == null || limit < 0) {
-            limit = SEARCH_LIMIT_DEFAULT;
-        }
-
-        LOG.debug("Call {}.search with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
-
-        LOG.debug("predicate:" + condition.toString());
-
-        RelationalPathBase<T> qObj = this.instance.getqObj();
+                          List<OrderSpecifier<?>> orderBys, Path<?>[] groupbys) throws EarthException {
 
         EarthQueryFactory queryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
+        return (List<T>) executeWithException(() -> {
+            LOG.debug("Call {}.search with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
 
-        @SuppressWarnings("rawtypes")
-        QBean<T> selectList = (QBean) Projections.bean(instance.getClass(), qObj.all());
+            RelationalPathBase<T> qObj = this.instance.getqObj();
 
-        if (orderByColumn != null) {
-            LOG.debug(EModelUtil.cleanQuery(queryFactory.select(selectList).from(qObj).offset(offset).limit(limit)
-                    .orderBy(orderByColumn).getSQL()));
+            long off = (offset == null || offset < 0) ? 0L : offset.longValue();
+            long lim = (limit == null || limit < 0) ? SEARCH_LIMIT_DEFAULT : limit.longValue();
 
-            return queryFactory.select(selectList).from(qObj).where(condition).offset(offset).limit(limit)
-                    .orderBy(orderByColumn).fetch();
-        } else {
-            return queryFactory.select(selectList).from(qObj).where(condition).offset(offset).limit(limit).fetch();
-        }
+            QBean<?> selectList = Projections.bean(instance.getClass(), qObj.all());
+
+            SQLQuery<?> query = queryFactory.select(selectList).from(qObj).offset(off);
+
+            if (condition != null) {
+                query = query.where(condition);
+            }
+
+            if (groupbys != null) {
+                query = query.groupBy(groupbys);
+            }
+
+            if (orderBys != null && orderBys.size() > 0) {
+                for (OrderSpecifier<?> orderBy : orderBys) {
+                    query = query.orderBy(orderBy);
+                }
+            }
+
+            query = query.limit(lim);
+
+            LOG.info("SQL STRING: " + query.getSQL().getSQL());
+            return query.fetch();
+        });
     }
 
     @SuppressWarnings("unchecked")
     public T findOne(String workspaceId, Map<Path<?>, Object> keyMap) throws EarthException {
-
-        LOG.info("Call {}.findOne with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
-
         EarthQueryFactory queryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
-        RelationalPathBase<T> qObj = this.instance.getqObj();
+        return (T) executeWithException(() -> {
+            LOG.info("Call {}.findOne with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
 
-        @SuppressWarnings("rawtypes")
-        QBean<T> selectList = (QBean) Projections.bean(instance.getClass(), qObj.all());
+            RelationalPathBase<T> qObj = this.instance.getqObj();
+            @SuppressWarnings("rawtypes")
+            QBean<T> selectList = (QBean) Projections.bean(instance.getClass(), qObj.all());
 
-        Predicate predicate = EModelUtil.buildCondition(keyMap, qObj, false);
+            Predicate predicate = EModelUtil.buildCondition(keyMap, qObj, false);
 
-        // LOG.info(EModelUtil.cleanQuery(queryFactory.select(selectList).from(qObj).where(predicate).getSQL()));
+            LOG.debug(EModelUtil.cleanQuery(queryFactory.select(selectList).from(qObj).where(predicate).getSQL()));
+            T result = queryFactory.select(selectList).from(qObj).where(predicate).fetchOne();
 
-        T result = queryFactory.select(selectList).from(qObj).where(predicate).fetchOne();
-
-        return result;
+            return result;
+        });
     }
 
     public long delete(String workspaceId, Map<Path<?>, Object> keyMap) throws EarthException {
@@ -132,12 +121,13 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
         LOG.info("Call {}.delete with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
 
         EarthQueryFactory queryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
+        return (long) executeWithException(() -> {
+            RelationalPathBase<T> qObj = this.instance.getqObj();
 
-        RelationalPathBase<T> qObj = this.instance.getqObj();
+            Predicate predicate = EModelUtil.buildCondition(keyMap, qObj, true);
 
-        Predicate predicate = EModelUtil.buildCondition(keyMap, qObj, true);
-
-        return queryFactory.delete(qObj).where(predicate).execute();
+            return queryFactory.delete(qObj).where(predicate).execute();
+        });
     }
 
     @Override
@@ -165,10 +155,10 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
         LOG.info("Call {}.deleteAll with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
 
         EarthQueryFactory queryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
-
-        RelationalPathBase<T> qObj = this.instance.getqObj();
-
-        return queryFactory.delete(qObj).execute();
+        return (long) executeWithException(() -> {
+            RelationalPathBase<T> qObj = this.instance.getqObj();
+            return queryFactory.delete(qObj).execute();
+        });
     }
 
     @Override
@@ -177,29 +167,44 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
         LOG.info("Call {}.add with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
         RelationalPathBase<T> qObj = this.instance.getqObj();
         EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
-        return earthQueryFactory.insert(qObj).populate(t).execute();
+        return (long) executeWithException(() -> {
+            return earthQueryFactory.insert(qObj).populate(t).execute();
+        });
     }
 
     @Override
     public long update(String workspaceId, Map<Path<?>, Object> keyMap, Map<Path<?>, Object> updateMap)
             throws EarthException {
 
-        LOG.info("Call {}.update with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
-
-        RelationalPathBase<T> qObj = this.instance.getqObj();
         EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
+        return (long) executeWithException(() -> {
+            LOG.info("Call {}.update with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
 
-        Predicate predicate = EModelUtil.buildCondition(keyMap, qObj, true);
-        List<Path<?>> paths = new ArrayList<>();
-        List<Object> values = new ArrayList<>();
+            RelationalPathBase<T> qObj = this.instance.getqObj();
+            Predicate predicate = EModelUtil.buildCondition(keyMap, qObj, true);
+            List<Path<?>> paths = new ArrayList<>();
+            List<Object> values = new ArrayList<>();
+            Iterator<Entry<Path<?>, Object>> it = updateMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Path<?>, Object> pair = (Map.Entry<Path<?>, Object>) it.next();
+                paths.add(pair.getKey());
+                values.add(pair.getValue());
+            }
+            return earthQueryFactory.update(qObj).set(paths, values).where(predicate).execute();
+        });
+    }
 
-        Iterator<Entry<Path<?>, Object>> it = updateMap.entrySet().iterator();
-        while (it.hasNext()) {
 
-            Map.Entry<Path<?>, Object> pair = (Map.Entry<Path<?>, Object>) it.next();
-            paths.add(pair.getKey());
-            values.add(pair.getValue());
+    public interface DaoCaller {
+        Object execute() throws EarthException;
+    }
+
+    protected Object executeWithException(DaoCaller caller) throws EarthException {
+        try {
+            return caller.execute();
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage());
+            throw new EarthException(ex.getMessage());
         }
-        return earthQueryFactory.update(qObj).set(paths, values).where(predicate).execute();
     }
 }

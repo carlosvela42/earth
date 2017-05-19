@@ -1,12 +1,9 @@
 package co.jp.nej.earth.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.entity.MstSystem;
+import co.jp.nej.earth.service.MstSystemService;
 import org.passay.CharacterCharacteristicsRule;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -21,15 +18,15 @@ import org.passay.WhitespaceRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.constant.Constant;
-import co.jp.nej.earth.model.entity.MstSystem;
-import co.jp.nej.earth.service.MstSystemService;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 @Component
 public class PasswordPolicy {
-
-    private static final int NUMBER_CHECKED_RULES = 3;
 
     @Autowired
     private MstSystemService mstSystemService;
@@ -61,47 +58,37 @@ public class PasswordPolicy {
         LengthRule ruleLength = new LengthRule();
         CharacterCharacteristicsRule rulesItem = new CharacterCharacteristicsRule();
         WhitespaceRule whitespaceRule = null;
-
         if (!listRuleFromDb.isEmpty()) {
-            rulesItem.setNumberOfCharacteristics(listRuleFromDb.size() - NUMBER_CHECKED_RULES);
+
             for (MstSystem item : listRuleFromDb) {
-                if (Constant.RuleDefilePasswordPolicy.PASS_SHORT.equals(item.getVariableName())) {
-                    if (!EStringUtil.isEmpty(item.getConfigValue())) {
-                        ruleLength.setMinimumLength(Integer.parseInt(item.getConfigValue()));
-                    }
-                }
 
-                if (Constant.RuleDefilePasswordPolicy.PASS_LONG.equals(item.getVariableName())) {
-                    if (!EStringUtil.isEmpty(item.getConfigValue())) {
-                        ruleLength.setMaximumLength(Integer.parseInt(item.getConfigValue()));
-                    }
-                }
-
-                if (Constant.RuleDefilePasswordPolicy.PASS_UPPERCASE.equals(item.getVariableName())) {
-                    if (!EStringUtil.isEmpty(item.getConfigValue())) {
+                if (!EStringUtil.isEmpty(item.getConfigValue())) {
+                    if (Constant.RuleDefilePasswordPolicy.PASS_UPPERCASE.equals(item.getVariableName())) {
                         rulesItem.getRules().add(new CharacterRule(EnglishCharacterData.UpperCase,
                                 Integer.parseInt(item.getConfigValue())));
                     }
-                }
 
-                if (Constant.RuleDefilePasswordPolicy.PASS_LOWERCASE.equals(item.getVariableName())) {
-                    if (!EStringUtil.isEmpty(item.getConfigValue())) {
+                    if (Constant.RuleDefilePasswordPolicy.PASS_LOWERCASE.equals(item.getVariableName())) {
                         rulesItem.getRules().add(new CharacterRule(EnglishCharacterData.LowerCase,
                                 Integer.parseInt(item.getConfigValue())));
                     }
-                }
 
-                if (Constant.RuleDefilePasswordPolicy.PASS_DIGIT.equals(item.getVariableName())) {
-                    if (!EStringUtil.isEmpty(item.getConfigValue())) {
+                    if (Constant.RuleDefilePasswordPolicy.PASS_DIGIT.equals(item.getVariableName())) {
                         rulesItem.getRules().add(
                                 new CharacterRule(EnglishCharacterData.Digit, Integer.parseInt(item.getConfigValue())));
                     }
-                }
 
-                if (Constant.RuleDefilePasswordPolicy.PASS_SPECIAL.equals(item.getVariableName())) {
-                    if (!EStringUtil.isEmpty(item.getConfigValue())) {
+                    if (Constant.RuleDefilePasswordPolicy.PASS_SPECIAL.equals(item.getVariableName())) {
                         rulesItem.getRules().add(new CharacterRule(EnglishCharacterData.Special,
                                 Integer.parseInt(item.getConfigValue())));
+                    }
+
+                    if (Constant.RuleDefilePasswordPolicy.PASS_SHORT.equals(item.getVariableName())) {
+                        ruleLength.setMinimumLength(Integer.parseInt(item.getConfigValue()));
+                    }
+
+                    if (Constant.RuleDefilePasswordPolicy.PASS_LONG.equals(item.getVariableName())) {
+                        ruleLength.setMaximumLength(Integer.parseInt(item.getConfigValue()));
                     }
                 }
 
@@ -110,6 +97,9 @@ public class PasswordPolicy {
                         whitespaceRule = new WhitespaceRule();
                     }
                 }
+            }
+            if (rulesItem.getRules() != null && rulesItem.getRules().size() > 0) {
+                rulesItem.setNumberOfCharacteristics(rulesItem.getRules().size());
             }
         }
 

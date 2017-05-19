@@ -37,12 +37,12 @@ $("#fontStyle").change(function() {
 	}
 });
 
-function property(selectId) {
+IV.prototype.property=function(selectId) {
 	if ($("#1").length == 0) {
-		$("#" + penColor).prop("checked", true);
-		$("#1" + fillColor).prop("checked", true);
-		$("#2" + highlightColor).prop("checked", true);
-		$("#width").val(lineSize);
+		$("#" + this.penColor).prop("checked", true);
+		$("#1" + this.fillColor).prop("checked", true);
+		$("#2" + this.highlightColor).prop("checked", true);
+		$("#width").val(this.lineSize);
 		$("#myModalLine").modal();
 	} else {
 		if ($("#" + selectId).prop("tagName") == "foreignObject") {
@@ -144,8 +144,8 @@ function okProperties(selectId) {
 }
 
 $("#properties").click(function() {
-	property(selectId);
-});
+	  imageViewer.property(imageViewer.selectId);
+	});
 
 $("#commentProperties").click(function() {
 	$("#t" + selectId).val($("#tbComment").val());

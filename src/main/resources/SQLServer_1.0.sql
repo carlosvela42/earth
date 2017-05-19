@@ -7,7 +7,7 @@ CREATE TABLE  CTL_EVENT (
     STATUS nvarchar(20),
     TASKID nvarchar(20) NOT NULL,
     WORKITEMDATA nvarchar(2000),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (EVENTID)
 );
 
@@ -16,7 +16,7 @@ CREATE TABLE CTL_TEMPLATE (
     USERID nvarchar(255) NOT NULL,
     TEMPLATEID nvarchar(20) NOT NULL,
     ACCESSAUTHORITY decimal(18),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (TEMPLATEID,USERID)
 );
 
@@ -29,7 +29,7 @@ CREATE TABLE DAT_DOCUMENT (
     PAGECOUNT decimal(18) NOT NULL,
     VIEWINFORMATION nvarchar(2000),
     DOCUMENTTYPE decimal(18),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (DOCUMENTNO,FOLDERITEMNO,WORKITEMID)
 );
 
@@ -38,7 +38,7 @@ CREATE TABLE DAT_FOLDERITEM (
     WORKITEMID nvarchar(20) NOT NULL,
     FOLDERITEMNO decimal(18) NOT NULL,
     TEMPLATEID nvarchar(20) NOT NULL,
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (FOLDERITEMNO,WORKITEMID)
 );
 
@@ -51,7 +51,7 @@ CREATE TABLE DAT_LAYER (
     TEMPLATEID nvarchar(20) NOT NULL,
     OWNERID nvarchar(20) NOT NULL,
     ANNOTATIONS nvarchar(2000),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (DOCUMENTNO,FOLDERITEMNO,LAYERNO,WORKITEMID)
 );
 
@@ -60,7 +60,7 @@ CREATE TABLE DAT_PROCESS (
     PROCESSID decimal(18) NOT NULL,
     WORKITEMID nvarchar(20) NOT NULL,
     TEMPLATEID nvarchar(20),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (PROCESSID,WORKITEMID)
 );
 
@@ -70,7 +70,7 @@ CREATE TABLE DAT_WORKITEM (
     TASKID nvarchar(20) NOT NULL,
     TEMPLATEID nvarchar(20) NOT NULL,
     LASTHISTORYNO decimal(18) NOT NULL,
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (WORKITEMID)
 );
 
@@ -82,7 +82,7 @@ CREATE TABLE MGR_PROCESS (
     DESCRIPTION nvarchar(255),
     PROCESSDEFINITION nvarchar(2000),
     DOCUMENTDATASAVEPATH nvarchar(260),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (PROCESSID)
 );
 
@@ -93,10 +93,10 @@ CREATE TABLE MGR_SCHEDULE (
     PROCESSID decimal(18) NOT NULL,
     TASKID nvarchar(20) NOT NULL,
     PROCESSISERVICEID decimal(18),
-    STARTTIME datetime,
+    STARTTIME nvarchar(50),
     REPEATOPTION nvarchar(2000),
-    ENDTIME datetime,
-    LASTUPDATETIME datetime,
+    ENDTIME nvarchar(50),
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (SCHEDULEID)
 );
 
@@ -107,7 +107,7 @@ CREATE TABLE MGR_TEMPLATE (
     TEMPLATETABLENAME nvarchar(255),
     TEMPLATEFIELD nvarchar(2000),
     TEMPLATETYPE nvarchar(255),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (TEMPLATEID)
 );
 
@@ -116,7 +116,7 @@ CREATE TABLE MGR_TEMPLATE_P (
     PROFILEID nvarchar(255) NOT NULL,
     TEMPLATEID nvarchar(20) NOT NULL,
     ACCESSAUTHORITY decimal(18),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (PROFILEID,TEMPLATEID)
 );
 
@@ -125,7 +125,7 @@ CREATE TABLE MGR_TEMPLATE_U (
     USERID nvarchar(255) NOT NULL,
     TEMPLATEID nvarchar(20) NOT NULL,
     ACCESSAUTHORITY decimal(18),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (TEMPLATEID,USERID)
 );
 
@@ -135,20 +135,20 @@ CREATE TABLE STR_DATA_FILE (
     FOLDERITEMNO decimal(18) NOT NULL,
     DOCUMENTNO decimal(18) NOT NULL,
     DOCUMENTDATAPATH nvarchar(260),
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (DOCUMENTNO,FOLDERITEMNO,WORKITEMID)
 );
 
 
 CREATE TABLE STR_LOG_ACCESS (
     EVENTID nvarchar(20) NOT NULL,
-    PROCESSTIME datetime NOT NULL,
+    PROCESSTIME nvarchar(50) NOT NULL,
     USERID nvarchar(255) NOT NULL,
     WORKITEMID nvarchar(20) NOT NULL,
     HISTORYNO decimal(18) NOT NULL,
     PROCESSID decimal(18) NOT NULL,
     PROCESSVERSION float(53),
     TASKID nvarchar(20) NOT NULL,
-    LASTUPDATETIME datetime,
+    LASTUPnvarchar(50) nvarchar(50),
     PRIMARY KEY (EVENTID)
 )

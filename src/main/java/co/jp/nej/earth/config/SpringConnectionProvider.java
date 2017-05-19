@@ -31,6 +31,7 @@ public class SpringConnectionProvider implements Provider<Connection> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return connection;
     }
 

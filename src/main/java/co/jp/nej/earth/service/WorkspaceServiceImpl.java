@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ import co.jp.nej.earth.util.DateUtil;
 @Service
 @Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
 public class WorkspaceServiceImpl implements WorkspaceService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceServiceImpl.class);
 
     @Autowired
     private WorkspaceDao workspaceDao;
@@ -62,11 +66,19 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public List<Message> deleteList(List<String> workspaceIds) throws EarthException {
         boolean status = true;
         List<Message> messages = new ArrayList<Message>();
-        status = workspaceDao.deleteList(workspaceIds);
-        if (!status) {
+        try {
+            status = workspaceDao.deleteList(workspaceIds);
+            if (!status) {
+                Message message = new Message(WorkSpace.ISUSE_WORKSPACE,
+                        messageSource.getMessage("E0022", new String[] { "WORKSPACE" }, Locale.ENGLISH));
+                messages.add(message);
+            }
+        } catch (Exception ex) {
+            LOG.error("WorkspaceServiceImpl:deleteList:" + ex.getMessage());
             Message message = new Message(WorkSpace.ISUSE_WORKSPACE,
                     messageSource.getMessage("E0022", new String[] { "WORKSPACE" }, Locale.ENGLISH));
             messages.add(message);
+            return messages;
         }
         return messages;
     }

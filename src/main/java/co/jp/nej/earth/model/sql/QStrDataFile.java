@@ -1,6 +1,7 @@
 package co.jp.nej.earth.model.sql;
 
 import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
 import com.querydsl.sql.RelationalPathBase;
@@ -16,8 +17,8 @@ public class QStrDataFile extends RelationalPathBase<StrDataFile> {
      */
     private static final long serialVersionUID = 1L;
     public final StringPath workitemId = createString(ColumnNames.WORKITEM_ID.toString());
-    public final StringPath folderItemNo = createString(ColumnNames.FOLDER_ITEM_NO.toString());
-    public final StringPath documentNo = createString(ColumnNames.DOCUMENT_NO.toString());
+    public final NumberPath<Integer> folderItemNo = createNumber(ColumnNames.FOLDER_ITEM_NO.toString(), Integer.class);
+    public final NumberPath<Integer> documentNo = createNumber(ColumnNames.DOCUMENT_NO.toString(), Integer.class);
     public final StringPath documentDataPath = createString(ColumnNames.DOCUMENT_DATA_PATH.toString());
 
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());

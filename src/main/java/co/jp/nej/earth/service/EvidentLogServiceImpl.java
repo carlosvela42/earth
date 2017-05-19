@@ -20,9 +20,9 @@ public class EvidentLogServiceImpl implements EvidentLogService {
 
     @Override
     public List<StrLogAccess> getListByWorkspaceId(String workspaceId, Long offset, Long limit,
-                                                   OrderSpecifier<String> orderByColumn) throws EarthException {
+                                                   List<OrderSpecifier<?>> orderBys) throws EarthException {
         try {
-            return strLogAccessDao.findAll(workspaceId, offset, limit, orderByColumn);
+            return strLogAccessDao.findAll(workspaceId, offset, limit, orderBys, null);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }

@@ -10,9 +10,8 @@ public class ConversionUtil {
             for (Object o : (List<?>) obj) {
                 result.add(clazz.cast(o));
             }
-            return result;
         }
-        return null;
+        return result;
     }
 
     public static <T> T castObject(Object obj, Class<T> clazz) {

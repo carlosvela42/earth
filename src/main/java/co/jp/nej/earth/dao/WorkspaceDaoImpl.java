@@ -75,7 +75,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         mgrWorkspace.setWorkspaceId(mgrWorkspaceConnect.getWorkspaceId());
         mgrWorkspace.setLastUpdateTime(mgrWorkspaceConnect.getLastUpdateTime());
         mgrWorkspace.setWorkspaceName(mgrWorkspaceConnect.getSchemaName());
-
+        mgrWorkspaceConnect.setPort(Constant.WorkSpace.PORT);
         boolean isSuccess;
         try {
             String user = mgrWorkspaceConnect.getSchemaName();
@@ -191,8 +191,8 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                     buffer.append(line).append("\n");
                 }
 
-                parts = buffer.toString()
-                        .replaceAll(Constant.WorkSpace.CHARACTER_REPLACE, user.toUpperCase()).split(";");
+                parts = buffer.toString().replaceAll(Constant.WorkSpace.CHARACTER_REPLACE, user.toUpperCase())
+                        .split(";");
 
             } else {
                 scriptFilePath = getClass().getClassLoader().getResource(DatabaseType.SQL_SERVER.getSourceFile())
@@ -254,6 +254,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         mgrWorkspace.setWorkspaceId(mgrWorkspaceConnect.getWorkspaceId());
         mgrWorkspace.setLastUpdateTime(mgrWorkspaceConnect.getLastUpdateTime());
         mgrWorkspace.setWorkspaceName(mgrWorkspaceConnect.getSchemaName());
+        mgrWorkspaceConnect.setPort(Constant.WorkSpace.PORT);
 
         String user = mgrWorkspaceConnect.getDbUser();
         String password = mgrWorkspaceConnect.getDbPassword();

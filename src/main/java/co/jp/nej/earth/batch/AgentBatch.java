@@ -26,6 +26,7 @@ import org.springframework.context.annotation.PropertySource;
 import co.jp.nej.earth.config.JdbcConfig;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.MgrSchedule;
+import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.service.ScheduleService;
 import co.jp.nej.earth.util.ApplicationContextUtil;
 
@@ -58,8 +59,8 @@ public class AgentBatch {
         scheduler.scheduleJob(job, trigger);
     }
 
-    public void run() throws ClassNotFoundException, SchedulerException, EarthException {
-        List<MgrSchedule> listSchedule = scheduleService.getSchedules();
+    public void run(String workspaceId) throws ClassNotFoundException, SchedulerException, EarthException {
+        List<MgrSchedule> listSchedule = scheduleService.getSchedules(workspaceId);
         if (!listSchedule.isEmpty()) {
             for (MgrSchedule schedule : listSchedule) {
                 createJob(schedule.getTaskId(), schedule.getStartTime(), schedule.getTaskId(), schedule.getTaskId());
@@ -73,7 +74,14 @@ public class AgentBatch {
         appUtil.setApplicationContext(context);
 
         AgentBatch agentBatch = context.getBean(AgentBatch.class);
-        agentBatch.run();
+        String workspaceId = null;
+        if (args.length > 0) {
+            workspaceId = args[0];
+        } else {
+            workspaceId = Constant.EARTH_WORKSPACE_ID;
+        }
+        appUtil.setWorkspaceId(workspaceId);
+        agentBatch.run(workspaceId);
     }
 
 }

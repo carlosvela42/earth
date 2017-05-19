@@ -3,16 +3,19 @@ package co.jp.nej.earth.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 
 import co.jp.nej.earth.dao.DataDbDao;
 import co.jp.nej.earth.dao.DataFileDao;
@@ -34,7 +37,10 @@ import co.jp.nej.earth.model.sql.QLayer;
 import co.jp.nej.earth.model.sql.QStrDataDb;
 import co.jp.nej.earth.model.sql.QStrDataFile;
 import co.jp.nej.earth.model.sql.QWorkItem;
+import co.jp.nej.earth.model.ws.RestResponse;
 import co.jp.nej.earth.util.DateUtil;
+import co.jp.nej.earth.util.EMessageResource;
+import co.jp.nej.earth.util.EStringUtil;
 import co.jp.nej.earth.util.FileUtil;
 
 /**
@@ -43,8 +49,7 @@ import co.jp.nej.earth.util.FileUtil;
  *
  */
 @Service
-@Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
-public class WorkItemServiceImpl implements WorkItemService {
+public class WorkItemServiceImpl extends BaseService implements WorkItemService {
 
     @Autowired
     private WorkItemDao workItemDao;
@@ -60,6 +65,8 @@ public class WorkItemServiceImpl implements WorkItemService {
     private DataFileDao dataFileDao;
     @Autowired
     private DataDbDao dataDbDao;
+    @Autowired
+    private EMessageResource eMessageResource;
 
     private static QFolderItem qFolderItem = QFolderItem.newInstance();
 
@@ -77,8 +84,49 @@ public class WorkItemServiceImpl implements WorkItemService {
      * {@inheritDoc}
      */
     @Override
-    public WorkItem getWorkItemDataStructure(long workitemId) {
-        return workItemDao.getWorkItemDataStructure(workitemId);
+    public WorkItem getWorkItemDataStructure(String workItemId, String workspaceId) throws EarthException {
+        return (WorkItem) this.executeTransaction(workspaceId, () -> {
+            try {
+                Map<Path<?>, Object> condition = new HashMap<>();
+                condition.put(qWorkItem.workitemId, workItemId);
+
+                WorkItem workItem = workItemDao.findOne(workspaceId, condition);
+                workItem.setWorkItemData(templateDao.getWorkItemTemplateData(workspaceId, workItemId,
+                        workItem.getTemplateId(), workItem.getLastHistoryNo()));
+                condition = new HashMap<>();
+                condition.put(qWorkItem.workitemId, workItemId);
+                Predicate pre1 = qFolderItem.workitemId.eq(workItemId);
+                List<FolderItem> folderItems = folderItemDao.search(workspaceId, pre1);
+                for (FolderItem folderItem : folderItems) {
+                    folderItem.setFolderItemData(templateDao.getFolderItemTemplateData(workspaceId, workItemId,
+                            folderItem.getFolderItemNo(), folderItem.getTemplateId(), workItem.getLastHistoryNo()));
+                    Predicate pre2 = qDocument.workitemId.eq(workItemId)
+                            .and(qDocument.folderItemNo.eq(folderItem.getFolderItemNo()));
+                    List<Document> documents = documentDao.search(workspaceId, pre2);
+                    for (Document document : documents) {
+                        document.setDocumentData(templateDao.getDocumentTemplateData(workspaceId, workItemId,
+                                folderItem.getFolderItemNo(), document.getDocumentNo(), document.getTemplateId(),
+                                workItem.getLastHistoryNo()));
+                        Predicate pre3 = qLayer.workitemId.eq(workItemId)
+                                .and(qLayer.documentNo.eq(document.getDocumentNo()))
+                                .and(qLayer.folderItemNo.eq(folderItem.getFolderItemNo()))
+                                .and(qLayer.workitemId.eq(workItemId));
+                        List<Layer> layers = layerDao.search(workspaceId, pre3);
+                        for (Layer layer : layers) {
+                            layer.setLayerData(templateDao.getLayerTemplateData(workspaceId, workItemId,
+                                    folderItem.getFolderItemNo(), document.getDocumentNo(), layer.getLayerNo(),
+                                    layer.getTemplateId(), workItem.getLastHistoryNo()));
+                        }
+                        document.setLayers(layers);
+                    }
+                    folderItem.setDocuments(documents);
+                }
+                workItem.setFolderItems(folderItems);
+                return workItem;
+            } catch (Exception e) {
+                throw new EarthException(e.getMessage());
+            }
+        });
     }
 
     /**
@@ -88,15 +136,17 @@ public class WorkItemServiceImpl implements WorkItemService {
      */
     @Override
     public boolean insertOrUpdateWorkItemToDb(WorkItem workItem) throws EarthException {
-        Long workitemId = Long.parseLong(workItem.getWorkitemId());
-        try {
-            if (workitemId < 0) {
-                return insertWorkItemToDb(workItem);
+        return (boolean) this.executeTransaction(workItem.getWorkspaceId(), () -> {
+            try {
+                Long workitemId = Long.parseLong(workItem.getWorkitemId());
+                if (workitemId < 0) {
+                    return insertWorkItemToDb(workItem);
+                }
+                return updateWorkItemToDb(workItem);
+            } catch (Exception e) {
+                throw new EarthException(e.getMessage());
             }
-            return updateWorkItemToDb(workItem);
-        } catch (IOException e) {
-            throw new EarthException(e.getMessage());
-        }
+        });
     }
 
     /**
@@ -109,8 +159,7 @@ public class WorkItemServiceImpl implements WorkItemService {
      */
     private boolean insertWorkItemToDb(WorkItem workItem) throws EarthException, IOException {
         // TODO
-        workItem.setWorkitemId(
-                Integer.toString(workItemDao.findAll(workItem.getWorkspaceId(), null, null, null).size() + 1));
+        workItem.setWorkitemId(Integer.toString(workItemDao.findAll(workItem.getWorkspaceId()).size() + 1));
         workItem.setLastHistoryNo(-1);
         workItemDao.add(workItem.getWorkspaceId(), workItem);
         // get template data
@@ -171,7 +220,7 @@ public class WorkItemServiceImpl implements WorkItemService {
      */
     private void insertFolder2Db(FolderItem folder, WorkItem workItem) throws EarthException, IOException {
         // TODO
-        folder.setFolderItemNo(folderItemDao.findAll(workItem.getWorkspaceId(), null, null, null).size() + 1);
+        folder.setFolderItemNo(folderItemDao.findAll(workItem.getWorkspaceId()).size() + 1);
         folder.setWorkitemId(workItem.getWorkitemId());
         // insert folder
         folderItemDao.add(workItem.getWorkspaceId(), folder);
@@ -248,7 +297,7 @@ public class WorkItemServiceImpl implements WorkItemService {
     private void insertDocument2Db(Document document, FolderItem folder, WorkItem workItem)
             throws EarthException, IOException {
         // TODO
-        document.setDocumentNo(documentDao.findAll(workItem.getWorkspaceId(), null, null, null).size() + 1);
+        document.setDocumentNo(documentDao.findAll(workItem.getWorkspaceId()).size() + 1);
         document.setWorkitemId(workItem.getWorkitemId());
         document.setFolderItemNo(folder.getFolderItemNo());
         // insert document
@@ -362,7 +411,7 @@ public class WorkItemServiceImpl implements WorkItemService {
     private void insertLayer2Db(Layer layer, Document document, FolderItem folder, WorkItem workItem)
             throws EarthException {
         // TODO
-        layer.setLayerNo(layerDao.findAll(workItem.getWorkspaceId(), null, null, null).size() + 1);
+        layer.setLayerNo(layerDao.findAll(workItem.getWorkspaceId()).size() + 1);
         layer.setDocumentNo(document.getDocumentNo());
         layer.setWorkitemId(workItem.getWorkitemId());
         layer.setFolderItemNo(folder.getFolderItemNo());
@@ -404,6 +453,126 @@ public class WorkItemServiceImpl implements WorkItemService {
         condition.put(qLayer.workitemId, workItem.getWorkitemId());
         // delete layer
         layerDao.delete(workItem.getWorkspaceId(), condition);
+    }
+
+    @Override
+    public RestResponse getWorkItem(HttpSession session, String workspaceId, String workitemId) throws EarthException {
+        RestResponse respone = new RestResponse();
+        // get workitem data from session
+        WorkItem workItem = null;
+        try {
+            workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
+        } catch (Exception e) {
+            throw new EarthException(e.getMessage());
+        }
+        if (workItem == null) {
+            respone.setResult(false);
+            respone.setData(eMessageResource.get("E0002", new String[] { "session" }));
+            return respone;
+        }
+        // set folderitems is null because information of forderitem isn't necessary
+        workItem.setFolderItems(null);
+        respone.setData(workItem);
+        return respone;
+    }
+
+    @Override
+    public RestResponse updateWorkItem(HttpSession session, String workspaceId, WorkItem workItem)
+            throws EarthException {
+        RestResponse respone = new RestResponse();
+        // get workitem data from session
+        WorkItem workItemTemp = null;
+        try {
+            workItemTemp = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workItem.getWorkitemId());
+        } catch (Exception e) {
+            throw new EarthException(e.getMessage());
+        }
+        if (workItemTemp == null) {
+            respone.setResult(false);
+            respone.setData(eMessageResource.get("E0002", new String[] { "session" }));
+            return respone;
+        }
+        // update work item data
+        workItemTemp.setWorkItemData(workItem.getWorkItemData());
+        // set work item after update to session
+        session.setAttribute("ORIGIN" + workspaceId + "&" + workItem.getWorkitemId(), workItemTemp);
+        return respone;
+    }
+
+    @Override
+    public RestResponse getWorkItemStructure(HttpSession session, String workspaceId, String workitemId)
+            throws EarthException {
+        RestResponse respone = new RestResponse();
+        // get workitem data from session
+        WorkItem workItem = null;
+        try {
+            workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
+        } catch (Exception e) {
+            throw new EarthException(e.getMessage());
+        }
+        if (workItem == null) {
+            respone.setResult(false);
+            respone.setData(eMessageResource.get("E0002", new String[] { "session" }));
+            return respone;
+        }
+        // set work item data is null
+        workItem.setWorkItemData(null);
+
+        // set folder items, documents, layers data in workitem is null
+        List<FolderItem> folderItems = workItem.getFolderItems();
+        if (folderItems != null) {
+            for (FolderItem folderItem : folderItems) {
+                folderItem.setFolderItemData(null);
+                List<Document> documents = folderItem.getDocuments();
+                if (documents != null) {
+                    for (Document document : documents) {
+                        document.setDocumentData(null);
+                        List<Layer> layers = document.getLayers();
+                        if (layers != null) {
+                            for (Layer layer : layers) {
+                                layer.setLayerData(null);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        respone.setData(respone);
+        return respone;
+    }
+
+    @Override
+    public RestResponse searchWorkItems(HttpSession session, String workspaceId, WorkItem searchCondition)
+            throws EarthException {
+        return (RestResponse) this.executeTransaction(workspaceId, () -> {
+            RestResponse response = new RestResponse();
+            QWorkItem qWorkItem = QWorkItem.newInstance();
+
+            // create search condition
+            if (searchCondition != null) {
+                BooleanBuilder condition = new BooleanBuilder();
+                if (!EStringUtil.isEmpty(searchCondition.getWorkitemId())) {
+                    condition.and(qWorkItem.workitemId.eq(searchCondition.getWorkitemId()));
+                }
+                if (!EStringUtil.isEmpty(searchCondition.getLastUpdateTime())) {
+                    condition.and(qWorkItem.lastUpdateTime.eq(searchCondition.getLastUpdateTime()));
+                }
+                if (searchCondition.getLastHistoryNo() > 0) {
+                    condition.and(qWorkItem.lastHistoryNo.eq(searchCondition.getLastHistoryNo()));
+                }
+                if (!EStringUtil.isEmpty(searchCondition.getTaskId())) {
+                    condition.and(qWorkItem.taskId.eq(searchCondition.getTaskId()));
+                }
+                if (!EStringUtil.isEmpty(searchCondition.getTemplateId())) {
+                    condition.and(qWorkItem.templateId.eq(searchCondition.getTemplateId()));
+                }
+                response.setData(workItemDao.search(workspaceId, condition));
+                return response;
+            }
+            // if searchcondition is null search all đata
+            response.setData(workItemDao.findAll(workspaceId));
+            return response;
+        });
     }
 
 }

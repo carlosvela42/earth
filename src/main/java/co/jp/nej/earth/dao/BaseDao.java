@@ -12,6 +12,7 @@ import co.jp.nej.earth.model.BaseModel;
 
 /**
  * Base DAO Model.
+ *
  * @author landd
  *
  * @param <T>
@@ -27,11 +28,14 @@ public interface BaseDao<T extends BaseModel<T>> {
      * @throws EarthException
      *             General Exception
      */
-    List<T> findAll(String workspaceId, Long offset, Long limit, OrderSpecifier<String> orderByColumn)
-            throws EarthException;
+    List<T> findAll(String workspaceId, Long offset, Long limit, List<OrderSpecifier<?>> orderBys,
+            Path<?>[] groupbys) throws EarthException;
+    List<T> findAll(String workspaceId) throws EarthException;
+
+    List<T> search(String workspaceId, Predicate condition) throws EarthException;
 
     List<T> search(String workspaceId, Predicate condition, Long offset, Long limit,
-            OrderSpecifier<String> orderByColumn) throws EarthException;
+            List<OrderSpecifier<?>> orderBys, Path<?>[] groupbys) throws EarthException;
 
     T findOne(String workspaceId, Map<Path<?>, Object> keyMap) throws EarthException;
 

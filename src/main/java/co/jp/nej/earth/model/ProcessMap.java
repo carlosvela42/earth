@@ -3,17 +3,18 @@ package co.jp.nej.earth.model;
 import co.jp.nej.earth.model.entity.MgrTemplate;
 
 public class ProcessMap {
-    private String processId;
+    private Integer processId;
     private String workItemId;
     private MgrTemplate mgrTemplate;
     private TemplateData processData;
     private Float processVersion;
     private String lastUpdateTime;
+    private String templateId;
 
     /**
      * @return the processId
      */
-    public String getProcessId() {
+    public Integer getProcessId() {
         return processId;
     }
 
@@ -21,7 +22,7 @@ public class ProcessMap {
      * @param processId
      *            the processId to set
      */
-    public void setProcessId(String processId) {
+    public void setProcessId(Integer processId) {
         this.processId = processId;
     }
 
@@ -91,6 +92,21 @@ public class ProcessMap {
      */
     public void setLastUpdateTime(String lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    /**
+     * @return the templateId
+     */
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    /**
+     * @param templateId
+     *            the templateId to set
+     */
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 
 }

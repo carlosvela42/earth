@@ -47,7 +47,7 @@ public enum ColumnNames {
     ,PROCESS_ID("processId")
     ,PROCESS_NAME("processName")
     ,HOST_NAME("hostName")
-    ,PROCESS_ISERVICEID("processIdServiceId")
+    ,PROCESS_ISERVICEID("processIServiceId")
     ,PROCESS_VERSION("processVersion")
     ,PROFILE_ID("profileId")
     ,REPEAT_OPTION("repeatOption")
@@ -83,6 +83,12 @@ public enum ColumnNames {
     ,DB_TYPE("dbType")
     ,DB_PORT("dbPort")
     ,ISSUE_DATE("issueDate")
+    ,ENABLE_DISABLE("enable_Disable")
+    ,NEXT_RUN_DATE("nextRunDate")
+    ,RUN_INTERVAL_DAY("runIntervalDay")
+    ,RUN_INTERVAL_HOUR("runIntervalHour")
+    ,RUN_INTERVAL_MINUTE("runIntervalMinute")
+    ,RUN_INTERVAL_SECOND("runIntervalSecond")
     ,COUNT("count");
 
     private String propertyName;

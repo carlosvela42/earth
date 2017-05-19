@@ -26,12 +26,12 @@ public class LicenseHistoryController {
     }
 
     @RequestMapping(value = "/searchLicenseHistory", method = RequestMethod.POST)
-    public String submit(@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,
-            Model model) throws EarthException {
-            List<StrCal> strCals = licenseHistoryService.search(fromDate.trim(), toDate.trim());
-            model.addAttribute("strCals", strCals);
-            model.addAttribute("fromDate", fromDate);
-            model.addAttribute("toDate", toDate);
+    public String submit(@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate, Model model)
+            throws EarthException {
+        List<StrCal> strCals = licenseHistoryService.search(fromDate.trim(), toDate.trim());
+        model.addAttribute("strCals", strCals);
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("toDate", toDate);
         return "licenseHistory/licenseHistory";
     }
 }

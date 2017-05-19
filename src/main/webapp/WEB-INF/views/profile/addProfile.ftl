@@ -11,23 +11,12 @@
             }
             $("#userIds").val(str);
         };
-        var checkUser = function () {
-            var str = $("#userIds").val();
-            var res = str.split(",");
-            if (str.length > 0) {
-                for (var prop in res) {
-                    console.log('obj.' + prop, '=', res[prop]);
-                    $('input[name=' + res[prop] + ']').attr("checked", "checked");
-                }
-            }
-        }
-        checkUser();
         $("input[class=DeleteRow]").on("click", countChecked);
     }
 </script>
 <form action="${rc.getContextPath()}/profile/insertOne" object="mgrProfile" method="post" class="form-narrow
 form-horizontal">
- <input type="hidden" id="userIds" name="userIds" value="${userIds!""}">
+    <input type="hidden" id="userIds" name="userIds" value="${strUserId!""}">
     <table style="text-align: left;">
         <tr style="height: 40px; text-align: center">
             <td><input type="submit" value="決定" class="button"></td>
@@ -53,7 +42,7 @@ form-horizontal">
                 </#if>
             </td>
         </tr>
-       
+
         <#if mgrProfile??>
             <tr>
                 <td>
@@ -96,9 +85,11 @@ form-horizontal">
                         <#if mgrUsers??>
                             <#list mgrUsers as mgrUser>
                                 <tr>
-                                    <td><input type="checkbox" id="delRow${mgrUser?index}" name="${mgrUser.userId}"
-                                               value="${mgrUser.userId}"
-                                               class="DeleteRow"></td>
+                                    <input type="checkbox" id="delRow${mgrUser?index}" name="${mgrUser.userId}"
+                                           value="${mgrUser.userId}"
+                                           class="DeleteRow" ${userIds?seq_contains(mgrUser.userId)?string("checked","")
+                                    }>
+                                    </td>
                                     <td><#if mgrUser.userId??>${mgrUser.userId}</#if></td>
                                     <td><#if mgrUser.name??>${mgrUser.name}</#if></td>
                                 </tr>

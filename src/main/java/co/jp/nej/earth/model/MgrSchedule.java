@@ -1,33 +1,55 @@
 package co.jp.nej.earth.model;
 
-public class MgrSchedule {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import co.jp.nej.earth.model.sql.QMgrSchedule;
+import co.jp.nej.earth.util.DateUtil;
+
+public class MgrSchedule extends BaseModel<MgrSchedule> {
+
+    /**
+     * Serial Version UID.
+     */
+    private static final long serialVersionUID = 1L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(MgrSchedule.class);
 
     private String scheduleId;
-    private String processId;
+    private int processId;
+    private String processName;
     private String taskId;
+    private String taskName;
     private String hostName;
-    private String processIseviceId;
+    private String processIServiceId;
     private String startTime;
-    private String repeatOption;
     private String endTime;
-    private String lastUpdateTime;
+    private String enableDisable;
+    private String nextRunDate;
+    private String runIntervalDay;
+    private String runIntervalHour;
+    private String runIntervalMinute;
+    private String runIntervalSecond;
+
 
     public MgrSchedule() {
-        super();
+        LOG.debug("Call to blank contructor");
+        this.setqObj(QMgrSchedule.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
-    public MgrSchedule(String scheduleId, String processId, String taskId, String hostName, String processIseviceId,
-            String startTime, String repeatOption, String endTime, String lastUpdateTime){
-        super();
+    public MgrSchedule(String scheduleId, int processId, String processName, String taskId, String taskName,
+                       String hostName, String processISevriceId, String startTime, String endTime) {
+        this();
         this.scheduleId = scheduleId;
         this.processId = processId;
+        this.processName = processName;
         this.taskId = taskId;
+        this.taskName = taskName;
         this.hostName = hostName;
-        this.processIseviceId = processIseviceId;
+        this.processIServiceId = processISevriceId;
         this.startTime = startTime;
-        this.repeatOption = repeatOption;
         this.endTime = endTime;
-        this.lastUpdateTime = lastUpdateTime;
     }
 
     /**
@@ -38,8 +60,7 @@ public class MgrSchedule {
     }
 
     /**
-     * @param scheduleId
-     *            the scheduleId to set
+     * @param scheduleId the scheduleId to set
      */
     public void setScheduleId(String scheduleId) {
         this.scheduleId = scheduleId;
@@ -48,16 +69,29 @@ public class MgrSchedule {
     /**
      * @return the processId
      */
-    public String getProcessId() {
+    public int getProcessId() {
         return processId;
     }
 
     /**
-     * @param processId
-     *            the processId to set
+     * @param processId the processId to set
      */
-    public void setProcessId(String processId) {
+    public void setProcessId(int processId) {
         this.processId = processId;
+    }
+
+    /**
+     * @return the processName
+     */
+    public String getProcessName() {
+        return processName;
+    }
+
+    /**
+     * @param processName the processName to set
+     */
+    public void setProcessName(String processName) {
+        this.processName = processName;
     }
 
     /**
@@ -68,11 +102,24 @@ public class MgrSchedule {
     }
 
     /**
-     * @param taskId
-     *            the taskId to set
+     * @param taskId the taskId to set
      */
     public void setTaskId(String taskId) {
         this.taskId = taskId;
+    }
+
+    /**
+     * @return the taskName
+     */
+    public String getTaskName() {
+        return taskName;
+    }
+
+    /**
+     * @param taskName the taskName to set
+     */
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     /**
@@ -83,26 +130,24 @@ public class MgrSchedule {
     }
 
     /**
-     * @param hostName
-     *            the hostName to set
+     * @param hostName the hostName to set
      */
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }
 
     /**
-     * @return the processIseviceId
+     * @return the processIServiceId
      */
-    public String getProcessIseviceId() {
-        return processIseviceId;
+    public String getProcessIServiceId() {
+        return processIServiceId;
     }
 
     /**
-     * @param processIseviceId
-     *            the processIseviceId to set
+     * @param processIServiceId the processIseviceId to set
      */
-    public void setProcessIseviceId(String processIseviceId) {
-        this.processIseviceId = processIseviceId;
+    public void setProcessIServiceId(String processIServiceId) {
+        this.processIServiceId = processIServiceId;
     }
 
     /**
@@ -113,26 +158,10 @@ public class MgrSchedule {
     }
 
     /**
-     * @param startTime
-     *            the startTime to set
+     * @param startTime the startTime to set
      */
     public void setStartTime(String startTime) {
         this.startTime = startTime;
-    }
-
-    /**
-     * @return the repeatOption
-     */
-    public String getRepeatOption() {
-        return repeatOption;
-    }
-
-    /**
-     * @param repeatOption
-     *            the repeatOption to set
-     */
-    public void setRepeatOption(String repeatOption) {
-        this.repeatOption = repeatOption;
     }
 
     /**
@@ -143,26 +172,58 @@ public class MgrSchedule {
     }
 
     /**
-     * @param endTime
-     *            the endTime to set
+     * @param endTime the endTime to set
      */
     public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
-    /**
-     * @return the lastUpdateTime
-     */
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
+    public String getEnableDisable() {
+        return enableDisable;
     }
 
-    /**
-     * @param lastUpdateTime
-     *            the lastUpdateTime to set
-     */
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
+    public void setEnableDisable(String enableDisable) {
+        this.enableDisable = enableDisable;
+    }
+
+    public String getNextRunDate() {
+        return nextRunDate;
+    }
+
+    public void setNextRunDate(String nextRunDate) {
+        this.nextRunDate = nextRunDate;
+    }
+
+    public String getRunIntervalDay() {
+        return runIntervalDay;
+    }
+
+    public void setRunIntervalDay(String runIntervalDay) {
+        this.runIntervalDay = runIntervalDay;
+    }
+
+    public String getRunIntervalHour() {
+        return runIntervalHour;
+    }
+
+    public void setRunIntervalHour(String runIntervalHour) {
+        this.runIntervalHour = runIntervalHour;
+    }
+
+    public String getRunIntervalMinute() {
+        return runIntervalMinute;
+    }
+
+    public void setRunIntervalMinute(String runIntervalMinute) {
+        this.runIntervalMinute = runIntervalMinute;
+    }
+
+    public String getRunIntervalSecond() {
+        return runIntervalSecond;
+    }
+
+    public void setRunIntervalSecond(String runIntervalSecond) {
+        this.runIntervalSecond = runIntervalSecond;
     }
 
 }

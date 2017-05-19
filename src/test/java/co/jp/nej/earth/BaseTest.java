@@ -1,23 +1,38 @@
 package co.jp.nej.earth;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
+import javax.sql.DataSource;
+
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import co.jp.nej.earth.config.AppConfig;
 import co.jp.nej.earth.config.JdbcConfig;
+import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
+import co.jp.nej.earth.model.DBunitModel;
 import co.jp.nej.earth.model.MgrWorkspaceConnect;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.enums.DatabaseType;
+import co.jp.nej.earth.service.WorkspaceService;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,6 +40,10 @@ import co.jp.nej.earth.model.enums.DatabaseType;
 public class BaseTest {
     @Autowired
     private JdbcConfig config;
+    @Autowired
+    private WorkspaceService wkService;
+    @Autowired
+    private MessageSource messageSource;
 
     public void resetSystemDataSource() {
         // Create System Query Factory.
@@ -76,11 +95,78 @@ public class BaseTest {
         return earthConn;
     }
 
+    protected void excuteTest(String workspaceId, File fileInput, TestCaller caller) throws Exception {
+        if (workspaceId == null || workspaceId.isEmpty()) {
+            workspaceId = Constant.EARTH_WORKSPACE_ID;
+        }
+        IDatabaseConnection connection = createConnection(workspaceId);
+        IDataSet dataSet = new FlatXmlDataSetBuilder().build(fileInput);
+        try {
+            DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
+        } finally {
+            connection.close();
+        }
+        caller.execute();
+        connection = createConnection(workspaceId);
+        try {
+            DatabaseOperation.TRUNCATE_TABLE.execute(connection, dataSet);
+        } finally {
+            connection.close();
+        }
+    }
+
+    protected void executeTestForManySchema(List<DBunitModel> models, TestCaller caller) throws Exception {
+        for (DBunitModel model : models) {
+            setUpDatabase(model.getWorkspaceId(), model.getFileInput());
+        }
+        caller.execute();
+        for (DBunitModel model : models) {
+            deleteAllData(model.getWorkspaceId(), model.getFileInput());
+        }
+    }
+
+    private IDatabaseConnection createConnection(String workspaceId) throws Exception {
+        DataSource dataSource = null;
+        MgrWorkspaceConnect mgrWorkspaceConnect = wkService.getMgrConnectionByWorkspaceId(workspaceId);
+        if (mgrWorkspaceConnect == null) {
+            throw new EarthException(
+                    messageSource.getMessage("connection.notfound", new String[] { "workspaceId" }, Locale.ENGLISH));
+        } else {
+            dataSource = config.dataSource(mgrWorkspaceConnect.getWorkspaceId(), mgrWorkspaceConnect);
+        }
+        Connection jdbcConnection = dataSource.getConnection();
+        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection, jdbcConnection.getSchema());
+        return connection;
+    }
+
+    protected void setUpDatabase(String workspaceId, File fileInput) throws Exception {
+        IDatabaseConnection connection = createConnection(workspaceId);
+        IDataSet dataSet = new FlatXmlDataSetBuilder().build(fileInput);
+        try {
+            DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
+        } finally {
+            connection.close();
+        }
+    }
+
+    protected void deleteAllData(String workspaceId, File fileInput) throws Exception {
+        IDatabaseConnection connection = createConnection(workspaceId);
+        IDataSet dataSet = new FlatXmlDataSetBuilder().build(fileInput);
+        try {
+            DatabaseOperation.TRUNCATE_TABLE.execute(connection, dataSet);
+        } finally {
+            connection.close();
+        }
+    }
+
     @Test
     public void testResetSystemDataSource() {
-
         // resetSystemDataSource();
         Assert.assertTrue(ConnectionManager.exists(Constant.EARTH_WORKSPACE_ID));
 
+    }
+
+    public interface TestCaller {
+        void execute() throws Exception;
     }
 }

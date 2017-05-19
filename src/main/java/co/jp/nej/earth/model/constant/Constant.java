@@ -62,14 +62,15 @@ public class Constant {
         public static final String TEMPLATE_ACCESS_RIGHT_MAP = "templateAccessRightMap";
         public static final String MENU_ACCESS_RIGHT_MAP = "menuAccessRightMap";
         public static final String WORKSPACES = "workspaces";
-        public static final String LAST_PATH = "lastPath";
+        public static final String LAST_REQUEST_VIEW = "lastRequestView";
         public static final String MESSAGES = "messages";
     }
 
     public static class View {
         public static final String HOME = "home/home";
         public static final String LOGIN = "login/login";
-        public static final String IMAGE_VIEWER = "imageViewer/ImageViewer";
+        public static final String IMAGE_VIEWER = "imageViewer/imageViewer";
+        public static final String IMAGE_VIEWER_TEMPLATE = "imageViewer/template";
     }
 
     public static class DatePattern {
@@ -236,10 +237,16 @@ public class Constant {
         public static final String DROP_USER = "Drop User ";
         public static final String CASCADE = " Cascade ";
         public static final String ALTER_USER = " ALTER USER ";
+        public static final Integer PORT = 1521;
     }
 
     public static class Template {
-        public static final String NOT_DELETE = "NOT_DELETE";
+        public static final String NOT_DELETE ="NOT_DELETE";
+        public static final String ID_BLANK = "ID_BLANK";
+        public static final String TEMPLATE_NAME_BLANK = "TEMPLATE_NAME_BLANK";
+        public static final String TEMPLATE_TABLE_NAME_BLANK = "TEMPLATE_TABLE_NAME_BLANK";
+        public static final String IS_EXIT_TEMPLATE = "ISEXIT_TEMPLATE";
+        public static final String TEMPLATE_FIELD_BLANK = "TEMPLATE_FIELD_BLANK";
     }
 
     public static class EnCryption {

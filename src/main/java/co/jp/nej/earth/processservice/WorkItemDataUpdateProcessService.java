@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.WorkItem;
-import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.constant.Constant.AgentBatch;
 import co.jp.nej.earth.model.entity.CtlEvent;
 import co.jp.nej.earth.model.entity.StrLogAccess;
@@ -43,6 +42,8 @@ public class WorkItemDataUpdateProcessService implements Job {
      */
     private LogAccessService logAccessService;
 
+    private String workspaceId;
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
@@ -55,6 +56,7 @@ public class WorkItemDataUpdateProcessService implements Job {
 
     private void logic() throws EarthException {
         ApplicationContext applicationContext = ApplicationContextUtil.getApplicationContext();
+        workspaceId = ApplicationContextUtil.getWorkspaceId();
         service = applicationContext.getBean(EventControlService.class);
         workItemService = applicationContext.getBean(WorkItemService.class);
         logAccessService = applicationContext.getBean(LogAccessService.class);
@@ -62,15 +64,16 @@ public class WorkItemDataUpdateProcessService implements Job {
     }
 
     private void loopingGetEditEvent() throws EarthException {
-        List<String> eventIds = service.getListEventIdByStatus(AgentBatch.STATUS_EDIT, Constant.EARTH_WORKSPACE_ID);
+        List<String> eventIds = service.getListEventIdByStatus(AgentBatch.STATUS_EDIT, workspaceId);
         if (eventIds.isEmpty()) {
             loopingGetEditEvent();
         }
         // update event to editting
-        service.updateBulkEventStatus(eventIds, Constant.EARTH_WORKSPACE_ID);
+        service.updateBulkEventStatus(eventIds, workspaceId);
         // lop eventIds
         for (String eventId : eventIds) {
-            Thread t = new Thread(new WorkItemDataUpdateThread(eventId, service, Constant.EARTH_WORKSPACE_ID,
+            Thread t = new Thread(
+                    new WorkItemDataUpdateThread(eventId, service, workspaceId,
                     workItemService, logAccessService));
             t.start();
         }

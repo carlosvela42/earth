@@ -82,7 +82,7 @@
     <div>
         <b id="message" style="color: red;"></b>
     </div>
-    <input type="hidden" id="workspaceIds" name="workspaceIds" value="">
+    <input type="hidden" id="workspaceIds" name="workspaceIds" >
     <input type="hidden" id="deleted" name="deleted" value="0"> 
     <table border="1" id="workspaceList">
         <tr>

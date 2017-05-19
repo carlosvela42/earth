@@ -1,14 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QCtlLogin;
 import co.jp.nej.earth.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
 
 public class CtlLogin extends BaseModel<CtlLogin> implements Serializable {
 
@@ -24,9 +22,6 @@ public class CtlLogin extends BaseModel<CtlLogin> implements Serializable {
     private String loginTime;
     private String logoutTime;
 
-    private Long testLong;
-
-    private Date testDate;
 
     public CtlLogin() {
 
@@ -79,19 +74,4 @@ public class CtlLogin extends BaseModel<CtlLogin> implements Serializable {
         this.logoutTime = logoutTime;
     }
 
-    public Long getTestLong() {
-        return testLong;
-    }
-
-    public void setTestLong(Long testLong) {
-        this.testLong = testLong;
-    }
-
-    public Date getTestDate() {
-        return testDate;
-    }
-
-    public void setTestDate(Date testDate) {
-        this.testDate = testDate;
-    }
 }

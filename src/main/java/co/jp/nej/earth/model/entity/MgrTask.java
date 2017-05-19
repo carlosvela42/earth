@@ -1,28 +1,31 @@
 package co.jp.nej.earth.model.entity;
 
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrTask;
+import co.jp.nej.earth.util.DateUtil;
+
 /**
  *
  * @author p-tvo-sonta
  *
  */
-public class MgrTask {
+public class MgrTask extends BaseModel<MgrTask> {
     private String taskId;
     private String taskName;
     private String className;
     private String processId;
-    private String lastUpdateTime;
 
     public MgrTask() {
-        super();
+        this.setqObj(QMgrTask.newInstance());
+        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
-    public MgrTask(String taskId, String taskName, String className, String processId, String lastUpdateTime) {
-        super();
+    public MgrTask(String taskId, String taskName, String className, String processId) {
+        this();
         this.taskId = taskId;
         this.taskName = taskName;
         this.className = className;
         this.processId = processId;
-        this.lastUpdateTime = lastUpdateTime;
     }
 
     /**
@@ -83,21 +86,6 @@ public class MgrTask {
      */
     public void setProcessId(String processId) {
         this.processId = processId;
-    }
-
-    /**
-     * @return the lastUpdateTime
-     */
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    /**
-     * @param lastUpdateTime
-     *            the lastUpdateTime to set
-     */
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 
 }

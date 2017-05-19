@@ -4,22 +4,30 @@ $("#select").click(function() {
 	$('#svg').css('cursor', 'auto');
 });
 
-function selectBefore() {
+IV.prototype.selectBefore = function() {
 	$("#1").remove();
 	$("#2").remove();
 	$("#3").remove();
 	$("#4").remove();
+	var selectId = imageViewer.selectId;
 	$("#" + selectId).attr("onmousedown", null);
 	$("#" + selectId).attr("onmouseup", null);
 	if ($("#r" + selectId).length==0) {
-		$("#" + selectId).on("click", selectClick);
+		$("#" + selectId).on("click", IV.selectClick);
 	} else {
-		$("#r" + selectId).on("click", selectClick);
+		$("#r" + selectId).on("click", IV.selectClick);
 	}
-	selectId = -1;
+	imageViewer.selectId = -1;
 }
 
-function selectClick(event) {
+IV.prototype.selectClick = function(event) {
+	var vis = imageViewer.vis;
+	var x1 = imageViewer.x1;
+	var y1 = imageViewer.y1;
+	var x2 = imageViewer.x1;
+	var y2 = imageViewer.y1;
+	var selectClick = imageViewer.selectClick;
+	
 	$("#drawSelect").prop("checked", true).trigger("click");
 	// $('[name=toolOption]').prop('checked', false);
 	var g;
@@ -29,8 +37,8 @@ function selectClick(event) {
 		g = vis.append("g").attr("transform",
 				$(this).parent().attr("transform"));
 	}
-	selectBefore();
-	selectId = $(this).attr("id");
+	imageViewer.selectBefore();
+	var selectId = imageViewer.selectId = $(this).attr("id");
 	if ($(this).prop("tagName") == "line") {
 		g.append("line").attr("x1", $(this).attr("x1")).attr("y1",
 				$(this).attr("y1")).attr("x2", $(this).attr("x2")).attr("y2",

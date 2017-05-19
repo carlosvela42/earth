@@ -16,6 +16,7 @@ import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.service.UserService;
+import co.jp.nej.earth.util.ConversionUtil;
 import co.jp.nej.earth.util.EStringUtil;
 
 @Controller
@@ -73,7 +74,7 @@ public class UserController {
         try {
             Map<String, Object> userDetail = userService.getDetail(userId);
             MgrUser mgrUser = (MgrUser) userDetail.get("mgrUser");
-            List<MgrProfile> mgrProfiles = (List<MgrProfile>) userDetail.get("mgrProfiles");
+            List<MgrProfile> mgrProfiles = ConversionUtil.castList(userDetail.get("mgrProfiles"), MgrProfile.class);
             model.addAttribute("mgrUser", mgrUser);
             model.addAttribute("mgrProfiles", mgrProfiles);
             return "user/editUser";

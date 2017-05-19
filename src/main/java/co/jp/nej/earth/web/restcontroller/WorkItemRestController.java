@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.jp.nej.earth.model.WorkItem;
 import co.jp.nej.earth.model.ws.GetWorkitemResponse;
 import co.jp.nej.earth.service.WorkItemService;
 
@@ -20,10 +19,10 @@ public class WorkItemRestController extends BaseRestController  {
     @RequestMapping("/GetWorkitem")
     public GetWorkitemResponse getWorkitem(
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-        WorkItem workitem = workItemService.getWorkItemDataStructure(NUM_100);
+//        WorkItem workitem = workItemService.getWorkItemDataStructure(NUM_100);
 
         GetWorkitemResponse workitemResponse = new GetWorkitemResponse();
-        workitemResponse.setWorkitem(workitem);
+//        workitemResponse.setWorkitem(workitem);
         return workitemResponse;
     }
 

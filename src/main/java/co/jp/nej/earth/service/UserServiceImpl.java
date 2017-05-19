@@ -1,5 +1,26 @@
 package co.jp.nej.earth.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
+
 import co.jp.nej.earth.dao.EventDao;
 import co.jp.nej.earth.dao.LicenseHistoryDao;
 import co.jp.nej.earth.dao.LoginControlDao;
@@ -29,10 +50,9 @@ import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.entity.CtlLogin;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.model.entity.StrCal;
+import co.jp.nej.earth.model.enums.Channel;
 import co.jp.nej.earth.model.sql.QCtlEvent;
 import co.jp.nej.earth.model.sql.QCtlLogin;
-import co.jp.nej.earth.model.sql.QCtlMenu;
-import co.jp.nej.earth.model.sql.QCtlTemplate;
 import co.jp.nej.earth.model.sql.QMgrUser;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
 import co.jp.nej.earth.model.sql.QStrLogAccess;
@@ -44,25 +64,6 @@ import co.jp.nej.earth.util.LoginUtil;
 import co.jp.nej.earth.util.MenuUtil;
 import co.jp.nej.earth.util.PasswordPolicy;
 import co.jp.nej.earth.util.TemplateUtil;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Predicate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -130,29 +131,31 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * @param userId   id of user
-     * @param password password of user
-     * @param session  HttpSession object
+     * @param userId
+     *            id of user
+     * @param password
+     *            password of user
+     * @param session
+     *            HttpSession object
      * @return list message determined that user log in successfully or not
      */
-    @Transactional
-    public List<Message> login(String userId, String password, HttpSession session) throws EarthException {
+    public List<Message> login(String userId, String password, HttpSession session, int channel) throws EarthException {
         List<Message> listMessage = new ArrayList<Message>();
         if (EStringUtil.isEmpty(userId)) {
             Message message = new Message(MessageCodeLogin.USR_BLANK,
-                    eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.USER_ID}));
+                    eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.USER_ID }));
             listMessage.add(message);
         }
 
         if (EStringUtil.isEmpty(password)) {
             Message message = new Message(MessageCodeLogin.PWD_BLANK,
-                    eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.PASSWORD}));
+                    eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.PASSWORD }));
             listMessage.add(message);
         }
 
         if (!EStringUtil.isEmpty(userId) && !EStringUtil.checkAlphabet(userId)) {
             Message message = new Message(MessageUser.USR_SPECIAL,
-                    eMessageResource.get(ErrorCode.E0007, new String[]{ScreenItem.USER_ID}));
+                    eMessageResource.get(ErrorCode.E0007, new String[] { ScreenItem.USER_ID }));
             listMessage.add(message);
         }
 
@@ -184,25 +187,30 @@ public class UserServiceImpl implements UserService {
                         ctlLogin.setLoginTime(loginTimeStr);
                         ctlLogin.setLogoutTime(null);
                         ctlLogin.setLastUpdateTime(loginTimeStr);
-                        if (loginControlDao.insertOne(ctlLogin)) {
+                        if (loginControlDao.add(Constant.EARTH_WORKSPACE_ID, ctlLogin) > 0) {
                             countAndUpdateLicenseHistory(userId);
                         }
 
                         Map<TemplateKey, TemplateAccessRight> templateAccessRightMap
-                                = new HashMap<TemplateKey, TemplateAccessRight>();
+                        = new HashMap<TemplateKey, TemplateAccessRight>();
                         List<MgrWorkspace> mgrWorkspaces = workspaceDao.getAll();
-
                         for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
-                            transactionManager = new TransactionManager(mgrWorkspace.getWorkspaceId());
-                            transactionManagers.add(transactionManager);
-                            templateAccessRightMap.putAll(
-                                    templateAuthorityDao.getMixAuthority(userId, mgrWorkspace.getWorkspaceId()));
+                            try {
+                                transactionManager = new TransactionManager(mgrWorkspace.getWorkspaceId());
+                                transactionManagers.add(transactionManager);
+                                templateAccessRightMap.putAll(
+                                        templateAuthorityDao.getMixAuthority(userId, mgrWorkspace.getWorkspaceId()));
+                            } catch (Exception ex) {
+                                LOG.error(ex.getMessage());
+                            }
                         }
 
                         TemplateUtil.saveToSession(session, templateAccessRightMap);
                         Map<String, MenuAccessRight> menuAccessRightMap = menuAuthorityDao.getMixAuthority(userId);
-                        session.setAttribute(Session.MENU_STRUCTURE, menuUtil.buildMenuTree(menuAccessRightMap));
-                        MenuUtil.saveToSession(session, menuAccessRightMap);
+                        if (channel == Channel.LOGIN.getValue()) {
+                            MenuUtil.saveToSession(session, menuAccessRightMap);
+                            session.setAttribute(Session.MENU_STRUCTURE, menuUtil.buildMenuTree(menuAccessRightMap));
+                        }
                         session.setAttribute(Session.WORKSPACES, mgrWorkspaces);
 
                         for (int i = transactionManagers.size() - 1; i >= 0; i--) {
@@ -247,7 +255,7 @@ public class UserServiceImpl implements UserService {
         return isLogout;
     }
 
-    public void countAndUpdateLicenseHistory(String userId) throws EarthException {
+    private void countAndUpdateLicenseHistory(String userId) throws EarthException {
         try {
             List<StrCal> strCals = loginControlDao.getNumberOnlineUserByProfile(userId);
             String currentDate = DateUtil.getCurrentDate(DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS);
@@ -264,7 +272,7 @@ public class UserServiceImpl implements UserService {
         TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
         List<MgrUser> mgrUsers = null;
         try {
-            mgrUsers = userDao.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null);
+            mgrUsers = userDao.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null, null);
             transactionManager.getManager().commit(transactionManager.getTxStatus());
         } catch (Exception ex) {
             transactionManager.getManager().rollback(transactionManager.getTxStatus());
@@ -279,45 +287,45 @@ public class UserServiceImpl implements UserService {
         try {
             if (EStringUtil.isEmpty(mgrUser.getUserId())) {
                 Message message = new Message(MessageUser.USR_BLANK,
-                        eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.USER_ID}));
+                        eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.USER_ID }));
 
                 listMessage.add(message);
                 return listMessage;
             }
             if (!EStringUtil.checkAlphabet(mgrUser.getUserId())) {
                 Message message = new Message(MessageUser.USR_SPECIAL,
-                        eMessageResource.get(ErrorCode.E0007, new String[]{ScreenItem.USER_ID}));
+                        eMessageResource.get(ErrorCode.E0007, new String[] { ScreenItem.USER_ID }));
                 listMessage.add(message);
                 return listMessage;
             }
             if (EStringUtil.isEmpty(mgrUser.getName())) {
                 Message message = new Message(MessageUser.NAME_BLANK,
-                        eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.NAME}));
+                        eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.NAME }));
                 listMessage.add(message);
                 return listMessage;
             }
             if (insert) {
                 if (!mgrUser.isChangePassword()) {
                     Message message = new Message(MessageUser.CHANGEPWD_BLANK, eMessageResource.get(ErrorCode.E0001,
-                            new String[]{ScreenItem.CHANGE_PASSWORD, ScreenItem.CREATE_USER}));
+                            new String[] { ScreenItem.CHANGE_PASSWORD, ScreenItem.CREATE_USER }));
                     listMessage.add(message);
                     return listMessage;
                 }
                 if (EStringUtil.isEmpty(mgrUser.getPassword())) {
                     Message message = new Message(MessageUser.PWD_BLANK,
-                            eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.NEW_PASSWORD}));
+                            eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.NEW_PASSWORD }));
                     listMessage.add(message);
                     return listMessage;
                 }
                 if (EStringUtil.isEmpty(mgrUser.getConfirmPassword())) {
                     Message message = new Message(MessageUser.PWD_BLANK,
-                            eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.CONFIRM_PASSWORD}));
+                            eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.CONFIRM_PASSWORD }));
                     listMessage.add(message);
                     return listMessage;
                 }
-                if (!EStringUtil.contains(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
+                if (!EStringUtil.equals(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
                     Message message = new Message(MessageUser.PWD_CORRECT, eMessageResource.get(ErrorCode.E1008,
-                            new String[]{ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD}));
+                            new String[] { ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD }));
                     listMessage.add(message);
                     return listMessage;
                 }
@@ -328,7 +336,7 @@ public class UserServiceImpl implements UserService {
                 }
                 if (isExist(mgrUser.getUserId())) {
                     Message message = new Message(MessageUser.USR_EXIST, eMessageResource.get(ErrorCode.E0005,
-                            new String[]{mgrUser.getUserId(), ScreenItem.USER}));
+                            new String[] { mgrUser.getUserId(), ScreenItem.USER }));
                     listMessage.add(message);
                     return listMessage;
                 }
@@ -337,19 +345,19 @@ public class UserServiceImpl implements UserService {
                 if (mgrUser.isChangePassword()) {
                     if (EStringUtil.isEmpty(mgrUser.getPassword())) {
                         Message message = new Message(MessageUser.PWD_BLANK,
-                                eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.NEW_PASSWORD}));
+                                eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.NEW_PASSWORD }));
                         listMessage.add(message);
                         return listMessage;
                     }
                     if (EStringUtil.isEmpty(mgrUser.getConfirmPassword())) {
                         Message message = new Message(MessageUser.PWD_BLANK,
-                                eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.CONFIRM_PASSWORD}));
+                                eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.CONFIRM_PASSWORD }));
                         listMessage.add(message);
                         return listMessage;
                     }
                     if (!EStringUtil.contains(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
                         Message message = new Message(MessageUser.PWD_CORRECT, eMessageResource.get(ErrorCode.E1008,
-                                new String[]{ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD}));
+                                new String[] { ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD }));
                         listMessage.add(message);
                         return listMessage;
                     }
@@ -362,7 +370,7 @@ public class UserServiceImpl implements UserService {
             }
             return listMessage;
         } catch (Exception ex) {
-            Message message = new Message(MessageUser.USR_BLANK, eMessageResource.get("E1009", new String[]{""}));
+            Message message = new Message(MessageUser.USR_BLANK, eMessageResource.get("E1009", new String[] { "" }));
             listMessage.add(message);
             return listMessage;
         }
@@ -415,15 +423,11 @@ public class UserServiceImpl implements UserService {
         QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
         QStrLogAccess qStrLogAccess = QStrLogAccess.newInstance();
         QCtlLogin qCtlLogin = QCtlLogin.newInstance();
-        QCtlTemplate qCtlTemplate = QCtlTemplate.newInstance();
-        QCtlMenu qCtlMenu = QCtlMenu.newInstance();
 
         List<TransactionManager> transactionManagers = new ArrayList<TransactionManager>();
         transactionManagers.add(new TransactionManager(Constant.EARTH_WORKSPACE_ID));
         try {
             List<MgrWorkspace> mgrWorkspaces = workspaceDao.getAll();
-            BooleanBuilder conditionSearch = null;
-            Predicate pre1 = null;
             for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
                 transactionManagers.add(new TransactionManager(mgrWorkspace.getWorkspaceId()));
 
@@ -435,14 +439,6 @@ public class UserServiceImpl implements UserService {
                 }
                 eventDao.deleteList(mgrWorkspace.getWorkspaceId(), conditionEvents);
 
-                conditionSearch = new BooleanBuilder();
-                pre1 = qCtlEvent.userId.in(userIds);
-                conditionSearch.and(pre1);
-                if (eventDao.search(mgrWorkspace.getWorkspaceId(), conditionSearch, null, null,
-                        null).size() > 0) {
-                    throw new EarthException("Delete cltEvent of User unsuccessfully");
-                }
-
                 List<Map<Path<?>, Object>> conditionLogAccesses = new ArrayList<>();
                 for (String userId : userIds) {
                     Map<Path<?>, Object> condition = new HashMap<>();
@@ -451,32 +447,9 @@ public class UserServiceImpl implements UserService {
                 }
                 strLogAccessDao.deleteList(mgrWorkspace.getWorkspaceId(), conditionLogAccesses);
 
-                conditionSearch = new BooleanBuilder();
-                pre1 = qStrLogAccess.userId.in(userIds);
-                conditionSearch.and(pre1);
-                if (strLogAccessDao.search(mgrWorkspace.getWorkspaceId(), conditionSearch, null,
-                        null, null).size() > 0) {
-                    throw new EarthException("Delete StrLogAccessDao of User unsuccessfully");
-                }
-
                 templateAuthorityDao.deleteListByUserIds(mgrWorkspace.getWorkspaceId(), userIds);
-                conditionSearch = new BooleanBuilder();
-                pre1 = qCtlTemplate.userId.in(userIds);
-                conditionSearch.and(pre1);
-                if (templateAuthorityDao.search(mgrWorkspace.getWorkspaceId(), conditionSearch,
-                        null, null, null).size() > 0) {
-                    throw new EarthException("Delete CtlTemplate of User unsuccessfully");
-                }
             }
             menuAuthorityDao.deleteListByUserIds(userIds);
-
-            BooleanBuilder conditionSearchMenu = new BooleanBuilder();
-            Predicate pre1Menu = qCtlMenu.userId.in(userIds);
-            conditionSearchMenu.and(pre1Menu);
-            if (menuAuthorityDao.search(Constant.EARTH_WORKSPACE_ID, conditionSearchMenu, null,
-                    null, null).size() > 0) {
-                throw new EarthException("Delete MenuAuthority of User unsuccessfully");
-            }
 
             List<Map<Path<?>, Object>> conditionCtlLogins = new ArrayList<>();
             for (String userId : userIds) {
@@ -486,14 +459,6 @@ public class UserServiceImpl implements UserService {
             }
             loginControlDao.deleteList(Constant.EARTH_WORKSPACE_ID, conditionCtlLogins);
 
-            conditionSearchMenu = new BooleanBuilder();
-            pre1Menu = qCtlLogin.userId.in(userIds);
-            conditionSearchMenu.and(pre1Menu);
-            if (loginControlDao.search(Constant.EARTH_WORKSPACE_ID, conditionSearchMenu, null,
-                    null, null).size() > 0) {
-                throw new EarthException("Delete CtlLogin of User unsuccessfully");
-            }
-
             List<Map<Path<?>, Object>> conditionUserProfiles = new ArrayList<>();
             for (String userId : userIds) {
                 Map<Path<?>, Object> condition = new HashMap<>();
@@ -501,14 +466,6 @@ public class UserServiceImpl implements UserService {
                 conditionUserProfiles.add(condition);
             }
             userProfileDao.deleteList(Constant.EARTH_WORKSPACE_ID, conditionUserProfiles);
-
-            conditionSearchMenu = new BooleanBuilder();
-            pre1Menu = qMgrUserProfile.userId.in(userIds);
-            conditionSearchMenu.and(pre1Menu);
-            if (userProfileDao.search(Constant.EARTH_WORKSPACE_ID, conditionSearchMenu, null,
-                    null, null).size() > 0) {
-                throw new EarthException("Delete MgrUserProfile of User unsuccessfully");
-            }
 
             List<Map<Path<?>, Object>> conditions = new ArrayList<>();
             for (String userId : userIds) {
@@ -571,9 +528,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public List<CtlLogin> getAllMgrLogin(String workspaceId, Long offset, Long limit,
-                                         OrderSpecifier<String> orderByColumn) throws EarthException {
-        return loginControlDao.findAll(Constant.EARTH_WORKSPACE_ID, offset, limit, orderByColumn);
+    public List<CtlLogin> getAllMgrLogin(String workspaceId, Long offset, Long limit, List<OrderSpecifier<?>> orderBys)
+            throws EarthException {
+        return loginControlDao.findAll(Constant.EARTH_WORKSPACE_ID, offset, limit, orderBys, null);
     }
 
     @Transactional
@@ -629,8 +586,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public List<CtlLogin> searchMgrLogin(String workspaceId, Predicate condition, Long offset, Long limit,
-                                         OrderSpecifier<String> orderByColumn) throws EarthException {
+            List<OrderSpecifier<?>> orderBys) throws EarthException {
 
-        return loginControlDao.search(Constant.EARTH_WORKSPACE_ID, condition, offset, limit, orderByColumn);
+        return loginControlDao.search(Constant.EARTH_WORKSPACE_ID, condition, offset, limit, orderBys, null);
     }
 }

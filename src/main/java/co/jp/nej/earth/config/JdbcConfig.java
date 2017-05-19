@@ -58,6 +58,7 @@ public class JdbcConfig {
     private String port;
 
     public DataSource dataSource(String workspaceId, MgrWorkspaceConnect mgrConnect) {
+        LOG.debug("Create new hikari data source with workspaceId=" + workspaceId);
         HikariConfig config = new HikariConfig();
 
         if (ConnectionManager.exists(workspaceId)) {
@@ -84,6 +85,7 @@ public class JdbcConfig {
     }
 
     public DataSource systemDataSource() {
+        LOG.debug("Create System Data Source");
         MgrWorkspaceConnect mgrConnect = new MgrWorkspaceConnect();
         mgrConnect.setDbUser(username);
         mgrConnect.setWorkspaceId(Constant.EARTH_WORKSPACE_ID);
@@ -97,18 +99,11 @@ public class JdbcConfig {
 
     @Bean
     public PlatformTransactionManager getPlatformTransactionManager() {
-        if (ConnectionManager.exists(Constant.EARTH_WORKSPACE_ID)) {
-            try {
-                return ConnectionManager.getTransactionManager(Constant.EARTH_WORKSPACE_ID);
-            } catch (EarthException e) {
-                LOG.error(e.getMessage());
-            }
-        }
-
         return new DataSourceTransactionManager(systemDataSource());
     }
 
     private String createDbUrl(MgrWorkspaceConnect mgrConnect) {
+        LOG.debug("Create Database Url with workspaceId=" + mgrConnect.getWorkspaceId());
         DatabaseType dbType = databaseType();
         String dbUrl = EStringUtil.EMPTY;
         if (DatabaseType.isOracle(dbType)) {
@@ -120,6 +115,8 @@ public class JdbcConfig {
         dbUrl = dbUrl.replace("{server}", mgrConnect.getDbServer())
                 .replace("{port}", String.valueOf(mgrConnect.getPort()))
                 .replace("{schema}", mgrConnect.getSchemaName());
+        LOG.debug("dbUrl=" + dbUrl);
+
         return dbUrl;
     }
 

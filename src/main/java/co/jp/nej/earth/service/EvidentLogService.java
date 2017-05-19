@@ -9,5 +9,5 @@ import java.util.List;
 public interface EvidentLogService {
 
     List<StrLogAccess> getListByWorkspaceId(String workspaceId, Long offset, Long limit,
-                                            OrderSpecifier<String> orderByColumn) throws EarthException;
+            List<OrderSpecifier<?>> orderBys) throws EarthException;
 }

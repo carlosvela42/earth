@@ -55,7 +55,7 @@ public class ProfileDaoImpl extends BaseDaoImpl<MgrProfile> implements ProfileDa
 
     public List<MgrProfile> getAll() throws EarthException {
         try {
-            return this.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null);
+            return this.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null, null);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }

@@ -5,10 +5,12 @@ import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
 import co.jp.nej.earth.model.MenuAccessRight;
 import co.jp.nej.earth.model.MenuLink;
+import co.jp.nej.earth.model.ProfileAccessRight;
 import co.jp.nej.earth.model.UserAccessRight;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.CtlMenu;
 import co.jp.nej.earth.model.entity.MgrMenu;
+import co.jp.nej.earth.model.entity.MgrMenuP;
 import co.jp.nej.earth.model.entity.MgrMenuU;
 import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.enums.ColumnNames;
@@ -19,12 +21,14 @@ import co.jp.nej.earth.model.sql.QMgrMenuP;
 import co.jp.nej.earth.model.sql.QMgrMenuU;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
 import co.jp.nej.earth.util.DateUtil;
-import co.jp.nej.earth.util.UserAcessRightUtil;
+import co.jp.nej.earth.util.UserAccessRightUtil;
 import com.google.gson.Gson;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.dml.SQLInsertClause;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -41,7 +45,7 @@ import java.util.Map;
 @Repository
 public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAuthorityDao {
 
-    private static final QCtlMenu qCtlMenu = QCtlMenu.newInstance();
+    private static final Logger LOG = LoggerFactory.getLogger(MenuAuthorityDaoImpl.class);
 
     public MenuAuthorityDaoImpl() throws Exception {
         super();
@@ -52,6 +56,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
         try {
             QMgrMenu qMgrMenu = QMgrMenu.newInstance();
             QMgrMenuCategory qMgrMenuCategory = QMgrMenuCategory.newInstance();
+            QCtlMenu qCtlMenu = QCtlMenu.newInstance();
 
             ResultSet resultSet = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID)
                     .select(qMgrMenu.functionId, qMgrMenu.functionName, qMgrMenu.functionCategoryId,
@@ -149,6 +154,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
     @Override
     public long deleteAllMixAuthority(List<String> menuIds) throws EarthException {
         try {
+            QCtlMenu qCtlMenu = QCtlMenu.newInstance();
             List<Map<Path<?>, Object>> conditions = new ArrayList<>();
             for (String menuId : menuIds) {
                 Map<Path<?>, Object> condition = new HashMap<>();
@@ -195,7 +201,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
                     .on(qMgrMenuP.profileId.eq(qMgrUserProfile.profileId))
                     .where(qMgrMenuP.functionId.eq(menuId)).getResults();
 
-            List<UserAccessRight> userAccessRights = UserAcessRightUtil.getUserAccessRightsFromResult(resultSet);
+            List<UserAccessRight> userAccessRights = UserAccessRightUtil.getUserAccessRightsFromResult(resultSet);
             return userAccessRights;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -203,4 +209,116 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
         }
     }
 
+    @Override
+    public List<ProfileAccessRight> getProfileAuthority(String menuId) throws EarthException {
+        List<ProfileAccessRight> profileAccessRights = new ArrayList<>();
+        try {
+            QMgrMenuP qMgrMenuP = QMgrMenuP.newInstance();
+            ResultSet resultSet = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID)
+                    .select(qMgrMenuP.profileId, qMgrMenuP.accessAuthority).from(qMgrMenuP)
+                    .where(qMgrMenuP.functionId.eq(menuId)).getResults();
+            while (resultSet.next()) {
+                ProfileAccessRight profileAccessRight = new ProfileAccessRight();
+                profileAccessRight.setProfileId(resultSet.getString(ColumnNames.PROFILE_ID.toString()));
+                profileAccessRight.setAccessRight(
+                        AccessRight.values()[resultSet.getInt(ColumnNames.ACCESS_AUTHORITY.toString())]);
+                profileAccessRights.add(profileAccessRight);
+            }
+        } catch (Exception e) {
+            throw new EarthException(e.getMessage());
+        }
+        return profileAccessRights;
+    }
+
+
+    @Override
+    public long deleteAllUserAuthority(String functionId) throws EarthException {
+        try {
+            QMgrMenuU qMgrMenuU= QMgrMenuU.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            long deletedRecordNumber = earthQueryFactory.delete(qMgrMenuU)
+                    .where(qMgrMenuU.functionId.eq(functionId)).execute();
+            return deletedRecordNumber;
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage());
+            throw new EarthException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public long deleteAllProfileAuthority(String functionId) throws EarthException {
+        try {
+            QMgrMenuP qMgrMenuP= QMgrMenuP.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            long deletedRecordNumber = earthQueryFactory.delete(qMgrMenuP)
+                    .where(qMgrMenuP.functionId.eq(functionId)).execute();
+            return deletedRecordNumber;
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage());
+            throw new EarthException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public long insertUserAuthority(String functionId, List<UserAccessRight> userAccessRights) throws EarthException {
+        try {
+            QMgrMenuU qMgrMenuU= QMgrMenuU.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            SQLInsertClause insert = earthQueryFactory.insert(qMgrMenuU);
+            for (UserAccessRight userAccessRight : userAccessRights) {
+                insert.set(qMgrMenuU.functionId, functionId)
+                        .set(qMgrMenuU.userId, userAccessRight.getUserId())
+                        .set(qMgrMenuU.accessAuthority, userAccessRight.getAccessRight().getValue())
+                        .set(qMgrMenuU.lastUpdateTime,
+                                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD))
+                        .addBatch();
+            }
+            return insert.execute();
+        } catch (Exception e) {
+            throw new EarthException(e.getMessage());
+        }
+    }
+
+    @Override
+    public long insertMenuU(MgrMenuU mgrMenuU) throws EarthException {
+        try {
+            QMgrMenuU qMgrMenuU= QMgrMenuU.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            return earthQueryFactory.insert(qMgrMenuU).populate(mgrMenuU).execute();
+        } catch (Exception e) {
+            throw new EarthException(e.getMessage());
+        }
+    }
+
+    @Override
+    public long insertProfileAuthority(String functionId, List<ProfileAccessRight> profileAccessRights)
+            throws EarthException {
+        try {
+            QMgrMenuP qMgrMenuP= QMgrMenuP.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            SQLInsertClause insert = earthQueryFactory.insert(qMgrMenuP);
+            for (ProfileAccessRight profileAccessRight: profileAccessRights) {
+                insert.set(qMgrMenuP.functionId, functionId)
+                        .set(qMgrMenuP.profileId, profileAccessRight.getProfileId())
+                        .set(qMgrMenuP.accessAuthority, profileAccessRight.getAccessRight().getValue())
+                        .set(qMgrMenuP.lastUpdateTime,
+                                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD))
+                        .addBatch();
+            }
+            return insert.execute();
+        } catch (Exception e) {
+            throw new EarthException(e.getMessage());
+        }
+    }
+
+    @Override
+    public long insertMenuP(MgrMenuP mgrMenuP) throws EarthException {
+        try {
+            QMgrMenuP qMgrMenuP= QMgrMenuP.newInstance();
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            return earthQueryFactory.insert(qMgrMenuP).populate(mgrMenuP).execute();
+        } catch (Exception e) {
+            throw new EarthException(e.getMessage());
+        }
+    }
 }

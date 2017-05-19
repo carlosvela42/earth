@@ -124,6 +124,50 @@ public class EarthQueryFactory extends SQLQueryFactory {
     }
 
     /**
+     * Get Template data information.
+     *
+     * @param template
+     * @param processId
+     * @param workItemId
+     * @param folderItemNo
+     * @param documentNo
+     * @param layerNo
+     * @param maxVersion
+     */
+    public TemplateData getProcessTemplateData(MgrTemplate template, String processId, int maxVersion)
+            throws EarthException {
+        if (template == null || EStringUtil.isEmpty(template.getTemplateId())) {
+            return null;
+        }
+
+        QTemplateData qTemplateData = QTemplateData.newInstance(template);
+        QBean<TemplateData> selectList = Projections.bean(TemplateData.class, qTemplateData.all());
+
+        Predicate whereClauses = qTemplateData.processId.eq(processId).and(qTemplateData.historyNo.eq(maxVersion));
+        TemplateData templateData = null;
+        try {
+            ResultSet resultSet = select(selectList).from(qTemplateData).where(whereClauses).getResults();
+
+            if (resultSet.next()) {
+                Map<String, Object> dataMap = new HashMap<String, Object>();
+                for (Field field : template.getTemplateFields()) {
+                    Object columnValue = resultSet.getObject(field.getName());
+                    dataMap.put(field.getName(), columnValue);
+                }
+
+                String lastUpdateTime = resultSet.getString(ColumnNames.LAST_UPDATE_TIME.toString());
+                Integer historyNo = resultSet.getInt(ColumnNames.HISTORY_NO.toString());
+
+                templateData = new TemplateData(historyNo, lastUpdateTime, dataMap);
+            }
+        } catch (SQLException e) {
+            throw new EarthException(e.getErrorCode() + ":" + e.getMessage());
+        }
+
+        return templateData;
+    }
+
+    /**
      * Insert Template data information into Database.
      *
      * @param template

@@ -1,5 +1,8 @@
 package co.jp.nej.earth.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import co.jp.nej.earth.model.sql.QDirectory;
 import co.jp.nej.earth.util.DateUtil;
 
@@ -12,6 +15,7 @@ public class Directory extends BaseModel<Directory> {
     /**
      * serial number
      */
+    private static final Logger LOG = LoggerFactory.getLogger(Directory.class);
     private static final long serialVersionUID = 1L;
     private int dataDirectoryId;
     private String folderPath;
@@ -22,6 +26,19 @@ public class Directory extends BaseModel<Directory> {
     public Directory() {
         this.setqObj(QDirectory.newInstance());
         this.setLastUpdateTime(DateUtil.getCurrentDateString());
+    }
+
+    public Directory(int dataDirectoryId, String folderPath, int newCreateFile, String reservedDiskVolSize,
+            String diskVolSize) {
+        super();
+
+        LOG.debug("Call to (dataDirectoryId, folderPath, newCreateFile, reservedDiskVolSize," + "diskVolSize");
+
+        this.dataDirectoryId = dataDirectoryId;
+        this.folderPath = folderPath;
+        this.newCreateFile = newCreateFile;
+        this.reservedDiskVolSize = reservedDiskVolSize;
+        this.diskVolSize = diskVolSize;
     }
 
     /**

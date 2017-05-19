@@ -18,7 +18,6 @@ import com.querydsl.core.types.Path;
 import co.jp.nej.earth.dao.EventDao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.WorkItem;
-import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.constant.Constant.AgentBatch;
 import co.jp.nej.earth.model.entity.CtlEvent;
 import co.jp.nej.earth.model.sql.QCtlEvent;
@@ -43,7 +42,7 @@ public class EventControlServiceImpl implements EventControlService {
      * {@inheritDoc}
      */
     @Override
-    public boolean insertEvent(WorkItem workItem) throws EarthException {
+    public boolean insertEvent(String workspaceId,WorkItem workItem) throws EarthException {
         // parse object to json
         String json = null;
         try {
@@ -61,7 +60,7 @@ public class EventControlServiceImpl implements EventControlService {
         event.setWorkitemData(json);
         event.setWorkitemId(" -1");
         event.setUserId("1");
-        return eventDao.add(Constant.EARTH_WORKSPACE_ID, event) > 0;
+        return eventDao.add(workspaceId, event) > 0;
     }
 
     /**

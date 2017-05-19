@@ -3,10 +3,10 @@ package co.jp.nej.earth.model;
 public class Field {
     private String name;
     private String description;
-    private int type;
-    private int size;
-    private boolean required;
-    private boolean encrypted;
+    private Integer type;
+    private Integer size;
+    private Boolean required;
+    private Boolean encrypted;
 
     /**
      *
@@ -23,7 +23,7 @@ public class Field {
      * @param required
      * @param encrypted
      */
-    public Field(String name, String description, int type, int size, boolean required, boolean encrypted) {
+    public Field(String name, String description, Integer type, Integer size, boolean required, boolean encrypted) {
         super();
         this.name = name;
         this.description = description;
@@ -41,7 +41,8 @@ public class Field {
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;
@@ -55,7 +56,8 @@ public class Field {
     }
 
     /**
-     * @param description the description to set
+     * @param description
+     *            the description to set
      */
     public void setDescription(String description) {
         this.description = description;
@@ -64,56 +66,60 @@ public class Field {
     /**
      * @return the type
      */
-    public int getType() {
+    public Integer getType() {
         return type;
     }
 
     /**
-     * @param type the type to set
+     * @param type
+     *            the type to set
      */
-    public void setType(int type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
     /**
      * @return the size
      */
-    public int getSize() {
+    public Integer getSize() {
         return size;
     }
 
     /**
-     * @param size the size to set
+     * @param size
+     *            the size to set
      */
-    public void setSize(int size) {
+    public void setSize(Integer size) {
         this.size = size;
     }
 
     /**
      * @return the required
      */
-    public boolean isRequired() {
+    public Boolean getRequired() {
         return required;
     }
 
     /**
-     * @param required the required to set
+     * @param required
+     *            the required to set
      */
-    public void setRequired(boolean required) {
+    public void setRequired(Boolean required) {
         this.required = required;
     }
 
     /**
      * @return the encrypted
      */
-    public boolean isEncrypted() {
+    public Boolean getEncrypted() {
         return encrypted;
     }
 
     /**
-     * @param encrypted the encrypted to set
+     * @param encrypted
+     *            the encrypted to set
      */
-    public void setEncrypted(boolean encrypted) {
+    public void setEncrypted(Boolean encrypted) {
         this.encrypted = encrypted;
     }
 }

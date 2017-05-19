@@ -1,9 +1,4 @@
 <@standard.standardPage title="EVIDENT LOG">
-
-<script type="text/javascript" src="../resources/js/jquery.min.js"></script>
-<script type="text/javascript"
-        src="../resources/js/handlebars-v4.0.5.js"></script>
-
 <form action="${rc.getContextPath()}/evidentLog/evidentLogScreen" object="mgrWorkspace" method="get" class="form-narrow
 form-horizontal">
 <#--// action="${rc.getContextPath()}/licenseHistory/evidentLogScreen"-->
@@ -60,42 +55,5 @@ form-horizontal">
             </tr>
         </#if>
     </table>
-    <script id="some-template" type="text/x-handlebars-template">
-        <table>
-            <thead>
-            <th>Name</th>
-            </thead>
-            <tbody>
-            {{#strLogAccesses}}
-            <tr>
-                <td>{{eventId}}</td>
-            </tr>
-            {{/strLogAccesses}}
-            </tbody>
-        </table>
-    </script>
-    <script>
-        var source = $("#some-template").html();
-        var template = Handlebars.compile(source);
-        function searchText() {
-            $.ajax({
-                type: "POST",
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                headers: {
-                    Accept: 'application/json'
-                },
-                url: "${rc.getContextPath()}/evidentLog/searchLicenseHistory",
-                data: {workspaceId: "001"},
-                success: function (strLogAccesses) {
-//                    var context = {
-//                        strLogAccesses: JSON.parse(strLogAccesses)
-//                    }
-                    console.log(strLogAccesses);
-//                    $('body').append(template(context));
-                }
-            });
-        }
-    </script>
 </form>
 </@standard.standardPage>

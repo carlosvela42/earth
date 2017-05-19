@@ -5,19 +5,17 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import co.jp.nej.earth.model.Message;
-import co.jp.nej.earth.model.constant.Constant.Session;
 
 @Component
 public class ValidatorUtil {
     @Autowired
     private EMessageResource eMessageResource;
 
-    public boolean validate(Model model, BindingResult result) {
+    public List<Message> validate(BindingResult result) {
         List<Message> messages = new ArrayList<Message>();
 
         if (result.hasErrors()) {
@@ -36,14 +34,12 @@ public class ValidatorUtil {
                         }
                     }
                 }
-
                 messages.add(new Message(fieldError.getCode(), eMessageResource.get(messageCode, params)));
             }
 
-            model.addAttribute(Session.MESSAGES, messages);
-            return false;
         }
 
-        return true;
+        return messages;
     }
+
 }

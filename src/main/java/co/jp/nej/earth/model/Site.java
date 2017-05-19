@@ -1,5 +1,8 @@
 package co.jp.nej.earth.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import co.jp.nej.earth.model.sql.QSite;
 import co.jp.nej.earth.util.DateUtil;
 
@@ -12,15 +15,25 @@ public class Site extends BaseModel<Site> {
     /**
      * serial number
      */
+    private static final Logger LOG = LoggerFactory.getLogger(Site.class);
     private static final long serialVersionUID = 1L;
     private Integer siteId;
     private Integer dataDirectoryId;
 
     public Site() {
+        LOG.debug("Call to blank constructor");
         this.setqObj(QSite.newInstance());
         this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
+    public Site(Integer siteId, Integer dataDirectoryId) {
+        super();
+
+        LOG.debug("Call to (siteId, dataDirectoryId");
+
+        this.siteId = siteId;
+        this.dataDirectoryId = dataDirectoryId;
+    }
     /**
      * @return the siteId
      */

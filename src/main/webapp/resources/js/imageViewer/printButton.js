@@ -15,9 +15,7 @@ function printImage(image) {
 	printWin.close();
 }
 
-$("#print0").click(function() {
-	printImage('<img src="' + jsonLayer.Image + '">');
-});
+
 
 function printAnno(i){
 	var strPrint = "<script type='text/javascript'>";
@@ -28,23 +26,19 @@ function printAnno(i){
 		}
 	}
 	strPrint += "</script>";
-	var tmpRotate = rotate;
-	var tmpScale = scale;
-	rotate = 0;
-	scale = 1;
-	startAnnotation();	
-	redraw();
-	var tmpSelect = selectId;
-	selectBefore();
+	var tmpRotate = imageViewer.rotate;
+	var tmpScale = imageViewer.scale;
+	imageViewer.rotate = 0;
+	imageViewer.scale = 1;
+	imageViewer.startAnnotation();	
+	imageViewer.redraw();
+	var tmpSelect = imageViewer.selectId;
+	imageViewer.selectBefore();
 	printImage(document.getElementById("container").innerHTML + strPrint);
-	rotate = tmpRotate+90;
-	scale = tmpScale;	
-	startAnnotation();	
-	rotate -= 90;
-	redraw();
+	imageViewer.rotate = tmpRotate+90;
+	imageViewer.scale = tmpScale;	
+	imageViewer.startAnnotation();	
+	imageViewer.rotate -= 90;
+	imageViewer.redraw();
 	$("#"+tmpSelect).trigger("click");
 }
-
-$("#print").click(function() {
-	printAnno(i);
-});

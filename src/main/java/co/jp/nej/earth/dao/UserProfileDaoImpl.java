@@ -59,7 +59,7 @@ public class UserProfileDaoImpl extends BaseDaoImpl<MgrUserProfile> implements U
             BooleanBuilder condition = new BooleanBuilder();
             Predicate pre1 = qMgrUserProfile.profileId.in(profileIds);
             condition.and(pre1);
-            return this.search(Constant.EARTH_WORKSPACE_ID, condition, null, null, null);
+            return this.search(Constant.EARTH_WORKSPACE_ID, condition);
         } catch (Exception ex) {
             throw new EarthException(ex.getMessage());
         }

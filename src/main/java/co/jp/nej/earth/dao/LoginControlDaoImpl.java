@@ -1,19 +1,5 @@
 package co.jp.nej.earth.dao;
 
-import static co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Repository;
-
-import com.querydsl.sql.dml.SQLInsertClause;
-import com.querydsl.sql.dml.SQLUpdateClause;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
@@ -25,6 +11,15 @@ import co.jp.nej.earth.model.sql.QCtlLogin;
 import co.jp.nej.earth.model.sql.QMgrProfile;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
 import com.querydsl.core.types.Path;
+import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
 
 @Repository
 public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginControlDao {
@@ -35,13 +30,6 @@ public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginC
         super();
     }
 
-    public boolean insertOne(CtlLogin ctlLogin) throws EarthException {
-        QCtlLogin qCtlLogin = QCtlLogin.newInstance();
-        SQLInsertClause sic = ConnectionManager.getEarthQueryFactory(EARTH_WORKSPACE_ID).insert(qCtlLogin)
-                .populate(ctlLogin);
-        return sic.execute() > 0L;
-    }
-
     /**
      *
      */
@@ -49,10 +37,10 @@ public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginC
         QCtlLogin qCtlLogin = QCtlLogin.newInstance();
         QMgrUserProfile qMgrUserProfile = QMgrUserProfile.newInstance();
         QMgrProfile qMgrProfile = QMgrProfile.newInstance();
+        EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(EARTH_WORKSPACE_ID);
 
         List<StrCal> strCals = new ArrayList<StrCal>();
         StrCal strCal = null;
-        EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(EARTH_WORKSPACE_ID);
         try {
             ResultSet resultSet = earthQueryFactory
                     .select(qMgrUserProfile.profileId, qCtlLogin.userId.count().as("useLicenseCount"),
@@ -70,33 +58,32 @@ public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginC
                 strCal.setAvailableLicenseCount(resultSet.getInt(ColumnNames.AVAILABLE_LICENSE_COUNT.toString()));
                 strCals.add(strCal);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new EarthException(e.getMessage());
         }
         return strCals;
     }
 
-    public boolean updateOutTime(String sessionId, String outTime) throws EarthException {
+    public long updateOutTime(String sessionId, String outTime) throws EarthException {
         QCtlLogin qcCtlLogin = QCtlLogin.newInstance();
-        SQLUpdateClause suc = ConnectionManager.getEarthQueryFactory(EARTH_WORKSPACE_ID).update(qcCtlLogin);
-        suc.set(qcCtlLogin.logoutTime, outTime);
-        suc.where(qcCtlLogin.sessionId.eq(sessionId));
-        return suc.execute() > 0L;
+        EarthQueryFactory query = ConnectionManager.getEarthQueryFactory(EARTH_WORKSPACE_ID);
+
+        return (long) executeWithException(() -> {
+            return query
+                    .update(qcCtlLogin).set(qcCtlLogin.logoutTime, outTime)
+                    .where(qcCtlLogin.sessionId.eq(sessionId))
+                    .execute();
+        });
     }
 
-    public boolean deleteListByUserIds(List<String> userIds) throws EarthException {
-        try {
-
-            List<Map<Path<?>, Object>> conditions = new ArrayList<>();
-            for (String userId : userIds) {
-                Map<Path<?>, Object> condition = new HashMap<>();
-                condition.put(qcCtlLogin.userId, userId);
-                conditions.add(condition);
-            }
-            return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions) >= 0;
-
-        } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+    public long deleteListByUserIds(List<String> userIds) throws EarthException {
+        List<Map<Path<?>, Object>> conditions = new ArrayList<>();
+        for (String userId : userIds) {
+            Map<Path<?>, Object> condition = new HashMap<>();
+            condition.put(qcCtlLogin.userId, userId);
+            conditions.add(condition);
         }
+        return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions);
+
     }
 }

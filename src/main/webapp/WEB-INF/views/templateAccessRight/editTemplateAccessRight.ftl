@@ -1,7 +1,7 @@
-<script type="text/javascript" src="../resources/js/jquery.min.js"></script>
+<script type="text/javascript" src="../resources/js/lib/jquery.min.js"></script>
 <script type="text/javascript">
 
-/* $("#addParent").click(function() {
+/* $("#addParent").click(function() {https://code.jquery.com/jquery-3.2.1.min.js
 	alert("1");
 	  var userAccessRightStr = "";
 	  $('#userAccessRightTable > tbody > tr').each(function() {

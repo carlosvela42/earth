@@ -12,14 +12,9 @@ import java.util.Map;
 
 public interface TemplateAuthorityDao extends BaseDao<CtlTemplate> {
 
-    Map<TemplateKey, TemplateAccessRight> getMixAuthority(String userId, String workspaceId)
-            throws EarthException;
-
-    boolean deleteListByUserIds(List<String> userIds) throws EarthException;
+    Map<TemplateKey, TemplateAccessRight> getMixAuthority(String userId, String workspaceId) throws EarthException;
 
     long deleteListByUserIds(String workspaceId, List<String> userIds) throws EarthException;
-
-    boolean deleteListByProfileIds(List<String> profileIds) throws EarthException;
 
     long deleteListByProfileIds(String workspaceId, List<String> profileIds) throws EarthException;
 
@@ -29,20 +24,21 @@ public interface TemplateAuthorityDao extends BaseDao<CtlTemplate> {
 
     long searchAllMixAuthority(TemplateKey templateKey) throws EarthException;
 
-    List<TemplateKey> getTemplateKeysByProfile(String profileId) throws EarthException;
-
     List<TemplateKey> getTemplateKeysByProfile(String workspaceId, String profileId) throws EarthException;
 
     List<UserAccessRight> getUserAuthority(TemplateKey templateKey) throws EarthException;
 
     List<ProfileAccessRight> getProfileAuthority(TemplateKey templateKey) throws EarthException;
 
-    boolean deleteAllUserAuthority(TemplateKey templateKey) throws EarthException;
+    long deleteAllUserAuthority(TemplateKey templateKey) throws EarthException;
 
-    boolean insertUserAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights) throws EarthException;
+    long insertUserAuthority(TemplateKey templateKey, List<UserAccessRight> userAccessRights) throws EarthException;
 
-    boolean deleteAllProfileAuthority(TemplateKey templateKey) throws EarthException;
+    long deleteAllProfileAuthority(TemplateKey templateKey) throws EarthException;
 
-    boolean insertProfileAuthority(TemplateKey templateKey, List<ProfileAccessRight> profileAccessRights)
+    long insertProfileAuthority(TemplateKey templateKey, List<ProfileAccessRight> profileAccessRights)
             throws EarthException;
+
+    long countMixAuthority(TemplateKey templateKey) throws EarthException;
+
 }
