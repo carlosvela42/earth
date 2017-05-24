@@ -2,6 +2,7 @@
 		imageViewer.startAnnotation();
 		imageViewer.redraw();
 	}
+<<<<<<< HEAD
 	
 	IV.prototype.rotateCClick = function() {
 		imageViewer.rotate = (imageViewer.rotate + 270) % 360;
@@ -12,3 +13,7 @@
 		imageViewer.rotate = (imageViewer.rotate + 90) % 360;
 		imageViewer.rotateAll();
 	}
+=======
+
+	var isRotated = false;
+>>>>>>> master

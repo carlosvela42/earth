@@ -32,16 +32,8 @@
 <script src="${rc.getContextPath()}/resources/js/imageViewer/move.js"></script>
 </head>
 <body style="padding-top: 70px">
-    <div style="float: right;">
-        <#if Session.userInfo??>
-            <#assign userInfo =Session.userInfo>
-            <label id="userInfo">${userInfo.userId}/${userInfo.userName}</label>
-            <a href="${rc.getContextPath()}/logout" class="button">ログアウト</a>
-        </#if>
-    </div>
 <div id="imageViewerWrapper"></div>
 <input type="hidden" data-context="${rc.getContextPath()}" name="contextPath" >
-<canvas id="the-canvas"></canvas>
 	<script
 		src="${rc.getContextPath()}/resources/js/imageViewer/content.js"></script>
 		<script

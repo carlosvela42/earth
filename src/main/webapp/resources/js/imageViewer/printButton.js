@@ -1,4 +1,4 @@
-function printImage(image) {
+IV.prototype.printImage = function(image) {
 	var windowContent = '<!DOCTYPE html>';
 	windowContent += '<html>'
 	windowContent += '<head><title>Print</title></head>';
@@ -15,9 +15,7 @@ function printImage(image) {
 	printWin.close();
 }
 
-
-
-function printAnno(i){
+IV.prototype.printAnno = function(i){
 	var strPrint = "<script type='text/javascript'>";
 	for (var j = 5; j <= i; j++) {
 		if ($("#t" + j).length) {
@@ -34,11 +32,19 @@ function printAnno(i){
 	imageViewer.redraw();
 	var tmpSelect = imageViewer.selectId;
 	imageViewer.selectBefore();
-	printImage(document.getElementById("container").innerHTML + strPrint);
+	imageViewer.printImage(document.getElementById("container").innerHTML + strPrint);
 	imageViewer.rotate = tmpRotate+90;
 	imageViewer.scale = tmpScale;	
 	imageViewer.startAnnotation();	
 	imageViewer.rotate -= 90;
 	imageViewer.redraw();
 	$("#"+tmpSelect).trigger("click");
+}
+
+IV.prototype.print0Click = function() {
+	imageViewer.printImage('<img src="' + imageViewer.documentImage + '">');
+}
+
+IV.prototype.printClick = function() {
+	imageViewer.printAnno(imageViewer.i);
 }

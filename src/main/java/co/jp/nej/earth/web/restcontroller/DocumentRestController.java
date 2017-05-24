@@ -28,7 +28,8 @@ public class DocumentRestController extends BaseRestController {
         boolean isSuccess = false;
         try {
             isSuccess = true;
-            List<Document> doc = documentService.getDocumentListInfo(workspaceId, "1", 2, "3");
+            List<Document> doc = documentService.getDocumentListInfo(
+                    workspaceId, workitemId, Integer.parseInt(folderItemNo), documentNo);
             imageResponse.setResult(doc);
         } catch (EarthException e) {
             isSuccess = false;

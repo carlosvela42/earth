@@ -1,103 +1,101 @@
 $( "#imageViewerWrapper" ).load( "imageviewer/template" , function() {
-  console.log('success');
-
   imageViewer = new IV();
-  imageViewer.init();
-  imageViewer.vis = container.append('svg').on("mousedown", imageViewer.mousedown).on("mouseup",
-			mouseup).attr("id", "svg");
+	imageViewer.container = d3.select('body').append('div').attr('id', 'container');
+	$('#container').width('800px');
+	$('#container').height('800px');
+  imageViewer.startLoad("003","1","2","3");
+  imageViewer.vis = imageViewer.container.append('svg').on("mousedown", imageViewer.mousedown).on("mouseup",
+		  imageViewer.mouseup).attr("id", "svg");
   $("input[name=toolOption]").on("click", imageViewer.selectBefore);
-  $("#first").click(function() {
-		imageViewer.cDocId = 1;
-		changeDocument();
-		$('#first').prop('disabled', true);
-		$('#previous').prop('disabled', true);
-		$('#next').prop('disabled', false);
-		$('#last').prop('disabled', false);
-		$('#btnImage').text('#1');
-	});
-	$("#previous").click(function() {
-		imageViewer.cDocId--;
-		changeDocument();
-		$('#next').prop('disabled', false);
-		$('#last').prop('disabled', false);
-		if (imageViewer.cDocId == 1) {
-			$('#first').prop('disabled', true);
-			$('#previous').prop('disabled', true);
-		}
-		$('#btnImage').text('#' + imageViewer.cDocId);
-	});
-	$("#next").click(function() {
-		imageViewer.cDocId++;
-		changeDocument();
-		$('#first').prop('disabled', false);
-		$('#previous').prop('disabled', false);
-		if (imageViewer.cDocId == documentsLength) {
-			$('#next').prop('disabled', true);
-			$('#last').prop('disabled', true);
-		}
-		$('#btnImage').text('#' + imageViewer.cDocId);
-	});
-	$("#last").click(function() {
-		imageViewer.cDocId = documentsLength;
-		changeDocument();
-		$('#first').prop('disabled', false);
-		$('#previous').prop('disabled', false);
-		$('#next').prop('disabled', true);
-		$('#last').prop('disabled', true);
-		$('#btnImage').text('#' + imageViewer.cDocId);
-	});
-	$("#rotate").click(function() {
-		imageViewer.rotate = (imageViewer.rotate + 90) % 360;
-		rotateAll();
+  $("#first").click(imageViewer.firstClick);
+	$("#previous").click(imageViewer.previousClick);
+	$("#next").click(imageViewer.nextClick);
+	$("#last").click(imageViewer.lastClick);
+	$("#rotate").click(imageViewer.rotateClick);
+	$("#rotateC").click(imageViewer.rotateCClick);	
+	$("#cut").click(imageViewer.cutClick);	
+	$("#copy").click(imageViewer.copyClick);	
+	$("#paste").click(imageViewer.pasteClick);	
+	$("#print0").click(imageViewer.print0Click);	
+	$("#print").click(imageViewer.printClick);	
+	$("#addLayer").click(imageViewer.addLayerClick);	
+	$("#removeLayer").click(imageViewer.removeLayerClick);	
+	$("#renameLayer").click(imageViewer.renameLayerClick);	
+	$("#activeLayer").click(imageViewer.activeLayerClick);	
+	$("#displayLayer").click(imageViewer.displayLayerClick);	
+	$("#btnLayer").click(imageViewer.btnLayerClick);	
+	$("#okLayer").click(imageViewer.okLayerClick);
+	$("#select").click(imageViewer.selectBtnClick);
+	$("#color").change(imageViewer.colorChange);
+	$("#fill").change(imageViewer.fillChange);
+	$("#border").change(imageViewer.borderChange);
+	$("#font").change(imageViewer.fontChange);
+	$("#fontSize").change(imageViewer.fontSizeChange);
+	$("#fontStyle").change(imageViewer.fontStyleChange);
+	$("#properties").click(imageViewer.propertiesClick);
+	$("#commentProperties").click(imageViewer.commentPropertiesClick);
+	$("#textProperties").click(imageViewer.textPropertiesClick);
+	$("#okProperties").click(imageViewer.okPropertiesClick);
+	$('input[name=color]').change(imageViewer.inputColorChange);
+	$('input[name=fill]').change(imageViewer.inputFillChange);
+	$('#width').change(imageViewer.widthChange);
+	$('input[type=radio][name=active]').change(imageViewer.activeChange);
+	$("#cbox1").prop('checked', true);
+	$("#controls").change(imageViewer.thuy);
+	$("#controls1").change(imageViewer.thuy);
+	$("#cbox1").click(imageViewer.thuy);
+	$("#btnGrayscale").click(imageViewer.btnGrayscaleClick);
+	$("#line").click(imageViewer.lineClick);
+	$("#rectangle").click(imageViewer.rectangleClick);
+	$("#comment").click(imageViewer.commentClick);
+	$("#highlight").click(imageViewer.highlightClick);
+	$("#text").click(imageViewer.textClick);
+	$("#zoomout").click(function() {
+		imageViewer.zoom(Math.ceil10(imageViewer.scale * 10, -2) / 10 - 0.1);
 	});
 
-	$("#rotateC").click(function() {
-		imageViewer.rotate = (imageViewer.rotate + 270) % 360;
-		rotateAll();
+	$("#zoomin").click(function() {
+		imageViewer.zoom(Math.floor10(imageViewer.scale * 10, -2) / 10 + 0.1);
 	});
 	
-	$("#cut").click(function() {
-		imageViewer.cut = imageViewer.selectId;
-		$("#" + imageViewer.selectId).parent().css("visibility", "hidden");
-		imageViewer.selectBefore();
+	$("#zoomFullPage").click(function() {		
+		if(($('#container').width()-getScrollBarWidth())/-imageViewer.x2[0]>($('#container').height()-getScrollBarWidth())/-imageViewer.y2[0]){
+			imageViewer.zoom(($('#container').height()-getScrollBarWidth())/-imageViewer.y2[0]);
+		}
+		else
+		{
+			imageViewer.zoom(($('#container').width()-getScrollBarWidth())/-imageViewer.x2[0]);
+		}
 	});
 	
-	$("#copy").click(
-			function() {
-				var im = imageViewer;
-				var selectId = im.selectId;
-				im.i++;
-				im.rotate += 90;
-				im.startAnnotation();
-				im.rotate -= 90;
-				im.redraw();
-				if($("#r" + im.selectId).length==0){
-				$("#" + im.selectId).clone().appendTo("svg").attr("id", im.i).attr(
-						"onmousedown", null).attr("onmouseup", null).on(
-						"click", im.selectClick);}else{
-							$("#" + selectId).clone().appendTo("svg").attr("id", im.i).attr(
-									"onmousedown", null).attr("onmouseup", null);
-				$("#r" + selectId).clone().appendTo("svg").attr("id", "r"+im.i).attr(
-						"onmousedown", null).attr("onmouseup", null).on(
-						"click", im.selectClick);}
-				im.x1[i] = im.x1[selectId];
-				im.x2[i] = im.x2[selectId];
-				im.y1[i] = im.y1[selectId];
-				im.y2[i] = im.y2[selectId];
-				$("#" + im.selectId).parent().css("visibility", "hidden");
-				im.cut = selectId;
-			});
-	
-	$("#paste").click(function() {
-		$("#" + imageViewer.cut).css("visibility", "visible");
-		$("#" + imageViewer.cut).parent().css("visibility", "visible");
+	$("#zoomFullWidth").click(function() {
+		imageViewer.zoom(($('#container').width()-getScrollBarWidth())/-imageViewer.x2[0]);
+	});
+
+	$("#zoom200").click(function() {
+		imageViewer.zoom(2);
 	});
 	
-	$("#print0").click(function() {
-		printImage('<img src="' + jQuery.parseJSON( imageViewer.jsonLayer.viewInformation ).Image + '">');
+	$("#zoom100").click(function() {
+		imageViewer.zoom(1);
 	});
 	
-	$("#print").click(function() {
-		printAnno(imageViewer.i);
+	$("#zoom75").click(function() {
+		imageViewer.zoom(0.75);
 	});
+	
+	$("#zoom50").click(function() {
+		imageViewer.zoom(0.5);
+	});
+
+	$('#controlZoom').onkeyup = controlZoom.onchange = function() {
+		var val = parseInt(this.value);
+		if (val > 100 || val < 0)
+			return false;
+		if (val > 50) {
+			imageViewer.zoom(0.06 * val - 2);
+		} else {
+			imageViewer.zoom(val / 50);
+		}
+	}
 });

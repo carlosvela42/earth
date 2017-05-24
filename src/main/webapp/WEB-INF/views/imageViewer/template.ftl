@@ -101,12 +101,11 @@
 			id="rotate">
 			<img src="${rc.getContextPath()}/resources/images/imageViewer/rotate.png" width="20" />
 		</button>
-		<button type="button" class="btn btn-default" title="first" id="first"
-			disabled>
+		<button type="button" class="btn btn-default" title="first" id="first">
 			<img src="${rc.getContextPath()}/resources/images/imageViewer/first.jpg" width="20" />
 		</button>
 		<button type="button" class="btn btn-default" title="previous"
-			id="previous" disabled>
+			id="previous">
 			<img src="${rc.getContextPath()}/resources/images/imageViewer/previous.png" width="20" />
 		</button>
 		<button type="button" class="btn btn-default" title="next" id="next">

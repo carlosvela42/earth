@@ -1,24 +1,24 @@
-$("#color").change(function() {
+IV.prototype.colorChange = function(){
 	$("#commentText").css("color", $("#color").val());
-});
+}
 
-$("#fill").change(function() {
+IV.prototype.fillChange = function(){
 	$("#commentText").css("backgroundColor", $("#fill").val());
-});
+}
 
-$("#border").change(function() {
+IV.prototype.borderChange = function(){
 	$("#commentText").css("border", $("#border").val());
-});
+}
 
-$("#font").change(function() {
+IV.prototype.fontChange = function(){
 	$("#commentText").css("font-family", $("#font").val());
-});
+}
 
-$("#fontSize").change(function() {
+IV.prototype.fontSizeChange = function(){
 	$("#commentText").css("fontSize", $("#fontSize").val());
-});
+}
 
-$("#fontStyle").change(function() {
+IV.prototype.fontStyleChange = function(){
 	if ($("#fontStyle").val() == "normal") {
 		$("#commentText").css("font-style", "normal");
 		$("#commentText").css("font-weight", "");
@@ -35,14 +35,14 @@ $("#fontStyle").change(function() {
 		$("#commentText").css("font-weight", "bold");
 		$("#commentText").css("font-style", "");
 	}
-});
+}
 
 IV.prototype.property=function(selectId) {
 	if ($("#1").length == 0) {
-		$("#" + this.penColor).prop("checked", true);
-		$("#1" + this.fillColor).prop("checked", true);
-		$("#2" + this.highlightColor).prop("checked", true);
-		$("#width").val(this.lineSize);
+		$("#" + imageViewer.penColor).prop("checked", true);
+		$("#1" + imageViewer.fillColor).prop("checked", true);
+		$("#2" + imageViewer.highlightColor).prop("checked", true);
+		$("#width").val(imageViewer.lineSize);
 		$("#myModalLine").modal();
 	} else {
 		if ($("#" + selectId).prop("tagName") == "foreignObject") {
@@ -85,7 +85,7 @@ IV.prototype.property=function(selectId) {
 	}
 }
 
-function textProperty(selectId) {
+IV.prototype.textProperty = function(selectId) {
 	$("#t" + selectId).val($("#commentText").val());
 	$("#t" + selectId).css("color", $('#color').find(":selected").text());
 	$("#t" + selectId).css("backgroundColor",
@@ -116,12 +116,12 @@ function textProperty(selectId) {
 	}
 }
 
-function okProperties(selectId) {
+IV.prototype.okProperties = function(selectId) {
 	if ($("#1").length == 0) {
-		penColor = $('input[name=color]:checked').val();	
-		fillColor = $('input[name=fill]:checked').val();	
-		highlightColor = $('input[name=highlight]:checked').val();
-		lineSize = $('#width').val();
+		imageViewer.penColor = $('input[name=color]:checked').val();	
+		imageViewer.fillColor = $('input[name=fill]:checked').val();	
+		imageViewer.highlightColor = $('input[name=highlight]:checked').val();
+		imageViewer.lineSize = $('#width').val();
 	} else {
 		if ($("#" + selectId).prop("tagName") == "line") {
 			$("#" + selectId).attr("stroke-width", $('#width').val());
@@ -143,28 +143,31 @@ function okProperties(selectId) {
 	}
 }
 
-$("#properties").click(function() {
-	  imageViewer.property(imageViewer.selectId);
-	});
+IV.prototype.propertiesClick = function(){
+	imageViewer.property(imageViewer.selectId);
+}
 
-$("#commentProperties").click(function() {
-	$("#t" + selectId).val($("#tbComment").val());
-});
+IV.prototype.commentPropertiesClick = function(){
+	$("#t" + imageViewer.selectId).val($("#tbComment").val());
+}
 
-$("#textProperties").click(function() {
-	textProperty(selectId);
-});
+IV.prototype.textPropertiesClick = function(){
+	imageViewer.textProperty(imageViewer.selectId);
+}
 
-$("#okProperties").click(function() {
-	okProperties(selectId);
-});
-$('input[name=color]').change(function(){
+IV.prototype.okPropertiesClick = function(){
+	imageViewer.okProperties(imageViewer.selectId);
+}
+
+IV.prototype.inputColorChange = function(){
 	$('#example').attr('stroke',$('input[name=color]:checked').val());
-	$("#color").val($( "#color option:selected" ).text());	
-});
-$('input[name=fill]').change(function(){
+	$("#color").val($( "#color option:selected" ).text());
+}
+
+IV.prototype.inputFillChange = function(){
 	$('#example').attr('fill',$('input[name=fill]:checked').val());
-});
-$('#width').change(function(){
+}
+
+IV.prototype.widthChange = function(){
 	$('#example').attr('stroke-width',$('#width').val());
-});
+}

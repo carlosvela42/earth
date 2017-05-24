@@ -10544,7 +10544,6 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
         }
       }
     }
-
   };
 
   return InternalRenderTask;
