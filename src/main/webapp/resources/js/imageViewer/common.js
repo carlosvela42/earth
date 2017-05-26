@@ -38,7 +38,8 @@ var IV = function(){
 	this.xGrayscale = null;
 	this.container = null;
 	this.pageNo = 0;
-
+this.rotated = 0;
+this.pasted = false;
 	this.x1[0] = 0;
 	this.y1[0] = 0;
 	this.startAnnotation = function() {
@@ -237,7 +238,31 @@ var IV = function(){
 		}
 	}
 };
+IV.prototype.rotatePoint = function(x1, y1, rotate) {
+    var cosAlpha = Math.round(Math.cos((rotate / 180) * Math.PI));
+    var sinAlpha = Math.round(Math.sin((rotate / 180) * Math.PI));
+    var x2 = x1 * cosAlpha - y1 * sinAlpha;
+    var y2 = x1 * sinAlpha + y1 * cosAlpha;
+    return [x2, y2];
+}
 
+IV.prototype.rotateLine = function(x1, y1, x2, y2, rotate) {
+    var rotate1 = rotatePoint(x1, y1, rotate);
+    var rotate2 = rotatePoint(x2, y2, rotate);
+    var x1_new = rotate1[0];
+    var y1_new = rotate1[1];
+    var x2_new = rotate2[0];
+    var y2_new = rotate2[1];
+    return [x1_new, y1_new, x2_new, y2_new];
+}
+
+IV.prototype.rotateRectangle = function(width, height, rotate) {
+    var cosAlpha = Math.abs(Math.round(Math.cos((rotate / 180) * Math.PI)));
+    var sinAlpha = Math.abs(Math.round(Math.sin((rotate / 180) * Math.PI)));
+    var w = width * cosAlpha + height * sinAlpha;
+    var h = width * sinAlpha + height * cosAlpha;
+    return [w, h];
+}
 IV.url = function(url){
 	return $("[name='contextPath']").data("context")+"/"+url;
 }

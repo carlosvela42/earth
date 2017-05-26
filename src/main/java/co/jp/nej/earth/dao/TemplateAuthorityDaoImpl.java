@@ -76,7 +76,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
                 templateAccessRightMap.put(templateKey, templateAccessRight);
             }
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         return templateAccessRightMap;
     }
@@ -88,7 +88,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
             return earthQueryFactory.delete(qMgrTemplateP).where(qMgrTemplateP.profileId.in(profileIds)).execute();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -101,7 +101,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
             earthQueryFactory.delete(qMgrTemplateU).where(qMgrTemplateU.userId.in(userIds)).execute();
             return earthQueryFactory.delete(qCtlTemplate).where(qCtlTemplate.userId.in(userIds)).execute();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -123,7 +123,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
 
             return insert.execute();
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -160,7 +160,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
             }
             return templateKeys;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
 
         }
     }
@@ -182,7 +182,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
             }
             return userAccessRights;
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -202,7 +202,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
                 profileAccessRights.add(profileAccessRight);
             }
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         return profileAccessRights;
     }
@@ -216,7 +216,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
                     .where(qMgrTemplateU.templateId.eq(templateKey.getTemplateId())).execute();
             return deletedRecordNumber;
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -237,7 +237,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
             }
             return insert.execute();
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -250,7 +250,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
                     .where(qMgrTemplateP.templateId.eq(templateKey.getTemplateId())).execute();
             return deletedRecordNumber;
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -271,7 +271,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
             }
             return insert.execute();
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -284,7 +284,7 @@ public class TemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> implement
             return earthQueryFactory.select(selectList).from(qCtlTemplate)
                     .where(qCtlTemplate.templateId.eq(templateKey.getTemplateId())).fetch().size();
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 }

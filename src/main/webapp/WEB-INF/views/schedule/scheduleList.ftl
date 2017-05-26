@@ -128,7 +128,7 @@ form-horizontal" id="scheduleListForm">
                 <input type="checkbox" id="delAll" name="delAll" class="DeleteRow">
             </th>
             <th>
-                <a href="${rc.getContextPath()}/schedule/addNew">
+                <a href="${rc.getContextPath()}/schedule/addNew?workspaceId=${workspaceId!""}">
                     <img src="${rc.getContextPath()}/resources/images/add.png" width="20">
                 </a>
             </th>
@@ -168,7 +168,7 @@ form-horizontal" id="scheduleListForm">
                                class="DeleteRow">
                     </th>
                     <th>
-                        <a href="${rc.getContextPath()}/schedule/showDetail?scheduleId=${mgrSchedule.scheduleId}">
+                        <a href="${rc.getContextPath()}/schedule/showDetail?scheduleId=${mgrSchedule.scheduleId}&workspaceId=${workspaceId!""}">
                             <img src="${rc.getContextPath()}/resources/images/edit.png" width="20">
                         </a>
                     </th>

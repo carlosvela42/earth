@@ -21,7 +21,7 @@ public class QMgrSchedule extends RelationalPathBase<MgrSchedule> {
     public final StringPath processIServiceId = createString(ColumnNames.PROCESS_ISERVICEID.toString());
     public final StringPath startTime = createString(ColumnNames.START_TIME.toString());
     public final StringPath endTime = createString(ColumnNames.END_TIME.toString());
-    public final StringPath enableDisable = createString(ColumnNames.ENABLE_DISABLE.toString());
+    public final StringPath enableDisable = createString(ColumnNames.ENABLEDISABLE.toString());
     public final StringPath nextRunDate = createString(ColumnNames.NEXT_RUN_DATE.toString());
     public final StringPath runIntervalDay = createString(ColumnNames.RUN_INTERVAL_DAY.toString());
     public final StringPath runIntervalHour = createString(ColumnNames.RUN_INTERVAL_HOUR.toString());

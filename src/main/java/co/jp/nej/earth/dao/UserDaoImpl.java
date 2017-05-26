@@ -35,7 +35,7 @@ public class UserDaoImpl extends BaseDaoImpl<MgrUser> implements UserDao {
             condition.put(qMgrUser.userId, userId);
             return this.findOne(Constant.EARTH_WORKSPACE_ID, condition);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -77,7 +77,7 @@ public class UserDaoImpl extends BaseDaoImpl<MgrUser> implements UserDao {
             return mgrUsers;
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -90,7 +90,7 @@ public class UserDaoImpl extends BaseDaoImpl<MgrUser> implements UserDao {
             return userIds;
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 

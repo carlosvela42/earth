@@ -89,7 +89,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
                 menuAccessRightMap.put(functionId, menuAccessRight);
             }
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         return menuAccessRightMap;
     }
@@ -103,7 +103,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             earthQueryFactory.delete(qMgrMenuU).where(qMgrMenuU.userId.in(userIds)).execute();
             return  earthQueryFactory.delete(qCtlMenu).where(qCtlMenu.userId.in(userIds)).execute();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -116,7 +116,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             earthQueryFactory.delete(qMgrMenuU).where(qMgrMenuU.userId.in(userIds)).execute();
             return earthQueryFactory.delete(qCtlMenu).where(qCtlMenu.userId.in(userIds)).execute();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -127,7 +127,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
             return earthQueryFactory.delete(qMgrMenuP).where(qMgrMenuP.profileId.in(profileIds)).execute();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -147,7 +147,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             }
             return insert.execute();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -163,7 +163,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             }
             return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions) ;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -185,7 +185,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             }
             return userAccessRights;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -205,7 +205,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             return userAccessRights;
         } catch (Exception ex) {
             ex.printStackTrace();
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -225,7 +225,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
                 profileAccessRights.add(profileAccessRight);
             }
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         return profileAccessRights;
     }
@@ -240,8 +240,8 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
                     .where(qMgrMenuU.functionId.eq(functionId)).execute();
             return deletedRecordNumber;
         } catch (Exception ex) {
-            LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            LOG.error(ex.getMessage(), ex);
+            throw new EarthException(ex);
         }
     }
 
@@ -255,7 +255,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             return deletedRecordNumber;
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -275,7 +275,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             }
             return insert.execute();
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -284,9 +284,10 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
         try {
             QMgrMenuU qMgrMenuU= QMgrMenuU.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            mgrMenuU.setLastUpdateTime(DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD));
             return earthQueryFactory.insert(qMgrMenuU).populate(mgrMenuU).execute();
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -307,7 +308,7 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
             }
             return insert.execute();
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -316,9 +317,10 @@ public class MenuAuthorityDaoImpl extends BaseDaoImpl<CtlMenu> implements MenuAu
         try {
             QMgrMenuP qMgrMenuP= QMgrMenuP.newInstance();
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+            mgrMenuP.setLastUpdateTime(DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD));
             return earthQueryFactory.insert(qMgrMenuP).populate(mgrMenuP).execute();
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.AbstractJsonpRespon
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.session.EarthSessionManager;
 import co.jp.nej.earth.model.constant.Constant.ErrorCode;
 import co.jp.nej.earth.model.ws.RestResponse;
@@ -30,7 +31,7 @@ public abstract class BaseRestController {
     }
 
     public interface WebServiceCaller {
-        RestResponse getResult();
+        RestResponse getResult() throws EarthException;
     }
 
     protected RestResponse getRestResponse(String sessionId, Object objInput, WebServiceCaller caller) {
@@ -47,7 +48,9 @@ public abstract class BaseRestController {
                 response = caller.getResult();
             }
         } catch (Exception e) {
-            LOG.error("Occured errors:" + e.getMessage() + " " + e.getCause());
+            LOG.error(e.getMessage(), e);
+            response.setResult(false);
+            response.setData(e.getMessage());
         } finally {
             try {
                 LOG.info("Response:" + new ObjectMapper().writeValueAsString(response));

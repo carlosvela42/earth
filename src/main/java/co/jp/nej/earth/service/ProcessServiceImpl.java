@@ -1,56 +1,25 @@
 package co.jp.nej.earth.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import co.jp.nej.earth.dao.*;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.manager.connection.*;
+import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.model.constant.Constant.*;
+import co.jp.nej.earth.model.entity.*;
+import co.jp.nej.earth.model.enums.*;
+import co.jp.nej.earth.model.form.*;
+import co.jp.nej.earth.model.sql.*;
+import co.jp.nej.earth.model.ws.*;
+import co.jp.nej.earth.util.*;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
+import com.querydsl.core.types.*;
+import org.json.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
-import javax.servlet.http.HttpSession;
-
-import org.json.JSONException;
-import org.json.XML;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.querydsl.core.types.Path;
-
-import co.jp.nej.earth.dao.DatProcessDao;
-import co.jp.nej.earth.dao.EventDao;
-import co.jp.nej.earth.dao.ProcessDao;
-import co.jp.nej.earth.dao.StrageDbDao;
-import co.jp.nej.earth.dao.StrageFileDao;
-import co.jp.nej.earth.dao.TemplateDao;
-import co.jp.nej.earth.dao.WorkItemDao;
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.DatProcess;
-import co.jp.nej.earth.model.Document;
-import co.jp.nej.earth.model.FolderItem;
-import co.jp.nej.earth.model.Layer;
-import co.jp.nej.earth.model.MgrProcess;
-import co.jp.nej.earth.model.ProcessMap;
-import co.jp.nej.earth.model.StrageDb;
-import co.jp.nej.earth.model.TemplateKey;
-import co.jp.nej.earth.model.WorkItem;
-import co.jp.nej.earth.model.constant.Constant.AgentBatch;
-import co.jp.nej.earth.model.constant.Constant.ErrorCode;
-import co.jp.nej.earth.model.entity.CtlEvent;
-import co.jp.nej.earth.model.enums.OpenProcessMode;
-import co.jp.nej.earth.model.form.DeleteProcessForm;
-import co.jp.nej.earth.model.form.ProcessForm;
-import co.jp.nej.earth.model.sql.QCtlEvent;
-import co.jp.nej.earth.model.sql.QDatProcess;
-import co.jp.nej.earth.model.sql.QMgrProcess;
-import co.jp.nej.earth.model.sql.QStrageDb;
-import co.jp.nej.earth.model.sql.QStrageFile;
-import co.jp.nej.earth.model.sql.QWorkItem;
-import co.jp.nej.earth.model.ws.Response;
-import co.jp.nej.earth.util.ConversionUtil;
-import co.jp.nej.earth.util.DateUtil;
-import co.jp.nej.earth.util.EStringUtil;
+import javax.servlet.http.*;
+import java.util.*;
 
 /**
  *
@@ -67,7 +36,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
     @Autowired
     private StrageDbDao strageDbDao;
     @Autowired
-    private MessageSource messageSource;
+    private EMessageResource eMessageResource;
     @Autowired
     private EventDao eventDao;
     @Autowired
@@ -107,7 +76,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                 try {
                     ctlEvent.setWorkitemData(new ObjectMapper().writeValueAsString(workItem));
                 } catch (JsonProcessingException e) {
-                    throw new EarthException(e.getMessage());
+                    throw new EarthException(e);
                 }
                 if (OpenProcessMode.EDIT.equals(openMode)) {
                     QCtlEvent qCtlEvent = QCtlEvent.newInstance();
@@ -121,7 +90,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                 }
                 return true;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -139,12 +108,12 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                 session.removeAttribute("ORIGIN" + workspaceId + "&" + workItemId);
                 return result;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
 
-    public DatProcess getProcess(String workspaceId, Integer processId) throws EarthException {
+    public DatProcess getProcess(HttpSession session, String workspaceId, Integer processId) throws EarthException {
         return (DatProcess) this.executeTransaction(workspaceId, () -> {
             try {
                 QDatProcess qDatProcess = QDatProcess.newInstance();
@@ -159,7 +128,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                         datProcess.getTemplateId(), workItem.getLastHistoryNo()));
                 return datProcess;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -186,7 +155,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                         .setMgrTemplate(templateDao.getById(new TemplateKey(workspaceId, datProcess.getTemplateId())));
                 return templateDao.insertProcessTemplateData(workspaceId, datProcess, workItem.getLastHistoryNo()) > 0;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -200,7 +169,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
             try {
                 return processDao.findAll(workspaceId);
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         }), MgrProcess.class);
     }
@@ -213,10 +182,10 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
         Response response = new Response();
         if (form.getProcessIds() == null || form.getProcessIds().isEmpty()) {
             response.setResult(false);
-            response.setMessage(messageSource.getMessage(ErrorCode.E0013, new String[] {}, Locale.ENGLISH));
+            response.setMessage(eMessageResource.get(ErrorCode.E0013, new String[] {}));
         } else if (!form.isConfirmDelete()) {
             response.setResult(false);
-            response.setMessage(messageSource.getMessage(ErrorCode.E0014, new String[] {}, Locale.ENGLISH));
+            response.setMessage(eMessageResource.get(ErrorCode.E0014, new String[] {}));
         }
         return response;
     }
@@ -248,7 +217,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                 }
                 return processDao.deleteList(form.getWorkspaceId(), conditions) > 0;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -257,39 +226,38 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
      * {@inheritDoc}
      */
     @Override
-    public Response validateProcess(ProcessForm form) {
-        Response response = new Response();
+    public List<Message> validateProcess(ProcessForm form) {
+        List<Message> messages = new ArrayList<>();
+
         if (validationProcessText(form.getProcess())) {
-            response.setResult(false);
             // TODO have no message code for this
-            response.setMessage(messageSource.getMessage(ErrorCode.E0019, new String[] {}, Locale.ENGLISH));
-            return response;
+            messages.add(new Message(ErrorCode.E0001,
+                    eMessageResource.get(ErrorCode.E0001, new String[] { "processinfo" })));
         }
-        if (!XML_EXTENTION.equalsIgnoreCase(form.getFileExtention())) {
-            response.setResult(false);
-            response.setMessage(messageSource.getMessage(ErrorCode.E0019, new String[] {}, Locale.ENGLISH));
-            return response;
-        }
+        // if (!XML_EXTENTION.equalsIgnoreCase(form.getFileExtention())) {
+        // response.setResult(false);
+        // response.setMessage(messageSource.getMessage(ErrorCode.E0019, new
+        // String[] {}, Locale.ENGLISH));
+        // return response;
+        // }
         try {
-            XML.toJSONObject(form.getProcess().getProcessDefinition()).toString();
+            if (form.getProcess().getProcessDefinition() != null) {
+                XML.toJSONObject(form.getProcess().getProcessDefinition()).toString();
+            }
         } catch (JSONException e) {
-            response.setResult(false);
-            response.setMessage(messageSource.getMessage(ErrorCode.E0020, new String[] {}, Locale.ENGLISH));
-            return response;
+            messages.add(new Message(ErrorCode.E0020, eMessageResource.get(ErrorCode.E0020, new String[] {})));
         }
+
         if (STR_FILE.equalsIgnoreCase(form.getProcess().getDocumentDataSavePath())) {
             if (form.getStrageFile().getSiteId() == null) {
-                response.setResult(false);
-                response.setMessage(messageSource.getMessage(ErrorCode.E0018, new String[] {}, Locale.ENGLISH));
+                messages.add(new Message(ErrorCode.E0018, eMessageResource.get(ErrorCode.E0018, new String[] {})));
             }
-            return response;
         } else {
             if (!testConnection(form.getStrageDb())) {
-                response.setResult(false);
-                response.setMessage(messageSource.getMessage(ErrorCode.E0021, new String[] {}, Locale.ENGLISH));
+                messages.add(new Message(ErrorCode.E0021, eMessageResource.get(ErrorCode.E0021, new String[] {})));
             }
         }
-        return response;
+        return messages;
     }
 
     /**
@@ -303,24 +271,26 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                 // TODO
                 process.setProcessId(processDao.findAll(form.getWorkspaceId()).size() + 1);
                 // parse data to json
-                process.setProcessDefinition(XML.toJSONObject(process.getProcessDefinition()).toString());
+                if (!EStringUtil.isEmpty(process.getProcessDefinition())) {
+                    process.setProcessDefinition(XML.toJSONObject(process.getProcessDefinition()).toString());
+                }
                 processDao.add(form.getWorkspaceId(), process);
                 if (STR_FILE.equalsIgnoreCase(process.getDocumentDataSavePath())) {
                     if (form.getStrageFile() == null) {
                         return false;
                     }
                     form.getStrageFile().setProcessId(process.getProcessId());
-                    strageFileDao.add(form.getWorkspaceId(), form.getStrageFile());
+                    strageFileDao.add(form.getStrageFile());
                     return true;
                 }
                 if (form.getStrageDb() == null) {
                     return false;
                 }
                 form.getStrageDb().setProcessId(process.getProcessId());
-                strageDbDao.add(form.getWorkspaceId(), form.getStrageDb());
+                strageDbDao.add(form.getStrageDb());
                 return true;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -330,29 +300,32 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, Object> getDetail(String workspaceId, int processId) throws EarthException {
+    public Map<String, Object> getDetail(String workspaceId, String processId) throws EarthException {
         return (HashMap<String, Object>) this.executeTransaction(workspaceId, () -> {
             try {
+                int intProcessId = Integer.parseInt(processId);
                 Map<String, Object> result = new HashMap<>();
                 QMgrProcess qMgrProcess = QMgrProcess.newInstance();
                 Map<Path<?>, Object> processCondition = new HashMap<>();
-                processCondition.put(qMgrProcess.processId, processId);
+                processCondition.put(qMgrProcess.processId, intProcessId);
                 MgrProcess process = processDao.findOne(workspaceId, processCondition);
                 result.put("process", process);
                 if (STR_FILE.equalsIgnoreCase(process.getDocumentDataSavePath())) {
                     QStrageFile qStrageFile = QStrageFile.newInstance();
                     Map<Path<?>, Object> fileCondition = new HashMap<>();
-                    fileCondition.put(qStrageFile.processId, processId);
-                    result.put("strageFile", strageFileDao.findOne(workspaceId, fileCondition));
+                    fileCondition.put(qStrageFile.processId, intProcessId);
+                    result.put("strageFile", strageFileDao.findOne(fileCondition));
                 } else {
                     QStrageDb qStrageDb = QStrageDb.newInstance();
                     Map<Path<?>, Object> dbCondition = new HashMap<>();
-                    dbCondition.put(qStrageDb.processId, processId);
-                    result.put("strageDb", strageDbDao.findOne(workspaceId, dbCondition));
+                    dbCondition.put(qStrageDb.processId, intProcessId);
+                    String schemaName = ConnectionManager.getEarthQueryFactory(workspaceId).getConnection().getSchema();
+                    dbCondition.put(qStrageDb.schemaName, schemaName);
+                    result.put("strageDb", strageDbDao.findOne(dbCondition));
                 }
                 return result;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -366,7 +339,9 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
             try {
                 QMgrProcess qMgrProcess = QMgrProcess.newInstance();
                 MgrProcess process = form.getProcess();
-                process.setProcessDefinition(XML.toJSONObject(process.getProcessDefinition()).toString());
+                if (!EStringUtil.isEmpty(process.getProcessDefinition())) {
+                    process.setProcessDefinition(XML.toJSONObject(process.getProcessDefinition()).toString());
+                }
                 // update processCondition
                 Map<Path<?>, Object> processCondition = new HashMap<>();
                 processCondition.put(qMgrProcess.processId, process.getProcessId());
@@ -388,27 +363,28 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                 QStrageDb qStrageDb = QStrageDb.newInstance();
                 Map<Path<?>, Object> fileCondition = new HashMap<>();
                 fileCondition.put(qStrageFile.processId, process.getProcessId());
-                strageFileDao.delete(form.getWorkspaceId(), fileCondition);
+                // strageFileDao.delete(fileCondition);
                 Map<Path<?>, Object> dbCondition = new HashMap<>();
                 dbCondition.put(qStrageDb.processId, process.getProcessId());
-                strageDbDao.delete(form.getWorkspaceId(), dbCondition);
+                // strageDbDao.delete(dbCondition);
+
                 // insert strageFile strageDb
                 if (STR_FILE.equalsIgnoreCase(process.getDocumentDataSavePath())) {
                     if (form.getStrageFile() == null) {
                         return false;
                     }
                     form.getStrageFile().setProcessId(process.getProcessId());
-                    strageFileDao.add(form.getWorkspaceId(), form.getStrageFile());
-                    return true;
+                    strageFileDao.add(form.getStrageFile());
+                } else {
+                    if (form.getStrageDb() == null) {
+                        return false;
+                    }
+                    form.getStrageDb().setProcessId(process.getProcessId());
+                    strageDbDao.add(form.getStrageDb());
                 }
-                if (form.getStrageDb() == null) {
-                    return false;
-                }
-                form.getStrageDb().setProcessId(process.getProcessId());
-                strageDbDao.add(form.getWorkspaceId(), form.getStrageDb());
                 return true;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -420,13 +396,14 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
      * @return
      */
     private boolean validationProcessText(MgrProcess process) {
-        if (process.getProcessName() != null && process.getProcessName().length() > NUM_255) {
+        if (EStringUtil.isEmpty(process.getProcessName()) || process.getProcessName().length() > NUM_255) {
             return true;
         }
-        if (process.getDescription() != null && process.getDescription().length() > NUM_255) {
+        if (EStringUtil.isEmpty(process.getDescription()) || process.getDescription().length() > NUM_255) {
             return true;
         }
-        if (process.getDocumentDataSavePath() != null && process.getDocumentDataSavePath().length() > NUM_260) {
+        if (EStringUtil.isEmpty(process.getDocumentDataSavePath())
+                || process.getDocumentDataSavePath().length() > NUM_260) {
             return true;
         }
         return false;
@@ -474,7 +451,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                 try {
                     json = new ObjectMapper().writeValueAsString(workItemSession);
                 } catch (JsonProcessingException e) {
-                    throw new EarthException(e.getMessage());
+                    throw new EarthException(e);
                 }
                 QCtlEvent qCtlEvent = QCtlEvent.newInstance();
                 Map<Path<?>, Object> condition = new HashMap<>();
@@ -487,7 +464,7 @@ public class ProcessServiceImpl extends BaseService implements ProcessService {
                 session.removeAttribute("TMP" + workspaceId + "&" + workItem.getWorkitemId());
                 return result > 0;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }

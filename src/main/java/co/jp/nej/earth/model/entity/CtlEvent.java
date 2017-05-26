@@ -2,7 +2,6 @@ package co.jp.nej.earth.model.entity;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QCtlEvent;
-import co.jp.nej.earth.util.DateUtil;
 
 public class CtlEvent extends BaseModel<CtlEvent> {
     /**
@@ -18,7 +17,6 @@ public class CtlEvent extends BaseModel<CtlEvent> {
 
     public CtlEvent() {
         this.setqObj(QCtlEvent.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public String getEventId() {

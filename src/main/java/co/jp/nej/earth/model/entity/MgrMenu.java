@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.MenuLink;
 import co.jp.nej.earth.model.sql.QMgrMenu;
-import co.jp.nej.earth.util.DateUtil;
 
 public class MgrMenu extends BaseModel<MgrMenu> implements Serializable {
 
@@ -27,7 +26,6 @@ public class MgrMenu extends BaseModel<MgrMenu> implements Serializable {
     public MgrMenu() {
         LOG.debug("Call to blank constructor");
         this.setqObj(QMgrMenu.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrMenu(String functionId, String functionName, String functionCategoryId, String functionCategoryName,

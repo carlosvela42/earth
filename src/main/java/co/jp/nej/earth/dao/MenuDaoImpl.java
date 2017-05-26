@@ -39,7 +39,7 @@ public class MenuDaoImpl extends BaseDaoImpl<MgrMenu> implements MenuDao {
             return mgrMenus;
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 

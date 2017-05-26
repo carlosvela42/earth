@@ -1,7 +1,6 @@
 
 package co.jp.nej.earth.dao;
 
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ import co.jp.nej.earth.model.ProcessMap;
 import co.jp.nej.earth.model.TemplateData;
 import co.jp.nej.earth.model.TemplateKey;
 import co.jp.nej.earth.model.WorkItem;
+import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.enums.Type;
 import co.jp.nej.earth.model.sql.QMgrTemplate;
@@ -50,7 +50,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
 
             return template;
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -61,7 +61,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
             return ConnectionManager.getEarthQueryFactory(workspaceId).select(selectList).from(qMgrTemplate)
                     .where(qMgrTemplate.templateId.in(templateIds)).fetch();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -71,7 +71,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
             return ConnectionManager.getEarthQueryFactory(workspaceId).getTemplateData(
                     getTemplate(workspaceId, templateId), processId, workItemId, null, null, null, maxVersion);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -81,7 +81,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
             return ConnectionManager.getEarthQueryFactory(workspaceId).getTemplateData(
                     getTemplate(workspaceId, templateId), null, workItemId, null, null, null, maxVersion);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -91,7 +91,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
             return ConnectionManager.getEarthQueryFactory(workspaceId).getTemplateData(
                     getTemplate(workspaceId, templateId), null, workItemId, folderItemNo, null, null, maxVersion);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -101,7 +101,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
             return ConnectionManager.getEarthQueryFactory(workspaceId).getTemplateData(
                     getTemplate(workspaceId, templateId), null, workItemId, folderItemNo, docNo, null, maxVersion);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -111,7 +111,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
             return ConnectionManager.getEarthQueryFactory(workspaceId).getTemplateData(
                     getTemplate(workspaceId, templateId), null, workItemId, folderItemNo, docNo, layerNo, maxVersion);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -121,7 +121,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
                     process.getProcessData(), Integer.toString(process.getProcessId()), process.getWorkItemId(), null,
                     null, null);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -130,7 +130,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
             return ConnectionManager.getEarthQueryFactory(workspaceId).insertTemplateData(workItem.getMgrTemplate(),
                     workItem.getWorkItemData(), null, workItem.getWorkitemId(), null, null, null);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -141,7 +141,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
                     folderItem.getFolderItemData(), null, folderItem.getWorkitemId(), folderItem.getFolderItemNo(),
                     null, null);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -151,7 +151,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
                     document.getDocumentData(), null, document.getWorkitemId(), document.getFolderItemNo(),
                     document.getDocumentNo(), null);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -161,7 +161,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
                     layer.getLayerData(), null, layer.getWorkitemId(), layer.getFolderItemNo(), layer.getDocumentNo(),
                     layer.getLayerNo());
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -180,7 +180,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
 
             return mgrTemplates;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -192,7 +192,7 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
             return ConnectionManager.getEarthQueryFactory(templateKey.getWorkspaceId()).select(selectList)
                     .from(qMgrTemplate).where(qMgrTemplate.templateId.eq(templateKey.getTemplateId())).fetchOne();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -205,15 +205,15 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
                     .from(qMgrTemplate).where(qMgrTemplate.templateType.eq(templateType)).fetch();
             return mgrTemplates;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
     @Override
     public TemplateData getProcessTemplateData(String workspaceId, String processId, String templateId, int maxVersion)
             throws EarthException {
-        return ConnectionManager.getEarthQueryFactory(workspaceId).getProcessTemplateData(
-                getTemplate(workspaceId, templateId), processId, maxVersion);
+        return ConnectionManager.getEarthQueryFactory(workspaceId)
+                .getProcessTemplateData(getTemplate(workspaceId, templateId), processId, maxVersion);
     }
 
     public long deleteTemplates(List<String> templateIds, String workspaceId) throws EarthException {
@@ -229,41 +229,64 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
 
     @Override
     public long insertOne(String workspaceId, MgrTemplate mgrTemplate) throws EarthException {
-        return add(workspaceId, mgrTemplate);
-
+        try {
+            return add(workspaceId, mgrTemplate);
+        } catch (Exception ex) {
+            throw new EarthException(ex);
+        }
     }
 
     @Override
     public long updateOne(String workspaceId, MgrTemplate mgrTemplate) throws EarthException {
-        QMgrTemplate qMgrTemplate = QMgrTemplate.newInstance();
-        Map<Path<?>, Object> condition = new HashMap<>();
-        Map<Path<?>, Object> value = new HashMap<>();
-        condition.put(qMgrTemplate.templateId, mgrTemplate.getTemplateId());
-        value.put(qMgrTemplate.templateName, mgrTemplate.getTemplateName());
-        return update(workspaceId, condition, value);
+        try {
+            QMgrTemplate qMgrTemplate = QMgrTemplate.newInstance();
+            Map<Path<?>, Object> condition = new HashMap<>();
+            Map<Path<?>, Object> value = new HashMap<>();
+            condition.put(qMgrTemplate.templateId, mgrTemplate.getTemplateId());
+            value.put(qMgrTemplate.templateName, mgrTemplate.getTemplateName());
+            return update(workspaceId, condition, value);
+        } catch (Exception ex) {
+            throw new EarthException(ex);
+        }
     }
 
     public long createTemplateData(String workspaceId, MgrTemplate mgrTemplate) throws EarthException {
-        String nameTable = "CREATE TABLE " + mgrTemplate.getTemplateTableName() + " ";
-        List<Field> fields = mgrTemplate.getTemplateFields();
-        String createField = "(ID INT GENERATED ALWAYS AS IDENTITY,";
-        for (Field field : fields) {
-            if (field.getType().equals(1)) {
-                createField += field.getName() + " " + Type.INT + ",";
-            } else {
-                createField += field.getName() + " " + Type.NVARCHAR2 + "(" + field.getSize() + ")" + ",";
-            }
-        }
-        createField += "PRIMARY KEY (ID))";
-
-        String sql = nameTable + createField;
         try {
+            String nameTable = "CREATE TABLE " + mgrTemplate.getTemplateTableName() + " ";
+            List<Field> fields = mgrTemplate.getTemplateFields();
+            String createField = "(ID INT GENERATED ALWAYS AS IDENTITY,";
+            for (Field field : fields) {
+                if (field.getType().equals(Constant.Template.FIELD_TYPTE_1)) {
+                    createField += field.getName() + " " + Type.NUMBER + ",";
+                } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_3)) {
+                    createField += field.getName() + " " + Type.LONG + ",";
+                } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_2)) {
+                    createField += field.getName() + " " + Type.NVARCHAR2 + "(" + field.getSize() + ")" + ",";
+                } else {
+                    createField += field.getName() + " " + Type.NCHAR + "(" + field.getSize() + ")" + ",";
+                }
+            }
+            createField += "PRIMARY KEY (ID))";
+            String sql = nameTable + createField;
             EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
             Statement stmt = earthQueryFactory.getConnection().createStatement();
             return stmt.executeUpdate(sql);
 
-        } catch (SQLException e) {
-            throw new EarthException(e.getMessage());
+        } catch (Exception ex) {
+            throw new EarthException(ex);
+        }
+    }
+
+    @Override
+    public long isExistsTableData(String workspaceId, String templateTableName, String dbUser) throws EarthException {
+        try {
+            String isExistsTable = "SELECT * FROM dba_tables where table_name = '" + templateTableName
+                    + "' and owner = '" + dbUser + "'";
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
+            Statement stmt = earthQueryFactory.getConnection().createStatement();
+            return stmt.executeUpdate(isExistsTable);
+        } catch (Exception ex) {
+            throw new EarthException(ex.getMessage());
         }
     }
 }

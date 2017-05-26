@@ -1,7 +1,6 @@
 package co.jp.nej.earth.model;
 
-import co.jp.nej.earth.model.sql.QMgrProcess;
-import co.jp.nej.earth.util.DateUtil;
+import co.jp.nej.earth.model.sql.*;
 
 /**
  *
@@ -22,7 +21,6 @@ public class MgrProcess extends BaseModel<MgrProcess> {
 
     public MgrProcess() {
         this.setqObj(QMgrProcess.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**

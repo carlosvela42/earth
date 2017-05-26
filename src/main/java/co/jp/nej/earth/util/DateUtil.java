@@ -54,4 +54,17 @@ public class DateUtil {
 
         return earthShortDF.format(getCurrentDate());
     }
+
+
+    /**
+     *
+     * @param stringDate
+     * @param pattern
+     * @return
+     * @throws Exception
+     */
+    public static Date convertStringSimpleDateFormat(String stringDate, String pattern) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.parse(stringDate);
+    }
 }

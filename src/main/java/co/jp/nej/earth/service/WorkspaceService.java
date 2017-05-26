@@ -22,7 +22,5 @@ public interface WorkspaceService {
 
     List<Message> validateInsert(MgrWorkspaceConnect mgrWorkspaceConnect) throws EarthException;
 
-    List<Message> validateUpdate(MgrWorkspaceConnect mgrWorkspaceConnect) throws EarthException;
-
     boolean updateOne(MgrWorkspaceConnect mgrWorkspaceConnect) throws EarthException;
 }

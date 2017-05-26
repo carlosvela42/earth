@@ -1,9 +1,15 @@
 package co.jp.nej.earth.model.form;
 
+import javax.validation.Valid;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import co.jp.nej.earth.model.WorkItem;
 
-public class WorkItemChangeForm {
+public class WorkItemChangeForm extends RestToken {
+    @NotEmpty(message = "E0002,workspaceId")
     private String workspaceId;
+    @Valid
     private WorkItem workItem;
 
     /**

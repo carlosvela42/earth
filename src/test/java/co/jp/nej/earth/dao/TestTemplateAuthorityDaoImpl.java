@@ -40,7 +40,7 @@ public class TestTemplateAuthorityDaoImpl extends BaseDaoImpl<CtlTemplate> imple
             }
             return userAccessRights;
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 }

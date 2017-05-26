@@ -34,7 +34,7 @@ public class UserProfileDaoImpl extends BaseDaoImpl<MgrUserProfile> implements U
             }
             return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -49,7 +49,7 @@ public class UserProfileDaoImpl extends BaseDaoImpl<MgrUserProfile> implements U
             }
             return this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -61,7 +61,7 @@ public class UserProfileDaoImpl extends BaseDaoImpl<MgrUserProfile> implements U
             condition.and(pre1);
             return this.search(Constant.EARTH_WORKSPACE_ID, condition);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 }

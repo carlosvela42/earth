@@ -20,7 +20,7 @@ IV.prototype.startLoad = function(workspaceId,workitemId,folderItemNo,documentNo
 
 IV.prototype.load = function() {
 	for (var k = 0; k < imageViewer.layerCount; k++) {
-		var layer = imageViewer.currentDocument.layers[k];
+		var layer = imageViewer.documents[imageViewer.cDocId-1].layers[k];
 		imageViewer.layerName[k] = layer.layerNo;
 		imageViewer.layerOwner[k] = layer.ownerId;
 		imageViewer.layerDisplay[k] = true;

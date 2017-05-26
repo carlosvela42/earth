@@ -12,7 +12,6 @@ import com.google.gson.reflect.TypeToken;
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.Field;
 import co.jp.nej.earth.model.sql.QMgrTemplate;
-import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EStringUtil;
 
 /**
@@ -45,7 +44,6 @@ public class MgrTemplate extends BaseModel<MgrTemplate> {
 
         LOG.debug("Call to blank constructor");
         this.setqObj(QMgrTemplate.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrTemplate(String workspaceId, String templateId, String templateName, String templateTableName,

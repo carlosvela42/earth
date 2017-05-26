@@ -109,7 +109,7 @@ public class BaseTest {
         caller.execute();
         connection = createConnection(workspaceId);
         try {
-            DatabaseOperation.TRUNCATE_TABLE.execute(connection, dataSet);
+            DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
         } finally {
             connection.close();
         }
@@ -153,7 +153,7 @@ public class BaseTest {
         IDatabaseConnection connection = createConnection(workspaceId);
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(fileInput);
         try {
-            DatabaseOperation.TRUNCATE_TABLE.execute(connection, dataSet);
+            DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
         } finally {
             connection.close();
         }

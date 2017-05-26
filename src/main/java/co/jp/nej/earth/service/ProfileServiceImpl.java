@@ -76,7 +76,7 @@ public class ProfileServiceImpl implements ProfileService {
         } catch (Exception ex) {
             transactionManager.getManager().rollback(transactionManager.getTxStatus());
             LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -98,7 +98,7 @@ public class ProfileServiceImpl implements ProfileService {
         } catch (Exception ex) {
             transactionManager.getManager().rollback(transactionManager.getTxStatus());
             LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
         return detail;
     }

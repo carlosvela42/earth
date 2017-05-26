@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QStrCal;
-import co.jp.nej.earth.util.DateUtil;
 
 public class StrCal extends BaseModel<StrCal> implements Serializable {
 
@@ -25,7 +24,6 @@ public class StrCal extends BaseModel<StrCal> implements Serializable {
     public StrCal() {
         LOG.debug("Call to blank constructor");
         this.setqObj(QStrCal.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public StrCal(String division, String processTime, String profileId, int availableLicenseCount,

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum Type {
-    INT(1), NVARCHAR2(2);
+    NUMBER(1), NVARCHAR2(2), LONG(3), NCHAR(4);
 
     private int value;
 
@@ -22,8 +22,10 @@ public enum Type {
 
     public static List<Type> getFieldTypes() {
         List<Type> templateTypes = new ArrayList<>();
-        templateTypes.add(Type.INT);
+        templateTypes.add(Type.NUMBER);
         templateTypes.add(Type.NVARCHAR2);
+        templateTypes.add(Type.LONG);
+        templateTypes.add(Type.NCHAR);
         return templateTypes;
     }
 

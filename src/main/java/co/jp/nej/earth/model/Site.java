@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.sql.QSite;
-import co.jp.nej.earth.util.DateUtil;
 
 /**
  *
@@ -23,10 +22,9 @@ public class Site extends BaseModel<Site> {
     public Site() {
         LOG.debug("Call to blank constructor");
         this.setqObj(QSite.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
-    public Site(Integer siteId, Integer dataDirectoryId) {
+    public Site(Integer siteId, Integer dataDirectoryId, Boolean checked) {
         super();
 
         LOG.debug("Call to (siteId, dataDirectoryId");

@@ -1,8 +1,6 @@
 package co.jp.nej.earth.model.form;
 
-import co.jp.nej.earth.model.MgrProcess;
-import co.jp.nej.earth.model.StrageDb;
-import co.jp.nej.earth.model.StrageFile;
+import co.jp.nej.earth.model.*;
 
 /**
  *

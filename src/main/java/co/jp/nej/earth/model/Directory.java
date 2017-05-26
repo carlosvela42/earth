@@ -1,10 +1,10 @@
+
 package co.jp.nej.earth.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.sql.QDirectory;
-import co.jp.nej.earth.util.DateUtil;
 
 /**
  * @author p-tvo-sonta
@@ -12,108 +12,117 @@ import co.jp.nej.earth.util.DateUtil;
  */
 public class Directory extends BaseModel<Directory> {
 
-    /**
-     * serial number
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(Directory.class);
-    private static final long serialVersionUID = 1L;
-    private int dataDirectoryId;
-    private String folderPath;
-    private int newCreateFile;
-    private String reservedDiskVolSize;
-    private String diskVolSize;
+  /**
+   * serial number
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(Directory.class);
+  private static final long serialVersionUID = 1L;
+  private int dataDirectoryId;
+  private String folderPath;
+  private int newCreateFile;
+  private String reservedDiskVolSize;
+  private String diskVolSize;
+  private Boolean checked = false;
 
-    public Directory() {
-        this.setqObj(QDirectory.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
-    }
+  public Boolean getChecked() {
+    return checked;
+  }
 
-    public Directory(int dataDirectoryId, String folderPath, int newCreateFile, String reservedDiskVolSize,
-            String diskVolSize) {
-        super();
+  public void setChecked(Boolean checked) {
+    this.checked = checked;
+  }
 
-        LOG.debug("Call to (dataDirectoryId, folderPath, newCreateFile, reservedDiskVolSize," + "diskVolSize");
+  public Directory() {
+    this.setqObj(QDirectory.newInstance());
+  }
 
-        this.dataDirectoryId = dataDirectoryId;
-        this.folderPath = folderPath;
-        this.newCreateFile = newCreateFile;
-        this.reservedDiskVolSize = reservedDiskVolSize;
-        this.diskVolSize = diskVolSize;
-    }
+  public Directory(int dataDirectoryId, String folderPath, int newCreateFile, String reservedDiskVolSize,
+      String diskVolSize, Boolean checked) {
+    super();
 
-    /**
-     * @return the dataDirectoryId
-     */
-    public int getDataDirectoryId() {
-        return dataDirectoryId;
-    }
+    LOG.debug("Call to (dataDirectoryId, folderPath, newCreateFile, reservedDiskVolSize," + "diskVolSize");
 
-    /**
-     * @param dataDirectoryId
-     *            the dataDirectoryId to set
-     */
-    public void setDataDirectoryId(int dataDirectoryId) {
-        this.dataDirectoryId = dataDirectoryId;
-    }
+    this.dataDirectoryId = dataDirectoryId;
+    this.folderPath = folderPath;
+    this.newCreateFile = newCreateFile;
+    this.reservedDiskVolSize = reservedDiskVolSize;
+    this.diskVolSize = diskVolSize;
+    this.checked = checked;
+  }
 
-    /**
-     * @return the folderPath
-     */
-    public String getFolderPath() {
-        return folderPath;
-    }
+  /**
+   * @return the dataDirectoryId
+   */
+  public int getDataDirectoryId() {
+    return dataDirectoryId;
+  }
 
-    /**
-     * @param folderPath
-     *            the folderPath to set
-     */
-    public void setFolderPath(String folderPath) {
-        this.folderPath = folderPath;
-    }
+  /**
+   * @param dataDirectoryId
+   *          the dataDirectoryId to set
+   */
+  public void setDataDirectoryId(int dataDirectoryId) {
+    this.dataDirectoryId = dataDirectoryId;
+  }
 
-    /**
-     * @return the newCreateFile
-     */
-    public int getNewCreateFile() {
-        return newCreateFile;
-    }
+  /**
+   * @return the folderPath
+   */
+  public String getFolderPath() {
+    return folderPath;
+  }
 
-    /**
-     * @param newCreateFile
-     *            the newCreateFile to set
-     */
-    public void setNewCreateFile(int newCreateFile) {
-        this.newCreateFile = newCreateFile;
-    }
+  /**
+   * @param folderPath
+   *          the folderPath to set
+   */
+  public void setFolderPath(String folderPath) {
+    this.folderPath = folderPath;
+  }
 
-    /**
-     * @return the reservedDiskVolSize
-     */
-    public String getReservedDiskVolSize() {
-        return reservedDiskVolSize;
-    }
+  /**
+   * @return the newCreateFile
+   */
+  public int getNewCreateFile() {
+    return newCreateFile;
+  }
 
-    /**
-     * @param reservedDiskVolSize
-     *            the reservedDiskVolSize to set
-     */
-    public void setReservedDiskVolSize(String reservedDiskVolSize) {
-        this.reservedDiskVolSize = reservedDiskVolSize;
-    }
+  /**
+   * @param newCreateFile
+   *          the newCreateFile to set
+   */
+  public void setNewCreateFile(int newCreateFile) {
+    this.newCreateFile = newCreateFile;
+  }
 
-    /**
-     * @return the diskVolSize
-     */
-    public String getDiskVolSize() {
-        return diskVolSize;
-    }
+  /**
+   * @return the reservedDiskVolSize
+   */
+  public String getReservedDiskVolSize() {
+    return reservedDiskVolSize;
+  }
 
-    /**
-     * @param diskVolSize
-     *            the diskVolSize to set
-     */
-    public void setDiskVolSize(String diskVolSize) {
-        this.diskVolSize = diskVolSize;
-    }
+  /**
+   * @param reservedDiskVolSize
+   *          the reservedDiskVolSize to set
+   */
+  public void setReservedDiskVolSize(String reservedDiskVolSize) {
+    this.reservedDiskVolSize = reservedDiskVolSize;
+  }
+
+  /**
+   * @return the diskVolSize
+   */
+  public String getDiskVolSize() {
+    return diskVolSize;
+  }
+
+  /**
+   * @param diskVolSize
+   *          the diskVolSize to set
+   */
+  public void setDiskVolSize(String diskVolSize) {
+    this.diskVolSize = diskVolSize;
+  }
 
 }

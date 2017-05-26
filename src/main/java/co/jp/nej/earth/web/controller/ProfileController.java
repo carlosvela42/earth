@@ -1,29 +1,21 @@
 package co.jp.nej.earth.web.controller;
 
-import java.util.List;
-import java.util.Map;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.model.constant.Constant.*;
+import co.jp.nej.earth.model.entity.*;
+import co.jp.nej.earth.service.*;
+import co.jp.nej.earth.util.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+import org.springframework.ui.*;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.Message;
-import co.jp.nej.earth.model.constant.Constant.ErrorCode;
-import co.jp.nej.earth.model.constant.Constant.Session;
-import co.jp.nej.earth.model.entity.MgrProfile;
-import co.jp.nej.earth.model.entity.MgrUser;
-import co.jp.nej.earth.service.ProfileService;
-import co.jp.nej.earth.service.UserService;
-import co.jp.nej.earth.util.ConversionUtil;
-import co.jp.nej.earth.util.EStringUtil;
+import java.util.*;
 
 @Controller
 @RequestMapping("/profile")
-public class ProfileController {
+public class ProfileController extends BaseController {
 
     @Autowired
     private ProfileService profileService;
@@ -31,7 +23,7 @@ public class ProfileController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/showList", method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public String showList(Model model) throws EarthException {
         List<MgrProfile> mgrProfiles = profileService.getAll();
         model.addAttribute("mgrProfiles", mgrProfiles);
@@ -71,7 +63,7 @@ public class ProfileController {
         } else {
             boolean updateProfile = profileService.updateAndAssignUsers(mgrProfile, userIds);
             if (updateProfile) {
-                return "redirect: showList";
+                return redirectToList();
             } else {
                 model.addAttribute("messageError", ErrorCode.E1009);
                 model.addAttribute("mgrUsers", userService.getAll());
@@ -105,7 +97,7 @@ public class ProfileController {
         } else {
             boolean insertProfile = profileService.insertAndAssignUsers(mgrProfile, userIds);
             if (insertProfile) {
-                return "redirect: showList";
+                return redirectToList();
             } else {
                 model.addAttribute("messageError", ErrorCode.E1009);
                 model.addAttribute("mgrUsers", userService.getAll());
@@ -122,6 +114,6 @@ public class ProfileController {
     public String deleteList(@ModelAttribute("profileIds") String profileIds, Model model) throws EarthException {
         List<String> profileId = EStringUtil.getListFromString(profileIds, ",");
         profileService.deleteList(profileId);
-        return "redirect: showList";
+        return redirectToList();
     }
 }

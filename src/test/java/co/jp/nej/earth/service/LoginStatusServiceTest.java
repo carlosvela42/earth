@@ -1,10 +1,10 @@
 package co.jp.nej.earth.service;
 
-import co.jp.nej.earth.BaseTest;
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.constant.Constant;
-import co.jp.nej.earth.model.entity.CtlLogin;
-import co.jp.nej.earth.util.DateUtil;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,9 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
+import co.jp.nej.earth.BaseTest;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.entity.CtlLogin;
+import co.jp.nej.earth.util.DateUtil;
 
 /**
  * Created by p-dcv-minhtv on 5/8/2017.
@@ -33,6 +35,9 @@ public class LoginStatusServiceTest extends BaseTest {
     private LoginStatusService loginStatusService;
 
     @Autowired
+    private PreparingDataService preparingDataService;
+    
+    @Autowired
     private HttpSession httpSession;
 
     @Before
@@ -45,7 +50,7 @@ public class LoginStatusServiceTest extends BaseTest {
             String loginTime= DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD);
             String logoutTime= DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD);
             ctlLogin =new CtlLogin(sessionId,userId,loginTime,logoutTime);
-            loginStatusService.insertOne(ctlLogin);
+            preparingDataService.insertOneCtlLogin(ctlLogin);
             ctlLogins.add(ctlLogin);
             sessionIds.add(sessionId);
         }

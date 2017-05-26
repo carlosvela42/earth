@@ -53,7 +53,6 @@ public class AgentBatch {
         TriggerKey tk = new TriggerKey(triggerKey);
         Trigger trigger = TriggerBuilder.newTrigger().withIdentity(tk)
                 .withSchedule(CronScheduleBuilder.cronSchedule(timeStart)).build();
-
         Scheduler scheduler = new StdSchedulerFactory().getScheduler();
         scheduler.start();
         scheduler.scheduleJob(job, trigger);

@@ -39,7 +39,7 @@ public class ProfileDaoImpl extends BaseDaoImpl<MgrProfile> implements ProfileDa
                     .where(qMgrUserProfile.userId.eq(userId)).fetch();
             return profiles;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -49,7 +49,7 @@ public class ProfileDaoImpl extends BaseDaoImpl<MgrProfile> implements ProfileDa
             condition.put(qMgrProfile.profileId, profileId);
             return this.findOne(Constant.EARTH_WORKSPACE_ID, condition);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -57,7 +57,7 @@ public class ProfileDaoImpl extends BaseDaoImpl<MgrProfile> implements ProfileDa
         try {
             return this.findAll(Constant.EARTH_WORKSPACE_ID, null, null, null, null);
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -72,7 +72,7 @@ public class ProfileDaoImpl extends BaseDaoImpl<MgrProfile> implements ProfileDa
             }
             del= this.deleteList(Constant.EARTH_WORKSPACE_ID, conditions) ;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
         return del;
     }
@@ -97,7 +97,7 @@ public class ProfileDaoImpl extends BaseDaoImpl<MgrProfile> implements ProfileDa
             }
             a = insert.execute();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
         return a;
     }
@@ -109,7 +109,7 @@ public class ProfileDaoImpl extends BaseDaoImpl<MgrProfile> implements ProfileDa
 //
 //            unAssign=qMgrUserProfile;
 //        } catch (Exception ex) {
-//            throw new EarthException(ex.getMessage());
+//            throw new EarthException(ex);
 //        }
 //        return unAssign;
 //    }

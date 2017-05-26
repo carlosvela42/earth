@@ -2,7 +2,6 @@ package co.jp.nej.earth.model.entity;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrWorkitemId;
-import co.jp.nej.earth.util.DateUtil;
 
 public class MgrWorkitemId extends BaseModel<MgrWorkitemId> {
 
@@ -31,6 +30,5 @@ public class MgrWorkitemId extends BaseModel<MgrWorkitemId> {
 
     public MgrWorkitemId() {
         this.setqObj(QMgrWorkitemId.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 }

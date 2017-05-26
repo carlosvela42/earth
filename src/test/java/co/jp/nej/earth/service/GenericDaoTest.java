@@ -82,16 +82,6 @@ public class GenericDaoTest extends BaseTest {
     }
 
     @Test
-    public void testGenericFindAll() throws EarthException {
-        List<OrderSpecifier<?>> orderBys = new ArrayList<>();
-        orderBys.add(new OrderSpecifier<>(Order.ASC, qObject.userId));
-        List<CtlLogin> ctlLogins = userService.getAllMgrLogin(Constant.EARTH_WORKSPACE_ID, null, null, orderBys);
-
-        LOG.info("Found " + (ctlLogins != null ? ctlLogins.size() : 0));
-        Assert.assertTrue(ctlLogins != null && ctlLogins.size() > 0);
-    }
-
-    @Test
     public void testGenericFindOne() throws EarthException {
 
         Map<Path<?>, Object> condition = new HashMap<>();

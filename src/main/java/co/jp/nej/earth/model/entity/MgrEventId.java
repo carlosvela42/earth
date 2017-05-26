@@ -2,7 +2,6 @@ package co.jp.nej.earth.model.entity;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrEventId;
-import co.jp.nej.earth.util.DateUtil;
 
 public class MgrEventId extends BaseModel<MgrEventId> {
     /**
@@ -30,6 +29,5 @@ public class MgrEventId extends BaseModel<MgrEventId> {
 
     public MgrEventId() {
         this.setqObj(QMgrEventId.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 }

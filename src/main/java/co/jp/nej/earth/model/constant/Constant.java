@@ -24,16 +24,28 @@ public class Constant {
         public static final String SEARCH_WORKITEM_REQUEST = "SearchWorkItemsRequest";
     }
 
+    public static class Regex {
+        public static final String DATE_TIME_REGEX
+                = "^$|\\d{4}/([1][0-2]|[0][0-9])/([3][0-1]|[1-2][0-9]|[0][1-9]|[1-9]) "
+                + "([2][0-3]|[0-1][0-9]|[1-9]):[0-5][0-9]:([0-5][0-9]|[6][0]).\\d{3}";
+    }
+
     /**
      * Message Code and Message Content using in Login function
      *
      * @author p-tvo-thuynd
-     *
      */
     public static class MessageCodeLogin {
         public static final String USR_BLANK = "USR_BLANK";
         public static final String PWD_BLANK = "PWD_BLANK";
         public static final String INVALID_LOGIN = "INVALID_LOGIN";
+    }
+
+    public static class Directory {
+        public static final String IS_EXIT_DIRECTORY = "IS_EXIT_DIRECTORY";
+        public static final int CONVERT = 1024 * 1024;
+        public static final int DEFAULT_VALUE = 50000;
+        public static final int YES = 1;
     }
 
     public static class MessageUser {
@@ -64,6 +76,7 @@ public class Constant {
         public static final String WORKSPACES = "workspaces";
         public static final String LAST_REQUEST_VIEW = "lastRequestView";
         public static final String MESSAGES = "messages";
+        public static final String LIST_SEARCH_CONDITION = "listSearchCondition";
     }
 
     public static class View {
@@ -75,18 +88,25 @@ public class Constant {
 
     public static class DatePattern {
 
-        /** yyyy/MM/dd HH:mm:ss 形式 */
+        /**
+         * yyyy/MM/dd HH:mm:ss 形式
+         */
         public static final String DATE_FORMAT_YYYY_MM_DD_HH_MM_SS = "yyyy/MM/dd HH:mm:ss";
 
-        /** yyyy/MM/dd HH:mm:ss.SSS 形式 */
+        /**
+         * yyyy/MM/dd HH:mm:ss.SSS 形式
+         */
         public static final String DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS = "yyyy/MM/dd HH:mm:ss.SSS";
 
-        /** yyyy/MM/dd 形式 */
+        /**
+         * yyyy/MM/dd 形式
+         */
         public static final String DATE_FORMAT_YYYY_MM_DD = "yyyy/MM/dd";
 
         public static final String YYYYMMDD_JA_FORMAT = "yyyy年MM月dd日";
 
-        /** yyyyMMdd  形式 */
+
+        /** yyyyMMdd 形式 */
         public static final String YYYYMMDD = "yyyyMMdd";
     }
 
@@ -95,12 +115,16 @@ public class Constant {
 
         public static final String CURRENT_DATE = "currentDate";
 
-        /** dd/MM/yyyy 形式 */
+        /**
+         * dd/MM/yyyy 形式
+         */
         public static final String DATE_FORMAT = "dd/MM/yyyy";
 
         public static final String STATUS_EDIT = "EDIT";
 
         public static final String STATUS_EDITTING = "EDITTING";
+
+        public static final String STATUS_OPEN = "OPEN";
     }
 
     public static class RuleDefilePasswordPolicy {
@@ -216,6 +240,8 @@ public class Constant {
         public static final String WORKSPACE_ID = "workspaceId";
         public static final String WORKSPACE_NAME = "workspaceName";
         public static final String PROCESS_TIME = "processTime";
+        public static final String FROM_DATE = "fromDate";
+        public static final String TO_DATE = "toDate";
     }
 
     public static class WorkSpace {
@@ -234,19 +260,41 @@ public class Constant {
         public static final String CREATE_USER = "Create User ";
         public static final String IDENTIFIED_BY = " identified By ";
         public static final String GRANT_SESSION = "Grant Create Session to ";
+        public static final String GRANT_DBA = "grant dba to ";
         public static final String DROP_USER = "Drop User ";
         public static final String CASCADE = " Cascade ";
         public static final String ALTER_USER = " ALTER USER ";
         public static final Integer PORT = 1521;
+        public static final String IP_VALIDATION = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+                + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+                + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+        public static final String SPECIAL_VALIDATION = "!#$%&'()*+,-./:;<=>?@[]^_`{|}~";
+        public static final String ID_PATTERN = "[0-9]+";
+        public static final String STRING_PATTERN = "[a-zA-Z]+";
+        public static final String MOBILE_PATTERN = "[0-9]{10}";
     }
 
+    public static class LicenseHistory {
+        public static final String LICENSEHISTORY = "licenseHistory/licenseHistory";
+    }
+
+
     public static class Template {
-        public static final String NOT_DELETE ="NOT_DELETE";
+        public static final String NOT_DELETE = "NOT_DELETE";
         public static final String ID_BLANK = "ID_BLANK";
         public static final String TEMPLATE_NAME_BLANK = "TEMPLATE_NAME_BLANK";
         public static final String TEMPLATE_TABLE_NAME_BLANK = "TEMPLATE_TABLE_NAME_BLANK";
         public static final String IS_EXIT_TEMPLATE = "ISEXIT_TEMPLATE";
+        public static final String IS_EXIT_TABLE = "IS_EXIT_TABLE";
         public static final String TEMPLATE_FIELD_BLANK = "TEMPLATE_FIELD_BLANK";
+        public static final int FIELD_TYPTE_1 = 1;
+        public static final int FIELD_TYPTE_2 = 2;
+        public static final int FIELD_TYPTE_3 = 3;
+        public static final int FIELD_TYPTE_4 = 4;
+    }
+
+    public static class Site {
+        public static final Integer FIRST = 1;
     }
 
     public static class EnCryption {
@@ -267,41 +315,47 @@ public class Constant {
         public static final String SHA_512 = "SHA-512";
         public static final String PKCS5PADDING = "AES/ECB/PKCS5Padding";
         public static final String AES = "AES";
-        public static final byte[] KEY = { _0X2D, _0X2A, _0X2D, _0X42, _0X55, _0X49, _0X4C, _0X44, _0X41, _0X43, _0X4F,
-                _0X44, _0X45, _0X2D, _0X2A, _0X2D };
+        public static final byte[] KEY = {_0X2D, _0X2A, _0X2D, _0X42, _0X55, _0X49, _0X4C, _0X44, _0X41, _0X43, _0X4F,
+                _0X44, _0X45, _0X2D, _0X2A, _0X2D};
     }
 
     public enum EarthId {
 
-        PROCESS(1),
-        WORKITEM(2),
-        TEMPLATE(3),
-        //PROFILE(4),
-        //USER(5),
-        WORKSPACE(6),
-        DIRECTORY(7),
-        SITE(8),
-        CODE(9),
-        SCHEDULE(10),
-        EVENT(11),
-        SESSION(12),
+        PROCESS(1), WORKITEM(2), TEMPLATE(3),
+        // PROFILE(4),
+        // USER(5),
+        WORKSPACE(6), DIRECTORY(7), SITE(8), CODE(9), SCHEDULE(10), EVENT(11), SESSION(12),
         // FUNCTION(13),
         // FUNCTIONCLASS(14),
         // HISTORYNO(15),
-        LATEST_HISTORY_NO(16),
-        FOLDER_ITEM_NO(17),
-        DOCUMENT_NO(18),
-        LAYER_NO(19);
+        LATEST_HISTORY_NO(16), FOLDER_ITEM_NO(17), DOCUMENT_NO(18), LAYER_NO(19);
 
         private int value;
+
         EarthId(int value) {
             this.setValue(value);
         }
+
         public int getValue() {
             return value;
         }
+
         public void setValue(int value) {
             this.value = value;
         }
     }
+
+    public static class Schedule {
+        public static final String STRING_NUMBER = "[0-9]+";
+        //        public static final String DATETIME_VALIDATION = "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|"
+//                + "(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|"
+//                + "^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:"
+//                + "(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])"
+//                + "|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
+//        public static final String DATETIME_VALIDATION = "^((19|20)\\\\d\\\\d)-(0?[1-9]|1[012])"
+//                + "-(0?[1-9]|[12][0-9]|3[01])$";
+        public static final String DATETIME_VALIDATION = "(\\d{4})/(\\d{2})/(\\d{2}) "
+                + "(\\d{2}):(\\d{2}):(\\d{2})";
+    }
+//
 }

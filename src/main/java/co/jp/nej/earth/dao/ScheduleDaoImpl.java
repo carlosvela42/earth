@@ -45,7 +45,7 @@ public class ScheduleDaoImpl extends BaseDaoImpl<MgrSchedule> implements Schedul
             return listSchedule;
         } catch (Exception e) {
             LOG.error(e.getMessage());
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -77,7 +77,7 @@ public class ScheduleDaoImpl extends BaseDaoImpl<MgrSchedule> implements Schedul
             return mgrSchedules;
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 }

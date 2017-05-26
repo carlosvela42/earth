@@ -8,6 +8,7 @@
 	href="${rc.getContextPath()}/resources/css/core.css" />
 <link rel="stylesheet" media="screen"
 	href="${rc.getContextPath()}/resources/css/style.css" />
+<link rel="shortcut icon" href="${rc.getContextPath()}/resources/images/favicon.ico" type="image/x-icon">
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
 <body>

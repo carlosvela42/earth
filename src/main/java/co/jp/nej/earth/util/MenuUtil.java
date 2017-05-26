@@ -18,7 +18,7 @@ import co.jp.nej.earth.model.enums.AccessRight;
 
 public class MenuUtil {
 
-    public List<MenuStructure> buildMenuTree(Map<String, MenuAccessRight> menuAccessRightMap) {
+    public static List<MenuStructure> buildMenuTree(Map<String, MenuAccessRight> menuAccessRightMap) {
         List<MenuStructure> menuStructures = new ArrayList<MenuStructure>();
         MenuStructure menuStructure;
         Map<String, String> mapStructure = new HashMap<String, String>();

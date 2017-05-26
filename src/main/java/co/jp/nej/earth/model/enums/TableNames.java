@@ -41,5 +41,6 @@ public enum TableNames {
     ,MGR_WORKITEMINCREMENT
     ,MGR_WORKITEMID
     ,MGR_EVENTID
+    ,MGR_PROCESS_SERVICE
     ;
 }

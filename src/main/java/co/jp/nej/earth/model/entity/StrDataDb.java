@@ -2,7 +2,6 @@ package co.jp.nej.earth.model.entity;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QStrDataDb;
-import co.jp.nej.earth.util.DateUtil;
 
 public class StrDataDb extends BaseModel<StrDataDb> {
 
@@ -18,7 +17,6 @@ public class StrDataDb extends BaseModel<StrDataDb> {
 
     public StrDataDb() {
         this.setqObj(QStrDataDb.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**

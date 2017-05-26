@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import co.jp.nej.earth.model.Layer;
 
-public class LayerUpdateForm {
+public class LayerUpdateForm extends RestToken {
     @NotEmpty(message = "E0002,workspaceId")
     private String workspaceId;
     @NotEmpty(message = "E0002,workspaceId")

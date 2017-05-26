@@ -31,7 +31,7 @@ public class FolderItemServiceImpl implements FolderItemService {
         try {
             workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         if (workItem == null) {
             respone.setResult(false);
@@ -73,7 +73,7 @@ public class FolderItemServiceImpl implements FolderItemService {
         try {
             workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         if (workItem == null) {
             respone.setResult(false);

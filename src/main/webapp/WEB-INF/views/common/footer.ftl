@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>FOOTER</title>
-</head>
-<body style="">
-<p style="text-align: center;"><b>FOOTER</b></p>
-</body>
-</html>
+<footer id="footer" role="contentinfo">
+
+    <p id="copyright">&copy;NISSHO ELECTRONICS CORPORATION</p>
+
+</footer><!-- #footer -->

@@ -116,14 +116,9 @@
 					<#if mgrWorkspaces??>
                         <#list mgrWorkspaces as mgrWorkspace>
                           <#if workspaceId??>
-				               <#if mgrWorkspace.workspaceId == workspaceId>
-				                   <option value="${mgrWorkspace.workspaceId}" selected>${mgrWorkspace.workspaceName}</option>
-				               <#else >
-				                   <option value="${mgrWorkspace.workspaceId}">${mgrWorkspace.workspaceName}</option>
-				               </#if>
-				           <#else >
-				               <option value="${mgrWorkspace.workspaceId}">${mgrWorkspace.workspaceName}</option>
-				           </#if>
+					             <#assign selected=(mgrWorkspace.workspaceId == workspaceId)?then("selected","")>
+					        </#if>
+					        <option value="${mgrWorkspace.workspaceId}"  ${selected!""}>${mgrWorkspace.workspaceName}</option>
                         </#list>
                    </#if>
                 </select></td>

@@ -1,12 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QMgrMenuU;
-import co.jp.nej.earth.util.DateUtil;
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrMenuU;
 
 /**
  * Created by minhtv on 3/29/2017.
@@ -23,7 +23,6 @@ public class MgrMenuU extends BaseModel<MgrMenuU> implements Serializable {
     public MgrMenuU() {
         LOG.debug("Call to blank constructor");
         this.setqObj(QMgrMenuU.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrMenuU(String functionId, String userId, int accessAuthority) {

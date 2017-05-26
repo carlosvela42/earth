@@ -1,7 +1,6 @@
 package co.jp.nej.earth.model;
 
 import co.jp.nej.earth.model.sql.QStrageFile;
-import co.jp.nej.earth.util.DateUtil;
 
 /**
  *
@@ -22,7 +21,6 @@ public class StrageFile extends BaseModel<StrageFile> {
     public StrageFile() {
         super();
         this.setqObj(QStrageFile.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**

@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import co.jp.nej.earth.model.FolderItem;
 
-public class FolderItemUpdateForm {
+public class FolderItemUpdateForm extends RestToken {
     @NotEmpty(message = "E0002,workspaceId")
     private String workspaceId;
     @NotEmpty(message = "E0002,workspaceId")

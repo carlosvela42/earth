@@ -1,6 +1,5 @@
 package co.jp.nej.earth.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -17,11 +16,10 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 
-import co.jp.nej.earth.dao.DataDbDao;
-import co.jp.nej.earth.dao.DataFileDao;
 import co.jp.nej.earth.dao.DocumentDao;
 import co.jp.nej.earth.dao.FolderItemDao;
 import co.jp.nej.earth.dao.LayerDao;
+import co.jp.nej.earth.dao.TaskDao;
 import co.jp.nej.earth.dao.TemplateDao;
 import co.jp.nej.earth.dao.WorkItemDao;
 import co.jp.nej.earth.exception.EarthException;
@@ -29,19 +27,16 @@ import co.jp.nej.earth.model.Document;
 import co.jp.nej.earth.model.FolderItem;
 import co.jp.nej.earth.model.Layer;
 import co.jp.nej.earth.model.WorkItem;
-import co.jp.nej.earth.model.entity.StrDataDb;
-import co.jp.nej.earth.model.entity.StrDataFile;
+import co.jp.nej.earth.model.entity.MgrTask;
 import co.jp.nej.earth.model.sql.QDocument;
 import co.jp.nej.earth.model.sql.QFolderItem;
 import co.jp.nej.earth.model.sql.QLayer;
-import co.jp.nej.earth.model.sql.QStrDataDb;
-import co.jp.nej.earth.model.sql.QStrDataFile;
+import co.jp.nej.earth.model.sql.QMgrTask;
 import co.jp.nej.earth.model.sql.QWorkItem;
 import co.jp.nej.earth.model.ws.RestResponse;
 import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EMessageResource;
 import co.jp.nej.earth.util.EStringUtil;
-import co.jp.nej.earth.util.FileUtil;
 
 /**
  *
@@ -62,21 +57,17 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
     @Autowired
     private LayerDao layerDao;
     @Autowired
-    private DataFileDao dataFileDao;
-    @Autowired
-    private DataDbDao dataDbDao;
-    @Autowired
     private EMessageResource eMessageResource;
+    @Autowired
+    private TaskDao taskDao;
+    @Autowired
+    private DocumentService documentService;
 
     private static QFolderItem qFolderItem = QFolderItem.newInstance();
 
     private static QWorkItem qWorkItem = QWorkItem.newInstance();
 
     private static QDocument qDocument = QDocument.newInstance();
-
-    private static QStrDataFile qStrDataFile = QStrDataFile.newInstance();
-
-    private static QStrDataDb qStrDataDb = QStrDataDb.newInstance();
 
     private static QLayer qLayer = QLayer.newInstance();
 
@@ -124,7 +115,7 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
                 workItem.setFolderItems(folderItems);
                 return workItem;
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -144,7 +135,7 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
                 }
                 return updateWorkItemToDb(workItem);
             } catch (Exception e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         });
     }
@@ -305,22 +296,24 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
         // insert document template data
         document.setMgrTemplate(templateDao.getTemplate(workItem.getWorkspaceId(), document.getTemplateId()));
         templateDao.insertDocumentTemplateData(workItem.getWorkspaceId(), document, workItem.getLastHistoryNo());
-        StrDataFile dataFile = new StrDataFile();
-        dataFile.setWorkitemId(workItem.getWorkitemId());
-        dataFile.setDocumentNo(document.getDocumentNo());
-        dataFile.setFolderItemNo(folder.getFolderItemNo());
-        dataFile.setDocumentDataPath(document.getDocumentPath());
-        // insert DataFile
-        dataFileDao.add(workItem.getWorkspaceId(), dataFile);
-        // TODO
-        // FileManagement.writeFile
-        StrDataDb dataDb = new StrDataDb();
-        dataDb.setWorkitemId(workItem.getWorkitemId());
-        dataDb.setDocumentNo(document.getDocumentNo());
-        dataDb.setFolderItemNo(folder.getFolderItemNo());
-        dataDb.setDocumentData(new String(FileUtil.convertFileToBinary(new File(document.getDocumentPath()))));
-        // insert dataDb
-        dataDbDao.add(workItem.getWorkspaceId(), dataDb);
+
+        // TODO because don't know how to get processId and get document saving info by processId
+        QMgrTask qMgrTask = QMgrTask.newInstance();
+        Map<Path<?>, Object> condition = new HashMap<>();
+        condition.put(qMgrTask.taskId, workItem.getTaskId());
+        MgrTask task = taskDao.findOne(workItem.getWorkspaceId(), condition);
+
+        if (task.getProcessId() != null) {
+            Integer processId = null;
+            try {
+                processId = Integer.parseInt(task.getProcessId());
+            } catch (Exception e) {
+                throw new EarthException(e);
+            }
+            documentService.saveDocument(workItem.getWorkspaceId(), document,
+                    documentService.getDocumentSavingInfo(workItem.getWorkspaceId(), processId));
+        }
+
         // list layer in document
         for (Layer layer : document.getLayers()) {
             // insert layer
@@ -358,33 +351,23 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
         document.setMgrTemplate(templateDao.getTemplate(workItem.getWorkspaceId(), document.getTemplateId()));
         templateDao.insertDocumentTemplateData(workItem.getWorkspaceId(), document, workItem.getLastHistoryNo());
 
-        // instance condition map
+        // TODO because don't know how to get processId and get document saving info by processId
+        QMgrTask qMgrTask = QMgrTask.newInstance();
         condition = new HashMap<>();
-        condition.put(qStrDataFile.documentNo, document.getDocumentNo());
-        condition.put(qStrDataFile.folderItemNo, folder.getFolderItemNo());
-        condition.put(qStrDataFile.workitemId, workItem.getWorkitemId());
-        // instance update map
-        updateMap = new HashMap<>();
-        updateMap.put(qStrDataFile.documentDataPath, document.getDocumentPath());
-        updateMap.put(qStrDataFile.lastUpdateTime, DateUtil.getCurrentDateString());
-        // update DataFile
-        dataFileDao.update(workItem.getWorkspaceId(), condition, updateMap);
-        // TODO
-        // FileManagement.deleteFile
-        // FileManagement.writeFile
+        condition.put(qMgrTask.taskId, workItem.getTaskId());
+        MgrTask task = taskDao.findOne(workItem.getWorkspaceId(), condition);
 
-        // instance condition map
-        condition = new HashMap<>();
-        condition.put(qStrDataDb.documentNo, document.getDocumentNo());
-        condition.put(qStrDataDb.folderItemNo, folder.getFolderItemNo());
-        condition.put(qStrDataDb.workitemId, workItem.getWorkitemId());
-        // instance update map
-        updateMap = new HashMap<>();
-        updateMap.put(qStrDataDb.documentData,
-                new String(FileUtil.convertFileToBinary(new File(document.getDocumentPath()))));
-        updateMap.put(qStrDataDb.lastUpdateTime, DateUtil.getCurrentDateString());
-        // update DataDb
-        dataDbDao.update(workItem.getWorkspaceId(), condition, updateMap);
+        if (task.getProcessId() != null) {
+            Integer processId = null;
+            try {
+                processId = Integer.parseInt(task.getProcessId());
+            } catch (Exception e) {
+                throw new EarthException(e);
+            }
+            documentService.saveDocument(workItem.getWorkspaceId(), document,
+                    documentService.getDocumentSavingInfo(workItem.getWorkspaceId(), processId));
+        }
+
         // list layer in document
         for (Layer layer : document.getLayers()) {
             // check action is insert, update or delete layer
@@ -463,7 +446,7 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
         try {
             workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         if (workItem == null) {
             respone.setResult(false);
@@ -485,7 +468,7 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
         try {
             workItemTemp = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workItem.getWorkitemId());
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         if (workItemTemp == null) {
             respone.setResult(false);
@@ -508,7 +491,7 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
         try {
             workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         if (workItem == null) {
             respone.setResult(false);
@@ -573,6 +556,13 @@ public class WorkItemServiceImpl extends BaseService implements WorkItemService 
             response.setData(workItemDao.findAll(workspaceId));
             return response;
         });
+    }
+
+    @Override
+    public String receiveNextTask(String taskId) {
+        // TODO Auto-generated method stub
+        // because don't know how to run next task
+        return "1";
     }
 
 }

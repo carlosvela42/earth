@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrTemplateP;
-import co.jp.nej.earth.util.DateUtil;
 
 public class MgrTemplateP extends BaseModel<MgrTemplateP> implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(MgrTemplateP.class);
@@ -22,7 +21,6 @@ public class MgrTemplateP extends BaseModel<MgrTemplateP> implements Serializabl
     public MgrTemplateP() {
         LOG.debug("Call to blank constructor");
         this.setqObj(QMgrTemplateP.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrTemplateP(String profileId, String templateId, int accessAuthority) {

@@ -1,10 +1,9 @@
 package co.jp.nej.earth.model.entity;
 
+import java.io.Serializable;
+
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrProfile;
-import co.jp.nej.earth.util.DateUtil;
-
-import java.io.Serializable;
 
 public class MgrProfile extends BaseModel<MgrProfile> implements Serializable {
     /**
@@ -18,7 +17,6 @@ public class MgrProfile extends BaseModel<MgrProfile> implements Serializable {
 
     public MgrProfile(){
         this.setqObj(QMgrProfile.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrProfile(String profileId, int availableLicenceCount,String description,String ldapIdentifier){

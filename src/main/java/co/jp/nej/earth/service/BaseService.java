@@ -1,20 +1,24 @@
 package co.jp.nej.earth.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.manager.connection.*;
+import co.jp.nej.earth.model.*;
+import org.slf4j.*;
+import org.springframework.transaction.*;
+import org.springframework.transaction.support.*;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.manager.connection.ConnectionManager;
+import java.util.*;
 
 public abstract class BaseService {
     private static final Logger LOG = LoggerFactory.getLogger(BaseService.class);
 
     public interface ServiceCaller {
         Object execute() throws EarthException;
+    }
+
+    protected Object executeTransaction(ServiceCaller caller) throws EarthException {
+        String workspaceId = co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
+        return executeTransaction(workspaceId, caller);
     }
 
     protected Object executeTransaction(String workspaceId, ServiceCaller caller) throws EarthException {
@@ -40,4 +44,18 @@ public abstract class BaseService {
         return result;
     }
 
+    protected boolean processCommitTransactions(List<TransactionManager> transactionManagers) {
+        for (int i = transactionManagers.size() - 1; i >= 0; i--) {
+            transactionManagers.get(i).getManager().commit(transactionManagers.get(i).getTxStatus());
+        }
+
+        return true;
+    }
+
+    protected boolean processRollBackTransactions(List<TransactionManager> transactionManagers) {
+        for (int i = transactionManagers.size() - 1; i >= 0; i--) {
+            transactionManagers.get(i).getManager().rollback(transactionManagers.get(i).getTxStatus());
+        }
+        return true;
+    }
 }

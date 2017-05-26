@@ -1,35 +1,29 @@
 package co.jp.nej.earth.web.controller;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.Message;
-import co.jp.nej.earth.model.constant.Constant.Session;
-import co.jp.nej.earth.model.constant.Constant.View;
-import co.jp.nej.earth.model.entity.MgrUser;
-import co.jp.nej.earth.service.LoginStatusService;
-import co.jp.nej.earth.service.UserService;
-import co.jp.nej.earth.util.EStringUtil;
-import co.jp.nej.earth.util.ValidatorUtil;
-import co.jp.nej.earth.web.form.LoginForm;
-import com.querydsl.core.types.OrderSpecifier;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.model.constant.Constant.*;
+import co.jp.nej.earth.model.entity.*;
+import co.jp.nej.earth.service.*;
+import co.jp.nej.earth.util.*;
+import co.jp.nej.earth.web.form.*;
+import com.querydsl.core.types.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+import org.springframework.ui.*;
+import org.springframework.validation.*;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import javax.servlet.http.*;
+import javax.validation.*;
+import java.util.*;
 
 /**
  * Created by minhtv on 3/21/2017. Login System
  */
 @Controller
 @RequestMapping("/")
-public class LoginController {
+public class LoginController extends BaseController {
 
     @Autowired
     private UserService userService;
@@ -40,7 +34,11 @@ public class LoginController {
     private LoginStatusService loginStatusService;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String showLogin(Model model) {
+    public String showLogin(Model model, HttpServletRequest request) {
+        if (LoginUtil.isLogin(request.getSession())) {
+            return "redirect:/";
+        }
+
         return View.LOGIN;
     }
 
@@ -59,7 +57,7 @@ public class LoginController {
             return View.LOGIN;
         } else {
             String lastPath = (String) request.getSession().getAttribute(Session.LAST_REQUEST_VIEW);
-            return EStringUtil.isEmpty(lastPath) ? ("redirect:/") : ("redirect: " + lastPath);
+            return EStringUtil.isEmpty(lastPath) ? ("redirect:/") : ("redirect:" + lastPath);
         }
     }
 
@@ -69,7 +67,6 @@ public class LoginController {
         userService.logout(request.getSession());
         return "redirect:login";
     }
-
 
     @RequestMapping(value = "/loginView", method = RequestMethod.GET)
     public String evidentLog(Model model, HttpServletRequest request) throws EarthException {
@@ -82,8 +79,7 @@ public class LoginController {
         Long offset = null;
         Long limit = null;
         OrderSpecifier<String> orderByColumn = null;
-        model.addAttribute("ctlLogins", loginStatusService.getAll(offset, limit,
-                orderByColumn));
+        model.addAttribute("ctlLogins", loginStatusService.getAll(offset, limit, orderByColumn));
         return "loginStatus/loginStatus";
     }
 }

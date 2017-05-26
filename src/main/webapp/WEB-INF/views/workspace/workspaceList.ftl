@@ -74,9 +74,9 @@
             <td><a href="${rc.getContextPath()}/workspace/addNew"
                 class="button">新規</a></td>
             <td><input type="button" class="button" value="削除"
-                onclick="validate()"></td>
+                onclick="validate()" disabled="disabled"></td>
             <td><input type="checkbox" name="deleteWorkspace"
-                value="deleteWorkspace">Confirm Delete</td>
+                value="deleteWorkspace" disabled="disabled">Confirm Delete</td>
         </tr>
     </table>
     <div>
@@ -102,9 +102,8 @@
             <#list mgrWorkspaces as mgrWorkspace>
 		        <tr id="row${mgrWorkspace?index}">
 		            <td><input type="checkbox" id="delRow${mgrWorkspace?index}"
-		               name="DeleteRow" value="${mgrWorkspace.workspaceId}"></td>
-		            <td><a id="workspaceId${mgrWorkspace?index}"
-		                href="${rc.getContextPath()}/workspace/showDetail?workspaceId=${mgrWorkspace.workspaceId}">${mgrWorkspace.workspaceId}</a></td>
+		               name="DeleteRow" value="${mgrWorkspace.workspaceId}" disabled="disabled"></td>
+		            <td><a id="workspaceId${mgrWorkspace?index}">${mgrWorkspace.workspaceId}</a></td>
 		            <td id="workspaceName${mgrWorkspace?index}">${mgrWorkspace.workspaceName}</td>
 		        </tr>
             </#list>        

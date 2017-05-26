@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.querydsl.core.types.OrderSpecifier;
@@ -56,6 +55,7 @@ import co.jp.nej.earth.model.sql.QCtlLogin;
 import co.jp.nej.earth.model.sql.QMgrUser;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
 import co.jp.nej.earth.model.sql.QStrLogAccess;
+import co.jp.nej.earth.util.ConversionUtil;
 import co.jp.nej.earth.util.CryptUtil;
 import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EMessageResource;
@@ -66,7 +66,7 @@ import co.jp.nej.earth.util.PasswordPolicy;
 import co.jp.nej.earth.util.TemplateUtil;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends BaseService implements UserService {
 
     @Autowired
     private UserDao userDao;
@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
             return true;
         } catch (Exception ex) {
             manager.rollback(txStatus);
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -160,10 +160,9 @@ public class UserServiceImpl implements UserService {
         }
 
         if (!EStringUtil.isEmpty(userId) && !EStringUtil.isEmpty(password)) {
-            List<TransactionManager> transactionManagers = new ArrayList<TransactionManager>();
-            TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
-            transactionManagers.add(transactionManager);
+            TransactionManager transactionManager = null;
             try {
+                transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
                 String encryptedPassword = CryptUtil.encryptOneWay(password);
                 MgrUser mgrUser = userDao.getById(userId);
                 if (mgrUser != null) {
@@ -172,87 +171,91 @@ public class UserServiceImpl implements UserService {
                                 eMessageResource.get(ErrorCode.E0003, null));
                         listMessage.add(message);
                     } else {
-                        MenuUtil menuUtil = new MenuUtil();
                         String loginToken = LoginUtil.generateToken(userId, DateUtil.getCurrentDate());
-                        UserInfo userInfo = new UserInfo();
-                        userInfo.setUserId(userId);
-                        userInfo.setUserName(mgrUser.getName());
-                        userInfo.setLoginToken(loginToken);
-                        session.setAttribute(Session.USER_INFO, userInfo);
+                        session.setAttribute(Session.USER_INFO, new UserInfo(userId, mgrUser.getName(), loginToken));
 
-                        CtlLogin ctlLogin = new CtlLogin();
-                        ctlLogin.setSessionId(loginToken);
-                        ctlLogin.setUserId(userId);
-                        String loginTimeStr = DateUtil.getCurrentDate().toString();
-                        ctlLogin.setLoginTime(loginTimeStr);
-                        ctlLogin.setLogoutTime(null);
-                        ctlLogin.setLastUpdateTime(loginTimeStr);
-                        if (loginControlDao.add(Constant.EARTH_WORKSPACE_ID, ctlLogin) > 0) {
-                            countAndUpdateLicenseHistory(userId);
-                        }
+                        CtlLogin ctlLogin = new CtlLogin(loginToken, userId, DateUtil.getCurrentDateString(), null);
+                        loginControlDao.add(Constant.EARTH_WORKSPACE_ID, ctlLogin);
+                        countAndUpdateLicenseHistory(userId);
 
-                        Map<TemplateKey, TemplateAccessRight> templateAccessRightMap
-                        = new HashMap<TemplateKey, TemplateAccessRight>();
+                        // Save All Workspaces information into session.
                         List<MgrWorkspace> mgrWorkspaces = workspaceDao.getAll();
-                        for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
-                            try {
-                                transactionManager = new TransactionManager(mgrWorkspace.getWorkspaceId());
-                                transactionManagers.add(transactionManager);
-                                templateAccessRightMap.putAll(
-                                        templateAuthorityDao.getMixAuthority(userId, mgrWorkspace.getWorkspaceId()));
-                            } catch (Exception ex) {
-                                LOG.error(ex.getMessage());
-                            }
-                        }
+                        session.setAttribute(Session.WORKSPACES, mgrWorkspaces);
 
+                        // Save All templates access right into session.
+                        Map<TemplateKey, TemplateAccessRight> templateAccessRightMap
+                                                        = getTemplatesAccessRightOfAllWorkspaces(userId, mgrWorkspaces);
                         TemplateUtil.saveToSession(session, templateAccessRightMap);
+
+                        // Save All Menus Access right into session.
                         Map<String, MenuAccessRight> menuAccessRightMap = menuAuthorityDao.getMixAuthority(userId);
                         if (channel == Channel.LOGIN.getValue()) {
                             MenuUtil.saveToSession(session, menuAccessRightMap);
-                            session.setAttribute(Session.MENU_STRUCTURE, menuUtil.buildMenuTree(menuAccessRightMap));
-                        }
-                        session.setAttribute(Session.WORKSPACES, mgrWorkspaces);
-
-                        for (int i = transactionManagers.size() - 1; i >= 0; i--) {
-                            TransactionManager transactionManager1 = transactionManagers.get(i);
-                            transactionManager1.getManager().commit(transactionManager1.getTxStatus());
+                            session.setAttribute(Session.MENU_STRUCTURE, MenuUtil.buildMenuTree(menuAccessRightMap));
                         }
                     }
                 } else {
-                    Message message = new Message(MessageCodeLogin.INVALID_LOGIN,
-                            eMessageResource.get(ErrorCode.E0003, null));
+                    Message message = new Message(
+                            MessageCodeLogin.INVALID_LOGIN, eMessageResource.get(ErrorCode.E0003, null));
                     listMessage.add(message);
                 }
             } catch (Exception e) {
-                for (int i = transactionManagers.size() - 1; i >= 0; i--) {
-                    TransactionManager transactionManager1 = transactionManagers.get(i);
-                    transactionManager1.getManager().rollback(transactionManager1.getTxStatus());
+                if (transactionManager != null) {
+                    transactionManager.getManager().rollback(transactionManager.getTxStatus());
                 }
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
+            }
+
+            if (listMessage.size() > 0) {
+                if (transactionManager != null) {
+                    transactionManager.getManager().rollback(transactionManager.getTxStatus());
+                }
+            } else {
+                if (transactionManager != null) {
+                    transactionManager.getManager().commit(transactionManager.getTxStatus());
+                }
             }
         }
-
         return listMessage;
     }
 
-    @Transactional
-    public boolean logout(HttpSession session) throws EarthException {
-        boolean isLogout = false;
-        if (session.getAttribute(Session.USER_INFO) != null) {
-            UserInfo userInfo = (UserInfo) session.getAttribute(Session.USER_INFO);
-            String sessionId = userInfo.getLoginToken();
-            String outTime = DateUtil.getCurrentDate().toString();
+    private Map<TemplateKey, TemplateAccessRight> getTemplatesAccessRightOfAllWorkspaces(String userId,
+            List<MgrWorkspace> mgrWorkspaces) {
+        Map<TemplateKey, TemplateAccessRight> templateAccessRightMap = new HashMap<TemplateKey, TemplateAccessRight>();
+
+        TransactionManager transactionMgr = null;
+        for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
             try {
-                loginControlDao.updateOutTime(sessionId, outTime);
-            } catch (Exception e) {
-                e.printStackTrace();
+                transactionMgr = new TransactionManager(mgrWorkspace.getWorkspaceId());
+                templateAccessRightMap
+                        .putAll(templateAuthorityDao.getMixAuthority(userId, mgrWorkspace.getWorkspaceId()));
+                transactionMgr.getManager().commit(transactionMgr.getTxStatus());
+            } catch (Exception ex) {
+                LOG.error(ex.getMessage(), ex);
+                if (transactionMgr != null) {
+                    transactionMgr.getManager().rollback(transactionMgr.getTxStatus());
+                }
             }
-            String userId = userInfo.getUserId();
-            countAndUpdateLicenseHistory(userId);
-            session.invalidate();
-            isLogout = true;
         }
-        return isLogout;
+
+        return templateAccessRightMap;
+    }
+
+    public boolean logout(HttpSession session) throws EarthException {
+        return (boolean) executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            if (LoginUtil.isLogin(session)) {
+                UserInfo userInfo = (UserInfo) session.getAttribute(Session.USER_INFO);
+                String sessionId = userInfo.getLoginToken();
+
+                loginControlDao.updateOutTime(sessionId, DateUtil.getCurrentDate().toString());
+                String userId = userInfo.getUserId();
+                countAndUpdateLicenseHistory(userId);
+                session.invalidate();
+                return true;
+            }
+
+            return false;
+        });
     }
 
     private void countAndUpdateLicenseHistory(String userId) throws EarthException {
@@ -264,7 +267,7 @@ public class UserServiceImpl implements UserService {
                 licenseHistoryDao.add(Constant.EARTH_WORKSPACE_ID, ls);
             }
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
     }
 
@@ -276,8 +279,7 @@ public class UserServiceImpl implements UserService {
             transactionManager.getManager().commit(transactionManager.getTxStatus());
         } catch (Exception ex) {
             transactionManager.getManager().rollback(transactionManager.getTxStatus());
-            ex.printStackTrace();
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
         return mgrUsers;
     }
@@ -511,7 +513,7 @@ public class UserServiceImpl implements UserService {
             return detail;
         } catch (Exception ex) {
             transactionManager.getManager().rollback(transactionManager.getTxStatus());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -527,53 +529,45 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Transactional
-    public List<CtlLogin> getAllMgrLogin(String workspaceId, Long offset, Long limit, List<OrderSpecifier<?>> orderBys)
-            throws EarthException {
-        return loginControlDao.findAll(Constant.EARTH_WORKSPACE_ID, offset, limit, orderBys, null);
-    }
-
-    @Transactional
     public CtlLogin getCtlLoginDetail(Map<Path<?>, Object> condition) throws EarthException {
-
-        return loginControlDao.findOne(Constant.EARTH_WORKSPACE_ID, condition);
+        return ConversionUtil.castObject(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return loginControlDao.findOne(Constant.EARTH_WORKSPACE_ID, condition);
+        }), CtlLogin.class);
     }
 
-    @Transactional
     public long deleteCtlLogin(Map<Path<?>, Object> condition) throws EarthException {
-
-        return loginControlDao.delete(Constant.EARTH_WORKSPACE_ID, condition);
+        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return loginControlDao.delete(Constant.EARTH_WORKSPACE_ID, condition);
+        });
     }
 
-    @Transactional
     public long deleteCtlLogins(List<Map<Path<?>, Object>> condition) throws EarthException {
-
-        return loginControlDao.deleteList(Constant.EARTH_WORKSPACE_ID, condition);
+        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return loginControlDao.deleteList(Constant.EARTH_WORKSPACE_ID, condition);
+        });
     }
 
-    @Transactional
     public long deleteAllCtlLogins() throws EarthException {
-        try {
+        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
             return loginControlDao.deleteAll(Constant.EARTH_WORKSPACE_ID);
-        } catch (EarthException ex) {
-            ex.printStackTrace();
-            throw new EarthException(ex.getMessage());
-        }
+        });
     }
 
     @Override
-    @Transactional
     public long addCtlLogin(CtlLogin login) throws EarthException {
-        return loginControlDao.add(Constant.EARTH_WORKSPACE_ID, login);
+        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return loginControlDao.add(Constant.EARTH_WORKSPACE_ID, login);
+        });
     }
 
     @Override
-    @Transactional
     public long updateCtlLogin(Map<Path<?>, Object> condition, Map<Path<?>, Object> updateMap) throws EarthException {
-        return loginControlDao.update(Constant.EARTH_WORKSPACE_ID, condition, updateMap);
+        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return loginControlDao.update(Constant.EARTH_WORKSPACE_ID, condition, updateMap);
+        });
     }
 
-    // List message for password
+    // List message for password.
     private List<Message> getMessagePasswordPolicy(List<String> passwordPolicys) {
         List<Message> messages = new ArrayList<Message>();
         for (String string : passwordPolicys) {
@@ -584,10 +578,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public List<CtlLogin> searchMgrLogin(String workspaceId, Predicate condition, Long offset, Long limit,
             List<OrderSpecifier<?>> orderBys) throws EarthException {
-
-        return loginControlDao.search(Constant.EARTH_WORKSPACE_ID, condition, offset, limit, orderBys, null);
+        return ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return loginControlDao.search(Constant.EARTH_WORKSPACE_ID, condition, offset, limit, orderBys, null);
+        }), CtlLogin.class);
     }
 }

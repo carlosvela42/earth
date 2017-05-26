@@ -1,14 +1,10 @@
 package co.jp.nej.earth.dao;
 
-import java.util.List;
-import java.util.Map;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.model.*;
+import com.querydsl.core.types.*;
 
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Predicate;
-
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.BaseModel;
+import java.util.*;
 
 /**
  * Base DAO Model.
@@ -37,13 +33,19 @@ public interface BaseDao<T extends BaseModel<T>> {
     List<T> search(String workspaceId, Predicate condition, Long offset, Long limit,
             List<OrderSpecifier<?>> orderBys, Path<?>[] groupbys) throws EarthException;
 
+    T findOne(Map<Path<?>, Object> keyMap) throws EarthException;
+
     T findOne(String workspaceId, Map<Path<?>, Object> keyMap) throws EarthException;
+
+    long delete(Map<Path<?>, Object> keyMap) throws EarthException;
 
     long delete(String workspaceId, Map<Path<?>, Object> keyMap) throws EarthException;
 
     long deleteList(String workspaceId, List<Map<Path<?>, Object>> keyMap) throws EarthException;
 
     long deleteAll(String workspaceId) throws EarthException;
+
+    long add(T t) throws EarthException;
 
     long add(String workspaceId, T t) throws EarthException;
 

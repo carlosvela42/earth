@@ -1,10 +1,9 @@
 package co.jp.nej.earth.model.entity;
 
+import java.io.Serializable;
+
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QCtlMenu;
-import co.jp.nej.earth.util.DateUtil;
-
-import java.io.Serializable;
 
 public class CtlMenu extends BaseModel<CtlMenu> implements Serializable {
     /**
@@ -17,7 +16,6 @@ public class CtlMenu extends BaseModel<CtlMenu> implements Serializable {
 
     public CtlMenu(){
         this.setqObj(QCtlMenu.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public CtlMenu(String functionId,String userId,int accessAuthority){

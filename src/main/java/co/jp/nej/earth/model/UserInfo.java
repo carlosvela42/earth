@@ -8,6 +8,25 @@ private String userId;
 private String userName;
 private String loginToken;
 
+/**
+ *
+ */
+public UserInfo() {
+    super();
+}
+
+/**
+ * @param userId
+ * @param userName
+ * @param loginToken
+ */
+public UserInfo(String userId, String userName, String loginToken) {
+    super();
+    this.userId = userId;
+    this.userName = userName;
+    this.loginToken = loginToken;
+}
+
 public String getUserId() {
    return userId;
 }

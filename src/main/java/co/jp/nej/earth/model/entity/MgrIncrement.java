@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrIncrement;
-import co.jp.nej.earth.util.DateUtil;
 
 public class MgrIncrement extends BaseModel<MgrIncrement> implements Serializable {
 
@@ -29,7 +28,6 @@ public class MgrIncrement extends BaseModel<MgrIncrement> implements Serializabl
 
         LOG.debug("Call to blank constructor");
         this.setqObj(QMgrIncrement.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public Integer getProcessId() {

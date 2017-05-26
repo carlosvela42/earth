@@ -74,4 +74,12 @@ public interface WorkItemService {
     RestResponse searchWorkItems(HttpSession session, String workspaceId, WorkItem searchCondition)
             throws EarthException;
 
+    /**
+     * receiveNextTask
+     *
+     * @param taskId
+     * @return
+     */
+    String receiveNextTask(String taskId);
+
 }

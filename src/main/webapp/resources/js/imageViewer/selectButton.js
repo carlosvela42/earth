@@ -18,7 +18,10 @@ IV.prototype.selectBefore = function() {
 	}
 	imageViewer.selectId = -1;
 }
-
+var original_x1;
+var original_y1;
+var original_x2;
+var original_y2;
 IV.prototype.selectClick = function(event) {	
 	$("#drawSelect").prop("checked", true).trigger("click");
 	// $('[name=toolOption]').prop('checked', false);
@@ -41,7 +44,11 @@ IV.prototype.selectClick = function(event) {
 				$(this).attr("class")).attr("onmousedown",
 				"startMove(event, 'group')").attr("onmouseup", "endMove()")
 				.attr("transform", $(this).attr("transform"));
-		g.append("rect").attr("x", $("#r" + selectId).attr("x")).attr("y",
+		original_x1 = $(this).attr("x1");
+		original_y1 = $(this).attr("y1");
+		original_x2 = $(this).attr("x2");
+		original_y2 = $(this).attr("y2");		
+g.append("rect").attr("x", $("#r" + selectId).attr("x")).attr("y",
 				$("#r" + selectId).attr("y")).attr("width",
 				$("#r" + selectId).attr("width")).attr("height",
 				$("#r" + selectId).attr("height")).attr("id", "r" + selectId)

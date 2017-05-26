@@ -10,4 +10,8 @@ public class EarthException extends Exception {
     public EarthException(String message) {
         super(message);
     }
+
+    public EarthException(Exception e) {
+        super(e);
+    }
 }

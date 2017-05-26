@@ -1,12 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QCtlLogin;
-import co.jp.nej.earth.util.DateUtil;
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QCtlLogin;
 
 public class CtlLogin extends BaseModel<CtlLogin> implements Serializable {
 
@@ -27,7 +27,6 @@ public class CtlLogin extends BaseModel<CtlLogin> implements Serializable {
 
         LOG.debug("Call to blank constructor");
         this.setqObj(QCtlLogin.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public CtlLogin(String sessionId, String userId, String loginTime, String logoutTime) {

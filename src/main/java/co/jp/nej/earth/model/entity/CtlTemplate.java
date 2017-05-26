@@ -1,14 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QCtlTemplate;
-import co.jp.nej.earth.util.DateUtil;
-
 import java.io.Serializable;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QCtlTemplate;
 
 
 public class CtlTemplate extends BaseModel<CtlTemplate> implements Serializable {
@@ -24,7 +22,6 @@ public class CtlTemplate extends BaseModel<CtlTemplate> implements Serializable 
     public CtlTemplate() {
         LOG.debug("Call to blank contructor");
         this.setqObj(QCtlTemplate.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public CtlTemplate(String userId, String templateId, int accessAuthority) {

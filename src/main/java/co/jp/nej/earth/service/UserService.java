@@ -33,10 +33,6 @@ public interface UserService {
 
     Map<String, Object> getDetail(String userId) throws EarthException;
 
-    // FOR test generic
-    List<CtlLogin> getAllMgrLogin(String workspaceId, Long offset, Long limit, List<OrderSpecifier<?>> orderBys)
-            throws EarthException;
-
     CtlLogin getCtlLoginDetail(Map<Path<?>, Object> condition) throws EarthException;
 
     long deleteCtlLogin(Map<Path<?>, Object> condition) throws EarthException;

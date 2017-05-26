@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -47,8 +45,6 @@ import co.jp.nej.earth.util.UserAccessRightUtil;
 
 @Service
 public class TemplateServiceImpl extends BaseService implements TemplateService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(TemplateServiceImpl.class);
 
     @Autowired
     private TemplateDao templateDao;
@@ -96,7 +92,7 @@ public class TemplateServiceImpl extends BaseService implements TemplateService 
                     .where(qMgrTemplateP.profileId.in(profileIds)).fetch();
             return mgrTemplates;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -150,8 +146,7 @@ public class TemplateServiceImpl extends BaseService implements TemplateService 
     /**
      * @author p-tvo-thuynd.
      *
-     *         This method is to save authority of user/profile to template to
-     *         equivalent table
+     *         This method is to save authority of user/profile to template to equivalent table
      * @param templateKey
      *            determine which template are being executed
      * @param tUser
@@ -224,7 +219,7 @@ public class TemplateServiceImpl extends BaseService implements TemplateService 
                 templateDao.createTemplateData(workspaceId, mgrTemplate);
                 return true;
             } catch (JsonProcessingException e) {
-                throw new EarthException(e.getMessage());
+                throw new EarthException(e);
             }
         }));
     }
@@ -247,19 +242,23 @@ public class TemplateServiceImpl extends BaseService implements TemplateService 
     }
 
     @Override
-    public List<Message> checkExistsTemplate(MgrTemplate mgrTemplate) throws EarthException {
+    public List<Message> checkExistsTemplate(MgrTemplate mgrTemplate, String dbUser) throws EarthException {
         return ConversionUtil.castList(executeTransaction(mgrTemplate.getWorkspaceId(), () -> {
-            String workspaceId = mgrTemplate.getWorkspaceId();
-            String templateId = mgrTemplate.getTemplateId();
-
             List<Message> messages = new ArrayList<Message>();
-            if (!StringUtils.isEmpty(workspaceId) && !StringUtils.isEmpty(mgrTemplate.getTemplateName())
+            if (!StringUtils.isEmpty(mgrTemplate.getWorkspaceId())
+                    && !StringUtils.isEmpty(mgrTemplate.getTemplateName())
                     && !StringUtils.isEmpty(mgrTemplate.getTemplateTableName())
                     && !StringUtils.isEmpty(mgrTemplate.getTemplateFields())) {
 
-                if (isExistTemplate(workspaceId, templateId)) {
+                if (isExistTemplate(mgrTemplate.getWorkspaceId(), mgrTemplate.getTemplateId())) {
                     Message message = new Message(Template.IS_EXIT_TEMPLATE,
                             messageSource.get(ErrorCode.E0005, new String[] { "TEMPLATE", "WORKSPACE" }));
+                    messages.add(message);
+                }
+                if (isExistTable(mgrTemplate.getWorkspaceId(), mgrTemplate.getTemplateTableName(),
+                        (Constant.WorkSpace.CHARACTER_COMMON + dbUser).toUpperCase())) {
+                    Message message = new Message(Template.IS_EXIT_TABLE,
+                            messageSource.get(ErrorCode.E0005, new String[] { "TABLE", "WORKSPACE" }));
                     messages.add(message);
                 }
             }
@@ -272,5 +271,10 @@ public class TemplateServiceImpl extends BaseService implements TemplateService 
         templateKey.setTemplateId(templateId);
         templateKey.setWorkspaceId(workspaceId);
         return templateDao.getById(templateKey) != null;
+    }
+
+    private boolean isExistTable(String workspaceId, String templateTableName, String dbUser) throws EarthException {
+        long isExit = templateDao.isExistsTableData(workspaceId, templateTableName, dbUser);
+        return isExit>0L;
     }
 }

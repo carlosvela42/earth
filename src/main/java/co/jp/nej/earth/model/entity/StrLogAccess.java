@@ -2,7 +2,6 @@ package co.jp.nej.earth.model.entity;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QStrLogAccess;
-import co.jp.nej.earth.util.DateUtil;
 
 public class StrLogAccess extends BaseModel<StrLogAccess> {
     /**
@@ -20,7 +19,6 @@ public class StrLogAccess extends BaseModel<StrLogAccess> {
 
     public StrLogAccess() {
         this.setqObj(QStrLogAccess.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public StrLogAccess(String eventId, String processTime, String userId, String workitemId, int historyNo,

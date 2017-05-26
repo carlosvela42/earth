@@ -1,24 +1,25 @@
 package co.jp.nej.earth.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
+
 import co.jp.nej.earth.dao.LoginControlDao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.TransactionManager;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.CtlLogin;
 import co.jp.nej.earth.model.sql.QCtlLogin;
-import co.jp.nej.earth.util.DateUtil;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by p-dcv-minhtv on 5/8/2017.
@@ -71,24 +72,5 @@ public class LoginStatusServiceImpl implements LoginStatusService {
         }
         return del == sessionIds.size();
 
-    }
-
-    @Override
-    public CtlLogin insertOne(CtlLogin ctlLogin) throws EarthException {
-        TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
-        try {
-            ctlLogin.setLastUpdateTime(DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD));
-            long insert = loginControlDao.add(Constant.EARTH_WORKSPACE_ID, ctlLogin);
-            if (insert == 0) {
-                throw new EarthException("Insert unsuccessfully!");
-            }
-
-        } catch (Exception ex) {
-            transactionManager.getManager().rollback(transactionManager.getTxStatus());
-            LOG.error(ex.getMessage());
-            return null;
-        }
-        transactionManager.getManager().commit(transactionManager.getTxStatus());
-        return ctlLogin;
     }
 }

@@ -117,7 +117,7 @@ public class EarthQueryFactory extends SQLQueryFactory {
                 templateData = new TemplateData(historyNo, lastUpdateTime, dataMap);
             }
         } catch (SQLException e) {
-            throw new EarthException(e.getErrorCode() + ":" + e.getMessage());
+            throw new EarthException(e);
         }
 
         return templateData;
@@ -161,7 +161,7 @@ public class EarthQueryFactory extends SQLQueryFactory {
                 templateData = new TemplateData(historyNo, lastUpdateTime, dataMap);
             }
         } catch (SQLException e) {
-            throw new EarthException(e.getErrorCode() + ":" + e.getMessage());
+            throw new EarthException(e);
         }
 
         return templateData;

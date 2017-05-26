@@ -5,19 +5,19 @@
 		<tr>
 			<td>テンプレートID</td>
 			<td><input type="text" id="txtTemplate" name="templateId"
-				value="${mgrTemplate.templateId}" height="20px" width="150px"
+				value="${mgrTemplate.templateId!""}" height="20px" width="150px"
 				style="text-align: left" readonly="readonly"></td>
 		</tr>
 		<tr>
 			<td>テンプレート名</td>
 			<td><input type="text" id="txtTemplateName" name="templateName"
-				value="${mgrTemplate.templateName}" height="20px" width="150px"
+				value="${mgrTemplate.templateName!""}" height="20px" width="150px"
 				style="text-align: left"></td>
 		</tr>
 		<tr>
 			<td>テンプレートテーブル名</td>
 			<td><input type="text" id="txtTemplateTableName"
-				name="templateTableName" value="${mgrTemplate.templateTableName}"
+				name="templateTableName" value="${mgrTemplate.templateTableName!""}"
 				height="20px" width="150px" style="text-align: left"
 				readonly="readonly"></td>
 		</tr>
@@ -38,13 +38,13 @@
                    <td><input type="checkbox" id="delRow${field?index}"
                       name="DeleteRow" disabled="disabled"></td>
                    <td><input type="text" id="delRow${field?index}"
-                      name="templateFields[${field?index}].name" value="${field.name}" readonly="readonly"></td>
+                      name="templateFields[${field?index}].name" value="${field.name!""}" readonly="readonly"></td>
                    <td><input type="text" id="delRow${field?index}"
-                      name="templateFields[${field?index}].description" value="${field.description}" readonly="readonly"></td>
+                      name="templateFields[${field?index}].description" value="${field.description!""}" readonly="readonly"></td>
                     <td><input type="text" id="delRow${field?index}"
-                      name="templateFields[${field?index}].type" value="${field.type}" readonly="readonly"></td>
-                   <td><input type="text" id="delRow${field?index}"
-                      name="templateFields[${field?index}].size" value="${field.size}" readonly="readonly"></td>
+                      name="templateFields[${field?index}].type" value="${field.type!""}" readonly="readonly"></td>
+	                   <td><input type="text" id="delRow${field?index}"
+	                      name="templateFields[${field?index}].size" value="${field.size!""}" readonly="readonly"></td>
                   <#if field.required>
                       <td><input type="checkbox" id="delRow${field?index}"
                         name="templateFields[${field?index}].required" checked disabled="disabled"></td>

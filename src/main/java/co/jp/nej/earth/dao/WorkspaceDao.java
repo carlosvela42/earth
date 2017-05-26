@@ -15,6 +15,10 @@ public interface WorkspaceDao {
 
     boolean insertOne(MgrWorkspaceConnect mgrWorkspaceConnect) throws EarthException;
 
+    boolean createSchema(MgrWorkspaceConnect mgrWorkspaceConnect, String workspaceId) throws EarthException;
+
+    void createTable(MgrWorkspaceConnect mgrWorkspaceConnect, String workspaceId) throws EarthException;
+
     boolean deleteList(List<String> workspaceIds) throws EarthException;
 
     MgrWorkspaceConnect getOne(String workspaceId) throws EarthException;

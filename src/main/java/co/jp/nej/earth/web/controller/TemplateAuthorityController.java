@@ -30,7 +30,7 @@ import co.jp.nej.earth.service.TemplateService;
 
 @Controller
 @RequestMapping("/templateAccessRight")
-public class TemplateAuthorityController {
+public class TemplateAuthorityController extends BaseController {
 
     @Autowired
     private TemplateService templateService;

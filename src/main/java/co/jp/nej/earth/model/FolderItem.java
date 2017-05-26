@@ -6,9 +6,10 @@ package co.jp.nej.earth.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.sql.QFolderItem;
-import co.jp.nej.earth.util.DateUtil;
 
 /**
  * @author p-tvo-khanhnv
@@ -23,6 +24,7 @@ public class FolderItem extends BaseModel<FolderItem> {
      *
      */
     private String workitemId;
+    @NotEmpty(message = "E0002,folderItemNo")
     private Integer folderItemNo;
     private MgrTemplate mgrTemplate;
     private Integer action;
@@ -32,7 +34,6 @@ public class FolderItem extends BaseModel<FolderItem> {
 
     public FolderItem() {
         this.setqObj(QFolderItem.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**

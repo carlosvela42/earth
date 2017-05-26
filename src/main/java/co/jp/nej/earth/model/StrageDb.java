@@ -1,7 +1,6 @@
 package co.jp.nej.earth.model;
 
 import co.jp.nej.earth.model.sql.QStrageDb;
-import co.jp.nej.earth.util.DateUtil;
 
 /**
  *
@@ -25,7 +24,6 @@ public class StrageDb extends BaseModel<StrageDb> {
     public StrageDb() {
         super();
         this.setqObj(QStrageDb.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**

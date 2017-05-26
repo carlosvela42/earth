@@ -50,6 +50,7 @@ public interface TemplateDao extends BaseDao<MgrTemplate> {
 
     TemplateData getProcessTemplateData(String workspaceId, String processId, String templateId, int maxVersion)
             throws EarthException;
+
     long deleteTemplates(List<String> templateIds, String workspaceId) throws EarthException;
 
     long insertOne(String workspaceId, MgrTemplate mgrTemplate) throws EarthException;
@@ -57,4 +58,6 @@ public interface TemplateDao extends BaseDao<MgrTemplate> {
     long createTemplateData(String workspaceId, MgrTemplate mgrTemplate) throws EarthException;
 
     long updateOne(String workspaceId, MgrTemplate mgrTemplate) throws EarthException;
+
+    long isExistsTableData(String workspaceId, String templateTableName, String dbUser) throws EarthException;
 }

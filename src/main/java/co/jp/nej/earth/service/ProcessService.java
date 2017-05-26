@@ -1,19 +1,13 @@
 package co.jp.nej.earth.service;
 
-import java.util.List;
-import java.util.Map;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.model.enums.*;
+import co.jp.nej.earth.model.form.*;
+import co.jp.nej.earth.model.ws.*;
 
-import javax.servlet.http.HttpSession;
-
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.DatProcess;
-import co.jp.nej.earth.model.MgrProcess;
-import co.jp.nej.earth.model.ProcessMap;
-import co.jp.nej.earth.model.WorkItem;
-import co.jp.nej.earth.model.enums.OpenProcessMode;
-import co.jp.nej.earth.model.form.DeleteProcessForm;
-import co.jp.nej.earth.model.form.ProcessForm;
-import co.jp.nej.earth.model.ws.Response;
+import javax.servlet.http.*;
+import java.util.*;
 
 /**
  *
@@ -27,7 +21,7 @@ public interface ProcessService {
     boolean closeProcess(HttpSession session, String workspaceId, String workItemId, String eventId)
             throws EarthException;
 
-    DatProcess getProcess(String workspaceId, Integer processId) throws EarthException;
+    DatProcess getProcess(HttpSession session, String workspaceId, Integer processId) throws EarthException;
 
     boolean updateProcess(HttpSession session, String workspaceId, ProcessMap datProcess) throws EarthException;
 
@@ -65,7 +59,7 @@ public interface ProcessService {
      * @param form
      * @return
      */
-    Response validateProcess(ProcessForm form);
+    List<Message> validateProcess(ProcessForm form);
 
     /**
      * insert process
@@ -84,7 +78,7 @@ public interface ProcessService {
      * @return
      * @throws EarthException
      */
-    Map<String, Object> getDetail(String workspaceId, int processId) throws EarthException;
+    Map<String, Object> getDetail(String workspaceId, String processId) throws EarthException;
 
     /**
      * update process

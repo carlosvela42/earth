@@ -73,7 +73,7 @@ public class UserAccessRightUtil {
             }
             return userAccessRights;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -106,7 +106,7 @@ public class UserAccessRightUtil {
             }
             return userAccessRights;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 }

@@ -1,4 +1,4 @@
-<@standard.standardPage title="ADDNEWWORKSPACE">
+<@standard.standardPage title="EDITWORKSPACE">
 <script type="text/javascript">
     function input() {
         // Declare variables
@@ -9,20 +9,20 @@
     }
 </script>
 <form action="${rc.getContextPath()}/workspace/updateOne"
-	object="mgrWorkspaceConnect" method="post">
+	object="workspaceForm" method="post">
 	<table>
 		<tr>
 			<td><input type="submit" value="決定" class="button"></td>
 			<td><a href="${rc.getContextPath()}/workspace/list"
 				class="button">キャンセル</a></td>
 		</tr>
-		<#if mgrWorkspaceConnect??>
+		<#if workspaceForm??>
 	        <tr>
 	            <td>
 	                <label>ワークスペースID：</label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtWorkspace" name="workspaceId" value="${mgrWorkspaceConnect.workspaceId}" readonly="readonly" height="20px" width="150px" style="text-align: left">
+	                <input type="text" id="txtWorkspace" name="workspaceId" value="${workspaceForm.workspaceId!""}" readonly="readonly" height="20px" width="150px" style="text-align: left">
 	            </td>
 	        </tr>
 	        <tr>
@@ -35,7 +35,7 @@
 	                <label>スキーマ名： </label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtSchemaName" name="schemaName" value="${mgrWorkspaceConnect.schemaName}" height="20px" width="150px" style="text-align: left" onkeyup="input()">  
+	                <input type="text" id="txtSchemaName" name="schemaName" value="${workspaceForm.schemaName!""}" height="20px" width="150px" style="text-align: left" onkeyup="input()">  
 	            </td>
 	        </tr>
 	         <tr>
@@ -43,7 +43,7 @@
 	                <label>DBユーザ： </label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtDBuser" name="dbUser" value="${mgrWorkspaceConnect.dbUser}" height="20px" width="150px" style="text-align: left" readonly="readonly"> 
+	                <input type="text" id="txtDBuser" name="dbUser" value="${workspaceForm.dbUser!""}" height="20px" width="150px" style="text-align: left" readonly="readonly"> 
 	            </td>
 	        </tr>
 	         <tr>
@@ -51,7 +51,7 @@
 	                <label>DBユーザパスワード： </label>
 	            </td>
 	            <td>
-	                <input type="password" id="txtDBpassword" name="dbPassword" value="${mgrWorkspaceConnect.dbPassword}" height="20px" width="150px" style="text-align: left"> 
+	                <input type="password" id="txtDBpassword" name="dbPassword" value="${workspaceForm.dbPassword!""}" height="20px" width="150px" style="text-align: left"> 
 	            </td>
 	        </tr>
 	         <tr>
@@ -59,7 +59,7 @@
 	                <label>オーナー： </label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtOwner" name="owner" value="${mgrWorkspaceConnect.owner}" height="20px" width="150px" style="text-align: left"> 
+	                <input type="text" id="txtOwner" name="owner" value="${workspaceForm.owner!""}" height="20px" width="150px" style="text-align: left"> 
 	            </td>
 	        </tr>
 	         <tr>
@@ -67,10 +67,15 @@
 	                <label>DBサーバ： </label>
 	            </td>
 	            <td>
-	                <input type="text" id="txtDBserver" name="dbServer" value="${mgrWorkspaceConnect.dbServer}" readonly="readonly" height="20px" width="150px" style="text-align: left">
+	                <input type="text" id="txtDBserver" name="dbServer" value="${workspaceForm.dbServer!""}" readonly="readonly" height="20px" width="150px" style="text-align: left">
 	            </td>
 	        </tr>
          </#if>
     </table>
+    <#if messages??> <#list messages as message>
+    <div>
+        <b style="color: red;">${message.getContent()}</b>
+    </div>
+    </#list> </#if>
 </form>
 </@standard.standardPage>

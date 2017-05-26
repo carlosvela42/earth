@@ -3,9 +3,10 @@ package co.jp.nej.earth.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.sql.QDocument;
-import co.jp.nej.earth.util.DateUtil;
 
 public class Document extends BaseModel<Document> {
 
@@ -13,8 +14,11 @@ public class Document extends BaseModel<Document> {
      *
      */
     private static final long serialVersionUID = 1L;
+    @NotEmpty(message = "E0002,workitemId")
     private String workitemId;
+    @NotEmpty(message = "E0002,folderItemNo")
     private Integer folderItemNo;
+    @NotEmpty(message = "E0002,documentNo")
     private Integer documentNo;
     private MgrTemplate mgrTemplate;
     private Integer pageCount;
@@ -29,7 +33,6 @@ public class Document extends BaseModel<Document> {
 
     public Document() {
         this.setqObj(QDocument.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**

@@ -41,7 +41,7 @@ public class StrLogAccessDaoImpl extends BaseDaoImpl<StrLogAccess> implements St
             strLogAccesses = earthQueryFactory.select(selectList).from(qStrLogAccess).fetch();
             return strLogAccesses;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 
@@ -60,7 +60,7 @@ public class StrLogAccessDaoImpl extends BaseDaoImpl<StrLogAccess> implements St
             }
             return true;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 }

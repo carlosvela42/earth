@@ -1,26 +1,20 @@
 package co.jp.nej.earth.dao;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.manager.connection.ConnectionManager;
-import co.jp.nej.earth.manager.connection.EarthQueryFactory;
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.util.EModelUtil;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-import com.querydsl.sql.RelationalPathBase;
-import com.querydsl.sql.SQLQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.manager.connection.*;
+import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.model.enums.*;
+import co.jp.nej.earth.util.*;
+import com.querydsl.core.types.*;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.sql.*;
+import com.querydsl.sql.dml.*;
+import org.slf4j.*;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.lang.reflect.Field;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.Map.*;
 
 public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> {
 
@@ -32,9 +26,8 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
 
     @SuppressWarnings("unchecked")
     public BaseDaoImpl() throws Exception {
-
         this.instance = ((Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass())
-                .getActualTypeArguments()[0]).newInstance();
+            .getActualTypeArguments()[0]).newInstance();
     }
 
     /**
@@ -98,6 +91,12 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
     }
 
     @SuppressWarnings("unchecked")
+    public T findOne(Map<Path<?>, Object> keyMap) throws EarthException {
+        String workspaceId = co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
+        return findOne(workspaceId, keyMap);
+    }
+
+    @SuppressWarnings("unchecked")
     public T findOne(String workspaceId, Map<Path<?>, Object> keyMap) throws EarthException {
         EarthQueryFactory queryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
         return (T) executeWithException(() -> {
@@ -110,10 +109,16 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
             Predicate predicate = EModelUtil.buildCondition(keyMap, qObj, false);
 
             LOG.debug(EModelUtil.cleanQuery(queryFactory.select(selectList).from(qObj).where(predicate).getSQL()));
+            LOG.info(queryFactory.select(selectList).from(qObj).where(predicate).getSQL().getSQL());
             T result = queryFactory.select(selectList).from(qObj).where(predicate).fetchOne();
 
             return result;
         });
+    }
+
+    public long delete(Map<Path<?>, Object> keyMap) throws EarthException {
+        String workspaceId = co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
+        return delete(workspaceId, keyMap);
     }
 
     public long delete(String workspaceId, Map<Path<?>, Object> keyMap) throws EarthException {
@@ -162,19 +167,27 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
     }
 
     @Override
-    public long add(String workspaceId, T t) throws EarthException {
+    public long add(T t) throws EarthException {
+        String workspaceId = co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
+        return add(workspaceId, t);
+    }
 
+    @Override
+    public long add(String workspaceId, T t) throws EarthException {
+        if (workspaceId == null) {
+            workspaceId = co.jp.nej.earth.model.constant.Constant.EARTH_WORKSPACE_ID;
+        }
         LOG.info("Call {}.add with workspace: {}", instance.getClass().getSimpleName(), workspaceId);
         RelationalPathBase<T> qObj = this.instance.getqObj();
         EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
         return (long) executeWithException(() -> {
-            return earthQueryFactory.insert(qObj).populate(t).execute();
+            return insertClause(earthQueryFactory, qObj, t).execute();
         });
     }
 
     @Override
     public long update(String workspaceId, Map<Path<?>, Object> keyMap, Map<Path<?>, Object> updateMap)
-            throws EarthException {
+        throws EarthException {
 
         EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
         return (long) executeWithException(() -> {
@@ -185,15 +198,46 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
             List<Path<?>> paths = new ArrayList<>();
             List<Object> values = new ArrayList<>();
             Iterator<Entry<Path<?>, Object>> it = updateMap.entrySet().iterator();
+
+            boolean hasLastUpdateTime = false;
             while (it.hasNext()) {
                 Map.Entry<Path<?>, Object> pair = (Map.Entry<Path<?>, Object>) it.next();
+                if (pair.getKey().getMetadata().getName().equals(ColumnNames.LAST_UPDATE_TIME.toString())) {
+                    hasLastUpdateTime = true;
+                }
                 paths.add(pair.getKey());
                 values.add(pair.getValue());
             }
+
+            if (!hasLastUpdateTime) {
+                StringPath lastUpdateTime = Expressions.stringPath(ColumnNames.LAST_UPDATE_TIME.toString());
+                paths.add(lastUpdateTime);
+                values.add(DateUtil.getCurrentDateString());
+            }
+
             return earthQueryFactory.update(qObj).set(paths, values).where(predicate).execute();
         });
     }
 
+    protected SQLUpdateClause updateClause(EarthQueryFactory earthQueryFactory, RelationalPathBase<T> qObject)
+        throws EarthException {
+        StringPath lastUpdateTime = Expressions.stringPath(ColumnNames.LAST_UPDATE_TIME.toString());
+
+        return earthQueryFactory.update(qObject).set(lastUpdateTime, DateUtil.getCurrentDateString());
+    }
+
+    protected SQLInsertClause insertClause(EarthQueryFactory earthQueryFactory, RelationalPathBase<T> qObject, T t)
+        throws EarthException {
+        try {
+            Field aField = this.instance.getClass().getSuperclass()
+                .getDeclaredField(ColumnNames.LAST_UPDATE_TIME.toString());
+            aField.setAccessible(true);
+            aField.set(t, DateUtil.getCurrentDateString());
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            throw new EarthException(e);
+        }
+        return earthQueryFactory.insert(qObject).populate(t);
+    }
 
     public interface DaoCaller {
         Object execute() throws EarthException;
@@ -203,8 +247,7 @@ public abstract class BaseDaoImpl<T extends BaseModel<T>> implements BaseDao<T> 
         try {
             return caller.execute();
         } catch (Exception ex) {
-            LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 }

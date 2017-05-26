@@ -7,6 +7,7 @@ import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.model.entity.MgrUserProfile;
+import co.jp.nej.earth.util.ConversionUtil;
 import co.jp.nej.earth.util.EStringUtil;
 import org.junit.After;
 import org.junit.Assert;
@@ -103,7 +104,7 @@ public class UserServiceTest extends BaseTest {
         LOG.info("UserId: " + mgrUsers.get(0).getUserId());
         detail = userService.getDetail(mgrUsers.get(0).getUserId());
         MgrUser mgrUser = (MgrUser) detail.get("mgrUser");
-        List<MgrProfile> mgrProfiles = (List<MgrProfile>) detail.get("mgrProfiles");
+        List<MgrProfile> mgrProfiles = ConversionUtil.castList(detail.get("mgrProfiles"), MgrProfile.class);
         LOG.info("UserId: " + mgrUser.getUserId() + " " + mgrProfiles.size());
         Assert.assertTrue(EStringUtil.contains(mgrUser.getUserId(), mgrUsers.get(0).getUserId())
                 && mgrProfiles.size() == RECORD);

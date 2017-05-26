@@ -1,8 +1,9 @@
 package co.jp.nej.earth.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.sql.QLayer;
-import co.jp.nej.earth.util.DateUtil;
 
 public class Layer extends BaseModel<Layer> {
 
@@ -13,6 +14,7 @@ public class Layer extends BaseModel<Layer> {
     private String workitemId;
     private Integer folderItemNo;
     private Integer documentNo;
+    @NotEmpty(message = "E0002,layerNo")
     private Integer layerNo;
     private MgrTemplate mgrTemplate;
     private String ownerId;
@@ -23,7 +25,6 @@ public class Layer extends BaseModel<Layer> {
 
     public Layer() {
         this.setqObj(QLayer.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     /**

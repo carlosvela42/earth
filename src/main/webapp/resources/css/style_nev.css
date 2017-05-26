@@ -1,0 +1,43 @@
+.content_main_common {
+    width: 1250px;
+    padding: 0 15px;
+    margin: 20px auto 0;
+}
+
+.content_title {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 28px;
+    color: #01A9DB;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.pull-left {
+    float: left !important;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+.clearfix {
+    clear: both;
+}
+
+.center-block {
+    margin: auto;
+    padding-top: 27px;
+}
+
+.content_foot {
+    height: 80px;
+}
+
+.filter {
+    display: none;
+}
+
+.form-cancel{
+    display: inline-block;
+}

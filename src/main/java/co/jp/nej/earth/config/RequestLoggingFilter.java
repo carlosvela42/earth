@@ -1,21 +1,12 @@
 package co.jp.nej.earth.config;
 
-import java.io.IOException;
+import co.jp.nej.earth.model.constant.Constant.*;
+import co.jp.nej.earth.util.*;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import co.jp.nej.earth.model.constant.Constant.Session;
-import co.jp.nej.earth.util.EStringUtil;
-import co.jp.nej.earth.util.LoginUtil;
+import javax.servlet.*;
+import javax.servlet.annotation.*;
+import javax.servlet.http.*;
+import java.io.*;
 
 @WebFilter("/*")
 public class RequestLoggingFilter implements Filter {
@@ -33,19 +24,17 @@ public class RequestLoggingFilter implements Filter {
         HttpSession session = request.getSession();
         String loginURI = request.getContextPath() + "/login";
         String requestUri = request.getRequestURI();
-        boolean loginRequest = requestUri.equals(loginURI);
 
-        if (LoginUtil.isLogin(session) || loginRequest || requestUri.contains("/resources/")
+        if (LoginUtil.isLogin(session) || requestUri.equals(loginURI) || requestUri.contains("/resources/")
                 || requestUri.contains("/WS/")) {
             chain.doFilter(request, response);
         } else {
-            if (!loginRequest) {
-                String lastRequestView = request.getRequestURI().replaceAll(request.getContextPath() + "/",
-                        EStringUtil.EMPTY);
-                if (!EStringUtil.isEmpty(lastRequestView)) {
-                    session.setAttribute(Session.LAST_REQUEST_VIEW, request.getRequestURI());
-                }
+            String lastRequestView = request.getRequestURI().replaceAll(request.getContextPath() + "//",
+                    EStringUtil.EMPTY);
+            if (!EStringUtil.isEmpty(lastRequestView)) {
+                session.setAttribute(Session.LAST_REQUEST_VIEW, lastRequestView);
             }
+
             response.sendRedirect(loginURI);
         }
     }

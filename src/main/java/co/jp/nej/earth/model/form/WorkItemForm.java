@@ -2,7 +2,7 @@ package co.jp.nej.earth.model.form;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class WorkItemForm {
+public class WorkItemForm extends RestToken {
     @NotEmpty(message = "E0002,workspaceId")
     private String workspaceId;
     @NotEmpty(message = "E0002,workItemId")

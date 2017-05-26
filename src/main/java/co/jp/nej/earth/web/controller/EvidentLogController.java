@@ -22,7 +22,7 @@ import co.jp.nej.earth.util.EStringUtil;
 
 @Controller
 @RequestMapping("/evidentLog")
-public class EvidentLogController {
+public class EvidentLogController extends BaseController {
 
     @Autowired
     private EvidentLogService evidentLogService;

@@ -183,9 +183,19 @@ IV.prototype.swapBefore = function() {
 	imageViewer.documents[imageViewer.cDocId-1].scale = imageViewer.scale;
 	imageViewer.documents[imageViewer.cDocId-1].rotate = imageViewer.rotate;
 	for (var j = 1; j <= imageViewer.layerCount; j++) {
-		if(imageViewer.layerName[j - 1]=='')
-		imageViewer.documents[imageViewer.cDocId-1].layers[j-1] = imageViewer.layerName[j - 1];
-		
+		if(typeof imageViewer.documents[imageViewer.cDocId-1].layers[j-1]== 'undefined'){
+		imageViewer.documents[imageViewer.cDocId-1].layers[j-1] = imageViewer.documents[imageViewer.cDocId-1].layers[j-2];
+		}
+		imageViewer.documents[imageViewer.cDocId-1].layers[j-1].layerNo = imageViewer.layerName[j - 1];
+		imageViewer.documents[imageViewer.cDocId-1].layers[j-1].ownerId = imageViewer.layerOwner[j - 1];
+		imageViewer.documents[imageViewer.cDocId-1].layers[j-1].layerDisplay = imageViewer.layerDisplay[j - 1];
+		imageViewer.documents[imageViewer.cDocId-1].layers[j-1].lastUpdateTime = imageViewer.layerModified[j - 1];
+		imageViewer.documents[imageViewer.cDocId-1].layers[j-1].layerCreated = imageViewer.layerCreated[j - 1];
+		imageViewer.documents[imageViewer.cDocId-1].layerActive = imageViewer.layerActive;
+		imageViewer.documents[imageViewer.cDocId-1].layers[j-1].annotations = '{}';
+		$('.'+imageViewer.layerName[j - 1]).each(function( index ) {
+			imageViewer.documents[imageViewer.cDocId-1].layers[j-1].annotations += $( this)[0].outerHTML;
+		});
 	}
 }
 

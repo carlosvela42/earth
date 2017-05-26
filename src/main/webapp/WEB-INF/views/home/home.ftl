@@ -18,6 +18,10 @@
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/site/showList">Site<span
                     class="fa arrow"></span></a>
         </li>
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/directory/showList">Directory<span
+                    class="fa arrow"></span></a>
+        </li>
         <h3>TUNGNT</h3>
         <li>
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/imageviewer">Image Viewer New<span
@@ -60,6 +64,12 @@
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/licenseHistory/initLicenseHistoryScreen">License
                 History<span
                         class="fa arrow"></span></a>
+        </li>
+        <h3>SONTA Test</h3>
+
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/process/showList">ProcessList<span
+                    class="fa arrow"></span></a>
         </li>
     </ul>
     </div>

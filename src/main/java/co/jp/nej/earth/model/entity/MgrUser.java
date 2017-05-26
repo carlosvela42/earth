@@ -1,12 +1,12 @@
 package co.jp.nej.earth.model.entity;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QMgrUser;
-import co.jp.nej.earth.util.DateUtil;
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrUser;
 
 public class MgrUser extends BaseModel<MgrUser> implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(MgrUser.class);
@@ -23,7 +23,6 @@ public class MgrUser extends BaseModel<MgrUser> implements Serializable {
     public MgrUser(){
         LOG.debug("Call to blank contructor");
         this.setqObj(QMgrUser.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
 

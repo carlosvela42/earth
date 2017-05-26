@@ -1,38 +1,24 @@
 package co.jp.nej.earth.web.controller;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.model.form.*;
+import co.jp.nej.earth.model.ws.*;
+import co.jp.nej.earth.service.*;
+import co.jp.nej.earth.util.*;
+import org.apache.commons.lang3.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+import org.springframework.ui.*;
+import org.springframework.util.*;
+import org.springframework.validation.*;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.MgrWorkspace;
-import co.jp.nej.earth.model.form.DeleteProcessForm;
-import co.jp.nej.earth.model.form.ProcessDetailForm;
-import co.jp.nej.earth.model.form.ProcessForm;
-import co.jp.nej.earth.model.ws.Response;
-import co.jp.nej.earth.service.ProcessService;
-import co.jp.nej.earth.service.SiteService;
-import co.jp.nej.earth.service.WorkspaceService;
+import javax.servlet.http.*;
+import javax.validation.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
  *
@@ -41,7 +27,7 @@ import co.jp.nej.earth.service.WorkspaceService;
  */
 @Controller
 @RequestMapping("/process")
-public class ProcessController {
+public class ProcessController extends BaseController {
 
     @Autowired
     private WorkspaceService workspaceService;
@@ -49,6 +35,9 @@ public class ProcessController {
     private ProcessService processService;
     @Autowired
     private SiteService siteService;
+
+    @Autowired
+    private ValidatorUtil validatorUtil;
 
     /**
      * get processes and workspaces from db
@@ -58,17 +47,10 @@ public class ProcessController {
      * @return
      * @throws EarthException
      */
-    @RequestMapping(value = "/showList", method = RequestMethod.GET)
-    public String showList(@RequestParam(value = "workspaceId", required = false) String workspaceId, Model model)
-            throws EarthException {
-        // String workSpaceId = (String) request.getAttribute("workspaceId");
-        // get all work space
-        List<MgrWorkspace> workspaces = workspaceService.getAll();
-        // if workspace id from parameter is null
-        if (workspaceId == null || workspaceId.isEmpty()) {
-            workspaceId = workspaces.get(0).getWorkspaceId();
-        }
-        model.addAttribute("workspaces", workspaces);
+    @RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
+    public String showList(Model model, HttpServletRequest request) throws EarthException {
+        SessionUtil.loadWorkspaces(workspaceService, model, request);
+        String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
         model.addAttribute("processes", processService.getAllByWorkspace(workspaceId));
         return "process/processList";
     }
@@ -76,14 +58,13 @@ public class ProcessController {
     /**
      * get list site id
      *
-     * @param workSpaceId
      * @return
      * @throws EarthException
      */
-    @RequestMapping(value = "/addNew", method = RequestMethod.POST)
-    public @ResponseBody List<Integer> addNew(@RequestAttribute("workSpaceId") String workSpaceId)
-            throws EarthException {
-        return siteService.getAllSiteIds(workSpaceId);
+    @RequestMapping(value = "/addNew", method = RequestMethod.GET)
+    public String addNew(Model model, HttpServletRequest request) throws EarthException {
+        loadInfo(request, model, new ProcessForm());
+        return "process/addProcess";
     }
 
     /**
@@ -94,16 +75,18 @@ public class ProcessController {
      * @throws EarthException
      */
     @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> insertOne(@ModelAttribute("processForm") ProcessForm processForm)
-            throws EarthException {
-        Map<String, Object> result = new HashMap<>();
-        Response respone = processService.validateProcess(processForm);
-        if (!respone.isResult()) {
-            result.put("message", respone.getMessage());
-            return result;
+    public String insertOne(@Valid @ModelAttribute("processForm") ProcessForm processForm, BindingResult result,
+            Model model, HttpServletRequest request) throws EarthException {
+        List<Message> messages = validatorUtil.validate(result);
+        messages.addAll(processService.validateProcess(processForm));
+        if (messages.size() > 0) {
+            loadInfo(request, model, processForm);
+            model.addAttribute("messages", messages);
+            return "process/addProcess";
         }
-        result.put("success", processService.insertOne(processForm));
-        return result;
+        processForm.setWorkspaceId(SessionUtil.getSearchConditionWorkspaceId(request.getSession()));
+        processService.insertOne(processForm);
+        return redirectToList();
     }
 
     /**
@@ -113,13 +96,18 @@ public class ProcessController {
      * @return
      * @throws EarthException
      */
-    @RequestMapping(value = "/showDetail", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> showDetail(
-            @ModelAttribute("processDetailForm") ProcessDetailForm processDetailForm) throws EarthException {
-        Map<String, Object> result = processService.getDetail(processDetailForm.getWorkspaceId(),
-                processDetailForm.getProcessId());
-        result.put("siteIds", siteService.getAllSiteIds(processDetailForm.getWorkspaceId()));
-        return result;
+    @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
+    public String showDetail(String processId, HttpServletRequest request, Model model) throws EarthException {
+        String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
+        Map<String, Object> result = processService.getDetail(workspaceId, processId);
+        ProcessForm processForm = new ProcessForm();
+        processForm.setProcess((MgrProcess) result.get("process"));
+        processForm.setStrageDb((StrageDb) result.get("strageDb"));
+        processForm.setStrageFile((StrageFile) result.get("strageFile"));
+
+        loadInfo(request, model, processForm);
+
+        return "process/addProcess";
     }
 
     /**
@@ -130,16 +118,19 @@ public class ProcessController {
      * @throws EarthException
      */
     @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> updateOne(@ModelAttribute("processForm") ProcessForm processForm)
-            throws EarthException {
-        Map<String, Object> result = new HashMap<>();
-        Response respone = processService.validateProcess(processForm);
-        if (!respone.isResult()) {
-            result.put("message", respone.getMessage());
-            return result;
+    public String updateOne(@Valid @ModelAttribute("processForm") ProcessForm processForm, BindingResult result,
+            HttpServletRequest request, Model model) throws EarthException {
+        List<Message> messages = validatorUtil.validate(result);
+        messages.addAll(processService.validateProcess(processForm));
+
+        if (messages.size() > 0) {
+            loadInfo(request, model, processForm);
+            model.addAttribute("messages", messages);
+            return "process/addProcess";
         }
-        result.put("success", processService.updateOne(processForm));
-        return result;
+
+        processService.updateOne(processForm);
+        return redirectToList();
     }
 
     /**
@@ -150,8 +141,7 @@ public class ProcessController {
      * @throws EarthException
      */
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> deleteList(
-            @RequestBody DeleteProcessForm deleteProcessForm) throws EarthException {
+    public @ResponseBody Map<String, Object> deleteList(DeleteProcessForm deleteProcessForm) throws EarthException {
         Map<String, Object> result = new HashMap<>();
         Response respone = processService.validateDeleteAction(deleteProcessForm);
         if (!respone.isResult()) {
@@ -160,6 +150,11 @@ public class ProcessController {
         }
         result.put("result", processService.deleteList(deleteProcessForm));
         return result;
+    }
+
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    public String cancel() {
+        return redirectToList();
     }
 
     /**
@@ -181,5 +176,30 @@ public class ProcessController {
         response.setContentLength((int) file.length());
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
         FileCopyUtils.copy(inputStream, response.getOutputStream());
+    }
+
+    private void loadInfo(HttpServletRequest request, Model model, ProcessForm processForm) throws EarthException {
+        String workSpaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
+        model.addAttribute("siteIds", siteService.getAllSiteIds(workSpaceId));
+        model.addAttribute("workspaceId", workSpaceId);
+
+        MgrProcess process = processForm.getProcess();
+        if (process == null) {
+            process = new MgrProcess();
+            process.setDocumentDataSavePath("database");
+        }
+        model.addAttribute("process", process);
+
+        StrageDb strageDb = processForm.getStrageDb();
+        if (strageDb == null) {
+            strageDb = new StrageDb();
+        }
+        model.addAttribute("strageDb", strageDb);
+
+        StrageFile strageFile = processForm.getStrageFile();
+        if (strageFile == null) {
+            strageFile = new StrageFile();
+        }
+        model.addAttribute("strageFile", strageFile);
     }
 }

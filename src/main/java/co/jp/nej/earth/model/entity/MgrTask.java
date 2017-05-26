@@ -2,7 +2,6 @@ package co.jp.nej.earth.model.entity;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrTask;
-import co.jp.nej.earth.util.DateUtil;
 
 /**
  *
@@ -10,6 +9,10 @@ import co.jp.nej.earth.util.DateUtil;
  *
  */
 public class MgrTask extends BaseModel<MgrTask> {
+    /**
+     * Serial Version UID.
+     */
+    private static final long serialVersionUID = 1L;
     private String taskId;
     private String taskName;
     private String className;
@@ -17,7 +20,6 @@ public class MgrTask extends BaseModel<MgrTask> {
 
     public MgrTask() {
         this.setqObj(QMgrTask.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrTask(String taskId, String taskName, String className, String processId) {

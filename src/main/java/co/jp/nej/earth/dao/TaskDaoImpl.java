@@ -32,7 +32,7 @@ public class TaskDaoImpl extends BaseDaoImpl<MgrTask> implements TaskDao {
             return mapTaks;
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 }

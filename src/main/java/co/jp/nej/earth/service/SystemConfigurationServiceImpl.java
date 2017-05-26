@@ -6,13 +6,13 @@ import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import co.jp.nej.earth.dao.MstSystemDao;
 import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.constant.Constant.AgentBatch;
 import co.jp.nej.earth.model.entity.MstSystem;
+import co.jp.nej.earth.model.ws.RestResponse;
 
 /**
  *
@@ -20,8 +20,7 @@ import co.jp.nej.earth.model.entity.MstSystem;
  *
  */
 @Service
-@Transactional(rollbackFor = EarthException.class, propagation = Propagation.REQUIRED)
-public class SystemConfigurationServiceImpl implements SystemConfigurationService {
+public class SystemConfigurationServiceImpl extends BaseService implements SystemConfigurationService {
 
     @Autowired
     private MstSystemDao mstSystemDao;
@@ -31,22 +30,42 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
      */
     @Override
     public int updateSystemConfig() throws EarthException {
-        // get system config from db
-        MstSystem mstSystem = mstSystemDao.getMstSystemBySectionAndVariable(AgentBatch.OPERATION_DATE,
-                AgentBatch.CURRENT_DATE);
-        SimpleDateFormat formatter = new SimpleDateFormat(AgentBatch.DATE_FORMAT);
-        Calendar configDate = Calendar.getInstance();
-        try {
-            // set value of configDate by system date
-            configDate.setTime(formatter.parse(mstSystem.getConfigValue()));
-        } catch (ParseException e) {
-            throw new EarthException(e.getMessage());
-        }
-        // add systemdate to 1 day
-        configDate.add(Calendar.DATE, 1);
-        // update system date to system config
-        return (int) mstSystemDao.updateMstSystem(AgentBatch.OPERATION_DATE,
-                AgentBatch.CURRENT_DATE, formatter.format(configDate.getTime()));
+        return (int) this.executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            try {
+                // get system config from db
+                MstSystem mstSystem = mstSystemDao.getMstSystemBySectionAndVariable(AgentBatch.OPERATION_DATE,
+                        AgentBatch.CURRENT_DATE);
+                SimpleDateFormat formatter = new SimpleDateFormat(AgentBatch.DATE_FORMAT);
+                Calendar configDate = Calendar.getInstance();
+                try {
+                    // set value of configDate by system date
+                    configDate.setTime(formatter.parse(mstSystem.getConfigValue()));
+                } catch (ParseException e) {
+                    throw new EarthException(e.getMessage());
+                }
+                // add systemdate to 1 day
+                configDate.add(Calendar.DATE, 1);
+                // update system date to system config
+                return (int) mstSystemDao.updateMstSystem(AgentBatch.OPERATION_DATE, AgentBatch.CURRENT_DATE,
+                        formatter.format(configDate.getTime()));
+            } catch (Exception e) {
+                throw new EarthException(e);
+            }
+        });
     }
 
+    @Override
+    public RestResponse updateSystemConfig(String inputDate) throws EarthException {
+        return (RestResponse) this.executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            try {
+                RestResponse respone = new RestResponse();
+                // update system date to system config
+                respone.setResult(mstSystemDao.updateMstSystem(AgentBatch.OPERATION_DATE, AgentBatch.CURRENT_DATE,
+                        inputDate) > 0);
+                return respone;
+            } catch (Exception e) {
+                throw new EarthException(e);
+            }
+        });
+    }
 }

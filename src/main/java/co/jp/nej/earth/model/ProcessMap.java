@@ -1,9 +1,13 @@
 package co.jp.nej.earth.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import co.jp.nej.earth.model.entity.MgrTemplate;
 
 public class ProcessMap {
+    @NotEmpty(message = "E0002,processId")
     private Integer processId;
+    @NotEmpty(message = "E0002,workItemId")
     private String workItemId;
     private MgrTemplate mgrTemplate;
     private TemplateData processData;

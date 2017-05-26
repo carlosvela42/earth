@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.sql.QMgrSchedule;
-import co.jp.nej.earth.util.DateUtil;
 
 public class MgrSchedule extends BaseModel<MgrSchedule> {
 
@@ -35,11 +34,10 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     public MgrSchedule() {
         LOG.debug("Call to blank contructor");
         this.setqObj(QMgrSchedule.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrSchedule(String scheduleId, int processId, String processName, String taskId, String taskName,
-                       String hostName, String processISevriceId, String startTime, String endTime) {
+                       String hostName, String processIServiceId, String startTime, String endTime) {
         this();
         this.scheduleId = scheduleId;
         this.processId = processId;
@@ -47,9 +45,29 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
         this.taskId = taskId;
         this.taskName = taskName;
         this.hostName = hostName;
-        this.processIServiceId = processISevriceId;
+        this.processIServiceId = processIServiceId;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public MgrSchedule(String scheduleId, int processId, String taskId, String hostName, String processIServiceId,
+                       String enableDisable, String startTime, String endTime, String nextRunDate,
+                       String runIntervalDay, String runIntervalHour, String runIntervalMinute,
+                       String runIntervalSecond) {
+        this();
+        this.scheduleId = scheduleId;
+        this.processId = processId;
+        this.taskId = taskId;
+        this.hostName = hostName;
+        this.processIServiceId = processIServiceId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.enableDisable=enableDisable;
+        this.nextRunDate=nextRunDate;
+        this.runIntervalDay=runIntervalDay;
+        this.runIntervalHour=runIntervalHour;
+        this.runIntervalMinute=runIntervalMinute;
+        this.runIntervalSecond=runIntervalSecond;
     }
 
     /**

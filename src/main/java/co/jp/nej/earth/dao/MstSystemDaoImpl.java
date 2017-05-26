@@ -38,7 +38,7 @@ public class MstSystemDaoImpl implements MstSystemDao {
                     .select(selectList).from(qMstSystem).where(qMstSystem.section.eq(section)).fetch();
             return listMstSystem;
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
 
         }
     }
@@ -67,7 +67,7 @@ public class MstSystemDaoImpl implements MstSystemDao {
             return (int) earthQueryFactory.update(qMstSystem).set(qMstSystem.configValue, configValue)
                     .where(qMstSystem.section.eq(section).and(qMstSystem.variableName.eq(variable))).execute();
         } catch (Exception ex) {
-            throw new EarthException(ex.getMessage());
+            throw new EarthException(ex);
         }
     }
 }

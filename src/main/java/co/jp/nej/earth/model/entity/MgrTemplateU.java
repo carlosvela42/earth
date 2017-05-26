@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrTemplateU;
-import co.jp.nej.earth.util.DateUtil;
 
 /**
  * Created by minhtv on 3/29/2017.
@@ -26,7 +25,6 @@ public class MgrTemplateU extends BaseModel<MgrTemplateU> implements Serializabl
 
         LOG.debug("Call to blank constructor");
         this.setqObj(QMgrTemplateU.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrTemplateU(String userId, String templateId, int accessAuthority) {

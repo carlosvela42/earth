@@ -59,7 +59,7 @@ public class LoginControlDaoImpl extends BaseDaoImpl<CtlLogin> implements LoginC
                 strCals.add(strCal);
             }
         } catch (Exception e) {
-            throw new EarthException(e.getMessage());
+            throw new EarthException(e);
         }
         return strCals;
     }

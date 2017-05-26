@@ -5,6 +5,7 @@ import java.util.List;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.WorkItem;
 import co.jp.nej.earth.model.entity.CtlEvent;
+import co.jp.nej.earth.model.ws.RestResponse;
 
 /**
  *
@@ -60,4 +61,14 @@ public interface EventControlService {
      * @return
      */
     boolean deleteEvent(CtlEvent event, String workSpaceId) throws EarthException;
+
+    /**
+     * unlock event control
+     *
+     * @param workspaceId
+     * @param eventId
+     * @return
+     * @throws EarthException
+     */
+    RestResponse unlockEventControl(String workspaceId, String eventId) throws EarthException;
 }

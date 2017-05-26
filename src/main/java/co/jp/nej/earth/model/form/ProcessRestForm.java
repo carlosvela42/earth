@@ -1,9 +1,15 @@
 package co.jp.nej.earth.model.form;
 
+import javax.validation.Valid;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import co.jp.nej.earth.model.ProcessMap;
 
-public class ProcessRestForm {
+public class ProcessRestForm extends RestToken {
+    @NotEmpty(message = "E0002,workspaceId")
     private String workspaceId;
+    @Valid
     private ProcessMap datProcess;
 
     /**

@@ -1,26 +1,23 @@
 package co.jp.nej.earth.manager.connection;
 
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import co.jp.nej.earth.config.*;
+import co.jp.nej.earth.exception.*;
+import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.model.constant.*;
+import co.jp.nej.earth.model.constant.Constant.*;
+import co.jp.nej.earth.service.*;
+import co.jp.nej.earth.util.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.jdbc.datasource.*;
+import org.springframework.stereotype.*;
+import org.springframework.transaction.*;
+import org.springframework.util.*;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Provider;
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.util.StringUtils;
-
-import co.jp.nej.earth.config.JdbcConfig;
-import co.jp.nej.earth.config.SpringConnectionProvider;
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.MgrWorkspaceConnect;
-import co.jp.nej.earth.service.WorkspaceService;
+import javax.annotation.*;
+import javax.inject.*;
+import javax.sql.*;
+import java.sql.*;
+import java.util.*;
 
 @Component
 public class ConnectionManager {
@@ -31,7 +28,7 @@ public class ConnectionManager {
 
     private static JdbcConfig config;
     private static WorkspaceService wkService;
-    private static MessageSource messges;
+    private static EMessageResource messges;
 
     @Autowired
     private JdbcConfig jdbcConfig;
@@ -40,7 +37,7 @@ public class ConnectionManager {
     private WorkspaceService workspaceService;
 
     @Autowired
-    private MessageSource messageSource;
+    private EMessageResource messageSource;
 
     @PostConstruct
     public void initConnectionManager() {
@@ -65,10 +62,14 @@ public class ConnectionManager {
         }
     }
 
+    public static EarthQueryFactory getEarthQueryFactory() throws EarthException {
+        return getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
+    }
+
     public static EarthQueryFactory getEarthQueryFactory(String id) throws EarthException {
 
         if (StringUtils.isEmpty(id)) {
-            throw new EarthException(messges.getMessage("E0001", new String[] { "workspaceId" }, Locale.ENGLISH));
+            throw new EarthException(messges.get(ErrorCode.E0001, new String[] { ScreenItem.WORKSPACE_ID }));
         }
 
         if (!exists(id)) {
@@ -102,7 +103,7 @@ public class ConnectionManager {
         MgrWorkspaceConnect connection = wkService.getMgrConnectionByWorkspaceId(id);
         if (connection == null) {
             throw new EarthException(
-                    messges.getMessage("connection.notfound", new String[] { "workspaceId" }, Locale.ENGLISH));
+                    messges.get("connection.notfound", new String[] { ScreenItem.WORKSPACE_ID }));
         } else {
             DataSource dataSource = config.dataSource(connection.getWorkspaceId(), connection);
             addDataSource(id, dataSource);

@@ -45,5 +45,6 @@ public interface TemplateService {
 
     boolean updateOne(String workspaceId, MgrTemplate mgrTemplate) throws EarthException;
 
-    List<Message> checkExistsTemplate(MgrTemplate mgrTemplate) throws EarthException;
+    List<Message> checkExistsTemplate(MgrTemplate mgrTemplate, String dbUser) throws EarthException;
+
 }

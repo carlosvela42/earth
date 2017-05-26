@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrMenuCategory;
-import co.jp.nej.earth.util.DateUtil;
 
 /**
  *
@@ -29,7 +28,6 @@ public class MgrMenuCategory extends BaseModel<MgrMenuCategory> implements Seria
 
         LOG.debug("Call to blank constructor");
         this.setqObj(QMgrMenuCategory.newInstance());
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
     }
 
     public MgrMenuCategory(String functionCategoryId, String functionCategoryName, int functionSortNo) {

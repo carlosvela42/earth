@@ -10,7 +10,7 @@ import co.jp.nej.earth.model.constant.Constant.View;
 
 @Controller
 @RequestMapping("/imageviewer")
-public class ImageViewerController {
+public class ImageViewerController extends BaseController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String imageviewer(HttpServletRequest request) {
         return View.IMAGE_VIEWER;

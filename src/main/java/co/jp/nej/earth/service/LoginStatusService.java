@@ -10,7 +10,5 @@ public interface LoginStatusService {
 
     List<CtlLogin> getAll(Long offset, Long limit, OrderSpecifier<String> orderByColumn) throws EarthException;
 
-    CtlLogin insertOne(CtlLogin ctlLogin) throws EarthException;
-
     boolean deleteList(List<String> sessionIds) throws EarthException;
 }

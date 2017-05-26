@@ -1,15 +1,5 @@
 package co.jp.nej.earth.web.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.constant.Constant.Session;
@@ -18,15 +8,24 @@ import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.service.UserService;
 import co.jp.nej.earth.util.ConversionUtil;
 import co.jp.nej.earth.util.EStringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/showList", method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public String showList(Model model) {
         try {
             List<MgrUser> mgrUsers = userService.getAll();
@@ -54,7 +53,7 @@ public class UserController {
             } else {
                 boolean insertUser = userService.insertOne(mgrUser);
                 if (insertUser) {
-                    return "redirect: showList";
+                    return redirectToList();
                 } else {
                     model.addAttribute("messageError", "E1009");
                     mgrUser = setUser(mgrUser);
@@ -79,7 +78,7 @@ public class UserController {
             model.addAttribute("mgrProfiles", mgrProfiles);
             return "user/editUser";
         } catch (EarthException ex) {
-            return "redirect: showList";
+            return redirectToList();
         }
     }
 
@@ -88,9 +87,9 @@ public class UserController {
         try {
             List<String> userId = EStringUtil.getListFromString(userIds, "\\s*,\\s*");
             userService.deleteList(userId);
-            return "redirect: showList";
+            return redirectToList();
         } catch (EarthException ex) {
-            return "redirect: showList";
+            return redirectToList();
         }
     }
 
@@ -106,7 +105,7 @@ public class UserController {
             } else {
                 boolean updateUser = userService.updateOne(mgrUser);
                 if (updateUser) {
-                    return "redirect: showList";
+                    return redirectToList();
                 } else {
                     model.addAttribute("messageError", "E1009");
                     mgrUser = setUser(mgrUser);

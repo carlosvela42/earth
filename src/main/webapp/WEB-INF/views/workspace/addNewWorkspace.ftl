@@ -9,46 +9,45 @@
 	}
 </script>
 <form action="${rc.getContextPath()}/workspace/insertOne"
-	object="mgrWorkspaceConnect" method="post">
+	object="workspaceForm" method="post">
 	<table>
 		<tr>
 			<td><input type="submit" value="決定" class="button"></td>
 			<td><a href="${rc.getContextPath()}/workspace/list"
 				class="button">キャンセル</a></td>
 		<tr>
-			<td><label>ワークスペースID：</label></td>
+			<td>ワークスペースID：</td>
 			<td><input type="text" id="txtWorkspace" name="workspaceId"
-				value="${mgrWorkspaceConnect.workspaceId}" height="20px" width="150px" style="text-align: left" readonly="readonly"></td>
+				value="${workspaceForm.workspaceId!""}" height="20px" width="150px" style="text-align: left" readonly="readonly"></td>
 		</tr>
 		<tr>
-			<td><label>スキーマ名： </label></td>
+			<td>スキーマ名：</td>
 			<td><input type="text" id="txtSchemaName" onkeyup="input()"
 				name="schemaName" height="20px" width="150px"
 				style="text-align: left"></td>
 		</tr>
 		<tr>
-			<td><label>DBユーザ： </label></td>
+			<td>DBユーザ：</td>
 			<td><input type="text" id="txtDBuser" name="dbUser"
 				height="20px" width="150px" style="text-align: left" readonly="readonly"></td>
 		</tr>
 		<tr>
-			<td><label>DBユーザパスワード： </label></td>
+			<td>DBユーザパスワード：</td>
 			<td><input type="password" id="txtDBpassword"
 				name="dbPassword" height="20px" width="150px"
 				style="text-align: left"></td>
 		</tr>
 		<tr>
-			<td><label>オーナー： </label></td>
+			<td>オーナー：</td>
 			<td><input type="text" id="txtOwner" name="owner"
 				height="20px" width="150px" style="text-align: left"></td>
 		</tr>
 		<tr>
-			<td><label>DBサーバ： </label></td>
+			<td>DBサーバ:</td>
 			<td><input type="text" id="txtDBserver"
 				name="dbServer" height="20px" width="150px"
 				style="text-align: left"></td>
 		</tr>
-
 	</table>
 
 	<#if messages??> <#list messages as message>

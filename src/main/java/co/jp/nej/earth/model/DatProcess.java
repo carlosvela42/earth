@@ -1,7 +1,6 @@
 package co.jp.nej.earth.model;
 
 import co.jp.nej.earth.model.sql.QDatProcess;
-import co.jp.nej.earth.util.DateUtil;
 
 public class DatProcess extends BaseModel<DatProcess> {
     /**
@@ -16,7 +15,6 @@ public class DatProcess extends BaseModel<DatProcess> {
 
     public DatProcess() {
         super();
-        this.setLastUpdateTime(DateUtil.getCurrentDateString());
         this.setqObj(QDatProcess.newInstance());
     }
 

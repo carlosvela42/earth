@@ -1,19 +1,14 @@
 package co.jp.nej.earth.config;
 
-import java.util.Locale;
-import java.util.Properties;
+import org.springframework.context.*;
+import org.springframework.context.annotation.*;
+import org.springframework.context.support.*;
+import org.springframework.web.servlet.*;
+import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.i18n.*;
+import org.springframework.web.servlet.view.freemarker.*;
 
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
+import java.util.*;
 
 @EnableWebMvc
 class WebMvcConfig extends WebMvcConfigurerAdapter {
@@ -33,6 +28,7 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
         messageSource.setBasename(MESSAGE_SOURCE);
         messageSource.setCacheSeconds(CACHE_SECONDS);
         messageSource.setUseCodeAsDefaultMessage(true);
+        messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
 
@@ -50,7 +46,8 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
         configurer.setTemplateLoaderPaths("/WEB-INF/views/");
 
         Properties settings = new Properties();
-        settings.put("auto_import", "/common/standardPage.ftl as standard, spring.ftl as spring");
+        settings.put("auto_import", "/common/standardPage.ftl as standard, spring.ftl as spring, "
+                                    + "/common/component.ftl as component");
         //settings.put("auto_import", "/common/standardPage.ftl as standard");
         configurer.setFreemarkerSettings(settings);
         configurer.setDefaultEncoding("UTF-8");
