@@ -8,6 +8,7 @@ import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.model.entity.MgrUserProfile;
 import co.jp.nej.earth.util.ConversionUtil;
+import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EStringUtil;
 import org.junit.After;
 import org.junit.Assert;
@@ -52,29 +53,27 @@ public class UserServiceTest extends BaseTest {
 
     @Before
     public void before() throws EarthException {
-        MgrUser mgrUser;
-        MgrProfile mgrProfile;
-
         for (Integer i = 1; i <= RECORD; i++) {
             String userId = USER + i.toString();
             String name = NAME + i.toString();
             String password = PASS + i.toString();
             boolean changePassword = true;
-            mgrUser = new MgrUser(userId, name, password, password, changePassword);
+            MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword,
+                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
             userService.insertOne(mgrUser);
             String profileId = PROFILE + i.toString();
             String description = DESCRIPTION + i.toString();
             String ldapIdentifier = LAP + i.toString();
-            mgrProfile = new MgrProfile(profileId, i, description, ldapIdentifier);
+            MgrProfile mgrProfile = new MgrProfile(profileId, i, description, ldapIdentifier);
             profileService.insertOne(mgrProfile);
             mgrUsers.add(mgrUser);
             mgrProfiles.add(mgrProfile);
             userIds.add(userId);
             profileIds.add(profileId);
         }
-        MgrUserProfile mgrUserProfile;
+
         for (MgrProfile mgrProfile1 : mgrProfiles) {
-            mgrUserProfile = new MgrUserProfile(mgrUsers.get(0).getUserId(), mgrProfile1.getProfileId());
+            MgrUserProfile mgrUserProfile = new MgrUserProfile(mgrUsers.get(0).getUserId(), mgrProfile1.getProfileId());
             profileService.assignUsers(mgrProfile1.getProfileId(), new ArrayList<>(
                     Arrays.asList(mgrUsers.get(0).getUserId())));
             mgrUserProfiles.add(mgrUserProfile);
@@ -117,7 +116,8 @@ public class UserServiceTest extends BaseTest {
         String name = NAME + (RECORD + 1);
         String password = PASS + (RECORD + 1);
         boolean changePassword = true;
-        MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword);
+        MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword,
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
         List<Message> messages = userService.validate(mgrUser, changePassword);
         Assert.assertFalse(messages != null && messages.size() > 0);
         insertUser = userService.insertOne(mgrUser);
@@ -135,7 +135,8 @@ public class UserServiceTest extends BaseTest {
         String name = NAME + (RECORD + 1);
         String password = PASS + (RECORD + 1);
         boolean changePassword = false;
-        MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword);
+        MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword,
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
         List<Message> messages = userService.validate(mgrUser, false);
         Assert.assertFalse(messages != null && messages.size() > 0);
         updateUser = userService.updateOne(mgrUser);
@@ -143,7 +144,8 @@ public class UserServiceTest extends BaseTest {
 
         changePassword = false;
         messages = userService.validate(mgrUser, false);
-        mgrUser = new MgrUser(userId, name, password, password, changePassword);
+        mgrUser = new MgrUser(userId, name, password, password, changePassword,
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
         Assert.assertFalse(messages != null && messages.size() > 0);
         updateUser = userService.updateOne(mgrUser);
         Assert.assertTrue(updateUser);
@@ -177,7 +179,8 @@ public class UserServiceTest extends BaseTest {
             String name = NAME + (RECORD + i);
             String password = PASS + (RECORD + i);
             boolean changePassword = true;
-            MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword);
+            MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword,
+                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
             mgrUsers1.add(mgrUser);
             userIds.add(userId);
             LOG.info("Insert User : " + mgrUser.getUserId());

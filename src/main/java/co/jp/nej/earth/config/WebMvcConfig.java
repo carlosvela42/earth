@@ -1,14 +1,19 @@
 package co.jp.nej.earth.config;
 
-import org.springframework.context.*;
-import org.springframework.context.annotation.*;
-import org.springframework.context.support.*;
-import org.springframework.web.servlet.*;
-import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.i18n.*;
-import org.springframework.web.servlet.view.freemarker.*;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
-import java.util.*;
+import java.util.Locale;
+import java.util.Properties;
 
 @EnableWebMvc
 class WebMvcConfig extends WebMvcConfigurerAdapter {

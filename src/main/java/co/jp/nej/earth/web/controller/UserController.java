@@ -5,16 +5,21 @@ import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
+import co.jp.nej.earth.model.form.DeleteListForm;
+import co.jp.nej.earth.model.form.UserForm;
+import co.jp.nej.earth.service.ProfileService;
 import co.jp.nej.earth.service.UserService;
 import co.jp.nej.earth.util.ConversionUtil;
-import co.jp.nej.earth.util.EStringUtil;
+import co.jp.nej.earth.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +29,14 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProfileService profileService;
+
+    @Autowired
+    private ValidatorUtil validatorUtil;
+
+    private static final String URL = "user";
 
     @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public String showList(Model model) {
@@ -37,33 +50,36 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/addNew", method = RequestMethod.GET)
-    public String addNew() {
+    public String addNew(Model model) {
+        model.addAttribute("user", new MgrUser());
         return "user/addUser";
     }
 
     @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
-    public String insertOne(@ModelAttribute("mgrUser") MgrUser mgrUser, Model model) {
+    public String insertOne(@Valid @ModelAttribute("userForm") UserForm userForm, BindingResult result, Model model) {
+        MgrUser mgrUser = setMgrUser(userForm);
         try {
-            List<Message> messages = userService.validate(mgrUser, true);
+            List<Message> messages = validatorUtil.validate(result);
+            messages.addAll(userService.validate(mgrUser, true));
             if (messages != null && messages.size() > 0) {
                 model.addAttribute(Session.MESSAGES, messages);
                 mgrUser = setUser(mgrUser);
-                model.addAttribute("mgrUser", mgrUser);
+                model.addAttribute("user", mgrUser);
                 return "user/addUser";
             } else {
                 boolean insertUser = userService.insertOne(mgrUser);
                 if (insertUser) {
-                    return redirectToList();
+                    return redirectToList(URL);
                 } else {
                     model.addAttribute("messageError", "E1009");
                     mgrUser = setUser(mgrUser);
-                    model.addAttribute("mgrUser", mgrUser);
+                    model.addAttribute("user", mgrUser);
                     return "user/addUser";
                 }
             }
         } catch (EarthException ex) {
             mgrUser = setUser(mgrUser);
-            model.addAttribute("mgrUser", mgrUser);
+            model.addAttribute("user", mgrUser);
             return "user/addUser";
         }
     }
@@ -74,49 +90,53 @@ public class UserController extends BaseController {
             Map<String, Object> userDetail = userService.getDetail(userId);
             MgrUser mgrUser = (MgrUser) userDetail.get("mgrUser");
             List<MgrProfile> mgrProfiles = ConversionUtil.castList(userDetail.get("mgrProfiles"), MgrProfile.class);
-            model.addAttribute("mgrUser", mgrUser);
+            model.addAttribute("user", mgrUser);
             model.addAttribute("mgrProfiles", mgrProfiles);
-            return "user/editUser";
+            return "user/addUser";
         } catch (EarthException ex) {
             return redirectToList();
         }
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public String deleteList(@ModelAttribute("userIds") String userIds) {
+    public String deleteList(DeleteListForm form) {
         try {
-            List<String> userId = EStringUtil.getListFromString(userIds, "\\s*,\\s*");
-            userService.deleteList(userId);
-            return redirectToList();
+            List<String> userIds = form.getListIds();
+            userService.deleteList(userIds);
+            return redirectToList(URL);
         } catch (EarthException ex) {
-            return redirectToList();
+            return redirectToList(URL);
         }
     }
 
     @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
-    public String updateOne(@ModelAttribute("mgrUser") MgrUser mgrUser, Model model) {
-        try {
-            List<Message> messages = userService.validate(mgrUser, false);
-            if (messages != null && messages.size() > 0) {
-                model.addAttribute(Session.MESSAGES, messages);
-                mgrUser = setUser(mgrUser);
-                model.addAttribute("mgrUser", mgrUser);
-                return "user/editUser";
+    public String updateOne(@Valid @ModelAttribute("userForm") UserForm userForm, BindingResult result,
+                            Model model) throws EarthException {
+        MgrUser mgrUser = setMgrUser(userForm);
+        List<Message> messages = userService.validate(mgrUser, false);
+        model.addAttribute("mgrProfiles", profileService.getProfilesByUserId(mgrUser.getUserId()));
+        if (messages != null && messages.size() > 0) {
+            model.addAttribute(Session.MESSAGES, messages);
+            mgrUser = setUser(mgrUser);
+            model.addAttribute("user", mgrUser);
+            return "user/addUser";
+        } else {
+            boolean updateUser = userService.updateOne(mgrUser);
+            if (updateUser) {
+                return redirectToList(URL);
             } else {
-                boolean updateUser = userService.updateOne(mgrUser);
-                if (updateUser) {
-                    return redirectToList();
-                } else {
-                    model.addAttribute("messageError", "E1009");
-                    mgrUser = setUser(mgrUser);
-                    model.addAttribute("mgrUser", mgrUser);
-                    return "user/editUser";
-                }
+                model.addAttribute("messageError", "E1009");
+                mgrUser = setUser(mgrUser);
+                model.addAttribute("user", mgrUser);
+                return "user/addUser";
             }
-        } catch (EarthException ex) {
-            model.addAttribute("mgrUser", mgrUser);
-            return "user/editUser";
         }
+    }
+
+
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    public String cancel() {
+        return redirectToList(URL);
     }
 
     private MgrUser setUser(MgrUser mgrUser) {
@@ -124,4 +144,10 @@ public class UserController extends BaseController {
         mgrUser.setConfirmPassword("");
         return mgrUser;
     }
+
+    private MgrUser setMgrUser(UserForm userForm) {
+        return new MgrUser(userForm.getUserId(), userForm.getName(), userForm.getPassword(),
+                userForm.getConfirmPassword(), userForm.isChangePassword(), userForm.getLastUpdateTime());
+    }
+
 }

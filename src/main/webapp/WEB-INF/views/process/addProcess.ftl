@@ -2,50 +2,49 @@
     <@component.detailUpdatePanel object="process" formId="processForm"></@component.detailUpdatePanel>
 </#assign>
 
-<@standard.standardPage title="EDIT PROCESS" contentFooter=contentFooter>
-<div><span>プロセス編集画面</span></div>
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/process.js"></script>
+</#assign>
+
+<@standard.standardPage title=e.get("process.edit") contentFooter=contentFooter script=script>
 <br>
     <#assign isPersisted = (process.processId??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
+
 <form id="processForm" action="${rc.getContextPath()}/process/${formAction}" object="processForm" method="post" class="">
     <#include "../common/messages.ftl">
-
-    <table>
-        <tr>
-            <td>Process name</td>
-            <td><input type="text" name="process.processName" value="${process.processName!""}"/></td>
-        </tr>
-        <tr>
-            <td>Process version</td>
-            <td><input type="text" name="process.processVersion" value="${process.processVersion!""}"/></td>
-        </tr>
-        <tr>
-            <td>Description</td>
-            <td><input type="text" name="process.description" value="${process.description!""}"/></td>
-        </tr>
-        <tr>
-            <td>Process defination</td>
-            <td><input type="file" id="fileUpload" value="upload"/><input type="button" id="fileDownload" value="download"></td>
-        </tr>
-        <tr>
-            <td>Document data save path</td>
-            <td>
-                <#if process.documentDataSavePath == "database">
-                    <input type="radio" name="process.documentDataSavePath" class="documentDataSavePath"
-                           value="database" checked>Database
-                    <input type="radio" name="process.documentDataSavePath" class="documentDataSavePath" value="file">file
-                <#else>
-                    <input type="radio" name="process.documentDataSavePath" class="documentDataSavePath"
-                           value="database">Database
-                    <input type="radio" name="process.documentDataSavePath" class="documentDataSavePath" value="file"
-                           checked>file
-                </#if>
-            </td>
-        </tr>
-    </table>
-    <td><input type="hidden" name="process.processId" value="${process.processId!""}"/></td>
-    <td><input type="hidden" name="workspaceId" value="${workspaceId!""}"/></td>
-    <#include "saveTarget.ftl">
+    <div class="board-wrapper">
+        <div class="board board-half">
+            <table class="table_form">
+                <tr>
+                    <td width="50%">${e.get('process.id')}</td>
+                    <td>${process.processId!""}<input type="hidden" name="process.processId" value="${process.processId!""}"/></td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('process.name')}</td>
+                    <td><input type="text" name="process.processName" value="${process.processName!""}"/></td>
+                </tr>
+                <tr>
+                    <td>${e.get('process.version')}</td>
+                    <td><input type="text" name="process.processVersion" value="${process.processVersion!""}"/></td>
+                </tr>
+                <tr>
+                    <td>${e.get('process.description')}</td>
+                    <td><input type="text" name="process.description" value="${process.description!""}"/></td>
+                </tr>
+                <tr>
+                    <td>${e.get('process.definition')}</td>
+                    <td><input type="file" id="fileUpload" value="upload"/><input type="button" id="fileDownload" value="download"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="board-split"></div>
+        <div class="board board-half">
+            <#include "saveTarget.ftl">
+        </div>
+        <#--<div class="clearfix"></div>-->
+    </div>
+    <div><input type="hidden" name="workspaceId" value="${workspaceId!""}"/></div>
 
 </form>
 </@standard.standardPage>

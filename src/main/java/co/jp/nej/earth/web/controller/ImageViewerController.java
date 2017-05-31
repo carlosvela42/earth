@@ -20,4 +20,14 @@ public class ImageViewerController extends BaseController {
     public String template(HttpServletRequest request) {
         return View.IMAGE_VIEWER_TEMPLATE;
     }
+
+    @RequestMapping(value = "svgImageViewer", method = RequestMethod.GET)
+    public String svgImageviewer(HttpServletRequest request) {
+        return "imageViewer/svgImageViewer";
+    }
+
+    @RequestMapping(value = "specRunner", method = RequestMethod.GET)
+    public String specRunner(HttpServletRequest request) {
+        return "imageViewer/SpecRunner";
+    }
 }

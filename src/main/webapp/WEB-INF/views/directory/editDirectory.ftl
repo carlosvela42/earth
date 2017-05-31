@@ -56,8 +56,6 @@ $("#editDirectoryForm").on('keyup keypress', function(e) {
 				<input type="radio" name="CreateFile" value="disable"${disable!""}>許可しない<br> 
 				<input type="hidden" id="newCreateFile" name="newCreateFile" height="20px" width="150px"
 				            style="text-align: left" value="${directoryForm.newCreateFile!""}">
-
-
 			</td>
 		</tr>
 		<tr>
@@ -85,7 +83,7 @@ $("#editDirectoryForm").on('keyup keypress', function(e) {
 	<table style="width: 100%;">
 		<tr>
 			<td align="center" style="width: 50%;"><a
-				href="${rc.getContextPath()}/directory/showList" class="button">キャンセル</a></td>
+				href="${rc.getContextPath()}/directory" class="button">キャンセル</a></td>
 			<td align="center"><input type="submit" value="決定"
 				class="button"></td>
 		</tr>

@@ -25,14 +25,17 @@ import co.jp.nej.earth.dao.DataDbDao;
 import co.jp.nej.earth.dao.DataFileDao;
 import co.jp.nej.earth.dao.DirectoryDao;
 import co.jp.nej.earth.dao.DocumentDao;
+import co.jp.nej.earth.dao.LayerDao;
 import co.jp.nej.earth.dao.ProcessDao;
 import co.jp.nej.earth.dao.StrageFileDao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Directory;
 import co.jp.nej.earth.model.Document;
 import co.jp.nej.earth.model.DocumentImageKey;
+import co.jp.nej.earth.model.DocumentResponse;
 import co.jp.nej.earth.model.DocumentSavingInfo;
 import co.jp.nej.earth.model.FolderItem;
+import co.jp.nej.earth.model.Layer;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.MgrProcess;
 import co.jp.nej.earth.model.StrageFile;
@@ -69,6 +72,8 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
     @Autowired
     private DocumentDao documentDao;
     @Autowired
+    private LayerDao layerDao;
+    @Autowired
     private EMessageResource eMessageResource;
     @Autowired
     private ProcessDao processDao;
@@ -95,7 +100,8 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
                     // loop directories
                     for (Directory directory : directories) {
                         File directoryFile = new File(directory.getFolderPath());
-                        // check size of file input and all file in directory are small
+                        // check size of file input and all file in directory
+                        // are small
                         // than reserved disk volume size or not
                         if (Long.parseLong(directory.getReservedDiskVolSize()) > (FileUtil.getFileSize(file)
                                 + FileUtil.getDirectorySize(directoryFile))) {
@@ -313,6 +319,50 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
     }
 
     @Override
+    public RestResponse getDocumentList(String workspaceId, String workitemId, int folderItemNo, int documentNo,
+            String action) throws EarthException {
+        RestResponse respone = new RestResponse();
+        List<Document> lstDocument = ConversionUtil.castList(this.executeTransaction(workspaceId, () -> {
+            return documentDao.getAll(workspaceId, workitemId, folderItemNo);
+        }), Document.class);
+        Document doc = null;
+        int i = 0, rowNum = -1;
+        do {
+            int ss = lstDocument.get(i).getDocumentNo();
+            if (ss==documentNo) {
+                rowNum = i;
+            }
+            i++;
+        } while (rowNum < 0&&i<lstDocument.size());
+        switch(action){
+        case "first":
+            rowNum = 0;
+            break;
+        case "previous":
+            rowNum--;
+            break;
+        case "next":
+            rowNum++;
+            break;
+        case "last":
+            rowNum = lstDocument.size()-1;
+            break;
+        default:
+            break;
+        }
+        doc = lstDocument.get(rowNum);
+        int tmpDocNo = doc.getDocumentNo();
+        List<Layer> lstLayer = ConversionUtil.castList(this.executeTransaction(workspaceId, () -> {
+            return layerDao.getAll(workspaceId, workitemId, folderItemNo, tmpDocNo);
+        }), Layer.class);
+        doc.setLayers(lstLayer);
+        DocumentResponse docRes = new DocumentResponse(doc,rowNum,lstDocument.size());
+        respone.setResult(true);
+        respone.setData(docRes);
+        return respone;
+    }
+
+    @Override
     public RestResponse getDocument(HttpSession session, String workspaceId, String workitemId, Integer folderItemNo,
             Integer documentNo) throws EarthException {
         RestResponse respone = new RestResponse();
@@ -378,7 +428,8 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
                                 temp.setLastUpdateTime(document.getLastUpdateTime());
                                 temp.setPageCount(document.getPageCount());
                                 temp.setViewInformation(document.getViewInformation());
-                                // TODO don't know what is the value of action update
+                                // TODO don't know what is the value of action
+                                // update
                                 temp.setAction(0);
                                 isDocumentExisted = true;
                                 break;
@@ -551,7 +602,8 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
                                 temp.setPageCount(document.getPageCount());
                                 temp.setViewInformation(document.getViewInformation());
                                 temp.setLayers(document.getLayers());
-                                // TODO don't know what is the value of action update
+                                // TODO don't know what is the value of action
+                                // update
                                 temp.setAction(0);
                                 isDocumentExisted = true;
                                 break;
@@ -641,7 +693,8 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
         document.setWorkitemId(workitemId);
         document.setFolderItemNo(folderItemNo);
         document.setDocumentNo(documentNo);
-        // TODO because don't know how to get outputType, and width, height of image
+        // TODO because don't know how to get outputType, and width, height of
+        // image
         byte[] bytes = getBinaryDataOfDocument(workspaceId, document);
         if (bytes != null && bytes.length > 0) {
             respone.setData(ImageUtil.getThumbnail(bytes, WIDTH, HEIGHT, ImageUtil.PNG_TYPE));

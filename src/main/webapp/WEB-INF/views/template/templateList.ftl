@@ -3,14 +3,17 @@
 	window.onload = function() {
 		var countChecked = function() {
 			var str = ""
+			var count = 0;
 			$('input[name=DeleteRow]:checked').each(function() {
 				str += $(this).attr('value') + ",";
+				count++;
 			});
 
 			if (str.length > 0) {
 				str = str.substring(0, str.length - 1);
 			}
 			$("#templateIds").val(str);
+			$("#countId").val(count);
 		};
 
 		var countDeleted = function() {
@@ -77,7 +80,7 @@
 				$('#btEdit').prop( "disabled", false );
 				$('#btDelete').prop( "disabled", false ); */
 
-				$("#mgrTemplateForm").attr("action", "switchWorkspace");
+				$("#mgrTemplateForm").attr("action", "template/switchWorkspace");
 				$("#mgrTemplateForm").submit();
 			} else {
 				$('#btAdd').prop("disabled", true);
@@ -87,16 +90,6 @@
 
 		});
 	})
-
-	function showDetail() {
-		var str = $("#templateIds").val();
-		if (str.length == 1) {
-			$("#mgrTemplateForm").attr("action", "showDetail");
-			$("#mgrTemplateForm").submit();
-		} else {
-			$("#message").html("choose one template, please!");
-		}
-	}
 </script>
 
 <form object="mgrTemplates" method="post" id="mgrTemplateForm"
@@ -105,8 +98,6 @@
 		<tr>
 			<td><a href="${rc.getContextPath()}/template/addNew" id="btAdd"
 				class="button">新規</a></td>
-			<td><input type="button" class="button" value="編集" id="btEdit"
-				onclick="showDetail()"></td>
 			<td><input type="button" class="button" value="削除" id="btDelete"
 				onclick="validate()"></td>
 			<td><input type="checkbox" name="deleteTemplate"
@@ -128,6 +119,8 @@
 		value=""> <input type="hidden" id="deleted" name="deleted"
 		value="0"> <input type="hidden" id="workspaceId"
 		name="workspaceId" value="0">
+		<input type="hidden" id="countId" name="countId"
+        value="">
 	<div>
 		<b id="message" style="color: red;"></b>
 	</div>
@@ -138,7 +131,7 @@
 			<th>テンプレートテーブル名</th>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="text" id="templateIdInput"
+			<td colspan="3"><input type="text" id="templateIdInput"
 				onkeyup="filter()" placeholder="Search for ID.."></td>
 			<td><input type="text" id="templateNameInput" onkeyup="filter()"
 				placeholder="Search for name.."></td>
@@ -150,6 +143,7 @@
                 <tr id="row${mgrTemplate?index}">   
                      <td><input type="checkbox" id="delRow${mgrTemplate?index}"
                        name="DeleteRow" value="${mgrTemplate.templateId}"></td>
+                       <td><a href="${rc.getContextPath()}/template/showDetail?templateIds=${mgrTemplate.templateId}"  class="button">編集</a></td>
                         <td id="templateId${mgrTemplate?index}">${mgrTemplate.templateId}</td>
                         <td id="templateName${mgrTemplate?index}">${mgrTemplate.templateName}</td>
                         <td id="templateTableName${mgrTemplate?index}">${mgrTemplate.templateTableName}</td>

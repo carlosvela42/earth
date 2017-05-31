@@ -1,3 +1,4 @@
+
 <@standard.standardPage title="ADD USER">
 <script>
     window.onload = function () {
@@ -7,7 +8,7 @@
         });
     }
 </script>
-<form action="${rc.getContextPath()}/user/updateOne" object="mgrUser" method="post" class="form-narrow
+<form action="${rc.getContextPath()}/user/updateOne" object="userDetailForm" method="post" class="form-narrow
 form-horizontal">
     <table style="text-align: left;">
         <tr style="height: 40px; text-align: center">

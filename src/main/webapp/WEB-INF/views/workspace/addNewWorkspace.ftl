@@ -13,7 +13,7 @@
 	<table>
 		<tr>
 			<td><input type="submit" value="決定" class="button"></td>
-			<td><a href="${rc.getContextPath()}/workspace/list"
+			<td><a href="${rc.getContextPath()}/workspace"
 				class="button">キャンセル</a></td>
 		<tr>
 			<td>ワークスペースID：</td>
@@ -23,37 +23,39 @@
 		<tr>
 			<td>スキーマ名：</td>
 			<td><input type="text" id="txtSchemaName" onkeyup="input()"
-				name="schemaName" height="20px" width="150px"
+				name="schemaName" value="${workspaceForm.schemaName!""}" height="20px" width="150px"
 				style="text-align: left"></td>
 		</tr>
 		<tr>
 			<td>DBユーザ：</td>
-			<td><input type="text" id="txtDBuser" name="dbUser"
+			<td><input type="text" id="txtDBuser" name="dbUser" value="${workspaceForm.dbUser!""}"
 				height="20px" width="150px" style="text-align: left" readonly="readonly"></td>
 		</tr>
 		<tr>
 			<td>DBユーザパスワード：</td>
 			<td><input type="password" id="txtDBpassword"
-				name="dbPassword" height="20px" width="150px"
+				name="dbPassword" value="${workspaceForm.dbPassword!""}" height="20px" width="150px"
 				style="text-align: left"></td>
 		</tr>
 		<tr>
 			<td>オーナー：</td>
-			<td><input type="text" id="txtOwner" name="owner"
+			<td><input type="text" id="txtOwner" name="owner" value="${workspaceForm.owner!""}"
 				height="20px" width="150px" style="text-align: left"></td>
 		</tr>
 		<tr>
 			<td>DBサーバ:</td>
 			<td><input type="text" id="txtDBserver"
-				name="dbServer" height="20px" width="150px"
+				name="dbServer" value="${workspaceForm.dbServer!""}" height="20px" width="150px"
 				style="text-align: left"></td>
 		</tr>
 	</table>
 
-	<#if messages??> <#list messages as message>
-	<div>
-		<b style="color: red;">${message.getContent()}</b>
-	</div>
-	</#list> </#if>
+	<#if messages??>
+		<#list messages as message>
+			<div>
+				<b style="color: red;">${message.getContent()}</b>
+			</div>
+		</#list>
+	</#if>
 </form>
 </@standard.standardPage>

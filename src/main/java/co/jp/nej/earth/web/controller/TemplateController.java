@@ -1,5 +1,27 @@
 package co.jp.nej.earth.web.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.id.ETemplateId;
 import co.jp.nej.earth.id.ETemplateTableName;
@@ -17,25 +39,6 @@ import co.jp.nej.earth.service.WorkspaceService;
 import co.jp.nej.earth.util.EStringUtil;
 import co.jp.nej.earth.util.ValidatorUtil;
 import co.jp.nej.earth.web.form.TemplateForm;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author longlt
@@ -70,7 +73,7 @@ public class TemplateController extends BaseController {
     return "template/dataMenu";
   }
 
-  @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+  @RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
   public String showList(String templateType, Model model, HttpServletRequest request) throws EarthException {
     List<MgrTemplate> mgrTemplates = new ArrayList<>();
     HttpSession session = request.getSession();
@@ -130,6 +133,8 @@ public class TemplateController extends BaseController {
     List<Message> messages = validatorUtil.validate(result);
     if (messages.size() > 0) {
       model.addAttribute(Session.MESSAGES, messages);
+      model.addAttribute("templateForm", templateForm);
+      model.addAttribute("fieldTypes", Type.getFieldTypes());
       return "template/addTemplate";
     }
     HttpSession session = request.getSession();
@@ -154,10 +159,10 @@ public class TemplateController extends BaseController {
         templateService.insertOne(workspaceId, mgrTemplate);
       }
     }
-    return redirectToList();
+    return redirectToList("template");
   }
 
-  @RequestMapping(value = "/showDetail", method = RequestMethod.POST)
+  @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
   public String showDetail(@ModelAttribute("templateIds") String templateId, Model model, HttpServletRequest request)
       throws EarthException, JsonParseException, JsonMappingException, IOException {
     TemplateKey templateKey = new TemplateKey();
@@ -168,27 +173,52 @@ public class TemplateController extends BaseController {
       templateKey.setWorkspaceId(workspaceId);
       MgrTemplate mgrTemplate = templateService.getById(templateKey);
       if (!(EStringUtil.isEmpty(mgrTemplate))) {
+        TemplateForm templateForm = new TemplateForm();
         List<Field> fields = new ObjectMapper().readValue(mgrTemplate.getTemplateField(),
             new TypeReference<List<Field>>() {
             });
-        mgrTemplate.setTemplateFields(fields);
-        model.addAttribute("mgrTemplate", mgrTemplate);
+        templateForm.setTemplateFields(fields);
+        templateForm.setTemplateId(templateId);
+        templateForm.setTemplateName(mgrTemplate.getTemplateName());
+        templateForm.setTemplateTableName(mgrTemplate.getTemplateTableName());
+
+        model.addAttribute("templateForm", templateForm);
       }
     }
     return "template/editTemplate";
   }
 
+  /*
+   * @RequestMapping(value = "/updateOne", method = RequestMethod.POST) public String
+   * updateOne(@ModelAttribute("mgrTemplate") MgrTemplate mgrTemplate, Model model, HttpServletRequest request) throws
+   * EarthException { HttpSession session = request.getSession(); String workspaceId =
+   * session.getAttribute("workspaceId").toString(); if ((mgrTemplate != null && !EStringUtil.isEmpty(workspaceId))) {
+   * mgrTemplate.setTemplateType(session.getAttribute("templateType").toString());
+   * mgrTemplate.setWorkspaceId(session.getAttribute("workspaceId").toString()); templateService.updateOne(workspaceId,
+   * mgrTemplate); } return redirectToList("template"); }
+   */
+
   @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
-  public String updateOne(@ModelAttribute("mgrTemplate") MgrTemplate mgrTemplate, Model model,
-      HttpServletRequest request) throws EarthException {
+  public String updateOne(@Valid @ModelAttribute("templateForm") TemplateForm templateForm, BindingResult result,
+      Model model, HttpServletRequest request) throws EarthException {
     HttpSession session = request.getSession();
     String workspaceId = session.getAttribute("workspaceId").toString();
-    if ((mgrTemplate != null && !EStringUtil.isEmpty(workspaceId))) {
-      mgrTemplate.setTemplateType(session.getAttribute("templateType").toString());
-      mgrTemplate.setWorkspaceId(session.getAttribute("workspaceId").toString());
-      templateService.updateOne(workspaceId, mgrTemplate);
+    MgrTemplate mgrTemplate = new MgrTemplate();
+    List<Message> messages = validatorUtil.validate(result);
+    if (messages.size() > 0) {
+      model.addAttribute(Session.MESSAGES, messages);
+      model.addAttribute("templateForm", templateForm);
+      model.addAttribute("fieldTypes", Type.getFieldTypes());
+      return "template/editTemplate";
     }
-    return redirectToList();
+    mgrTemplate.setTemplateId(templateForm.getTemplateId());
+    mgrTemplate.setTemplateName(templateForm.getTemplateName());
+    mgrTemplate.setTemplateTableName(templateForm.getTemplateTableName());
+    mgrTemplate.setTemplateType(session.getAttribute("templateType").toString());
+    mgrTemplate.setTemplateFields(templateForm.getTemplateFields());
+    mgrTemplate.setWorkspaceId(workspaceId);
+    templateService.updateOne(workspaceId, mgrTemplate);
+    return redirectToList("template");
   }
 
   @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
@@ -200,7 +230,7 @@ public class TemplateController extends BaseController {
       List<String> templateIdList = Arrays.asList(templateIds.split("\\s*,\\s*"));
       templateService.deleteTemplates(templateIdList, workspaceId);
     }
-    return redirectToList();
+    return redirectToList("template");
   }
 
 }

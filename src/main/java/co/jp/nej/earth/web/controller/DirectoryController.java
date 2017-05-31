@@ -58,15 +58,15 @@ public class DirectoryController extends BaseController {
       }
       directoryService.deleteDirectorys(intDataDirectoryIds, Constant.EARTH_WORKSPACE_ID);
     }
-    return redirectToList();
+    return redirectToList("directory");
   }
 
   @RequestMapping(value = "/addNew", method = RequestMethod.GET)
   public String addNew(Model model, HttpServletRequest request) throws EarthException {
     DirectoryForm directoryForm = new DirectoryForm();
-
     directoryForm.setDataDirectoryId(eDatadirectoryId.getAutoId());
-    directoryForm.setDiskVolSize("50000");
+    directoryForm.setDiskVolSize(String.valueOf(Constant.Directory.DEFAULT_VALUE));
+    directoryForm.setNewCreateFile(String.valueOf(Constant.Directory.YES));
     model.addAttribute("directoryForm", directoryForm);
     return "directory/addDirectory";
   }
@@ -76,6 +76,7 @@ public class DirectoryController extends BaseController {
       HttpServletRequest request, Model model) throws EarthException {
     List<Message> messages = validatorUtil.validate(result);
     if (messages.size() > 0) {
+      model.addAttribute("directoryForm", directoryForm);
       model.addAttribute(Session.MESSAGES, messages);
       return "directory/addDirectory";
     }
@@ -93,7 +94,7 @@ public class DirectoryController extends BaseController {
       return "directory/addDirectory";
     } else {
       directoryService.insertOne(directory, Constant.EARTH_WORKSPACE_ID);
-      return redirectToList();
+      return redirectToList("directory");
     }
   }
 
@@ -118,6 +119,7 @@ public class DirectoryController extends BaseController {
       HttpServletRequest request, Model model) throws EarthException {
     List<Message> messages = validatorUtil.validate(result);
     if (messages.size() > 0) {
+      model.addAttribute("directoryForm", directoryForm);
       model.addAttribute(Session.MESSAGES, messages);
       return "directory/editDirectory";
     }
@@ -128,7 +130,7 @@ public class DirectoryController extends BaseController {
     directory.setReservedDiskVolSize(directoryForm.getReservedDiskVolSize());
     directory.setFolderPath(directoryForm.getFolderPath());
     directoryService.updateDirectory(directory, Constant.EARTH_WORKSPACE_ID);
-    return redirectToList();
+    return redirectToList("directory");
   }
 
   @RequestMapping(value = "/getSizeFolder", method = RequestMethod.GET)

@@ -1,18 +1,3 @@
-.content_main_common {
-    width: 1250px;
-    padding: 0 15px;
-    margin: 20px auto 0;
-}
-
-.content_title {
-    display: inline-block;
-    vertical-align: top;
-    margin-top: 28px;
-    color: #01A9DB;
-    font-size: 18px;
-    font-weight: bold;
-}
-
 .pull-left {
     float: left !important;
 }
@@ -40,4 +25,28 @@
 
 .form-cancel{
     display: inline-block;
+}
+
+/*Text common*/
+.text_center {
+    text-align: center;
+}
+
+/*override style.css*/
+#header .inner h1 {
+    padding: 14px 5px 16px 42px;
+    height: 60px;
+}
+
+/*icon resources*/
+.icon_add {
+    background-image: url("../images/btnAdd.png");
+}
+
+.icon_edit {
+    background-image: url("../images/btnEdit.png");
+}
+
+.icon_search {
+    background-image: url("../images/search.png");
 }

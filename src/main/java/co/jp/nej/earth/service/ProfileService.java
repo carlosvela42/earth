@@ -13,6 +13,8 @@ import co.jp.nej.earth.model.entity.MgrProfile;
 public interface ProfileService {
     List<MgrProfile> getAll() throws EarthException;
 
+    List<MgrProfile> getProfilesByUserId(String userId) throws EarthException;
+
     Map<String, Object> getDetail(String profileId) throws EarthException;
 
     List<Message> validate(MgrProfile mgrProfile, boolean insert);

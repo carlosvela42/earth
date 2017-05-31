@@ -1,0 +1,149 @@
+#content {
+  padding-bottom: 80px;
+}
+#content .content_main .content_inner {
+  background: white;
+  padding: 15px;
+}
+
+.table_list {
+  width: 100%;
+}
+.table_list td {
+  border: 1px #e4e6e8 solid;
+  height: 30px;
+  vertical-align: middle;
+}
+.table_list .table_header td {
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  background: #f3f3f3;
+}
+.table_list .table_header td:nth-child(2n+1) {
+  /* or 4n+1 */
+  background: #e4e6e8;
+}
+.table_list .condition input {
+  height: 100%;
+  width: 100%;
+  border: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding-left: 10px;
+  font-weight: bold;
+}
+.table_list td:nth-child(1) {
+  text-align: center;
+}
+.table_list .table_body tr:nth-child(odd) {
+  background: #f3f3f3;
+}
+.table_list .table_body td {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.table_list .table_body td.number {
+  text-align: right;
+}
+.table_list .table_body td.text {
+  text-align: left;
+}
+.table_list td:nth-child(1), .table_list td:nth-child(2) {
+  width: 30px;
+  padding: 0;
+}
+
+.content_head {
+  padding: 15px 15px;
+}
+.content_head .content_main_common {
+  width: 1250px;
+  margin: auto;
+}
+.content_head .content_main_common .content_title {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 28px;
+  color: #01A9DB;
+  font-size: 18px;
+  font-weight: bold;
+}
+.content_head .content_main_common .workspaceSelectBox {
+  margin-top: 14px;
+}
+
+header .navigation_btn {
+  background: white;
+}
+
+.icon {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
+}
+
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-group > .btn:first-child {
+  margin-left: 0;
+}
+
+.btn-group > .dropdown-toggle:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.board-wrapper {
+  display: table;
+  width: 100%;
+}
+.board-wrapper .board:first-child {
+  margin-right: 5%;
+}
+.board-wrapper .board-split {
+  width: 2%;
+}
+
+.board-full {
+  padding: 15px;
+  background: white;
+}
+
+.board {
+  background: white;
+  padding: 15px;
+  display: table-cell;
+  vertical-align: baseline;
+}
+
+.board-half {
+  width: 49%;
+}
+
+input[type=text] {
+  border-radius: 5px;
+  border: 1px solid #e4e6e8;
+  padding: 5px 10px;
+  width: 100%;
+}
+
+.table_form {
+  width: 100%;
+}
+.table_form tr {
+  height: 60px;
+  border-bottom: 1px solid #e4e6e8;
+}
+.table_form tr td:nth-child(1) {
+  font-weight: bold;
+}
+.table_form tr td {
+  vertical-align: middle;
+}

@@ -1,4 +1,4 @@
-Ôªø<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 
@@ -14,7 +14,7 @@
 <link rel="stylesheet"
 	href="${rc.getContextPath()}/resources/css/bootstrap.min.css">
 <link rel="stylesheet"
-	href="${rc.getContextPath()}/resources/css/imageviewer.css">
+	href="${rc.getContextPath()}/resources/css/svgImageviewer.css">
 
 <!-- Optional theme -->
 <link rel="stylesheet"
@@ -33,7 +33,15 @@
 </head>
 <body style="padding-top: 70px">
 <div id="imageViewerWrapper"></div>
+<div style="float: right;">
+    <#if Session.userInfo??>
+        <#assign userInfo =Session.userInfo>
+        <label id='userInfo'>${userInfo.userId}/${userInfo.userName}</label>
+        <a href="${rc.getContextPath()}/logout" class="button">ÉçÉOÉAÉEÉg</a>
+    </#if>
+</div>
 <input type="hidden" data-context="${rc.getContextPath()}" name="contextPath" >
+<canvas id="the-canvas"></canvas>
 	<script
 		src="${rc.getContextPath()}/resources/js/imageViewer/content.js"></script>
 		<script

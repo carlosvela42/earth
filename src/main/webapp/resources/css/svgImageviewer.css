@@ -1,0 +1,63 @@
+body{
+	margin:0px;
+}
+
+#toolbar{
+	margin:10px;
+}
+
+#mainContent{
+    margin-top:100px;
+}
+
+
+div#container {     
+        border:2px solid #000;
+        overflow-x: scroll;
+      }
+
+label {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+  padding: 1px;
+}
+label span {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+label span.red {
+  background: #DB2828;
+}
+label span.green {
+  background: #21BA45;
+}
+label span.orange {
+  background: #F2711C;
+}
+label span.purple {
+  background: #A333C8;
+}
+label span.black {
+  background: #000000;
+}
+label span.yellow {
+  background: #FBBD08;
+}
+label span.violet {
+  background: #6435C9;
+}
+label span.teal {
+  background: #00B5AD;
+}
+label span.olive {
+  background: #B5CC18;
+}
+label span.blue {
+  background: #0000FF;
+}
+label span.none {
+  background: #FFF;
+}

@@ -1,129 +1,87 @@
-<@standard.standardPage title="ADD USER">
-<script>
-    window.onload = function () {
-        $("input[name=changePassword]").change(function () {
-            console.log(this.checked);
-            $('input[type=password]').prop("disabled", !this.checked);
-        });
-    }
-</script>
-<form action="${rc.getContextPath()}/user/insertOne" object="mgrUser" method="post" class="form-narrow form-horizontal">
-    <table style="text-align: left;">
-        <tr style="height: 40px; text-align: center">
-            <td><input type="submit" value="決定" class="button"></td>
-            <td><a href="${rc.getContextPath()}/user/showList" class="button">キャンセル</a></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <#if messages??>
-                    <#list messages as message>
-                        <div>
-                            <b style="color: red;">${message.getContent()}</b>
-                        </div>
-                    </#list>
-                </#if>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <#if messageError??>
-                    <div>
-                    <b style="color: red;">${rc.getMessage("${messageError}")}</b>
-                    </div>
-                </#if>
-            </td>
-        </tr>
-        <#if mgrUser??>
-            <tr>
-                <td>
-                    <label>ユーザID</label>
-                </td>
-                <td>
-                    <input type="text" id="txtUserID" name="userId" height="20px" width="150px"
-                           style="text-align: left" value="${mgrUser.userId!""}">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>名前</label>
-                </td>
-                <td>
-                    <input type="text" id="txtName" name="name" height="20px" width="150px" style="text-align: left"
-                           value="${mgrUser.name!""}">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>パスワード変更</label>
-                </td>
-                <td>
-                    <input type="checkbox" name="changePassword">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>新しいパスワード</label>
-                </td>
-                <td>
-                    <input type="password" id="txtPassword" name="password" height="20px" width="150px"
-                           style="text-align: left" disabled="disabled"">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>新しいパスワード（確認用) </label>
-                </td>
-                <td>
-                    <input type="password" id="txtComfirmpassword" name="confirmPassword" height="20px" width="150px"
-                           style="text-align: left" disabled="disabled" >
-                </td>
-            </tr>
-        <#else >
-            <tr>
-                <td>
-                    <label>ユーザID</label>
-                </td>
-                <td>
-                    <input type="text" id="txtUserID" name="userId" height="20px" width="150px"
-                           style="text-align: left">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>名前</label>
-                </td>
-                <td>
-                    <input type="text" id="txtName" name="name" height="20px" width="150px" style="text-align: left">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>パスワード変更</label>
-                </td>
-                <td>
-                    <input type="checkbox" name="changePassword">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>新しいパスワード</label>
-                </td>
-                <td>
-                    <input type="password" id="txtPassword" name="password" height="20px" width="150px"
-                           style="text-align: left" disabled="disabled">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>新しいパスワード（確認用) </label>
-                </td>
-                <td>
-                    <input type="password" id="txtComfirmpassword" name="confirmPassword" height="20px" width="150px"
-                           style="text-align: left" disabled="disabled">
-                </td>
-            </tr>
-        </#if>
+<#assign contentFooter>
+    <@component.detailUpdatePanel object="user" formId="userForm"></@component.detailUpdatePanel>
+</#assign>
 
-    </table>
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/user.js"></script>
+</#assign>
+
+<@standard.standardPage title=e.get("user.edit") contentFooter=contentFooter script=script>
+<br>
+    <#assign isPersisted = (user.lastUpdateTime??)>
+    <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
+<form id="userForm" action="${rc.getContextPath()}/user/${formAction}" object="userForm" method="post" class="">
+    <#include "../common/messages.ftl">
+    <div class="board-wrapper">
+        <div class="board board-half">
+            <table class="table_form">
+                <tr>
+                    <td width="50%">${e.get('user.id')}</td>
+                    <td>
+                        <input type="text" name="userId" value="${user.userId!""}">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('user.name')}</td>
+                    <td>
+                        <input type="text" id="txtName" name="name" height="20px" width="150px" style="text-align: left"
+                               value="${user.name!""}">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('user.changePassword')}</td>
+                    <td>
+                        <input type="checkbox" name="changePassword">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('user.password')}</td>
+                    <td>
+                        <input type="password" name="password" disabled="disabled"">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('user.confirmPassword')}</td>
+                    <td>
+                        <input type="password" name="confirmPassword" disabled="disabled">
+                    </td>
+                </tr>
+            </table>
+            <div><input type="hidden" name="lastUpdateTime" value="${user.lastUpdateTime!""}"/></div>
+        </div>
+        <div class="board-split"></div>
+        <#if mgrProfiles??>
+            <div class="board board-half">
+                <table class="clientSearch table_list">
+                    <thead>
+                    <tr class="table_header">
+                        <td width="50%" colspan="2">${e.get('profile.id')}</td>
+                        <td>${e.get('profile.description')}</td>
+                    </tr>
+                    <tr class="condition">
+                        <td><span class="icon icon_search"></span></td>
+                        <td><input type="text" col="1" placeholder="Search for ID.."></td>
+                        <td><input type="text" col="2" placeholder="Search for name.."></td>
+                    </tr>
+                    </thead>
+                    <tbody id="userTbody" class="table_body">
+                        <#if mgrProfiles??>
+                            <#list mgrProfiles as mgrProfile>
+                            <tr profileId="${mgrProfile.profileId}">
+                                <td class="text" width="50%" colspan="2">${mgrProfile.profileId!""}</td>
+                                <td class="text">${mgrProfile.description!""}</td>
+                            </tr>
+                            </#list>
+                        <#else>
+                        <tr>
+                            <td width="50%" colspan="2"></td>
+                            <td></td>
+                        </tr>
+                        </#if>
+                    </tbody>
+                </table>
+            </div>
+        </#if>
+    </div>
 </form>
 </@standard.standardPage>

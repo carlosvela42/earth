@@ -24,7 +24,7 @@
 		}
 	}
 </script>
-<form action="${rc.getContextPath()}/site/insertOne" object="site"
+<form action="${rc.getContextPath()}/site/insertOne" object="siteForm"
 	method="post">
 	<input type="hidden" id="directoryIds" name="directoryIds">
 	<div>
@@ -34,7 +34,7 @@
 		<tr>
 			<td><label>Site_ID：</label></td>
 			<td><input type="text" id="txtSiteId" name="siteId"
-				value="${site.siteId}" height="20px" width="150px"
+				value="${siteForm.siteId}" height="20px" width="150px"
 				style="text-align: left" readonly="readonly"></td>
 		</tr>
 	</table>
@@ -47,22 +47,24 @@
 			<th>確保ディスク容量[MB]</th>
 			<th>ディスク容量[MB]</th>
 		</tr>
-		<#if directorys??>
-                <#list directorys as directory>
-                <tr id="row${directory?index}">
-                     <td><input type="checkbox" id="chooseRow${directory?index}"name="ChooseRow" value="${directory.dataDirectoryId}"></td>
-                     <td id="dataDirectoryId${directory?index}">${directory.dataDirectoryId}</td>
-                     <td id="folderPath${directory?index}">${directory.folderPath}</td>
-                     <td id="newCreateFile${directory?index}">${directory.newCreateFile}</td>
-                     <td id="reservedDiskVolSize${directory?index}">${directory.reservedDiskVolSize}</td>
-                     <td id="diskVolSize${directory?index}">${directory.diskVolSize}</td>
-                </tr>
-                </#list>
-            </#if>
+		<#if siteForm??>
+			<#if siteForm.directories??>
+	                <#list siteForm.directories as directory>
+	                <tr id="row${directory?index}">
+	                     <td><input type="checkbox" id="chooseRow${directory?index}"name="ChooseRow" value="${directory.dataDirectoryId}" ${directory.checked?string("checked","")}></td>
+	                     <td id="dataDirectoryId${directory?index}" value="${directory.dataDirectoryId}">${directory.dataDirectoryId}</td>
+	                     <td id="folderPath${directory?index}" value="${directory.folderPath}">${directory.folderPath}</td>
+	                     <td id="newCreateFile${directory?index}" value="${directory.newCreateFile}">${directory.newCreateFile}</td>
+	                     <td id="reservedDiskVolSize${directory?index}" value="${directory.reservedDiskVolSize}">${directory.reservedDiskVolSize}</td>
+	                     <td id="diskVolSize${directory?index}" value="${directory.diskVolSize}"->${directory.diskVolSize}</td>
+	                </tr>
+	                </#list>
+	            </#if>
+	      </#if>
         </table>
 	<div>
-		<input type="button" value="決定" class="button" onclick="validate()">
-		<a href="${rc.getContextPath()}/site/showList" class="button">キャンセル</a>
+		<input type="submit" value="決定" class="button">
+		<a href="${rc.getContextPath()}/site" class="button">キャンセル</a>
 	</div>
 
 	</table>

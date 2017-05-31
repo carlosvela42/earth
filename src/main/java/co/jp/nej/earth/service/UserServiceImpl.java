@@ -131,31 +131,28 @@ public class UserServiceImpl extends BaseService implements UserService {
     }
 
     /**
-     * @param userId
-     *            id of user
-     * @param password
-     *            password of user
-     * @param session
-     *            HttpSession object
+     * @param userId   id of user
+     * @param password password of user
+     * @param session  HttpSession object
      * @return list message determined that user log in successfully or not
      */
     public List<Message> login(String userId, String password, HttpSession session, int channel) throws EarthException {
         List<Message> listMessage = new ArrayList<Message>();
         if (EStringUtil.isEmpty(userId)) {
             Message message = new Message(MessageCodeLogin.USR_BLANK,
-                    eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.USER_ID }));
+                    eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.USER_ID}));
             listMessage.add(message);
         }
 
         if (EStringUtil.isEmpty(password)) {
             Message message = new Message(MessageCodeLogin.PWD_BLANK,
-                    eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.PASSWORD }));
+                    eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.PASSWORD}));
             listMessage.add(message);
         }
 
         if (!EStringUtil.isEmpty(userId) && !EStringUtil.checkAlphabet(userId)) {
             Message message = new Message(MessageUser.USR_SPECIAL,
-                    eMessageResource.get(ErrorCode.E0007, new String[] { ScreenItem.USER_ID }));
+                    eMessageResource.get(ErrorCode.E0007, new String[]{ScreenItem.USER_ID}));
             listMessage.add(message);
         }
 
@@ -184,7 +181,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 
                         // Save All templates access right into session.
                         Map<TemplateKey, TemplateAccessRight> templateAccessRightMap
-                                                        = getTemplatesAccessRightOfAllWorkspaces(userId, mgrWorkspaces);
+                                = getTemplatesAccessRightOfAllWorkspaces(userId, mgrWorkspaces);
                         TemplateUtil.saveToSession(session, templateAccessRightMap);
 
                         // Save All Menus Access right into session.
@@ -220,7 +217,7 @@ public class UserServiceImpl extends BaseService implements UserService {
     }
 
     private Map<TemplateKey, TemplateAccessRight> getTemplatesAccessRightOfAllWorkspaces(String userId,
-            List<MgrWorkspace> mgrWorkspaces) {
+                                                                                   List<MgrWorkspace> mgrWorkspaces) {
         Map<TemplateKey, TemplateAccessRight> templateAccessRightMap = new HashMap<TemplateKey, TemplateAccessRight>();
 
         TransactionManager transactionMgr = null;
@@ -287,44 +284,13 @@ public class UserServiceImpl extends BaseService implements UserService {
     public List<Message> validate(MgrUser mgrUser, boolean insert) {
         List<Message> listMessage = new ArrayList<Message>();
         try {
-            if (EStringUtil.isEmpty(mgrUser.getUserId())) {
-                Message message = new Message(MessageUser.USR_BLANK,
-                        eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.USER_ID }));
-
+            if (!EStringUtil.checkJapanese(mgrUser.getName())) {
+                Message message = new Message(MessageUser.NAME_SPECIAL,
+                        eMessageResource.get(ErrorCode.E0007, new String[]{ScreenItem.NAME}));
                 listMessage.add(message);
                 return listMessage;
             }
-            if (!EStringUtil.checkAlphabet(mgrUser.getUserId())) {
-                Message message = new Message(MessageUser.USR_SPECIAL,
-                        eMessageResource.get(ErrorCode.E0007, new String[] { ScreenItem.USER_ID }));
-                listMessage.add(message);
-                return listMessage;
-            }
-            if (EStringUtil.isEmpty(mgrUser.getName())) {
-                Message message = new Message(MessageUser.NAME_BLANK,
-                        eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.NAME }));
-                listMessage.add(message);
-                return listMessage;
-            }
-            if (insert) {
-                if (!mgrUser.isChangePassword()) {
-                    Message message = new Message(MessageUser.CHANGEPWD_BLANK, eMessageResource.get(ErrorCode.E0001,
-                            new String[] { ScreenItem.CHANGE_PASSWORD, ScreenItem.CREATE_USER }));
-                    listMessage.add(message);
-                    return listMessage;
-                }
-                if (EStringUtil.isEmpty(mgrUser.getPassword())) {
-                    Message message = new Message(MessageUser.PWD_BLANK,
-                            eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.NEW_PASSWORD }));
-                    listMessage.add(message);
-                    return listMessage;
-                }
-                if (EStringUtil.isEmpty(mgrUser.getConfirmPassword())) {
-                    Message message = new Message(MessageUser.PWD_BLANK,
-                            eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.CONFIRM_PASSWORD }));
-                    listMessage.add(message);
-                    return listMessage;
-                }
+           /* if (insert) {
                 if (!EStringUtil.equals(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
                     Message message = new Message(MessageUser.PWD_CORRECT, eMessageResource.get(ErrorCode.E1008,
                             new String[] { ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD }));
@@ -343,36 +309,36 @@ public class UserServiceImpl extends BaseService implements UserService {
                     return listMessage;
                 }
 
-            } else {
-                if (mgrUser.isChangePassword()) {
-                    if (EStringUtil.isEmpty(mgrUser.getPassword())) {
-                        Message message = new Message(MessageUser.PWD_BLANK,
-                                eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.NEW_PASSWORD }));
-                        listMessage.add(message);
-                        return listMessage;
-                    }
-                    if (EStringUtil.isEmpty(mgrUser.getConfirmPassword())) {
-                        Message message = new Message(MessageUser.PWD_BLANK,
-                                eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.CONFIRM_PASSWORD }));
-                        listMessage.add(message);
-                        return listMessage;
-                    }
-                    if (!EStringUtil.contains(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
-                        Message message = new Message(MessageUser.PWD_CORRECT, eMessageResource.get(ErrorCode.E1008,
-                                new String[] { ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD }));
-                        listMessage.add(message);
-                        return listMessage;
-                    }
-                    List<String> passwordValidate = passwordPolicy.validate(mgrUser.getPassword());
-                    if (passwordValidate != null && passwordValidate.size() > 0) {
-                        listMessage = getMessagePasswordPolicy(passwordValidate);
-                        return listMessage;
-                    }
+            } else {*/
+            if (mgrUser.isChangePassword()) {
+                if (EStringUtil.isEmpty(mgrUser.getPassword())) {
+                    Message message = new Message(MessageUser.PWD_BLANK,
+                            eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.NEW_PASSWORD}));
+                    listMessage.add(message);
+                    return listMessage;
+                }
+                if (EStringUtil.isEmpty(mgrUser.getConfirmPassword())) {
+                    Message message = new Message(MessageUser.PWD_BLANK,
+                            eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.CONFIRM_PASSWORD}));
+                    listMessage.add(message);
+                    return listMessage;
+                }
+                if (!EStringUtil.contains(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
+                    Message message = new Message(MessageUser.PWD_CORRECT, eMessageResource.get(ErrorCode.E1008,
+                            new String[]{ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD}));
+                    listMessage.add(message);
+                    return listMessage;
+                }
+                List<String> passwordValidate = passwordPolicy.validate(mgrUser.getPassword());
+                if (passwordValidate != null && passwordValidate.size() > 0) {
+                    listMessage = getMessagePasswordPolicy(passwordValidate);
+                    return listMessage;
                 }
             }
+//            }
             return listMessage;
         } catch (Exception ex) {
-            Message message = new Message(MessageUser.USR_BLANK, eMessageResource.get("E1009", new String[] { "" }));
+            Message message = new Message(MessageUser.USR_BLANK, eMessageResource.get("E1009", new String[]{""}));
             listMessage.add(message);
             return listMessage;
         }
@@ -536,33 +502,33 @@ public class UserServiceImpl extends BaseService implements UserService {
     }
 
     public long deleteCtlLogin(Map<Path<?>, Object> condition) throws EarthException {
-        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+        return (long) executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
             return loginControlDao.delete(Constant.EARTH_WORKSPACE_ID, condition);
         });
     }
 
     public long deleteCtlLogins(List<Map<Path<?>, Object>> condition) throws EarthException {
-        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+        return (long) executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
             return loginControlDao.deleteList(Constant.EARTH_WORKSPACE_ID, condition);
         });
     }
 
     public long deleteAllCtlLogins() throws EarthException {
-        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+        return (long) executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
             return loginControlDao.deleteAll(Constant.EARTH_WORKSPACE_ID);
         });
     }
 
     @Override
     public long addCtlLogin(CtlLogin login) throws EarthException {
-        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+        return (long) executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
             return loginControlDao.add(Constant.EARTH_WORKSPACE_ID, login);
         });
     }
 
     @Override
     public long updateCtlLogin(Map<Path<?>, Object> condition, Map<Path<?>, Object> updateMap) throws EarthException {
-        return (long)executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+        return (long) executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
             return loginControlDao.update(Constant.EARTH_WORKSPACE_ID, condition, updateMap);
         });
     }
@@ -579,7 +545,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 
     @Override
     public List<CtlLogin> searchMgrLogin(String workspaceId, Predicate condition, Long offset, Long limit,
-            List<OrderSpecifier<?>> orderBys) throws EarthException {
+                                         List<OrderSpecifier<?>> orderBys) throws EarthException {
         return ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
             return loginControlDao.search(Constant.EARTH_WORKSPACE_ID, condition, offset, limit, orderBys, null);
         }), CtlLogin.class);

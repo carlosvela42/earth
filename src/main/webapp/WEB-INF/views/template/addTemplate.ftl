@@ -21,52 +21,27 @@
 													':checked');
 											var encrypted = $('#encrypted').is(
 													':checked');
-
-											$('#fieldList tbody')
-													.append(
-															"<tr>"
-																	+ "<td><input type='checkbox' id='delRow["
-																	+ i
-																			.toString()
-																	+ "]'name='DeleteRow'></td>"
-																	+ "<td><input  type='text' name='templateFields["
-																	+ i
-																			.toString()
-																	+ "].name' value='"
-																	+ name
-																	+ "'/></td>"
-																	+ "<td><input  type='text'name='templateFields["
-																	+ i
-																			.toString()
-																	+ "].description' value='"
-																	+ description
-																	+ "'/></td>"
-																	+ "<td><input type='text' value='"
-                                                                    + typeDisplay
-                                                                    + "'/><input type='hidden'name='templateFields["
-																	+ i
-																			.toString()
-																	+ "].type' value='"
-																	+ typeValue
-																	+ "'/></td>"
-																	+ "<td><input  type='text'name='templateFields["
-																	+ i
-																			.toString()
-																	+ "].size' value='"
-																	+ size
-																	+ "'/></td>"
-																	+ "<td><input  type='text'name='templateFields["
-																	+ i
-																			.toString()
-																	+ "].required' value='"
-																	+ required
-																	+ "'/></td>"
-																	+ "<td><input  type='text'name='templateFields["
-																	+ i
-																			.toString()
-																	+ "].encrypted' value='"
-																	+ encrypted
-																	+ "'/></td></tr>");
+															var generate = "<tr><td><input type='checkbox' id='delRow["+ i.toString()+"]'name='DeleteRow'></td>"
+														         + "<td><input  type='text' name='templateFields["+i.toString()+"].name' value='"+name+"'/></td>"
+																 + "<td><input  type='text'name='templateFields["+i.toString()+"].description' value='"+description+"'/></td>"
+																 + "<td><input type='text' value='"+typeDisplay+"'/><input type='hidden'name='templateFields["+i.toString()+"].type' value='"+typeValue+"'/></td>"
+																 + "<td><input  type='text'name='templateFields["+i.toString()+"].size' value='"+size+"'/></td>"
+															if(required){
+																generate +="<td><input  type='checkbox'  value='"+required+"' checked/>"
+																+ "<input  type='hidden' name='templateFields["+ i.toString()+ "].required' value='true'/></td>"
+															}
+															else{
+																generate +="<td><input  type='checkbox'  value='"+required+"'/>"
+                                                                + "<input  type='hidden' name='templateFields["+ i.toString()+ "].required' value='false'/></td>"
+															}
+															if(encrypted){
+																generate +="<td><input  type='checkbox' value='"+encrypted+"' checked/>"
+																+ "<input  type='hidden' name='templateFields["+ i.toString()+ "].encrypted' value='true'/></td></tr>"
+															}else{
+																generate +="<td><input  type='checkbox' name='templateFields["+ i.toString()+"].encrypted'  value='"+encrypted+"' />"
+																+ "<input  type='hidden' name='templateFields["+ i.toString()+ "].encrypted' value='false'/></td></tr>"
+															}
+															$('#fieldList tbody').append(generate);
 											i += 1;
 											$('#name').val("");
 											$('#description').val("");
@@ -115,14 +90,13 @@
 		<tr>
 			<td>テンプレート名</td>
 			<td><input type="text" id="txtTemplateName" name="templateName"
-				height="20px" width="150px" style="text-align: left"></td>
+				value="${templateForm.templateName!""}" height="20px" width="150px" style="text-align: left"></td>
 		</tr>
 		<tr>
 			<td>テンプレートテーブル名</td>
 			<td><input type="text" id="txtTemplateTableName"
 				value="${templateForm.templateTableName!""}" name="templateTableName"
-				height="20px" width="150px" style="text-align: left"
-				readonly="readonly"></td>
+				height="20px" width="150px" style="text-align: left"></td>
 		</tr>
 	</table>
 	<div align="left">フィールド定義</div>
@@ -150,18 +124,20 @@
 				name="templateFields[${field?index}].size" value="${field.size!""}"></td>
 			<#if field.required>
 			<td><input type="checkbox" id="delRow${field?index}"
-				name="templateFields[${field?index}].required" checked
-				disabled="disabled"></td>
+				name="templateFields[${field?index}].required" checked disabled="disabled">
+				<input  type="hidden" name="templateFields[${field?index}].required" value='true'/></td>
 			<#else>
 			<td><input type="checkbox" id="delRow${field?index}"
-				name="templateFields[${field?index}].required" disabled="disabled"></td></#if>
+				name="templateFields[${field?index}].required" disabled="disabled">
+				<input  type="hidden" name="templateFields[${field?index}].required" value='false'/></td></#if>
 			<#if field.encrypted>
 			<td><input type="checkbox" id="delRow${field?index}"
-				name="templateFields[${field?index}].encrypted" checked
-				disabled="disabled"></td>
+				name="templateFields[${field?index}].encrypted" checked disabled="disabled">
+				<input  type="hidden" name="templateFields[${field?index}].encrypted" value='true'/></td>
 			<#else>
 			<td><input type="checkbox" id="delRow${field?index}"
-				name="templateFields[${field?index}].encrypted" disabled="disabled"></td></#if>
+				name="templateFields[${field?index}].encrypted" disabled="disabled">
+				<input  type="hidden" name="templateFields[${field?index}].encrypted" value='false'/></td></#if>
 		</tr>
 		</#list> </#if> </#if>
 	</table>
@@ -207,7 +183,7 @@
 	<table style="width: 100%;">
 		<tr>
 			<td align="center" style="width: 50%;"><a
-				href="${rc.getContextPath()}/template/showList" class="button">キャンセル</a></td>
+				href="${rc.getContextPath()}/template" class="button">キャンセル</a></td>
 			<td align="center"><input type="submit" value="決定"
 				class="button"></td>
 		</tr>

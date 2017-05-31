@@ -18,6 +18,7 @@ import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.session.EarthSessionManager;
 import co.jp.nej.earth.model.Document;
 import co.jp.nej.earth.model.Message;
+import co.jp.nej.earth.model.WorkItem;
 import co.jp.nej.earth.model.form.CloseAndSaveForm;
 import co.jp.nej.earth.model.form.CloseImageForm;
 import co.jp.nej.earth.model.form.DocumentForm;
@@ -36,7 +37,7 @@ public class DocumentRestController extends BaseRestController {
     @Autowired
     private ValidatorUtil validatorUtil;
 
-  @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*")
     @RequestMapping("/displayImage")
     public ImageResponse displayImage(String jsessionId, String workspaceId, String workitemId, String folderItemNo,
             String documentNo, HttpServletRequest request) {
@@ -44,8 +45,8 @@ public class DocumentRestController extends BaseRestController {
         boolean isSuccess = false;
         try {
             isSuccess = true;
-            List<Document> doc = documentService.getDocumentListInfo(
-                    workspaceId, workitemId, Integer.parseInt(folderItemNo), documentNo);
+            List<Document> doc = documentService.getDocumentListInfo(workspaceId, workitemId,
+                    Integer.parseInt(folderItemNo), documentNo);
             imageResponse.setResult(doc);
         } catch (EarthException e) {
             isSuccess = false;
@@ -54,7 +55,24 @@ public class DocumentRestController extends BaseRestController {
         imageResponse.setResult(isSuccess);
         return imageResponse;
     }
-   @RequestMapping(value = "/getDocument", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/getDocumentInfo", method = RequestMethod.POST)
+    public RestResponse getDocumentInfo(@ModelAttribute("DocumentForm") DocumentForm form, BindingResult result,
+            HttpServletRequest request) throws EarthException {
+        RestResponse respone = new RestResponse();
+        Object tmpSession = request.getSession()
+                .getAttribute("TMP" + form.getWorkspaceId() + "&" + form.getWorkitemId());
+        if (tmpSession == null){
+            return documentService.getDocumentList(form.getWorkspaceId(), form.getWorkitemId(), form.getFolderItemNo(),
+                    form.getDocumentNo(), "new");
+        } else {
+            respone.setResult(true);
+            respone.setData(tmpSession);
+            return respone;
+        }
+    }
+
+    @RequestMapping(value = "/getDocument", method = RequestMethod.POST)
     public RestResponse getDocument(@Valid @RequestBody DocumentForm form, BindingResult result,
             HttpServletRequest request) throws EarthException {
         List<Message> messages = validatorUtil.validate(result);
@@ -67,8 +85,8 @@ public class DocumentRestController extends BaseRestController {
 
         return getRestResponse(form.getSessionId(), null, () -> {
             try {
-                return documentService.getDocument(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getWorkitemId(), form.getFolderItemNo(), form.getDocumentNo());
+                return documentService.getDocument(EarthSessionManager.find(form.getSessionId()), form.getWorkspaceId(),
+                        form.getWorkitemId(), form.getFolderItemNo(), form.getDocumentNo());
             } catch (EarthException e) {
                 RestResponse respone = new RestResponse();
                 respone.setResult(false);
@@ -113,10 +131,12 @@ public class DocumentRestController extends BaseRestController {
             respone.setData(messages);
             return respone;
         }
-
+        WorkItem workItem = new WorkItem();
+        workItem.setWorkspaceId(form.getWorkspaceId());
+        request.getSession().setAttribute("ORIGIN" + form.getWorkspaceId() + "&" + form.getWorkitemId(), workItem);
         return getRestResponse(form.getSessionId(), form, () -> {
-                return documentService.displayImage(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getWorkitemId(), form.getFolderItemNo(), form.getDocumentNo());
+            return documentService.displayImage(request.getSession(), form.getWorkspaceId(), form.getWorkitemId(),
+                    form.getFolderItemNo(), form.getDocumentNo());
         });
     }
 

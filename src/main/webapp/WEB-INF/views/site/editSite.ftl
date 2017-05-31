@@ -26,7 +26,7 @@
 		}
 	}
 </script>
-<form action="${rc.getContextPath()}/site/updateOne" object="site"
+<form action="${rc.getContextPath()}/site/updateOne" object="siteForm"
 	method="post">
 	<input type="hidden" id="directoryIds" name="directoryIds">
 	<div>
@@ -36,7 +36,7 @@
 		<tr>
 			<td><label>Site_ID：</label></td>
 			<td><input type="text" id="txtSiteId" name="siteId"
-				value="${site.siteId}" height="20px" width="150px"
+				value="${siteForm.siteId}" height="20px" width="150px"
 				style="text-align: left" readonly="readonly"></td>
 		</tr>
 	</table>
@@ -49,8 +49,9 @@
 			<th>確保ディスク容量[MB]</th>
 			<th>ディスク容量[MB]</th>
 		</tr>
-		<#if directorys??>
-                <#list directorys as directory>
+		<#if siteForm??>
+            <#if siteForm.directories??>
+                <#list siteForm.directories as directory>
                      <tr id="row${directory?index}">
 	                      <td><input type="checkbox" id="chooseRow${directory?index}" name="ChooseRow" value="${directory.dataDirectoryId}" ${directory.checked?string("checked","")}></td>
 	                      <td><input type="text" id="chooseRow${directory?index}" name="directorys[${directory?index}].dataDirectoryId" value="${directory.dataDirectoryId}" readonly="readonly"></td>
@@ -61,10 +62,11 @@
                     </tr>
                 </#list>
             </#if>
-        </table>
+      </#if>
+   </table>
 	<div>
-		<input type="button" value="決定" class="button" onclick="validate()">
-		<a href="${rc.getContextPath()}/site/showList" class="button">キャンセル</a>
+		<input type="submit" value="決定" class="button">
+		<a href="${rc.getContextPath()}/site" class="button">キャンセル</a>
 	</div>
 
 	</table>

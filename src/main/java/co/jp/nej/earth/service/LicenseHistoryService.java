@@ -6,5 +6,5 @@ import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.entity.StrCal;
 
 public interface LicenseHistoryService {
-    List<StrCal> search(String fromTime, String toTime) throws EarthException;
+    List<StrCal> search(Long offset, Long limit) throws EarthException;
 }

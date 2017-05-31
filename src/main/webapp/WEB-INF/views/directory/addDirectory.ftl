@@ -1,5 +1,15 @@
 <@standard.standardPage title="NEWDIRECTORY">
 <script type="text/javascript">
+$(function() {
+    $('input[name=CreateFile]:radio').change(
+            function() {
+                if($("input[name=CreateFile]:checked").val()=="enable"){
+                    $("#newCreateFile").val(1);
+                }else{
+                    $("#newCreateFile").val(0);
+                }
+            });
+})
 $(document).ready(function(){
 	function getSize(){
         var folderPath = $("#txtFolderPath").val();
@@ -39,8 +49,15 @@ $("#directoryForm").on('keyup keypress', function(e) {
         </tr>
         <tr>
             <td colspan="2">新規ファイル作成</td>
-            <td><input type="radio" name="newCreateFile" value="1">許可する<br>
-                <input type="radio" name="newCreateFile" value="0"> 許可しない<br></td>
+            <td><#if directoryForm.newCreateFile=="1"> 
+                     <#assign enable="checked"></#if> 
+                <#if directoryForm.newCreateFile=="0">
+                     <#assign disable="checked"></#if> 
+                <input type="radio" name="CreateFile" value="enable"${enable!""}>許可する<br>
+                <input type="radio" name="CreateFile" value="disable"${disable!""}> 許可しない<br>
+                <input type="hidden" id="newCreateFile" name="newCreateFile" height="20px" width="150px"
+                            style="text-align: left" value="${directoryForm.newCreateFile!""}">
+           </td>
         </tr>
         <tr>
             <td>確保ディスク容量[MB]</td>
@@ -65,7 +82,7 @@ $("#directoryForm").on('keyup keypress', function(e) {
     <table style="width: 100%;">
         <tr>
             <td align="center" style="width: 50%;"><a
-                href="${rc.getContextPath()}/directory/showList" class="button">キャンセル</a></td>
+                href="${rc.getContextPath()}/directory" class="button">キャンセル</a></td>
             <td align="center"><input type="submit" value="決定"
                 class="button"></td>
         </tr>

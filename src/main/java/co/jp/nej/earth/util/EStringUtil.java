@@ -13,10 +13,20 @@ public class EStringUtil extends StringUtils {
     private static final Logger LOG = LoggerFactory.getLogger(EStringUtil.class);
 
     public static final String EMPTY = "";
+    public static final int NUMBER_255 = 255;
 
     public static boolean checkAlphabet(String string) {
-        for (char c : string.toCharArray()) {
-            if (!(Character.isLetter(c)) && !(Character.isDigit(c))) {
+        for (char ch : string.toCharArray()) {
+            if (!(Character.isLetter(ch)) && !(Character.isDigit(ch))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean checkJapanese(String string) {
+        for (char ch : string.toCharArray()) {
+            if (!((int) ch <= NUMBER_255)) {
                 return false;
             }
         }
@@ -44,6 +54,7 @@ public class EStringUtil extends StringUtils {
         }
         return false;
     }
+
     public static List<String> getListFromString(String str, String stringIndex) {
         List<String> strings = new ArrayList<String>();
         try {

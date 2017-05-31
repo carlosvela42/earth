@@ -7,7 +7,7 @@
     <ul id="ul-System-managed" class="nav nav-second-level">
         <h3>LONGLT</h3>
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/workspace/list">WorkSpace<span
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/workspace/">WorkSpace<span
                     class="fa arrow"></span></a>
         </li>
         <li>
@@ -15,11 +15,11 @@
                     class="fa arrow"></span></a>
         </li>
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/site/showList">Site<span
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/site/">Site<span
                     class="fa arrow"></span></a>
         </li>
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/directory/showList">Directory<span
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/directory/">Directory<span
                     class="fa arrow"></span></a>
         </li>
         <h3>TUNGNT</h3>
@@ -29,11 +29,11 @@
         </li>
         <h3>MINHTV</h3>
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/user/showList">User<span
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/user">User<span
                     class="fa arrow"></span></a>
         </li>
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/profile/showList">Profile<span
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/profile">Profile<span
                     class="fa arrow"></span></a>
         </li>
         <li>
@@ -49,7 +49,7 @@
                     class="fa arrow"></span></a>
         </li>
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/schedule/showList">Schedule List<span
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/schedule">Schedule List<span
                     class="fa arrow"></span></a>
         </li>
 
@@ -68,7 +68,7 @@
         <h3>SONTA Test</h3>
 
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/process/showList">ProcessList<span
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/process">ProcessList<span
                     class="fa arrow"></span></a>
         </li>
     </ul>

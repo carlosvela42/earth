@@ -38,8 +38,18 @@ public class SessionUtil {
         if (workspaceId == null || workspaceId.isEmpty()) {
             workspaceId = workspaces.get(0).getWorkspaceId();
         }
+
+        String workspaceName="";
+        for(MgrWorkspace workspace : workspaces) {
+            if(workspace.getWorkspaceId().equals(workspaceId)) {
+                workspaceName = workspace.getWorkspaceName();
+                break;
+            }
+        }
+
         model.addAttribute("workspaces", workspaces);
         model.addAttribute("workspaceId", workspaceId);
+        model.addAttribute("workspaceName", workspaceName);
         setSearchConditionWorkspace(request.getSession(), workspaceId);
     }
 

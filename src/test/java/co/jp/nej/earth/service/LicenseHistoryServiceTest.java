@@ -26,7 +26,7 @@ public class LicenseHistoryServiceTest extends BaseTest{
     private static final int AVAILABLE_LICENSE_COUNT = 20;
     private static final int USE_LICENSE_COUNT = 20;
     private static final int TEST_CASE_1_RESULT = 15;
-    private static final int TEST_CASE_2_RESULT = 11;
+    private static final int TEST_CASE_2_RESULT = 8;
     private static final int TEST_CASE_34_RESULT = 8;
 
     @Before
@@ -162,26 +162,26 @@ public class LicenseHistoryServiceTest extends BaseTest{
 
     @Test
     public void testSearch1() throws EarthException {
-        List<StrCal> strCals = licenseHistoryService.search("", "");
-        Assert.assertTrue(strCals != null && strCals.size() == TEST_CASE_1_RESULT);
+        List<StrCal> strCals = licenseHistoryService.search( null, null);
+        Assert.assertTrue(strCals != null && strCals.size() == 15);
     }
 
     @Test
     public void testSearch2() throws EarthException {
-        List<StrCal> strCals = licenseHistoryService.search("2017/04/19 12:33:44.585", "");
-        Assert.assertTrue(strCals != null && strCals.size() == TEST_CASE_2_RESULT);
+        List<StrCal> strCals = licenseHistoryService.search(7L, 9L);
+        Assert.assertTrue(strCals != null && strCals.size() == 6L);
     }
 
     @Test
     public void testSearch3() throws EarthException {
-        List<StrCal> strCals = licenseHistoryService.search("", "2017/04/19 12:33:44.585");
-        Assert.assertTrue(strCals != null && strCals.size() == TEST_CASE_34_RESULT);
+        List<StrCal> strCals = licenseHistoryService.search(3L, null);
+        Assert.assertTrue(strCals != null && strCals.size() == 3L);
     }
 
     @Test
     public void testSearch4() throws EarthException {
-        List<StrCal> strCals = licenseHistoryService.search("2017/04/19 12:33:44.585", "2017/04/19 12:33:53.720");
-        Assert.assertTrue(strCals != null && strCals.size() == TEST_CASE_34_RESULT);
+        List<StrCal> strCals = licenseHistoryService.search( null, 10L);
+        Assert.assertTrue(strCals != null && strCals.size() == 5L);
     }
 
     @Test

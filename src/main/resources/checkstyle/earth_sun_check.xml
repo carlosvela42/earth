@@ -165,6 +165,7 @@
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier">
             <property name="allowPublicFinalFields" value="true"/>
+            <property name="protectedAllowed" value="true"/>
         </module>
 
         <!-- Miscellaneous other checks.                   -->

@@ -15,44 +15,44 @@ public class AddScheduleForm {
     private String hostName;
 
     @NotEmpty(message = "E0001,processId")
-    @Pattern(regexp = Constant.Schedule.STRING_NUMBER,message = "E0017,processId")
+    @Pattern(regexp = Constant.Regexp.STRING_NUMBER,message = "E0017,processId")
     @Min(value = 1,message = "E0017,processId")
     private String processId;
 
     @NotEmpty(message = "E0001,taskId")
-    @Pattern(regexp = Constant.Schedule.STRING_NUMBER,message = "E0017,taskId")
+    @Pattern(regexp = Constant.Regexp.STRING_NUMBER,message = "E0017,taskId")
     @Min(value = 1,message = "E0017,processId")
     private String taskId;
 
     @NotEmpty(message = "E0001,processIServiceId")
-    @Pattern(regexp = Constant.Schedule.STRING_NUMBER,message = "E0017,processIServiceId")
+    @Pattern(regexp = Constant.Regexp.STRING_NUMBER,message = "E0017,processIServiceId")
     @Min(value = 1,message = "E0017,processId")
     private String processIServiceId;
 
     @NotEmpty(message = "E0001,startTime")
-    @Pattern(regexp = Constant.Schedule.DATETIME_VALIDATION,message = "E0017,startTime")
+    @Pattern(regexp = Constant.Regexp.DATETIME_VALIDATION,message = "E0017,startTime")
     private String startTime;
 
     @NotEmpty(message = "E0001,endTime")
-    @Pattern(regexp = Constant.Schedule.DATETIME_VALIDATION,message = "E0017,endTime")
+    @Pattern(regexp = Constant.Regexp.DATETIME_VALIDATION,message = "E0017,endTime")
     private String endTime;
 
     private String enableDisable;
 
     @NotEmpty(message = "E0001,runIntervalDay")
-    @Pattern(regexp = Constant.Schedule.STRING_NUMBER,message = "E0017,runIntervalSecond")
+    @Pattern(regexp = Constant.Regexp.STRING_NUMBER,message = "E0017,runIntervalSecond")
     private String runIntervalDay;
 
     @NotEmpty(message = "E0001,runIntervalHour")
-    @Pattern(regexp = Constant.Schedule.STRING_NUMBER,message = "E0017,runIntervalSecond")
+    @Pattern(regexp = Constant.Regexp.STRING_NUMBER,message = "E0017,runIntervalSecond")
     private String runIntervalHour;
 
     @NotEmpty(message = "E0001,runIntervalMinute")
-    @Pattern(regexp = Constant.Schedule.STRING_NUMBER,message = "E0017,runIntervalMinute")
+    @Pattern(regexp = Constant.Regexp.STRING_NUMBER,message = "E0017,runIntervalMinute")
     private String runIntervalMinute;
 
     @NotEmpty(message = "E0001,runIntervalSecond")
-    @Pattern(regexp = Constant.Schedule.STRING_NUMBER,message = "E0017,runIntervalSecond")
+    @Pattern(regexp = Constant.Regexp.STRING_NUMBER,message = "E0017,runIntervalSecond")
     private String runIntervalSecond;
 
     public String getScheduleId() {

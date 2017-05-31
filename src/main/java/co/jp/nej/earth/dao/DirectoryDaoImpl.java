@@ -134,6 +134,7 @@ public class DirectoryDaoImpl extends BaseDaoImpl<Directory> implements Director
       return ConnectionManager.getEarthQueryFactory(workspaceId).update(qDirectory)
           .set(qDirectory.newCreateFile, directory.getNewCreateFile())
           .set(qDirectory.reservedDiskVolSize, directory.getReservedDiskVolSize())
+          .set(qDirectory.diskVolSize, directory.getDiskVolSize())
           .set(qDirectory.folderPath, directory.getFolderPath())
           .where(qDirectory.dataDirectoryId.eq(directory.getDataDirectoryId())).execute();
     } catch (Exception ex) {

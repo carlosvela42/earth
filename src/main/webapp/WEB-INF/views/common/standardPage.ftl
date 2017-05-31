@@ -1,5 +1,5 @@
 <#ftl encoding='UTF-8'>
-<#macro standardPage title="" displayWorkspace=false contentFooter="">
+<#macro standardPage title="" displayWorkspace=false contentFooter="" script="">
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,16 +7,21 @@
     <meta charset="UTF-8">
     <title>Earth</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <#--<link rel="stylesheet" media="screen"-->
-          <#--href="${rc.getContextPath()}/resources/css/bootstrap.min.css" />-->
+    <link rel="stylesheet" media="screen"
+          href="${rc.getContextPath()}/resources/css/bootstrap.min.css" />
     <link rel="stylesheet" media="screen"
           href="${rc.getContextPath()}/resources/css/style.css" />
     <link rel="stylesheet" media="screen"
           href="${rc.getContextPath()}/resources/css/style_nev.css" />
+    <link rel="stylesheet" media="screen"
+          href="${rc.getContextPath()}/resources/css/sass_compiled/components.css" />
     <link rel="shortcut icon" href="${rc.getContextPath()}/resources/images/favicon.ico" type="image/x-icon">
     <script src="${rc.getContextPath()}/resources/js/libs/jquery-2.2.4.min.js"></script>
+    <script src="${rc.getContextPath()}/resources/js/lib/bootstrap.min.js"></script>
     <script src="${rc.getContextPath()}/resources/js/lib/jquery.query-object.js"></script>
+    <script src="${rc.getContextPath()}/resources/js/lib/handlebars-v4.0.10.js"></script>
     <script src="${rc.getContextPath()}/resources/js/common.js"></script>
+    ${(script)}
 </head>
 
 <body id="mainIndex">
@@ -57,7 +62,7 @@
         <div class="content_head">
             <div class="content_main_common">
                 <div class="pull-left">
-                    <a href="http://placehold.it"><img src="http://placehold.it/60x60"></a>
+                    <a href="http://placehold.it"><img src="${rc.getContextPath()}/resources/images/global/user.png"></a>
                     <span class="content_title"> ${title} </span>
                 </div>
 
@@ -71,9 +76,7 @@
         </div>
 
         <div class="content_main">
-            <p>
-                <#nested/>
-            </p>
+            <#nested/>
             <MAP name="19">
                 <AREA shape="rect" coords="53,97,77,121" href="19_1.html">
             </MAP>

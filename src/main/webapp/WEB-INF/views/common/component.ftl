@@ -2,6 +2,8 @@
   <div class="content_foot">
       <p>
           <div class="center-block">
+            <form id="deleteForm" action="deleteList" method="post">
+            </form>
             <button class="btn" id="deleteButton"><@spring.message code='button.delete'/></button>
             <span class="btn">
                 <input type="checkbox" id="deleteConfirm"/>

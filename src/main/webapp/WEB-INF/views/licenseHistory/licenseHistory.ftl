@@ -1,17 +1,15 @@
 <@standard.standardPage title="License History">
 
-<form id="searchForm" method="post" object="strCals"
-	action="searchLicenseHistory">
-	<label>処理時刻From</label> <input type="text" name="fromDate"
-		id="fromDateId" value="<#if fromDate??>${fromDate}</#if>"> <label>処理時刻To</label>
-	<input type="text" name="toDate" id="toDateId"
-		value="<#if toDate??>${toDate}</#if>"> <input type="submit"
-		id="searchBtn" value="Search">
+<form id="searchForm" method="post" object="strCals" action="searchLicenseHistory">
+	<input type="number" name="limit" placeholder="Limit" value="<#if limit??>${limit}</#if>">
+	<input type="number" name="skip" placeholder="Skip" value="<#if skip??>${skip}</#if>">
+	<input type="submit" id="searchBtn" value="Search">
 </form>
-<#if messages??> <#list messages as message>
-                        <div>
-                            <b style="color: red;">${message.getContent()}</b>
-                        </div> </#list> </#if>
+<#if message??>
+   <div>
+       <b style="color: red;">${message}</b>
+   </div>
+</#if>
 <table border="1">
 	<thead>
 		<tr>
@@ -35,7 +33,7 @@
 	       </#list>
 	    <#else>
 	       <tr>
-	           <td colspan="5">Khong co du lieu nao</td>
+	           <td colspan="5">No result</td>
 	       </tr>
 	   </#if>
 	</tbody>

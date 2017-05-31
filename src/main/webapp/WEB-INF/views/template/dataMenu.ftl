@@ -8,7 +8,7 @@
             <#list templateTypes as templateType>
              <tr>
                  <td><a id="templateType${templateType?index}"
-                        href="${rc.getContextPath()}/template/showList?templateType=${templateType}">${templateType}</a></td>
+                        href="${rc.getContextPath()}/template?templateType=${templateType}">${templateType}</a></td>
              </tr>
              </#list>
          </#if>

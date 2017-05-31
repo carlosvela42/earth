@@ -3,10 +3,12 @@ package co.jp.nej.earth.service;
 import co.jp.nej.earth.BaseTest;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
+import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.model.entity.MgrUserProfile;
 import co.jp.nej.earth.util.ConversionUtil;
+import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EStringUtil;
 import org.junit.After;
 import org.junit.Assert;
@@ -59,7 +61,8 @@ public class ProfileServiceTest extends BaseTest {
             String name = NAME + i.toString();
             String password = PASS + i.toString();
             boolean changePassword = true;
-            mgrUser = new MgrUser(userId, name, password, password, changePassword);
+            mgrUser = new MgrUser(userId, name, password, password, changePassword, DateUtil.getCurrentDate(Constant
+                    .DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
             userService.insertOne(mgrUser);
 
             String profileId = PROFILE + i.toString();
@@ -145,7 +148,7 @@ public class ProfileServiceTest extends BaseTest {
 
     @Test
     public void deleteList() throws EarthException {
-        boolean deleteProfile=false;
+        boolean deleteProfile = false;
         deleteProfile = profileService.deleteList(profileIds);
         LOG.info("Delete profile true: " + deleteProfile);
         Assert.assertTrue(deleteProfile);
@@ -155,7 +158,7 @@ public class ProfileServiceTest extends BaseTest {
     public void deleteListFalse() throws EarthException {
         boolean deleteProfile = false;
         List<String> profileIdsFalse = new ArrayList<>();
-        profileIdsFalse.add(PROFILE+(RECORD+RECORDFALSE));
+        profileIdsFalse.add(PROFILE + (RECORD + RECORDFALSE));
         deleteProfile = profileService.deleteList(profileIdsFalse);
         LOG.info("Delete profile false: " + deleteProfile);
         Assert.assertFalse(deleteProfile);

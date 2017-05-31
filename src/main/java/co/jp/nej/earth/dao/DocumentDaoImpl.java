@@ -39,8 +39,7 @@ public class DocumentDaoImpl extends BaseDaoImpl<Document> implements DocumentDa
     public List<Document> getAll(String workspaceId, String workitemId, int folderItemNo) throws EarthException {
         QDocument qDocument = QDocument.newInstance();
         List<Document> documents = ConnectionManager.getEarthQueryFactory(workspaceId).select(qDocument).from(qDocument)
-                .where(qDocument.workitemId.eq(workitemId).and(qDocument.folderItemNo.eq(folderItemNo)))
-                .orderBy(qDocument.documentNo.asc()).fetch();
+                .where(qDocument.workitemId.eq(workitemId).and(qDocument.folderItemNo.eq(folderItemNo))).fetch();
         return documents;
     }
 }

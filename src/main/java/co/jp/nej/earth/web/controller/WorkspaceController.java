@@ -63,6 +63,8 @@ public class WorkspaceController extends BaseController {
     List<Message> messages = validatorUtil.validate(result);
     if (messages.size() > 0) {
       model.addAttribute(Session.MESSAGES, messages);
+      workspaceForm.setWorkspaceId(eWorkspaceId.getAutoId());
+      model.addAttribute("workspaceForm", workspaceForm);
       return "workspace/addNewWorkspace";
     }
     MgrWorkspaceConnect mgrWorkspaceConnect = new MgrWorkspaceConnect();
@@ -79,7 +81,7 @@ public class WorkspaceController extends BaseController {
       return "workspace/addNewWorkspace";
     } else {
       workspaceService.insertOne(mgrWorkspaceConnect);
-      return redirectToList();
+      return redirectToList("workspace");
     }
   }
 
@@ -100,7 +102,7 @@ public class WorkspaceController extends BaseController {
     mgrWorkspaceConnect.setDbServer(workspaceForm.getDbServer());
     boolean success = workspaceService.updateOne(mgrWorkspaceConnect);
     if (success) {
-      return redirectToList();
+      return redirectToList("workspace");
     } else {
       return "workspace/editWorkspace";
     }

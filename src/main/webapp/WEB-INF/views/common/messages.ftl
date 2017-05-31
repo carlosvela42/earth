@@ -1,7 +1,15 @@
-<#if messages??>
-  <#list messages as message>
-    <div>
-        <b style="color: red;">${message.getContent()}</b>
+<script id="message-template" type="text/x-handlebars-template">
+    <div class="entry">
+        <b data-code="{{code}}" style="color: red;">{{message}}</b>
     </div>
-  </#list>
-</#if>
+</script>
+
+<div id="messages">
+  <#if messages??>
+    <#list messages as message>
+        <div>
+            <b data-code="${(message.getCode()!"")}" style="color: red;">${message.getContent()}</b>
+        </div>
+    </#list>
+  </#if>
+</div>

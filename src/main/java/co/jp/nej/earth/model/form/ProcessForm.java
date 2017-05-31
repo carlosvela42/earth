@@ -7,7 +7,7 @@ import co.jp.nej.earth.model.*;
  * @author p-tvo-sonta
  *
  */
-public class ProcessForm {
+public class  ProcessForm {
     private MgrProcess process;
     private StrageFile strageFile;
     private StrageDb strageDb;

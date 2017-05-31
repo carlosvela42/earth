@@ -1,12 +1,11 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QMgrUser;
+import java.io.Serializable;
 
 public class MgrUser extends BaseModel<MgrUser> implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(MgrUser.class);
@@ -20,20 +19,22 @@ public class MgrUser extends BaseModel<MgrUser> implements Serializable {
     private String confirmPassword;
     private boolean changePassword;
 
-    public MgrUser(){
+    public MgrUser() {
         LOG.debug("Call to blank contructor");
         this.setqObj(QMgrUser.newInstance());
     }
 
 
-    public MgrUser(String userId, String name, String password,String confirmPassword,boolean changePassword){
+    public MgrUser(String userId, String name, String password, String confirmPassword, boolean changePassword,
+                   String lastUpdateTime) {
         this();
         LOG.debug("Call to (userId, name, password, confirmPassword,changePassword) " + "contructor");
-        this.userId=userId;
-        this.name=name;
-        this.password=password;
-        this.changePassword=changePassword;
-        this.confirmPassword=confirmPassword;
+        this.userId = userId;
+        this.name = name;
+        this.password = password;
+        this.changePassword = changePassword;
+        this.confirmPassword = confirmPassword;
+        this.setLastUpdateTime(lastUpdateTime);
     }
 
 

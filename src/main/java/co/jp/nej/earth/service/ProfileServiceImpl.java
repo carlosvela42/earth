@@ -81,6 +81,20 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public List<MgrProfile> getProfilesByUserId(String userId) throws EarthException {
+        TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
+        try {
+            List<MgrProfile> mgrProfiles = profileDao.getProfilesByUserId(userId);
+            transactionManager.getManager().commit(transactionManager.getTxStatus());
+            return mgrProfiles;
+        } catch (Exception ex) {
+            transactionManager.getManager().rollback(transactionManager.getTxStatus());
+            LOG.error(ex.getMessage());
+            throw new EarthException(ex);
+        }
+    }
+
+    @Override
     public Map<String, Object> getDetail(String profileId) throws EarthException {
         TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
         Map<String, Object> detail = new HashMap<>();

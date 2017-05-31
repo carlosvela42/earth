@@ -23,7 +23,7 @@ public class Field {
      * @param required
      * @param encrypted
      */
-    public Field(String name, String description, Integer type, Integer size, boolean required, boolean encrypted) {
+    public Field(String name, String description, Integer type, Integer size, Boolean required, Boolean encrypted) {
         super();
         this.name = name;
         this.description = description;

@@ -34,6 +34,9 @@ public interface DocumentService {
 
     DocumentSavingInfo getDocumentSavingInfo(String workspaceId, Integer processId) throws EarthException;
 
+    RestResponse getDocumentList(String workspaceId, String workitemId, int folderItemNo, int documentNo, String action)
+            throws EarthException;
+
     List<Document> getDocumentListInfo(String workspaceId, String workitemId, int folderItemNo, String documentNo)
             throws EarthException;
 

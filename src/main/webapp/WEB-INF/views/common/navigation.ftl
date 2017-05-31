@@ -1,11 +1,11 @@
 <nav class="global">
-    <div class="btn"><img src="${rc.getContextPath()}/resources/images/global/btn.png" alt="btn" width="60"
+    <div class="navigation_btn"><img src="${rc.getContextPath()}/resources/images/global/btn.png" alt="btn" width="60"
                           height="60"
     /></div>
     <ul>
 
 
-        <li class="main"><a href="/">MAIN</a></li>
+        <li class="main"><a href="${rc.getContextPath()}/">MAIN</a></li>
         <li class="user">
             <div class="name">ユーザー</div>
             <ul>

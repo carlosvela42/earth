@@ -3,7 +3,9 @@ package co.jp.nej.earth.service;
 import co.jp.nej.earth.exception.*;
 import co.jp.nej.earth.manager.connection.*;
 import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.util.EMessageResource;
 import org.slf4j.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.*;
 import org.springframework.transaction.support.*;
 
@@ -11,6 +13,9 @@ import java.util.*;
 
 public abstract class BaseService {
     private static final Logger LOG = LoggerFactory.getLogger(BaseService.class);
+
+    @Autowired
+    private EMessageResource messageSource;
 
     public interface ServiceCaller {
         Object execute() throws EarthException;
