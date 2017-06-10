@@ -5,8 +5,8 @@ public class Field {
     private String description;
     private Integer type;
     private Integer size;
-    private Boolean required;
-    private Boolean encrypted;
+    private Boolean required = false;
+    private Boolean encrypted = false;
 
     /**
      *

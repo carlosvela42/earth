@@ -7,89 +7,100 @@
 		baseUrl = "${rc.getContextPath()}/process/";
 		processDefinition = "${process.processDefinition}";
 		processId = getUrlParameter('processId');
-		$('.documentDataSavePath').click(function(){
-			if($(this).val()== "database"){
+		$('.documentDataSavePath').click(function() {
+			if ($(this).val() == "database") {
 				$('#fileArea').hide();
 				$('#databaseArea').show();
 				documentDataSavePath = $(this).val();
-			} else if($(this).val()== "file"){
+			} else if ($(this).val() == "file") {
 				$('#fileArea').show();
 				$('#databaseArea').hide();
 				documentDataSavePath = $(this).val();
 			}
 		});
-		$('#cancel').click(function(){
-			document.location.href = baseUrl+"showList";
+		$('#cancel').click(function() {
+			document.location.href = baseUrl + "showList";
 		});
-		$('#desision').click(function(){
-			var processForm = {};
-			var strageFile = {};
-			var strageDb = {};
-			var process = {};
-			process.processId = processId;
-			process.processDefinition = processDefinition;
-			process.processName = $('#processNameTxt').val();
-			process.processVersion = $('#processVersionTxt').text();
-			process.description = $('#description').val();
-			process.documentDataSavePath = $(".documentDataSavePath:checked").val();
-			if($(".documentDataSavePath:checked").val() == 'file'){
-				strageFile.siteId = $('#siteId').val();
-				strageFile.siteManagementType = $('.siteManagementMethod:checked').val();
-			}else if($(".documentDataSavePath:checked").val() == 'database'){
-				strageDb.schemaName= $('#schemaName').val();
-				strageDb.dbUser = $('#dbUser').val();
-				strageDb.dbPassword = $('#dbPassword').val();
-				strageDb.owner = $('#owner').val();
-				strageDb.dbServer = $('#dbServer').val();
+		$('#desision')
+				.click(
+						function() {
+							var processForm = {};
+							var strageFile = {};
+							var strageDb = {};
+							var process = {};
+							process.processId = processId;
+							process.processDefinition = processDefinition;
+							process.processName = $('#processNameTxt').val();
+							process.processVersion = $('#processVersionTxt')
+									.text();
+							process.description = $('#description').val();
+							process.documentDataSavePath = $(
+									".documentDataSavePath:checked").val();
+							if ($(".documentDataSavePath:checked").val() == 'file') {
+								strageFile.siteId = $('#siteId').val();
+								strageFile.siteManagementType = $(
+										'.siteManagementMethod:checked').val();
+							} else if ($(".documentDataSavePath:checked").val() == 'database') {
+								strageDb.schemaName = $('#schemaName').val();
+								strageDb.dbUser = $('#dbUser').val();
+								strageDb.dbPassword = $('#dbPassword').val();
+								strageDb.owner = $('#owner').val();
+								strageDb.dbServer = $('#dbServer').val();
+							}
+							if ($('#fileUpload').val()) {
+								processForm.fileExtention = getFileExtension($(
+										'#fileUpload').val());
+							} else {
+								processForm.fileExtention = "xml";
+							}
+							processForm.workspaceId = $('#workspaceSelection')
+									.val();
+							processForm.process = process;
+							processForm.strageFile = strageFile;
+							processForm.strageDb = strageDb;
+							$.ajax({
+								url : baseUrl + "updateOne",
+								contentType : 'application/json',
+								data : JSON.stringify(processForm),
+								dataType : 'json',
+								type : 'POST',
+								success : function(data) {
+									if (data.message) {
+										alert(data.message);
+									} else if (data.success) {
+										document.location.href = baseUrl
+												+ "showList?workspaceId="
+												+ $('#workspaceSelection')
+														.val();
+									}
+								}
+							});
+						});
+		$('#fileUpload').change(function() {
+			var oFReader = new FileReader();
+			oFReader.readAsText($(this).get(0).files[0]);
+			oFReader.onload = function(oFREvent) {
+				console.log(this.result);
+				processDefinition = this.result;
 			}
-			if($('#fileUpload').val()){
-				processForm.fileExtention = getFileExtension($('#fileUpload').val());
-			}else{
-				processForm.fileExtention = "xml";
-			}
-			processForm.workspaceId = $('#workspaceSelection').val();
-			processForm.process = process;
-			processForm.strageFile = strageFile;
-			processForm.strageDb = strageDb;
-			$.ajax({
-			   url: baseUrl+"updateOne",
-			   contentType:'application/json',
-			   data: JSON.stringify(processForm),
-			   dataType: 'json',
-			   type: 'POST',
-			   success: function(data) {
-			   	if(data.message){
-			   		alert(data.message);
-			   	}else if(data.success){
-			   		document.location.href = baseUrl+"showList?workspaceId="+$('#workspaceSelection').val();
-			   	}
-			   }
-			});
 		});
-		$('#fileUpload').change(function (){
-        	var oFReader = new FileReader();
-	       	oFReader.readAsText($(this).get(0).files[0]);
-	       	oFReader.onload = function (oFREvent) {
-		       	console.log(this.result);
-		       	processDefinition = this.result;
-      	 	}
-      	});
-      	$('#fileDownload').click(function(){
-      		document.location.href = baseUrl+"downloadFile";
-      	});
+		$('#fileDownload').click(function() {
+			document.location.href = baseUrl + "downloadFile";
+		});
 	};
-	function getFileExtension(filename){
-		return filename.substr(filename.lastIndexOf('.')+1)
+	function getFileExtension(filename) {
+		return filename.substr(filename.lastIndexOf('.') + 1)
 	};
 	function getUrlParameter(sParam) {
-    	var sPageURL = decodeURIComponent(window.location.search.substring(1)), 
-    		sURLVariables = sPageURL.split('&'), sParameterName, i;
-    	for (i = 0; i < sURLVariables.length; i++) {
-        	sParameterName = sURLVariables[i].split('=');
+		var sPageURL = decodeURIComponent(window.location.search.substring(1)), sURLVariables = sPageURL
+				.split('&'), sParameterName, i;
+		for (i = 0; i < sURLVariables.length; i++) {
+			sParameterName = sURLVariables[i].split('=');
 			if (sParameterName[0] === sParam) {
-            	return sParameterName[1] === undefined ? true : sParameterName[1];
-        	}
-    	}
+				return sParameterName[1] === undefined ? true
+						: sParameterName[1];
+			}
+		}
 	}
 </script>
 <div>

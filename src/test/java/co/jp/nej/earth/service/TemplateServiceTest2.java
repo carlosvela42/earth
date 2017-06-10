@@ -98,17 +98,17 @@ public class TemplateServiceTest2 extends BaseTest {
 
         UserAccessRight userAccessRight1 = new UserAccessRight();
         userAccessRight1.setUserId("admin");
-        userAccessRight1.setAccessRight(AccessRight.CAN_HIDE_MASKING);
+        userAccessRight1.setAccessRight(AccessRight.RW);
         userAccessRights.add(userAccessRight1);
 
         UserAccessRight userAccessRight2 = new UserAccessRight();
         userAccessRight2.setUserId("minhtv");
-        userAccessRight2.setAccessRight(AccessRight.RO);
+        userAccessRight2.setAccessRight(AccessRight.NONE);
         userAccessRights.add(userAccessRight2);
 
         UserAccessRight userAccessRight3 = new UserAccessRight();
         userAccessRight3.setUserId("thuynd");
-        userAccessRight3.setAccessRight(AccessRight.SO);
+        userAccessRight3.setAccessRight(AccessRight.NONE);
         userAccessRights.add(userAccessRight3);
 
         UserAccessRight userAccessRight4 = new UserAccessRight();
@@ -124,7 +124,7 @@ public class TemplateServiceTest2 extends BaseTest {
         List<ProfileAccessRight> profileAccessRights = new ArrayList<ProfileAccessRight>();
         ProfileAccessRight profileAccessRight1 = new ProfileAccessRight();
         profileAccessRight1.setProfileId("profile_1");
-        profileAccessRight1.setAccessRight(AccessRight.CAN_HIDE_MASKING);
+        profileAccessRight1.setAccessRight(AccessRight.RW);
         profileAccessRights.add(profileAccessRight1);
 
         ProfileAccessRight profileAccessRight2 = new ProfileAccessRight();
@@ -215,14 +215,14 @@ public class TemplateServiceTest2 extends BaseTest {
 
         UserAccessRight userAccessRight1 = new UserAccessRight();
         userAccessRight1.setUserId("admin");
-        userAccessRight1.setAccessRight(AccessRight.CAN_HIDE_MASKING);
+        userAccessRight1.setAccessRight(AccessRight.RW);
         userAccessRights.add(userAccessRight1);
 
         List<ProfileAccessRight> profileAccessRights = new ArrayList<ProfileAccessRight>();
 
         ProfileAccessRight profileAccessRight1 = new ProfileAccessRight();
         profileAccessRight1.setProfileId("profile_1");
-        profileAccessRight1.setAccessRight(AccessRight.RO);
+        profileAccessRight1.setAccessRight(AccessRight.NONE);
         profileAccessRights.add(profileAccessRight1);
 
         TemplateKey templateKey = new TemplateKey("001", "template_1");
@@ -265,7 +265,7 @@ public class TemplateServiceTest2 extends BaseTest {
 
         UserAccessRight userAccessRight1 = new UserAccessRight();
         userAccessRight1.setUserId("admin_admin_admin_admin");
-        userAccessRight1.setAccessRight(AccessRight.CAN_HIDE_MASKING);
+        userAccessRight1.setAccessRight(AccessRight.RW);
         userAccessRights.add(userAccessRight1);
 
         List<ProfileAccessRight> profileAccessRights = new ArrayList<ProfileAccessRight>();

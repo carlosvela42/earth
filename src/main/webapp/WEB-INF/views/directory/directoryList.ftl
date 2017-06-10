@@ -1,104 +1,59 @@
-<@standard.standardPage title="DIRECTORYLIST">
-<script>
-    window.onload = function() {
-    	var countChecked = function() {
-            var str = ""
-            $('input[name=DeleteRow]:checked').each(function() {
-                str += $(this).attr('value') + ",";
-            });
+<#assign contentFooter>
+<@component.removePanel></@component.removePanel>
+</#assign>
 
-            if (str.length > 0) {
-                str = str.substring(0, str.length - 1);
-            }
-            $("#dataDirectoryIds").val(str);
-        };
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/directory.js"></script>
+</#assign>
 
-        var countDeleted = function() {
-            var str = "0";
-            $('input[name=deleteDirectorys]:checked').each(function() {
-                str = "1";
-            });
-            $("#deleted").val(str);
-        };
-
-        $("input[name=DeleteRow]").on("click", countChecked);
-        $("input[name=deleteDirectorys]").on("click", countDeleted);
-    }
-    function validate() {
-        var deleted = parseInt($("#deleted").val());
-        var str = $("#dataDirectoryIds").val();
-        console.log("dataDirectoryIds: " + str);
-
-        if (deleted > 0 && str.length > 0) {
-            document.forms[0].submit();
-        } else {
-            if (deleted == 0 && str.length == 0) {
-                $("#message").html("choose user and Confirm");
-            } else if (deleted == 0 && str.length > 0) {
-                $("#message").html("choose Confirm");
-            } else if (deleted > 0 && str.length == 0) {
-                $("#message").html("choose user");
-            }
-        }
-    }
-    function filter() {
-        // Declare variables
-        var directoryIdInput, i;
-        directoryIdInput = document.getElementById('directoryIdInput').value.toUpperCase();
-        // Loop through all list items, and hide those who don't match the search query
-        for (i = 0; i < $("#directorysTable tr ").length - 2; i++) {
-
-            if (($("#ataDirectoryId" + i).html().toUpperCase().indexOf(siteIdInput) > -1)) {
-                $("#row" + i).show();
-
-            } else {
-                $("#row" + i).hide();
-            }
-        }
-      }
-</script>
-<form method="post" id="directoryForm"
-    action="${rc.getContextPath()}/directory/deleteList">
-    <input type="hidden" id="dataDirectoryIds" name="dataDirectoryIds" value=""> 
-    <input type="hidden" id="deleted" name="deleted" value="0">
-    <div>
-        <b id="message" style="color: red;"></b>
-    </div>
-    <table border="1" id="directorysTable">
-        <tr>
-            <th><input type="checkbox" name="deleteDirectorys"
-                value="deleteDirectorys"></th>
-            <th><a href="${rc.getContextPath()}/directory/addNew" class="button">新規</a></th>
-            <th>Directory_ID</th>
-            <th>Folder path</th>
-            <th>Create new file</th>
-            <th>Secured disk space [MB]</th>
-            <th>Disk space [MB]</th>
+<@standard.standardPage title=e.get('directory.list') contentFooter=contentFooter script=script>
+<div class="board-wrapper board-full">
+  <#include "../common/messages.ftl">
+    <table class="clientSearch table_list">
+        <thead>
+        <tr class="table_header">
+            <td class=""><input type="checkbox" class="deleteAllCheckBox" /></td>
+            <td class="text_center">
+                <a id="addButton" class="icon icon_add" href="${rc.getContextPath()}/directory/addNew">
+                </a>
+            </td>
+            <td>${e.get('directory.id')}</td>
+            <td>${e.get('folder.path')}</td>
+            <td>${e.get('create.new.file')}</td>
+            <td>${e.get('secured.disk.space')}</td>
+            <td>${e.get('disk.space')}</td>
         </tr>
-        <tr>
-            <td colspan="3"><input type="text" id="directoryIdInput"
-                onkeyup="filter()" placeholder="Search for ID.."></td>
+        <tr class="condition">
+            <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+            <td colspan="2"><input id="tests" type="number" col="3" placeholder="search"/></td>
+            <td><input id="tests2" type="text" col="4" placeholder="search"/></td>
+            <td><input type="text" col="5" placeholder="search"/></td>
+            <td><input type="text" col="6" placeholder="search"/></td>
+            <td><input type="text" col="7" placeholder="search"/></td>
         </tr>
-        <#if directorys??>
-                <#list directorys as directory>
-                <tr id="row${directory?index}">
-                     <td><input type="checkbox" id="delRow${directory?index}"name="DeleteRow" value="${directory.dataDirectoryId!""}"></td>
-                     <td><a href="${rc.getContextPath()}/directory/showDetail?dataDirectoryId=${directory.dataDirectoryId}"  class="button">編集</a></td>
-                     <td id="dataDirectoryId${directory?index}">${directory.dataDirectoryId}</td>
-                     <td id="dataDirectoryId${directory?index}">${directory.folderPath}</td>
-                     <td id="dataDirectoryId${directory?index}">${directory.newCreateFile}</td>
-                     <td id="dataDirectoryId${directory?index}">${directory.reservedDiskVolSize}</td>
-                     <td id="dataDirectoryId${directory?index}">${directory.diskVolSize}</td>
-                </tr>
-                </#list>
-            </#if>
-        </table>
-    <br>
-    <table id="button">
-        <tr>
-            <td><input type="button" class="button" value="削除"onclick="validate()"></td>
-            <td><input type="checkbox" name="deleteDirectorys" value="deleteDirectorys">ConfirmDelete</td>
-        </tr>
+        </thead>
+        <tbody id="directoryTbody" class="table_body">
+          <#if directorys??>
+            <#list directorys as directory>
+            <tr directoryId="${directory.dataDirectoryId}">
+                <td><input type="checkbox" class="deleteCheckBox" /></td>
+                <td class="text_center"><a class="icon icon_edit" 
+                href="${rc.getContextPath()}/directory/showDetail?dataDirectoryId=${directory.dataDirectoryId}"></a></td>
+                <td class="number">${directory.dataDirectoryId}</td>
+                <td class="text">${directory.folderPath!""}</td>
+                <td class="text">
+                	<#if directory.newCreateFile == 1>
+                		Y
+                	<#else>
+                		N
+                	</#if>
+                </td>
+                <td class="text">${directory.reservedDiskVolSize!""}</td>
+                <td class="text">${directory.diskVolSize!""}</td>
+            </tr>
+            </#list>
+          </#if>
+        </tbody>
     </table>
-</form>
+</div>
 </@standard.standardPage>

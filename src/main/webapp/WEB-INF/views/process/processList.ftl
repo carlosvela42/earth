@@ -10,13 +10,13 @@
 <div class="board-wrapper board-full">
   <#include "../common/messages.ftl">
     <form method="get" id="filter" action="">
-        <input type="hidden" name="workspaceId" value="${workspaceId}">
+        <input type="hidden" id="workspaceId" name="workspaceId" value="${workspaceId}">
     </form>
     <table class="clientSearch table_list">
         <thead>
         <tr class="table_header">
             <td class=""><input type="checkbox" class="deleteAllCheckBox" /></td>
-            <td>
+            <td class="text_center">
                 <a id="addButton" class="icon icon_add" href="${rc.getContextPath()}/process/addNew">
                 </a>
             </td>
@@ -27,7 +27,7 @@
             <td>${e.get('process.savingType')}</td>
         </tr>
         <tr class="condition">
-            <td><span class="icon icon_search"></span></td>
+            <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
             <td colspan="2"><input id="tests" type="text" col="3" placeholder="Search process ID"/></td>
             <td><input id="tests2" type="text" col="4" placeholder="Search process name"/></td>
             <td><input type="text" col="5" placeholder="Search process version"/></td>
@@ -41,8 +41,7 @@
             <tr processId="${process.processId}">
                 <td><input type="checkbox" class="deleteCheckBox" /></td>
                 <td class="text_center"><a class="icon icon_edit" href="${rc.getContextPath()
-                }/process/showDetail?processId=${process
-                .processId}"></a></td>
+                }/process/showDetail?processId=${process.processId}"></a></td>
                 <td class="number">${process.processId}</td>
                 <td class="text"><#if process.processName??>${process.processName}</#if></td>
                 <td class="number"><#if process.processVersion??>${process.processVersion}</#if></td>

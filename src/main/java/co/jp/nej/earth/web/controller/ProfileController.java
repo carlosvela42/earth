@@ -1,17 +1,29 @@
 package co.jp.nej.earth.web.controller;
 
-import co.jp.nej.earth.exception.*;
-import co.jp.nej.earth.model.*;
-import co.jp.nej.earth.model.constant.Constant.*;
-import co.jp.nej.earth.model.entity.*;
-import co.jp.nej.earth.service.*;
-import co.jp.nej.earth.util.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
-import org.springframework.ui.*;
-import org.springframework.web.bind.annotation.*;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.Message;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.entity.MgrProfile;
+import co.jp.nej.earth.model.entity.MgrUser;
+import co.jp.nej.earth.model.form.DeleteListForm;
+import co.jp.nej.earth.model.form.ProfileForm;
+import co.jp.nej.earth.service.ProfileService;
+import co.jp.nej.earth.service.UserService;
+import co.jp.nej.earth.util.ConversionUtil;
+import co.jp.nej.earth.util.EStringUtil;
+import co.jp.nej.earth.util.ValidatorUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.*;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/profile")
@@ -23,53 +35,52 @@ public class ProfileController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ValidatorUtil validatorUtil;
+
+    private static final String URL = "profile";
+
     @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public String showList(Model model) throws EarthException {
         List<MgrProfile> mgrProfiles = profileService.getAll();
         model.addAttribute("mgrProfiles", mgrProfiles);
+        model.addAttribute("userIds", new ArrayList<String>());
         return "profile/profileList";
 
     }
 
     @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
     public String showDetail(Model model, String profileId) throws EarthException {
-            Map<String, Object> profileDetail = profileService.getDetail(profileId);
-            MgrProfile mgrProfile = ConversionUtil.castObject(profileDetail.get("mgrProfile"), MgrProfile.class);
-            List<MgrUser> mgrUsers = ConversionUtil.castList(profileDetail.get("mgrUsers"), MgrUser.class);
-            List<String> userIds = ConversionUtil.castList(profileDetail.get("userIds"), String.class);
+        Map<String, Object> profileDetail = profileService.getDetail(profileId);
+        MgrProfile mgrProfile = ConversionUtil.castObject(profileDetail.get("mgrProfile"), MgrProfile.class);
+        List<MgrUser> mgrUsers = ConversionUtil.castList(profileDetail.get("mgrUsers"), MgrUser.class);
+        List<String> userIds = ConversionUtil.castList(profileDetail.get("userIds"), String.class);
 
-            String strUserId = EStringUtil.getStringFromList(",",userIds);
-            model.addAttribute("mgrUsers", mgrUsers);
-            model.addAttribute("mgrProfile", mgrProfile);
-            model.addAttribute("userIds", userIds);
-            model.addAttribute("strUserId", strUserId);
-            return "profile/editProfile";
+        String strUserId = EStringUtil.getStringFromList(",", userIds);
+        model.addAttribute("mgrUsers", mgrUsers);
+        model.addAttribute("mgrProfile", mgrProfile);
+        model.addAttribute("userIds", userIds);
+        model.addAttribute("strUserId", strUserId);
+        return "profile/addProfile";
 
     }
 
     @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
-    public String updateOne(@ModelAttribute("mgrProfile") MgrProfile mgrProfile,
-            @ModelAttribute("strUserId") String strUserId, Model model) throws EarthException {
-        List<Message> messages = profileService.validate(mgrProfile, false);
+    public String updateOne(@Valid @ModelAttribute("profileForm") ProfileForm profileForm, BindingResult result
+            , Model model) throws EarthException {
+        List<Message> messages = validatorUtil.validate(result);
+        MgrProfile mgrProfile = setMgrProfile(profileForm);
+        messages.addAll(profileService.validate(mgrProfile, false));
+        String strUserId = profileForm.getUserIds();
         List<String> userIds = EStringUtil.getListFromString(strUserId, ",");
         if (messages != null && messages.size() > 0) {
-            model.addAttribute(Session.MESSAGES, messages);
-            model.addAttribute("mgrUsers", userService.getAll());
-            model.addAttribute("mgrProfile", mgrProfile);
-            model.addAttribute("strUserId", strUserId);
-            model.addAttribute("userIds", userIds);
-
-            return "profile/editProfile";
+            return getView(model, mgrProfile, strUserId, userIds, messages);
         } else {
             boolean updateProfile = profileService.updateAndAssignUsers(mgrProfile, userIds);
             if (updateProfile) {
-                return redirectToList();
+                return redirectToList(URL);
             } else {
-                model.addAttribute("messageError", ErrorCode.E1009);
-                model.addAttribute("mgrUsers", userService.getAll());
-                model.addAttribute("mgrProfile", mgrProfile);
-                model.addAttribute("userIds", userIds);
-                return "profile/editProfile";
+                return getView(model, mgrProfile, strUserId, userIds, messages);
             }
         }
     }
@@ -78,42 +89,60 @@ public class ProfileController extends BaseController {
     public String addNew(Model model) throws EarthException {
         List<MgrUser> mgrUsers = userService.getAll();
         model.addAttribute("mgrUsers", mgrUsers);
+        model.addAttribute("mgrProfile", new MgrProfile());
+        model.addAttribute("userIds", new ArrayList<String>());
         return "profile/addProfile";
     }
 
     @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
-    public String insertOne(@ModelAttribute("mgrProfile") MgrProfile mgrProfile, String strUserId, Model model)
-            throws EarthException {
-        List<Message> messages = profileService.validate(mgrProfile, true);
+    public String insertOne(@Valid @ModelAttribute("profileForm") ProfileForm profileForm, BindingResult result,
+                            Model model) throws EarthException {
+        List<Message> messages = validatorUtil.validate(result);
+        MgrProfile mgrProfile = setMgrProfile(profileForm);
+        mgrProfile.setLastUpdateTime(null);
+        messages.addAll(profileService.validate(mgrProfile, true));
+        String strUserId = profileForm.getUserIds();
         List<String> userIds = EStringUtil.getListFromString(strUserId, ",");
         if (messages != null && messages.size() > 0) {
-            model.addAttribute(Session.MESSAGES, messages);
-            model.addAttribute("mgrUsers", userService.getAll());
-            model.addAttribute("mgrProfile", mgrProfile);
-            model.addAttribute("strUserId", strUserId);
-            model.addAttribute("userIds", userIds);
-
-            return "profile/addProfile";
+            return getView(model, mgrProfile, strUserId, userIds, messages);
         } else {
             boolean insertProfile = profileService.insertAndAssignUsers(mgrProfile, userIds);
             if (insertProfile) {
-                return redirectToList();
+                return redirectToList(URL);
             } else {
-                model.addAttribute("messageError", ErrorCode.E1009);
-                model.addAttribute("mgrUsers", userService.getAll());
-                model.addAttribute("mgrProfile", mgrProfile);
-                model.addAttribute("strUserId", strUserId);
-                model.addAttribute("userIds", userIds);
-
-                return "profile/addProfile";
+                return getView(model, mgrProfile, strUserId, userIds, messages);
             }
         }
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public String deleteList(@ModelAttribute("profileIds") String profileIds, Model model) throws EarthException {
-        List<String> profileId = EStringUtil.getListFromString(profileIds, ",");
+    public String deleteList(DeleteListForm form) throws EarthException {
+
+        List<String> profileId = form.getListIds();
         profileService.deleteList(profileId);
-        return redirectToList();
+        return redirectToList(URL);
     }
+
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    public String cancel() {
+        return redirectToList(URL);
+    }
+
+    private String getView(Model model, MgrProfile mgrProfile, String strUserId, List<String> userIds,
+                           List<Message> messages) throws EarthException {
+        model.addAttribute(Constant.Session.MESSAGES, messages);
+        model.addAttribute("mgrUsers", userService.getAll());
+        model.addAttribute("mgrProfile", mgrProfile);
+        model.addAttribute("strUserId", strUserId);
+        model.addAttribute("userIds", userIds);
+
+        return "profile/addProfile";
+    }
+
+    private MgrProfile setMgrProfile(ProfileForm profileForm) {
+        return new MgrProfile(profileForm.getProfileId(), Integer.parseInt("0"),
+                profileForm.getDescription(), profileForm.getLdapIdentifier(), profileForm.getLastUpdateTime());
+    }
+
+
 }

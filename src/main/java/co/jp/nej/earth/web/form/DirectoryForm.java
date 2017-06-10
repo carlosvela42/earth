@@ -1,10 +1,14 @@
 package co.jp.nej.earth.web.form;
 
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.Directory;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class DirectoryForm {
+public class DirectoryForm extends BaseModel<Directory> {
 
-  @NotEmpty(message = "E0001,dataDirectoryId")
+    private static final long serialVersionUID = 1L;
+
+@NotEmpty(message = "E0001,dataDirectoryId")
   private String dataDirectoryId;
 
   @NotEmpty(message = "E0001,folderPath")

@@ -1,59 +1,46 @@
-<@standard.standardPage title="EVIDENT LOG">
-<form action="${rc.getContextPath()}/evidentLog/evidentLogScreen" object="mgrWorkspace" method="get" class="form-narrow
-form-horizontal">
-<#--// action="${rc.getContextPath()}/licenseHistory/evidentLogScreen"-->
-    <label>証跡ログ</label>
-    <#if mgrWorkspaces??>
-        <select onchange="this.form.submit()" id="mgrWorkspaceList" name="workspaceId">
-            <#list mgrWorkspaces as mgrWorkspace>
-                <#if workspaceId??>
-                    <#if mgrWorkspace.workspaceId == workspaceId>
-                        <option value="${mgrWorkspace.workspaceId}" selected>${mgrWorkspace.workspaceName}</option>
-                    <#else >
-                        <option value="${mgrWorkspace.workspaceId}">${mgrWorkspace.workspaceName}</option>
-                    </#if>
-                <#else >
-                    <option value="${mgrWorkspace.workspaceId}">${mgrWorkspace.workspaceName}</option>
-                </#if>
-            </#list>
-        </select>
-    </#if>
-    <table border="1" style="text-align: left;">
-        <tr>
-            <th>イベントID</th>
-            <th>処理日時</th>
-            <th>ユーザID</th>
-            <th>ワークアイテムID</th>
-            <th>履歴NO</th>
-            <th>プロセスID</th>
-            <th>プロセスバージョン</th>
-            <th>タスクID</th>
+<#assign searchForm>
+    <@component.searchFormPanel object="evidentLog" formId="evidentForm"></@component.searchFormPanel>
+</#assign>
+
+<@standard.standardPage title=e.get('evidenceLog.log') displayWorkspace=true script=script>
+
+<div class="board-wrapper board-full">
+    <#include "../common/messages.ftl">
+    <form method="get" id="filter" action="">
+        <input type="hidden" name="workspaceId" value="${workspaceId}">
+    </form>
+
+    ${searchForm}
+
+    <table class="clientSearch table_list">
+        <thead>
+        <tr class="table_header" style="white-space: nowrap;">
+            <td>${e.get('evidenceLog.eventId')}</td>
+            <td>${e.get('evidenceLog.processTime')}</td>
+            <td>${e.get('user.id')}</td>
+            <td>${e.get('evidenceLog.workitemId')}</td>
+            <td>${e.get('evidenceLog.historyNo')}</td>
+            <td>${e.get('evidenceLog.processId')}</td>
+            <td>${e.get('evidenceLog.processVersion')}</td>
+            <td>${e.get('evidenceLog.taskId')}</td>
         </tr>
-        <#if strLogAccesses??>
-            <#list strLogAccesses as strLogAccess>
+        </thead>
+        <tbody id="evidentTbody" class="table_body">
+            <#if strLogAccesses??>
+                <#list strLogAccesses as strLogAccess>
                 <tr>
-                    <td style="text-align: right;">${strLogAccess.eventId!""}</td>
-                    <td style="text-align: left;">${strLogAccess.processTime!""}</td>
-                    <td style="text-align: left;">${strLogAccess.userId!""}</td>
-                    <td style="text-align: right;">${strLogAccess.workitemId!""}</td>
-                    <td style="text-align: right;">${strLogAccess.historyNo!""}</td>
-                    <td style="text-align: right;">${strLogAccess.processId!""}</td>
-                    <td style="text-align: right;">${strLogAccess.processVersion!""}</td>
-                    <td style="text-align: right;">${strLogAccess.taskId!""}</td>
+                    <td class="number">${strLogAccess.eventId!""}</td>
+                    <td class="text">${strLogAccess.processTime!""}</td>
+                    <td class="text">${strLogAccess.userId!""}</td>
+                    <td class="number">${strLogAccess.workitemId!""}</td>
+                    <td class="number">${strLogAccess.historyNo!""}</td>
+                    <td class="number">${strLogAccess.processId!""}</td>
+                    <td class="number">${strLogAccess.processVersion!""}</td>
+                    <td class="number">${strLogAccess.taskId!""}</td>
                 </tr>
-            </#list>
-        <#else>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </#if>
+                </#list>
+            </#if>
+        </tbody>
     </table>
-</form>
+</div>
 </@standard.standardPage>

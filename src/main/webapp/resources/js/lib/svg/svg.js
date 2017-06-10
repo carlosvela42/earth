@@ -4463,7 +4463,7 @@ SVG.Image = SVG.invent({
 
         if(p === null) return
 
-        // ensure image size
+        // ensure image size        
         if (self.width() == 0 && self.height() == 0)
           self.size(img.width, img.height)
 
@@ -4479,6 +4479,8 @@ SVG.Image = SVG.invent({
           , ratio:  img.width / img.height
           , url:    url
           })
+          
+          
       })
 
       SVG.on(img, 'error', function(e){

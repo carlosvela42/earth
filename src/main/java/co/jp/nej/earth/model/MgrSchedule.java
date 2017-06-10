@@ -1,9 +1,8 @@
 package co.jp.nej.earth.model;
 
+import co.jp.nej.earth.model.sql.QMgrSchedule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import co.jp.nej.earth.model.sql.QMgrSchedule;
 
 public class MgrSchedule extends BaseModel<MgrSchedule> {
 
@@ -37,7 +36,8 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     public MgrSchedule(String scheduleId, int processId, String processName, String taskId, String taskName,
-                       String hostName, String processIServiceId, String startTime, String endTime) {
+                       String hostName, String processIServiceId, String startTime, String endTime,
+                       String enableDisable) {
         this();
         this.scheduleId = scheduleId;
         this.processId = processId;
@@ -48,12 +48,13 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
         this.processIServiceId = processIServiceId;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.enableDisable = enableDisable;
     }
 
     public MgrSchedule(String scheduleId, int processId, String taskId, String hostName, String processIServiceId,
                        String enableDisable, String startTime, String endTime, String nextRunDate,
                        String runIntervalDay, String runIntervalHour, String runIntervalMinute,
-                       String runIntervalSecond) {
+                       String runIntervalSecond, String lastUpdateTime) {
         this();
         this.scheduleId = scheduleId;
         this.processId = processId;
@@ -62,12 +63,13 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
         this.processIServiceId = processIServiceId;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.enableDisable=enableDisable;
-        this.nextRunDate=nextRunDate;
-        this.runIntervalDay=runIntervalDay;
-        this.runIntervalHour=runIntervalHour;
-        this.runIntervalMinute=runIntervalMinute;
-        this.runIntervalSecond=runIntervalSecond;
+        this.enableDisable = enableDisable;
+        this.nextRunDate = nextRunDate;
+        this.runIntervalDay = runIntervalDay;
+        this.runIntervalHour = runIntervalHour;
+        this.runIntervalMinute = runIntervalMinute;
+        this.runIntervalSecond = runIntervalSecond;
+        this.setLastUpdateTime(lastUpdateTime);
     }
 
     /**

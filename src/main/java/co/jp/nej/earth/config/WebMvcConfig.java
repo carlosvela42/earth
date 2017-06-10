@@ -3,6 +3,8 @@ package co.jp.nej.earth.config;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.validation.SmartValidator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -70,5 +72,10 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
         viewResolver.setContentType("text/html;charset=UTF-8");
         // viewResolver.setContentType("UTF-8");
         return viewResolver;
+    }
+
+    @Bean(name = "validator")
+    public SmartValidator localValidatorFactoryBean() {
+        return new LocalValidatorFactoryBean();
     }
 }

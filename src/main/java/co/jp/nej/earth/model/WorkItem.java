@@ -38,6 +38,8 @@ public class WorkItem extends BaseModel<WorkItem> {
     private List<FolderItem> folderItems = new ArrayList<FolderItem>();
     private int lastHistoryNo;
 
+    private ProcessMap processMap;
+
     public WorkItem() {
         this.setqObj(QWorkItem.newInstance());
     }
@@ -181,4 +183,17 @@ public class WorkItem extends BaseModel<WorkItem> {
         this.lastHistoryNo = lastHistoryNo;
     }
 
+    /**
+     * @return the processMap
+     */
+    public ProcessMap getProcessMap() {
+        return processMap;
+    }
+
+    /**
+     * @param processMap the processMap to set
+     */
+    public void setProcessMap(ProcessMap processMap) {
+        this.processMap = processMap;
+    }
 }

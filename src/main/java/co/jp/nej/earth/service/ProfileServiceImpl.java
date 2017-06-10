@@ -121,12 +121,6 @@ public class ProfileServiceImpl implements ProfileService {
     public List<Message> validate(MgrProfile mgrProfile, boolean insert) {
         List<Message> listMessage = new ArrayList<>();
         try {
-            if (EStringUtil.isEmpty(mgrProfile.getProfileId())) {
-                Message message = new Message(Constant.MessageUser.USR_BLANK,
-                        eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.PROFILE_ID }));
-                listMessage.add(message);
-                return listMessage;
-            }
 
             if (insert) {
                 if (!EStringUtil.checkAlphabet(mgrProfile.getProfileId())) {
@@ -135,16 +129,7 @@ public class ProfileServiceImpl implements ProfileService {
                     listMessage.add(message);
                     return listMessage;
                 }
-            }
 
-            if (EStringUtil.isEmpty(mgrProfile.getDescription())) {
-                Message message = new Message(Constant.MessageUser.NAME_BLANK,
-                        eMessageResource.get(ErrorCode.E0001, new String[] { ScreenItem.DESCRIPTION }));
-                listMessage.add(message);
-                return listMessage;
-            }
-
-            if (insert) {
                 if (isExist(mgrProfile.getProfileId())) {
                     Message message = new Message(Constant.MessageUser.USR_EXIST, eMessageResource.get(ErrorCode.E0005,
                             new String[] { mgrProfile.getProfileId(), ScreenItem.PROFILE }));

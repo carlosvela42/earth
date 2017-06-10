@@ -12,6 +12,7 @@ import co.jp.nej.earth.model.UserAccessRight;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.entity.MgrUser;
+import co.jp.nej.earth.web.form.SearchForm;
 
 public interface TemplateService {
   Map<String, Object> getTemplateListInfo(String workspaceId, List<String> templateIds) throws EarthException;
@@ -46,5 +47,7 @@ public interface TemplateService {
   boolean updateOne(String workspaceId, MgrTemplate mgrTemplate) throws EarthException;
 
   List<Message> checkExistsTemplate(MgrTemplate mgrTemplate, String dbUser) throws EarthException;
+
+  String getFieldJson(String workspaceId, SearchForm searchForm) throws EarthException;
 
 }

@@ -58,7 +58,7 @@ public class ScheduleDaoImpl extends BaseDaoImpl<MgrSchedule> implements Schedul
             ResultSet resultSet = ConnectionManager.getEarthQueryFactory(workspaceId)
                     .select(qMgrSchedule.scheduleId, qMgrSchedule.processId, qMgrSchedule.taskId,
                             qMgrSchedule.processIServiceId, qMgrSchedule.hostName, qMgrSchedule.startTime,
-                            qMgrSchedule.endTime, qMgrProcess.processName)
+                            qMgrSchedule.endTime, qMgrSchedule.enableDisable ,qMgrProcess.processName)
                     .from(qMgrSchedule).innerJoin(qMgrProcess).on(qMgrSchedule.processId.eq(qMgrProcess.processId))
                     .getResults();
             List<MgrSchedule> mgrSchedules = new ArrayList<>();
@@ -71,7 +71,9 @@ public class ScheduleDaoImpl extends BaseDaoImpl<MgrSchedule> implements Schedul
                         resultSet.getString(ColumnNames.HOST_NAME.toString()),
                         resultSet.getString(ColumnNames.PROCESS_ISERVICEID.toString()),
                         resultSet.getString(ColumnNames.START_TIME.toString()),
-                        resultSet.getString(ColumnNames.END_TIME.toString()));
+                        resultSet.getString(ColumnNames.END_TIME.toString()),
+                        resultSet.getString(ColumnNames.ENABLE_DISABLE.toString())
+                        );
                 mgrSchedules.add(mgrSchedule);
             }
             return mgrSchedules;

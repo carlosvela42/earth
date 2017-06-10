@@ -13,6 +13,8 @@ $icon_size: 25px;
 
 $table_form_row_height: 60px;
 
+$table_form_login_row_height: 45px;
+
 //bottom panel
 $action_panel_height: 80px;
 
@@ -45,6 +47,12 @@ $action_panel_height: 80px;
     td:nth-child(2n+1) {  /* or 4n+1 */
       background: $grey;
     }
+
+    &.table_same_color {
+      td {
+        background: $lighter_grey;
+      }
+    }
   }
 
   .condition {
@@ -68,6 +76,7 @@ $action_panel_height: 80px;
     tr:nth-child(odd) {
       background: $lighter_grey;
     }
+
     //tr:nth-child(even) {
     //  background: $table_body_even_row_color;
     //}
@@ -79,6 +88,7 @@ $action_panel_height: 80px;
       }
       &.text {
         text-align: left;
+        white-space: nowrap;
       }
     }
   }
@@ -87,6 +97,28 @@ $action_panel_height: 80px;
   td:nth-child(1), td:nth-child(2) {
     width: 30px;
     padding: 0;
+    &.text_center {
+      padding-top: 3px;
+    }
+    &.text{
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    &.number{
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+}
+
+.table_list.no_search {
+  .table_body {
+    tr:nth-child(odd) {
+      background: $white;
+    }
+    tr:nth-child(even) {
+      background: $lighter_grey;
+    }
   }
 }
 
@@ -99,10 +131,12 @@ $action_panel_height: 80px;
     .content_title {
       display: inline-block;
       vertical-align: top;
-      margin-top: 28px;
+      //margin-top: 28px;
       color: #01A9DB;
       font-size: 18px;
       font-weight: bold;
+      margin-top: 15px;
+      padding-left: 15px;
     }
 
     .workspaceSelectBox {
@@ -170,6 +204,13 @@ input[type=text] {
   padding: 5px 10px;
   width: 100%;
 }
+//input component
+input[type=password] {
+  border-radius: 5px;
+  border: 1px solid $grey;
+  padding: 5px 10px;
+  width: 100%;
+}
 
 //table_form
 .table_form {
@@ -184,4 +225,41 @@ input[type=text] {
       vertical-align: middle;
     }
   }
+}
+
+.table_form_login {
+  width: 100%;
+  text-align: center;
+  vertical-align: middle;
+  tr:first-child{
+    height: 85px;
+  }
+  tr {
+    height: $table_form_login_row_height;
+    td:nth-child(1) {
+      font-weight: bold;
+    }
+    td {
+      vertical-align: middle;
+    }
+  }
+}
+
+.div_login {
+  width: 350px;
+  height: 310px;
+  margin: auto;
+  padding-top: 15%;
+}
+
+.region {
+  padding: 10px 0;
+}
+
+.debug_info {
+  position: fixed;
+  bottom: 0px;
+  height: 20px;
+  padding-left: 10px;
+  z-index: 1000;
 }

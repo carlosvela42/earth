@@ -1,157 +1,70 @@
-<@standard.standardPage title="ADD PROFILE">
-<script>
-    window.onload = function () {
-        var countChecked = function () {
-            var str = ""
-            $('input[class=DeleteRow]:checked').each(function () {
-                str += $(this).attr('value') + ",";
-            });
-            if (str.length > 0) {
-                str = str.substring(0, str.length - 1);
-            }
-            $("#userIds").val(str);
-        };
-        $("input[class=DeleteRow]").on("click", countChecked);
-    }
-</script>
-<form action="${rc.getContextPath()}/profile/insertOne" object="mgrProfile" method="post" class="form-narrow
-form-horizontal">
-    <input type="hidden" id="userIds" name="userIds" value="${strUserId!""}">
-    <table style="text-align: left;">
-        <tr style="height: 40px; text-align: center">
-            <td><input type="submit" value="決定" class="button"></td>
-            <td><a href="${rc.getContextPath()}/profile/showList" class="button">キャンセル</a></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <#if messages??>
-                    <#list messages as message>
-                        <div>
-                            <b style="color: red;">${message.getContent()}</b>
-                        </div>
-                    </#list>
-                </#if>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <#if messageError??>
-                    <div>
-                        <b style="color: red;">${rc.getMessage("${messageError}")}</b>
-                    </div>
-                </#if>
-            </td>
-        </tr>
+<#assign contentFooter>
+    <@component.detailUpdatePanel object="profile" formId="profileForm"></@component.detailUpdatePanel>
+</#assign>
 
-        <#if mgrProfile??>
-            <tr>
-                <td>
-                    <label>プロファイルID</label>
-                </td>
-                <td>
-                    <input type="text" id="txtProfileId" name="profileId" height="20px" width="150px"
-                           style="text-align: left;" value="${mgrProfile.profileId}">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>説明</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDescription" name="description" height="20px" width="150px"
-                           style="text-align: left"
-                           value="${mgrProfile.description}">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>LDAP識別子</label>
-                </td>
-                <td>
-                    <input type="text" id="txtLDAP" name="ldapIdentifier" height="20px" width="150px"
-                           style="text-align: left" value="${mgrProfile.ldapIdentifier}">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>ユーザ一覧</label>
-                </td>
-                <td>
-                    <table border="1px solid black">
-                        <tr>
-                            <th colspan="2">ユーザID</th>
-                            <th>名前</th>
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/profile.js"></script>
+</#assign>
+
+<@standard.standardPage title=e.get("profile.edit") contentFooter=contentFooter script=script>
+<br>
+    <#assign isPersisted = (mgrProfile.lastUpdateTime??)>
+    <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
+    <#assign readonly = (formAction=='updateOne')?then('readonly',"")>
+
+<form  id="profileForm"  action="${rc.getContextPath()}/profile/${formAction}"  object="profileForm" method="post"
+       class="">
+    <#include "../common/messages.ftl">
+    <div class="board-wrapper">
+        <div class="board board-half">
+            <table class="table_form">
+                <tr>
+                    <td width="50%">${e.get('profile.id')}</td>
+                    <td>
+                        <input type="text" name="profileId" value="${mgrProfile.profileId!""}" ${readonly!""}>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('profile.description')}</td>
+                    <td>
+                        <input type="text" name="description" value="${mgrProfile.description!""}">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('profile.ldapIdentifier')}</td>
+                    <td>
+                        <input type="text" name="ldapIdentifier" value="${mgrProfile.ldapIdentifier!""}">
+                    </td>
+                </tr>
+            </table>
+            <div><input type="hidden" name="lastUpdateTime" value="${mgrProfile.lastUpdateTime!""}"/></div>
+            <div class="board board-half"><b>${e.get('user.list')}</b></div>
+            <table class="clientSearch table_list">
+                <thead>
+                <tr class="table_header">
+                    <td class=""><input type="checkbox" class="deleteAllCheckBox"/></td>
+                    <td class="text">${e.get('user.id')}</td>
+                    <td class="text">${e.get('user.name')}</td>
+                </tr>
+                </thead>
+                <tbody id="userTbody" class="table_body">
+                    <#if mgrUsers??>
+                        <#list mgrUsers as mgrUser>
+                        <tr userId="${mgrUser.userId}">
+                            <td><input type="checkbox" class="deleteCheckBox"
+                            ${userIds?seq_contains(mgrUser.userId)?string("checked","")}
+                            /></td>
+                            <td class="text">${mgrUser.userId!""}</td>
+                            <td class="text">${mgrUser.name!""}</td>
                         </tr>
-                        <#if mgrUsers??>
-                            <#list mgrUsers as mgrUser>
-                                <tr>
-                                    <input type="checkbox" id="delRow${mgrUser?index}" name="${mgrUser.userId}"
-                                           value="${mgrUser.userId}"
-                                           class="DeleteRow" ${userIds?seq_contains(mgrUser.userId)?string("checked","")
-                                    }>
-                                    </td>
-                                    <td><#if mgrUser.userId??>${mgrUser.userId}</#if></td>
-                                    <td><#if mgrUser.name??>${mgrUser.name}</#if></td>
-                                </tr>
-                            </#list>
-                        </#if>
-                    </table>
-                </td>
-            </tr>
-        <#else >
-            <tr>
-                <td>
-                    <label>プロファイルID</label>
-                </td>
-                <td>
-                    <input type="text" id="txtProfileId" name="profileId" height="20px" width="150px"
-                           style="text-align: left;">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>説明</label>
-                </td>
-                <td>
-                    <input type="text" id="txtDescription" name="description" height="20px" width="150px"
-                           style="text-align: left"
-                    >
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>LDAP識別子</label>
-                </td>
-                <td>
-                    <input type="text" id="txtLDAP" name="ldapIdentifier" height="20px" width="150px"
-                           style="text-align: left">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>ユーザ一覧</label>
-                </td>
-                <td>
-                    <table border="1px solid black">
-                        <tr>
-                            <th colspan="2">ユーザID</th>
-                            <th>名前</th>
-                        </tr>
-                        <#if mgrUsers??>
-                            <#list mgrUsers as mgrUser>
-                                <tr>
-                                    <td><input type="checkbox" id="delRow${mgrUser?index}" name="${mgrUser.userId}"
-                                               value="${mgrUser.userId}"
-                                               class="DeleteRow"></td>
-                                    <td><#if mgrUser.userId??>${mgrUser.userId}</#if></td>
-                                    <td><#if mgrUser.name??>${mgrUser.name}</#if></td>
-                                </tr>
-                            </#list>
-                        </#if>
-                    </table>
-                </td>
-            </tr>
-        </#if>
-    </table>
+                        </#list>
+                    </#if>
+                </tbody>
+            </table>
+        </div>
+        <div class="board-split"></div>
+
+    </div>
+    <input type="hidden" id="userIds" name="userIds" value="${strUserId!""}">
 </form>
 </@standard.standardPage>

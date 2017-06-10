@@ -26,9 +26,11 @@ import co.jp.nej.earth.model.TemplateKey;
 import co.jp.nej.earth.model.WorkItem;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.enums.TemplateType;
 import co.jp.nej.earth.model.enums.Type;
 import co.jp.nej.earth.model.sql.QMgrTemplate;
 import co.jp.nej.earth.util.EStringUtil;
+import co.jp.nej.earth.web.form.SearchForm;
 
 @Repository
 public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements TemplateDao {
@@ -251,21 +253,91 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
 
   public long createTemplateData(String workspaceId, MgrTemplate mgrTemplate) throws EarthException {
     try {
-      String nameTable = "CREATE TABLE " + mgrTemplate.getTemplateTableName() + " ";
-      List<Field> fields = mgrTemplate.getTemplateFields();
-      String createField = "(ID INT GENERATED ALWAYS AS IDENTITY,";
-      for (Field field : fields) {
-        if (field.getType().equals(Constant.Template.FIELD_TYPTE_1)) {
-          createField += field.getName() + " " + Type.NUMBER + ",";
-        } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_3)) {
-          createField += field.getName() + " " + Type.LONG + ",";
-        } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_2)) {
-          createField += field.getName() + " " + Type.NVARCHAR2 + "(" + field.getSize() + ")" + ",";
-        } else {
-          createField += field.getName() + " " + Type.NCHAR + "(" + field.getSize() + ")" + ",";
+      String nameTable = EStringUtil.EMPTY;
+      String createField = EStringUtil.EMPTY;
+      if (TemplateType.WORKITEM.toString().equals(mgrTemplate.getTemplateType())) {
+        nameTable = "CREATE TABLE " + mgrTemplate.getTemplateTableName() + " ";
+        List<Field> fields = mgrTemplate.getTemplateFields();
+        createField = "(WORKITEMID NVARCHAR2(20),HISTORYNO NUMBER,";
+        for (Field field : fields) {
+          if (field.getType().equals(Constant.Template.FIELD_TYPTE_1)) {
+            createField += field.getName() + " " + Type.NUMBER + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_3)) {
+            createField += field.getName() + " " + Type.LONG + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_2)) {
+            createField += field.getName() + " " + Type.NVARCHAR2 + "(" + field.getSize() + ")" + ",";
+          } else {
+            createField += field.getName() + " " + Type.NCHAR + "(" + field.getSize() + ")" + ",";
+          }
         }
+        createField += "LASTUPDATETIME NCHAR(50), PRIMARY KEY (WORKITEMID,HISTORYNO))";
+      } else if (TemplateType.PROCESS.toString().equals(mgrTemplate.getTemplateType())) {
+        nameTable = "CREATE TABLE " + mgrTemplate.getTemplateTableName() + " ";
+        List<Field> fields = mgrTemplate.getTemplateFields();
+        createField = "(PROCESSID NVARCHAR2(20), WORKITEMID NVARCHAR2(20),HISTORYNO NUMBER,";
+        for (Field field : fields) {
+          if (field.getType().equals(Constant.Template.FIELD_TYPTE_1)) {
+            createField += field.getName() + " " + Type.NUMBER + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_3)) {
+            createField += field.getName() + " " + Type.LONG + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_2)) {
+            createField += field.getName() + " " + Type.NVARCHAR2 + "(" + field.getSize() + ")" + ",";
+          } else {
+            createField += field.getName() + " " + Type.NCHAR + "(" + field.getSize() + ")" + ",";
+          }
+        }
+        createField += "LASTUPDATETIME NCHAR(50), PRIMARY KEY (PROCESSID,WORKITEMID,HISTORYNO))";
+      } else if (TemplateType.FOLDERITEM.toString().equals(mgrTemplate.getTemplateType())) {
+        nameTable = "CREATE TABLE " + mgrTemplate.getTemplateTableName() + " ";
+        List<Field> fields = mgrTemplate.getTemplateFields();
+        createField = "(WORKITEMID NVARCHAR2(20),FOLDERITEMNO NUMBER, HISTORYNO NUMBER,";
+        for (Field field : fields) {
+          if (field.getType().equals(Constant.Template.FIELD_TYPTE_1)) {
+            createField += field.getName() + " " + Type.NUMBER + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_3)) {
+            createField += field.getName() + " " + Type.LONG + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_2)) {
+            createField += field.getName() + " " + Type.NVARCHAR2 + "(" + field.getSize() + ")" + ",";
+          } else {
+            createField += field.getName() + " " + Type.NCHAR + "(" + field.getSize() + ")" + ",";
+          }
+        }
+        createField += "LASTUPDATETIME NCHAR(50), PRIMARY KEY (WORKITEMID,FOLDERITEMNO,HISTORYNO))";
+      } else if (TemplateType.DOCUMENT.toString().equals(mgrTemplate.getTemplateType())) {
+        nameTable = "CREATE TABLE " + mgrTemplate.getTemplateTableName() + " ";
+        List<Field> fields = mgrTemplate.getTemplateFields();
+        createField = "(WORKITEMID NVARCHAR2(20),FOLDERITEMNO NUMBER,DOCUMENTNO NUMBER, HISTORYNO NUMBER,";
+        for (Field field : fields) {
+          if (field.getType().equals(Constant.Template.FIELD_TYPTE_1)) {
+            createField += field.getName() + " " + Type.NUMBER + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_3)) {
+            createField += field.getName() + " " + Type.LONG + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_2)) {
+            createField += field.getName() + " " + Type.NVARCHAR2 + "(" + field.getSize() + ")" + ",";
+          } else {
+            createField += field.getName() + " " + Type.NCHAR + "(" + field.getSize() + ")" + ",";
+          }
+        }
+        createField += "LASTUPDATETIME NCHAR(50), PRIMARY KEY (WORKITEMID,FOLDERITEMNO,DOCUMENTNO,HISTORYNO))";
+      } else if (TemplateType.LAYER.toString().equals(mgrTemplate.getTemplateType())) {
+        nameTable = "CREATE TABLE " + mgrTemplate.getTemplateTableName() + " ";
+        List<Field> fields = mgrTemplate.getTemplateFields();
+        createField = "(WORKITEMID NVARCHAR2(20),FOLDERITEMNO NUMBER,DOCUMENTNO NUMBER,LAYERNO NUMBER, "
+            + "HISTORYNO NUMBER,";
+        for (Field field : fields) {
+          if (field.getType().equals(Constant.Template.FIELD_TYPTE_1)) {
+            createField += field.getName() + " " + Type.NUMBER + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_3)) {
+            createField += field.getName() + " " + Type.LONG + ",";
+          } else if (field.getType().equals(Constant.Template.FIELD_TYPTE_2)) {
+            createField += field.getName() + " " + Type.NVARCHAR2 + "(" + field.getSize() + ")" + ",";
+          } else {
+            createField += field.getName() + " " + Type.NCHAR + "(" + field.getSize() + ")" + ",";
+          }
+        }
+        createField += "LASTUPDATETIME NCHAR(50), PRIMARY KEY (WORKITEMID,FOLDERITEMNO,DOCUMENTNO,LAYERNO,HISTORYNO))";
       }
-      createField += "PRIMARY KEY (ID))";
+
       String sql = nameTable + createField;
       EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
       Statement stmt = earthQueryFactory.getConnection().createStatement();
@@ -286,6 +358,21 @@ public class TemplateDaoImpl extends BaseDaoImpl<MgrTemplate> implements Templat
       return stmt.executeUpdate(isExistsTable);
     } catch (Exception ex) {
       throw new EarthException(ex.getMessage());
+    }
+  }
+
+  @Override
+  public String getFieldJson(String workspaceId, SearchForm searchForm) throws EarthException {
+    try {
+      QMgrTemplate qMgrTemplate = QMgrTemplate.newInstance();
+      String fieldJson = ConnectionManager.getEarthQueryFactory(workspaceId).select(qMgrTemplate.templateField)
+          .from(qMgrTemplate)
+          .where(qMgrTemplate.templateId.eq(searchForm.getTemplateId()).and(qMgrTemplate.templateTableName
+              .eq(searchForm.getTemplateTableName()).and(qMgrTemplate.templateType.eq(searchForm.getTemplateType()))))
+          .fetchOne();
+      return fieldJson;
+    } catch (Exception ex) {
+      throw new EarthException(ex);
     }
   }
 }

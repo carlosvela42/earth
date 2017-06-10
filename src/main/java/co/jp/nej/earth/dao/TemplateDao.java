@@ -11,6 +11,7 @@ import co.jp.nej.earth.model.TemplateData;
 import co.jp.nej.earth.model.TemplateKey;
 import co.jp.nej.earth.model.WorkItem;
 import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.web.form.SearchForm;
 
 public interface TemplateDao extends BaseDao<MgrTemplate> {
   MgrTemplate getTemplate(String workspaceId, String templateId) throws EarthException;
@@ -60,4 +61,6 @@ public interface TemplateDao extends BaseDao<MgrTemplate> {
   long updateOne(String workspaceId, MgrTemplate mgrTemplate) throws EarthException;
 
   long isExistsTableData(String workspaceId, String templateTableName, String dbUser) throws EarthException;
+
+  String getFieldJson(String workspaceId, SearchForm searchForm) throws EarthException;
 }

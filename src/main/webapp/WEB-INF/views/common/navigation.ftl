@@ -16,15 +16,15 @@
         <li class="report">
             <div class="name">レポート</div>
             <ul>
-                <li><a href="${rc.getContextPath()}/licenseHistory/initLicenseHistoryScreen">ライセンス利用状況</a></li>
-                <li><a href="${rc.getContextPath()}/evidentLog/evidentLog">証跡ログ</a></li>
+                <li><a href="${rc.getContextPath()}/licenseHistory">ライセンス利用状況</a></li>
+                <li><a href="${rc.getContextPath()}/evidentLog">証跡ログ</a></li>
                 <li><a href="${rc.getContextPath()}/loginView">ログイン状況</a></li>
             </ul>
         </li>
         <li class="authority">
             <div class="name">権限</div>
             <ul>
-                <li><a href="${rc.getContextPath()}/templateAccessRight/initTemplateListScreen">テンプレート一覧</a></li>
+                <li><a href="${rc.getContextPath()}/templateAccessRight">テンプレート一覧</a></li>
                 <li><a href="${rc.getContextPath()}/menuAccessRight/menuList">メニュー一覧</a></li>
             </ul>
         </li>
@@ -51,7 +51,7 @@
         <li class="tool">
             <div class="name">ツール</div>
             <ul>
-                <li><a href="${rc.getContextPath()}/imageviewer">イメージビューア</a></li>
+                <li><a href="${rc.getContextPath()}/imageviewer/svgImageViewer">イメージビューア</a></li>
             </ul>
         </li>
     </ul>

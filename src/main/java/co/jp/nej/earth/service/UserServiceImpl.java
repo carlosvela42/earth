@@ -138,25 +138,13 @@ public class UserServiceImpl extends BaseService implements UserService {
      */
     public List<Message> login(String userId, String password, HttpSession session, int channel) throws EarthException {
         List<Message> listMessage = new ArrayList<Message>();
-        if (EStringUtil.isEmpty(userId)) {
-            Message message = new Message(MessageCodeLogin.USR_BLANK,
-                    eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.USER_ID}));
-            listMessage.add(message);
-        }
-
-        if (EStringUtil.isEmpty(password)) {
-            Message message = new Message(MessageCodeLogin.PWD_BLANK,
-                    eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.PASSWORD}));
-            listMessage.add(message);
-        }
-
         if (!EStringUtil.isEmpty(userId) && !EStringUtil.checkAlphabet(userId)) {
             Message message = new Message(MessageUser.USR_SPECIAL,
                     eMessageResource.get(ErrorCode.E0007, new String[]{ScreenItem.USER_ID}));
             listMessage.add(message);
         }
 
-        if (!EStringUtil.isEmpty(userId) && !EStringUtil.isEmpty(password)) {
+        if (!EStringUtil.isEmpty(userId)) {
             TransactionManager transactionManager = null;
             try {
                 transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
@@ -348,8 +336,11 @@ public class UserServiceImpl extends BaseService implements UserService {
         TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
         try {
             mgrUser.setLastUpdateTime(DateUtil.getCurrentDate(DatePattern.DATE_FORMAT_YYYY_MM_DD));
-            mgrUser.setPassword(CryptUtil.encryptOneWay(mgrUser.getPassword()));
-            mgrUser.setConfirmPassword(CryptUtil.encryptOneWay(mgrUser.getConfirmPassword()));
+                mgrUser.setPassword(CryptUtil.encryptOneWay(!EStringUtil.isEmpty(mgrUser.getPassword())?mgrUser
+                        .getPassword():""));
+
+            mgrUser.setConfirmPassword(CryptUtil.encryptOneWay(!EStringUtil.isEmpty(mgrUser.getConfirmPassword())
+                    ?mgrUser.getConfirmPassword():""));
             long insert = userDao.add(Constant.EARTH_WORKSPACE_ID, mgrUser);
             if (insert == 0) {
                 throw new EarthException("Insert unsuccessfully!");

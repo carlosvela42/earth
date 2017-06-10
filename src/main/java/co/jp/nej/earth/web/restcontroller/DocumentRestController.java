@@ -59,17 +59,25 @@ public class DocumentRestController extends BaseRestController {
     @RequestMapping(value = "/getDocumentInfo", method = RequestMethod.POST)
     public RestResponse getDocumentInfo(@ModelAttribute("DocumentForm") DocumentForm form, BindingResult result,
             HttpServletRequest request) throws EarthException {
-        RestResponse respone = new RestResponse();
-        Object tmpSession = request.getSession()
-                .getAttribute("TMP" + form.getWorkspaceId() + "&" + form.getWorkitemId());
-        if (tmpSession == null){
-            return documentService.getDocumentList(form.getWorkspaceId(), form.getWorkitemId(), form.getFolderItemNo(),
-                    form.getDocumentNo(), "new");
-        } else {
-            respone.setResult(true);
-            respone.setData(tmpSession);
+        List<Message> messages = validatorUtil.validate(result);
+        if (messages != null && messages.size() > 0) {
+            RestResponse respone = new RestResponse();
+            respone.setResult(false);
+            respone.setData(messages);
             return respone;
+            }
+        RestResponse respone = new RestResponse();
+        Object imageDocument = request.getSession()
+                .getAttribute("TMP" + form.getWorkspaceId() + "&" + form.getWorkitemId());
+        if (imageDocument == null){
+            imageDocument = documentService.getDocumentList(form.getWorkspaceId(), form.getWorkitemId()
+                    , form.getFolderItemNo(),form.getDocumentNo(), "new");
+            request.getSession().setAttribute("TMP" + form.getWorkspaceId() + "&" + form.getWorkitemId()
+            ,imageDocument);
         }
+        respone.setResult(true);
+        respone.setData(imageDocument);
+        return respone;
     }
 
     @RequestMapping(value = "/getDocument", method = RequestMethod.POST)

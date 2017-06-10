@@ -14,7 +14,7 @@
             <thead>
             <tr class="table_header">
                 <td class=""><input type="checkbox" class="deleteAllCheckBox"/></td>
-                <td>
+                <td class="text_center">
                     <a id="addButton" class="icon icon_add" href="${rc.getContextPath()}/user/addNew">
                     </a>
                 </td>
@@ -22,7 +22,7 @@
                 <td>${e.get('user.name')}</td>
             </tr>
             <tr class="condition">
-                <td><span class="icon icon_search"></span></td>
+                <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
                 <td colspan="2"><input type="text" col="3" placeholder="Search for ID.."></td>
                 <td><input type="text" col="4" placeholder="Search for name.."></td>
             </tr>
@@ -32,7 +32,7 @@
                     <#list mgrUsers as mgrUser>
                     <tr userId="${mgrUser.userId}">
                         <td><input type="checkbox" class="deleteCheckBox"/></td>
-                        <td class="text_center"><a class="icon icon_edit"
+                        <td class="text_center text_icon"><a class="icon icon_edit"
                                                    href="${rc.getContextPath()}/user/showDetail?userId=${mgrUser.userId}"></a>
                         </td>
                         <td class="text">${mgrUser.userId!""}</td>

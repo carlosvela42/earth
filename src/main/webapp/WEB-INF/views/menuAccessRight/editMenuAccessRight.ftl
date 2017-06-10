@@ -1,210 +1,181 @@
-<@standard.standardPage title="MENU AUTHORITY">
-<script type="text/javascript">
-    function addParent() {
-        var userAccessRightStr = "";
-        $('#userAccessRightTable > tbody > tr').each(function () {
-            userAccessRightStr += $(this).find("td").eq(1).html() + "|" + $(this).find("td").eq(2).html() + ",";
-        });
-        $('#userIdAccessRight').val(userAccessRightStr);
+<#assign contentFooter>
+    <@component.detailUpdatePanel object="menuAccessRight" formId="menuAuthorityForm"></@component.detailUpdatePanel>
+</#assign>
+<#assign addForm>
+    <@component.addFormPanel object="" formId=""></@component.addFormPanel>
+</#assign>
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/menu.js"></script>
+</#assign>
 
-        var profileAccessRightStr = "";
-        $('#profileAccessRightTable > tbody > tr').each(function () {
-            profileAccessRightStr += $(this).find("td").eq(1).html() + "|" + $(this).find("td").eq(2).html() + ",";
-        });
+<@standard.standardPage title=e.get("mgrMenu.authority") contentFooter=contentFooter script=script>
 
-        $('#profileIdAccessRight').val(profileAccessRightStr);
-        //$("#formId").submit()
-    }
+<form method="post" action="${rc.getContextPath()}/menuAccessRight/updateMenuAccessRight" id="menuAuthorityForm"
+      object="menuAuthorityForm">
+    <#include "../common/messages.ftl">
+    <div class="board-wrapper">
+        <div class="board board-half">
+            <table class="table_form">
+                <tr>
+                    <td width="50%">${e.get('mgrMenu.functionId')}</td>
+                    <td>
+                        <input type="text" name="functionId" value="${menuAuthorityForm.functionId!""}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('mgrMenu.functionName')}</td>
+                    <td>
+                        <input type="text" name="functionName" height="20px" width="150px" style="text-align: left"
+                               value="${menuAuthorityForm.functionName!""}" readonly>
+                    </td>
+                </tr>
 
-    function addChildRecord() {
-        var choosenUserId = $("#userId").val();
-        var choosenProfileId = $("#profileId").val();
-        var choosenAccessRight = $("input[name='accessRight']:checked").data('name');
-        if ((choosenUserId == null || choosenUserId == '') && (choosenProfileId == null || choosenProfileId == '')) {
-            alert("Ban chua chon UserId hoac ProfileId");
-        } else if (choosenUserId != '' && choosenProfileId != '') {
-            alert("Ban chi duoc chon UserId hoac ProfileId");
-        } else if (choosenUserId != '' || choosenProfileId != '') {
-            if (choosenAccessRight != null) {
-                if (choosenUserId != '') {
-                    var userIdArr = new Array();
-                    $('#userAccessRightTable > tbody > tr').each(function () {
-                        userIdArr.push($(this).find("td").eq(1).html());
-                    });
+                <tr>
+                    <td width="50%">${e.get('mgrMenu.functionCategoryId')}</td>
+                    <td>
+                        <input type="text" name="functionCategoryId"
+                               value="${menuAuthorityForm.functionCategoryId!""}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('mgrMenu.functionCategoryName')}</td>
+                    <td>
+                        <input type="text" name="functionCategoryName"
+                               value="${menuAuthorityForm.functionCategoryName!""}" readonly>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="board-split"></div>
+        <div class="board board-half">
+            <div id="tabs" class="container">
+                <div class="panel with-nav-tabs panel-default">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tabs-user">${e.get('user.id')}</a></li>
+                            <li><a data-toggle="tab" href="#tabs-profile">${e.get('profile.id')}</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div id="tabs-user" class="tab-pane fade in active">
+                                <button type="button" class="btn btn_remove" id="deleteButton"
+                                        onclick="return delRow('user');">
+                                    <@spring.message code='button.delete'/></button>
+                                <div style="height: 10px;"></div>
+                                <table class="clientSearch table_list userAccessRightTable">
+                                    <thead>
+                                    <tr class="table_header">
+                                        <td><input type="checkbox" name="userRightTop" class="deleteAllCheckBox"></td>
+                                        <td class="text_center">
+                                            <button type="button" class="icon btn_add" id="addUser"
+                                                    data-target="#addFormuser"></button>
+                                        </td>
+                                        <td style="width: 40%">${e.get('user.id')}</td>
+                                        <td>${e.get('accessRight.name')}</td>
+                                    </tr>
+                                    <tr class="condition">
+                                        <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+                                        <td colspan="2"><input type="text" col="3" placeholder="Search ">
+                                        </td>
+                                        <td><input type="text" col="4" placeholder="Search "></td>
+                                    </tr>
+                                    </thead>
+                                    <#assign index=(menuAuthorityForm.userAccessRights??)?then
+                                    (menuAuthorityForm.userAccessRights?size,0)>
+                                    <tbody id="userTbody" class="table_body" index="${index}">
+                                        <#if menuAuthorityForm.userAccessRights??>
+                                            <#list menuAuthorityForm.userAccessRights as userAccessRight>
+                                            <tr userId="${userAccessRight.userId}">
+                                                <td><input type="checkbox" class="deleteCheckBox"/></td>
+                                                <td class="text_center">
+                                                    <span class="icon icon_edit"
+                                                          onclick="editRow('user','${userAccessRight.userId!""}')"></span>
+                                                </td>
+                                                <td class="text">
+                                                    <span> ${userAccessRight.userId!""}</span>
+                                                    <input type="hidden"
+                                                           name="userAccessRights[${userAccessRight?index}].userId"
+                                                           value="${userAccessRight.userId!""}"
+                                                    />
+                                                </td>
+                                                <td class="text">
+                                                    <span>${userAccessRight.accessRight!""}</span>
+                                                    <input type="hidden"
+                                                           name="userAccessRights[${userAccessRight?index}].accessRight"
+                                                           value="${userAccessRight.accessRight!""}"
+                                                    />
+                                                </td>
+                                            </tr>
+                                            </#list>
+                                        </#if>
+                                    </tbody>
+                                </table>
 
-                    var newUserRow = "<tr><td><input type=\"checkbox\" name=\"userRight\"></td><td>" + choosenUserId + "</td><td>" + choosenAccessRight + "</td></tr>";
+                            </div>
+                            <div id="tabs-profile" class="tab-pane fade">
+                                <button type="button" class="btn btn_remove"
+                                        id="deleteButton" onclick="return delRow('profile');">
+                                    <@spring.message code='button.delete'/></button>
+                                <div style="height: 10px;"></div>
+                                <table class="clientSearch table_list profileAccessRightTable">
+                                    <thead>
+                                    <tr class="table_header">
+                                        <td><input type="checkbox" name="userRightTop" class="deleteAllCheckBox"></td>
+                                        <td class="text_center">
 
-                    if (jQuery.inArray(choosenUserId, userIdArr) != -1) {
-                        var index = jQuery.inArray(choosenUserId, userIdArr);
-                        $('#userAccessRightTable > tbody > tr').eq(index).replaceWith(newUserRow);
-                    } else {
-                        $("#userAccessRightTable").append(newUserRow);
-                    }
-                    $("#userId").val('');
-                    $("input[name='accessRight']:checked").prop('checked', false);
-                } else if (choosenProfileId != '') {
-                    var profileIdArr = new Array();
-                    $('#profileAccessRightTable > tbody > tr').each(function () {
-                        profileIdArr.push($(this).find("td").eq(1).html());
-                    });
+                                            <button type="button" class="icon btn_add" id="addProfile"
+                                                    data-target="#addFormprofile"></button>
 
-                    var newProfileRow = "<tr><td><input type=\"checkbox\" name=\"userRight\"></td><td>" + choosenProfileId + "</td><td>" + choosenAccessRight + "</td></tr>";
+                                        </td>
+                                        <td style="width: 40%">${e.get('profile.id')}</td>
+                                        <td>${e.get('accessRight.name')}</td>
+                                    </tr>
+                                    <tr class="condition">
+                                        <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+                                        <td colspan="2"><input type="text" col="3" placeholder="Search ">
+                                        </td>
+                                        <td><input type="text" col="4" placeholder="Search "></td>
+                                    </tr>
+                                    </thead>
+                                    <#assign index1=(menuAuthorityForm.profileAccessRights??)?then(menuAuthorityForm.profileAccessRights?size,0)>
+                                    <tbody id="profileTbody" class="table_body" index="${index1}">
 
-                    if (jQuery.inArray(choosenProfileId, profileIdArr) != -1) {
-                        var index = jQuery.inArray(choosenProfileId, profileIdArr);
-                        $('#profileAccessRightTable > tbody > tr').eq(index).replaceWith(newProfileRow);
-                    } else {
-                        $("#profileAccessRightTable").append(newProfileRow);
-                    }
+                                        <#if menuAuthorityForm.profileAccessRights??>
+                                            <#list menuAuthorityForm.profileAccessRights as profileAccessRight>
+                                            <tr profileId="${profileAccessRight.profileId}">
+                                                <td><input type="checkbox" name="profileRight" class="deleteCheckBox">
+                                                </td>
+                                                <td class="text_center">
+                                                    <span class="icon icon_edit"
+                                                       onclick="editRow('profile','${profileAccessRight.profileId!""}');">
+                                                    </span>
+                                                </td>
+                                                <td type="text">
+                                                    <span>${profileAccessRight.profileId!""}</span><input type="hidden"
+                                                                                                          name="profileAccessRights[${profileAccessRight?index}].profileId"
+                                                                                                          value="${profileAccessRight.profileId!""}"/>
+                                                </td>
+                                                <td type="text"><span>${profileAccessRight.accessRight!""}</span><input
+                                                        type="hidden"
+                                                        name="profileAccessRights[${profileAccessRight?index}].accessRight"
+                                                        value="${profileAccessRight.accessRight!""}"
+                                                        readonly/></td>
+                                            </tr>
+                                            </#list>
+                                        </#if>
+                                    </tbody>
+                                </table>
+                            </div>
 
-                    $("#profileId").val('');
-                    $("input[name='accessRight']:checked").prop('checked', false);
-                }
-            } else {
-                alert("Ban chua chon access right");
-            }
-        }
-    }
+                        </div>
+                    </div>
 
-    function deleteRecord() {
-        $('input:checkbox:checked').each(function () {
-            $(this).parent().parent().remove();
-        });
-    }
-</script>
-<label>メニュー権限設定</label>
-</br>
-<form method="post" action="${rc.getContextPath()}/menuAccessRight/updateMenuAccessRight" id="formId" object="mgrMenu">
-    <input type="submit" onclick="addParent()" value="決定">
-    <a id="cancelParent" href="${rc.getContextPath()}/menuAccessRight/menuList" class="button">キャンセル</a>
-    <#if message??>
-        <label>${message}</label>
-    </#if>
-    <table>
-        <tr style="text-align: left;">
-            <td>機能ID</td>
-            <td>
-                <input type="label" id="txtFunctionId" name="functionId" height="20px" width="150px"
-                       style="text-align: left;background: #EBEBE4;" value="${mgrMenu.functionId!""}" readonly>
-            </td>
-        </tr>
-        <tr style="text-align: left;">
-            <td>機能名</td>
-            <td>
-                <input type="label" id="txtFunctionId" name="functionName" height="20px" width="150px"
-                       style="text-align: left;background: #EBEBE4;" value="${mgrMenu.functionName!""}" readonly>
-            </td>
-        </tr>
-        <tr style="text-align: left;">
-            <td>機能分類ID</td>
-            <td>
-                <input type="label" id="txtFunctionId" name="functionCategoryId" height="20px" width="150px"
-                       style="text-align: left;background: #EBEBE4;" value="${mgrMenu.functionCategoryId!""}" readonly>
-            </td>
-        </tr>
-        <tr style="text-align: left;">
-            <td>機能分類名</td>
-            <td>
-                <input type="label" id="txtFunctionId" name="functionCategoryName" height="20px" width="150px"
-                       style="text-align: left;background: #EBEBE4;" value="${mgrMenu.functionCategoryName!""}" readonly>
-            </td>
-        </tr>
-        <tr style="text-align: left;">
-            <td>ユーザID</td>
-            <td>
-                <button type="button" onclick="deleteRecord()">削除</button>
-                <table border="1" id="userAccessRightTable">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>ユーザID</th>
-                        <th>アクセス権</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <#if userAccessRights??>
-                            <#list userAccessRights as userAccessRight>
-                            <tr id="${userAccessRight.userId}">
-                                <td><input type="checkbox" name="userRight"></td>
-                                <td>${userAccessRight.userId}</td>
-                                <td>${userAccessRight.accessRight}</td>
-                            </tr>
-                            </#list>
-                        </#if>
-                    </tbody>
-                </table>
-                <input type="hidden" id="userIdAccessRight" name="userIdAccessRight">
-            </td>
-        </tr>
-        <tr style="text-align: left;">
-            <td>プロファイルID</td>
-            <td>
-                <button type="button" onclick="deleteRecord()">削除</button>
-                <table border="1" id="profileAccessRightTable">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>プロファイルID</th>
-                        <th>アクセス権</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <#if profileAccessRights??>
-                            <#list profileAccessRights as profileAccessRight>
-                            <tr>
-                                <td><input type="checkbox" name="profileRight"></td>
-                                <td>${profileAccessRight.profileId}</td>
-                                <td>${profileAccessRight.accessRight}</td>
-                            </tr>
-                            </#list>
-                        </#if>
-                    </tbody>
-                </table>
-                <input type="hidden" id="profileIdAccessRight" name="profileIdAccessRight">
-            </td>
-        </tr>
-    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </form>
-<div style="height: 20px;"></div>
-<button id="addChild" onclick="addChildRecord()">決定</button>
-<button id="cancelChild">キャンセル</button>
-<table>
-    <tr style="text-align: left;">
-        <td>ユーザID</td>
-        <td>
-            <select id="userId">
-                <option value="">--Select--</option>
-                <#if mgrUsers??>
-                    <#list mgrUsers as mgrUser>
-                        <option value="${mgrUser.userId}">${mgrUser.userId}</option>
-                    </#list>
-                </#if>
-            </select>
-        </td>
-    </tr>
-    <tr style="text-align: left;">
-        <td>プロファイルID</td>
-        <td>
-            <select id="profileId">
-                <option value="">--Select--</option>
-                <#if mgrProfiles??>
-                    <#list mgrProfiles as mgrProfile>
-                        <option value="${mgrProfile.profileId}">${mgrProfile.profileId}</option>
-                    </#list>
-                </#if>
-            </select>
-        </td>
-    </tr>
-    <tr style="text-align: left;">
-        <td>アクセス権</td>
-        <td>
-            <#if accessRights??>
-                <#list accessRights as accessRight>
-                    <input type="radio" name="accessRight" data-name="${accessRight}"
-                           value="${accessRight.value}">${accessRight}</label></br>
-                </#list>
-            </#if>
-        </td>
-    </tr>
-</table>
+${addForm}
 </@standard.standardPage>

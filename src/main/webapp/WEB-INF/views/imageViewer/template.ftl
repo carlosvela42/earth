@@ -1,5 +1,5 @@
-﻿<nav class="navbar navbar-default navbar-fixed-top">
-	<div class="btn-group" role="group" aria-label="...">
+<nav class="navbar navbar-default navbar-fixed-top" z-index='300'>
+	<div class="btn-group" role="group" aria-label="..." z-index='301'>
 		<button type="button" class="btn btn-default" title="select"
 			id="select">
 			<img src="${rc.getContextPath()}/resources/images/imageViewer/select.png" width="20" />
@@ -48,10 +48,6 @@
 					data-tool="highlight"> HIGHLIGHT</li>
 				<li><input type="radio" id="comment" name="toolOption"
 					data-tool="comment"> COMMENT</li>
-				<li><input type="radio" id="testLine" name="toolOption"
-					data-tool="testLine"> TESTLINE</li>
-				<li style="display: none"><input type="radio" id="drawSelect"
-					name="toolOption" data-tool="drawSelect"></li>
 			</ul>
 		</div>
 		<button type="button" class="btn btn-default" title="properties"
@@ -60,7 +56,7 @@
 		</button>
 		<button type="button" id="btnGrayscale"
 			class="btn btn-default image-viewer" title="grayscale"
-			data-toggle="modal" data-modal="#myModal2">
+			data-toggle="modal" data-target="#myModal2">
 			<img src="${rc.getContextPath()}/resources/images/imageViewer/grayscale.jpg" width="20" />
 		</button>
 		<button type="button" id="btnLayer" class="btn btn-default"
@@ -126,7 +122,7 @@
 	</div>
 </nav>
 <!-- Modal -->
-<div class="modal fade" id="myModalText" role="dialog">
+<div class="modal fade" id="myModalText" role="dialog" z-index='302'>
 	<div class="modal-dialog">
 		<!-- Modal content-->
 		<div class="modal-content">
@@ -171,13 +167,13 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal"
 					id="textProperties">OK</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal" id="cancelTextProperties">Cancel</button>
 			</div>
 		</div>
 	</div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="myModalComment" role="dialog">
+<div class="modal fade" id="myModalComment" role="dialog" z-index='302'>
 	<div class="modal-dialog">
 		<!-- Modal content-->
 		<div class="modal-content">
@@ -187,20 +183,20 @@
 			</div>
 			<div class="modal-body">
 				<div class="form-group">
-					<textarea class="form-control" rows="5" id="comment"></textarea>
+					<textarea class="form-control" rows="5" id="commentTxtArea"></textarea>
 				</div>
 			</div>
 			<div class="modal-footer">
 				Label <input id="tbComment" value="">
 				<button type="button" class="btn btn-default" data-dismiss="modal"
 					id="commentProperties">OK</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal" id="cancelCommentProperties">Cancel</button>
 			</div>
 		</div>
 	</div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="myModalLine" role="dialog">
+<div class="modal fade" id="myModalLine" role="dialog" z-index='302'>
 	<div class="modal-dialog">
 		<!-- Modal content-->
 		<div class="modal-content">
@@ -220,22 +216,22 @@
 						<div id="home" class="tab-pane fade in active">
 							<input type="radio" name="color" id="black" value="black" checked />
 							<label for="black"><span class="black"></span></label><input
-								type="radio" name="color" id="red" value="red" /> <label
+								type="radio" name="color" id="red" value="Red" /> <label
 								for="red"><span class="red"></span></label> <input type="radio"
-								name="color" id="green" value="green" /> <label for="green"><span
+								name="color" id="green" value="Green" /> <label for="green"><span
 								class="green"></span></label> <input type="radio" name="color"
-								id="yellow" value="yellow" /> <label for="yellow"><span
+								id="yellow" value="Yellow" /> <label for="yellow"><span
 								class="yellow"></span></label> <input type="radio" name="color"
-								id="olive" value="olive" /> <label for="olive"><span
+								id="olive" value="Olive" /> <label for="olive"><span
 								class="olive"></span></label> <input type="radio" name="color"
-								id="orange" value="orange" /> <label for="orange"><span
+								id="orange" value="Orange" /> <label for="orange"><span
 								class="orange"></span></label> <input type="radio" name="color"
-								id="teal" value="teal" /> <label for="teal"><span
+								id="teal" value="Teal" /> <label for="teal"><span
 								class="teal"></span></label> <input type="radio" name="color" id="blue"
-								value="blue" /> <label for="blue"><span class="blue"></span></label><input
-								type="radio" name="color" id="violet" value="violet" /><label
+								value="Blue" /> <label for="blue"><span class="blue"></span></label><input
+								type="radio" name="color" id="violet" value="Violet" /><label
 								for="violet"><span class="violet"></span></label> <input
-								type="radio" name="color" id="none" value="none" /> <label
+								type="radio" name="color" id="none" value="None" /> <label
 								for="none"><span class="none"></span></label>
 						</div>
 						<div id="menu1" class="tab-pane fade">
@@ -302,7 +298,7 @@
 	</div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="myModal2" role="dialog">
+<div class="modal fade" id="myModal2" role="dialog" z-index='302'>
 	<div class="modal-dialog">
 		<!-- Modal content-->
 		<div class="modal-content">
@@ -335,7 +331,7 @@
 	</div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="myModal3" role="dialog">
+<div class="modal fade" id="myModal3" role="dialog" z-index='302'>
 	<div class="modal-dialog">
 		<!-- Modal content-->
 		<div class="modal-content">

@@ -193,15 +193,15 @@
 		</plugins>
 	</reporting>
 	<build>
-		<!-- <resources>
+		<resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>build.properties</include>
+                    <include>*.*</include>
                 </includes>
             </resource>
-        </resources> -->
+        </resources>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

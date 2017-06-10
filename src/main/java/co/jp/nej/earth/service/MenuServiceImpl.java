@@ -114,8 +114,12 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                     mgrUserProfiles, accessRightPMap);
             List<UserAccessRight> menuAccessRights = UserAccessRightUtil.mixAuthority(userAccessRights,
                     userAccessRightByProfiles);
+            if(menuAccessRights.size()>0){
+                return menuAuthorityDao.insertMixAuthority(functionId, menuAccessRights);
+            }else{
+                return 0L;
+            }
 
-            return menuAuthorityDao.insertMixAuthority(functionId, menuAccessRights);
         });
     }
 }

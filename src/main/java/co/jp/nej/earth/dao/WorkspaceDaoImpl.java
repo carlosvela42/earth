@@ -1,13 +1,5 @@
 package co.jp.nej.earth.dao;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.sql.Statement;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
@@ -19,6 +11,15 @@ import co.jp.nej.earth.model.sql.QMgrWorkspace;
 import co.jp.nej.earth.model.sql.QMgrWorkspaceConnect;
 import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EStringUtil;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.QBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.sql.Statement;
+import java.util.List;
 
 /**
  * @author longlt
@@ -60,7 +61,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
       QMgrWorkspace qMgrWorkspace = QMgrWorkspace.newInstance();
       QBean<MgrWorkspace> selectList = Projections.bean(MgrWorkspace.class, qMgrWorkspace.all());
       List<MgrWorkspace> mgrWorkspaces = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID)
-          .select(selectList).from(qMgrWorkspace).fetch();
+          .select(selectList).from(qMgrWorkspace).orderBy(qMgrWorkspace.workspaceName.asc()).fetch();
       return mgrWorkspaces;
     } catch (Exception ex) {
       throw new EarthException(ex);

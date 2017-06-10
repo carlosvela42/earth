@@ -12,10 +12,11 @@
     <link rel="stylesheet" media="screen"
           href="${rc.getContextPath()}/resources/css/style.css" />
     <link rel="stylesheet" media="screen"
-          href="${rc.getContextPath()}/resources/css/style_nev.css" />
-    <link rel="stylesheet" media="screen"
           href="${rc.getContextPath()}/resources/css/sass_compiled/components.css" />
+    <link rel="stylesheet" media="screen"
+          href="${rc.getContextPath()}/resources/css/style_nev.css" />
     <link rel="shortcut icon" href="${rc.getContextPath()}/resources/images/favicon.ico" type="image/x-icon">
+    <script>window.baseUrl = "${rc.getContextPath()}"</script>
     <script src="${rc.getContextPath()}/resources/js/libs/jquery-2.2.4.min.js"></script>
     <script src="${rc.getContextPath()}/resources/js/lib/bootstrap.min.js"></script>
     <script src="${rc.getContextPath()}/resources/js/lib/jquery.query-object.js"></script>

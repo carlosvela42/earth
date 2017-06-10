@@ -4,6 +4,7 @@ import co.jp.nej.earth.exception.*;
 import co.jp.nej.earth.model.*;
 import co.jp.nej.earth.model.constant.Constant.*;
 import co.jp.nej.earth.model.entity.*;
+import co.jp.nej.earth.model.form.SearchForm;
 import co.jp.nej.earth.service.*;
 import co.jp.nej.earth.util.*;
 import co.jp.nej.earth.web.form.*;
@@ -69,17 +70,18 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = "/loginView", method = RequestMethod.GET)
-    public String evidentLog(Model model, HttpServletRequest request) throws EarthException {
-        model.addAttribute("ctlLogins", loginStatusService.getAll(null, null, null));
+    public String evidentLog(SearchForm searchForm, Model model, HttpServletRequest request) throws EarthException {
+        model.addAttribute("searchForm",searchForm);
+        model.addAttribute("ctlLogins", loginStatusService.getAll(searchForm.getSkip(), searchForm.getLimit(), null));
         return "loginStatus/loginStatus";
     }
 
-    @RequestMapping(value = "/loginViewScreen", method = RequestMethod.GET)
-    public String loginView(Model model, HttpServletRequest request) throws EarthException {
-        Long offset = null;
-        Long limit = null;
-        OrderSpecifier<String> orderByColumn = null;
-        model.addAttribute("ctlLogins", loginStatusService.getAll(offset, limit, orderByColumn));
-        return "loginStatus/loginStatus";
-    }
+//    @RequestMapping(value = "/loginViewScreen", method = RequestMethod.GET)
+//    public String loginView(Model model, HttpServletRequest request) throws EarthException {
+//        Long offset = null;
+//        Long limit = null;
+//        OrderSpecifier<String> orderByColumn = null;
+//        model.addAttribute("ctlLogins", loginStatusService.getAll(offset, limit, orderByColumn));
+//        return "loginStatus/loginStatus";
+//    }
 }

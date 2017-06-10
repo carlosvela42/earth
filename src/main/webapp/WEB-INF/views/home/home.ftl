@@ -22,6 +22,10 @@
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/directory/">Directory<span
                     class="fa arrow"></span></a>
         </li>
+        <li>
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/workItem/">WorkItem<span
+                    class="fa arrow"></span></a>
+        </li>
         <h3>TUNGNT</h3>
         <li>
             <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/imageviewer">Image Viewer New<span
@@ -37,7 +41,7 @@
                     class="fa arrow"></span></a>
         </li>
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/evidentLog/evidentLog">Evident Log<span
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/evidentLog/">Evident Log<span
                     class="fa arrow"></span></a>
         </li>
         <li>
@@ -56,12 +60,12 @@
         <h3>ThuyND Test</h3>
 
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/templateAccessRight/initTemplateListScreen">Initialize
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/templateAccessRight/">Initialize
                 Template List Screen<span
                         class="fa arrow"></span></a>
         </li>
         <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/licenseHistory/initLicenseHistoryScreen">License
+            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/licenseHistory/">License
                 History<span
                         class="fa arrow"></span></a>
         </li>

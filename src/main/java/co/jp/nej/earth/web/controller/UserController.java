@@ -58,6 +58,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
     public String insertOne(@Valid @ModelAttribute("userForm") UserForm userForm, BindingResult result, Model model) {
         MgrUser mgrUser = setMgrUser(userForm);
+        mgrUser.setLastUpdateTime(null);
         try {
             List<Message> messages = validatorUtil.validate(result);
             messages.addAll(userService.validate(mgrUser, true));

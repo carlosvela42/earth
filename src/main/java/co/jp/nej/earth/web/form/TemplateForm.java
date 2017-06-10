@@ -1,55 +1,66 @@
 package co.jp.nej.earth.web.form;
 
-import java.util.List;
-
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.Field;
+import co.jp.nej.earth.model.entity.MgrTemplate;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import co.jp.nej.earth.model.Field;
+import java.util.List;
 
-public class TemplateForm {
+public class TemplateForm extends BaseModel<MgrTemplate> {
 
-    @NotEmpty(message = "E0001,templateId")
-    private String templateId;
+  @NotEmpty(message = "E0001,templateId")
+  private String templateId;
 
-    @NotEmpty(message = "E0001,templateName")
-    private String templateName;
+  @NotEmpty(message = "E0001,templateName")
+  private String templateName;
 
-    @NotEmpty(message = "E0001,templateTableName")
-    private String templateTableName;
+  public String getWorkspaceId() {
+    return workspaceId;
+  }
 
-    @NotEmpty(message = "E0001,templateFields")
-    private List<Field> templateFields;
+  public void setWorkspaceId(String workspaceId) {
+    this.workspaceId = workspaceId;
+  }
 
-    public List<Field> getTemplateFields() {
-        return templateFields;
-    }
+  @NotEmpty(message = "E0001,templateTableName")
+  private String templateTableName;
 
-    public void setTemplateFields(List<Field> templateFields) {
-        this.templateFields = templateFields;
-    }
+  @NotEmpty(message = "E0001,templateFields")
+  private List<Field> templateFields;
 
-    public String getTemplateId() {
-        return templateId;
-    }
+  private String workspaceId;
 
-    public void setTemplateId(String templateId) {
-        this.templateId = templateId;
-    }
+  public List<Field> getTemplateFields() {
+    return templateFields;
+  }
 
-    public String getTemplateName() {
-        return templateName;
-    }
+  public void setTemplateFields(List<Field> templateFields) {
+    this.templateFields = templateFields;
+  }
 
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
+  public String getTemplateId() {
+    return templateId;
+  }
 
-    public String getTemplateTableName() {
-        return templateTableName;
-    }
+  public void setTemplateId(String templateId) {
+    this.templateId = templateId;
+  }
 
-    public void setTemplateTableName(String templateTableName) {
-        this.templateTableName = templateTableName;
-    }
+  public String getTemplateName() {
+    return templateName;
+  }
+
+  public void setTemplateName(String templateName) {
+    this.templateName = templateName;
+  }
+
+  public String getTemplateTableName() {
+    return templateTableName;
+  }
+
+  public void setTemplateTableName(String templateTableName) {
+    this.templateTableName = templateTableName;
+  }
 
 }

@@ -1,41 +1,42 @@
-<@standard.standardPage title="License History">
+<#assign searchForm>
+    <@component.searchFormPanel object="licenseHistory" formId="evidentForm"></@component.searchFormPanel>
+</#assign>
 
-<form id="searchForm" method="post" object="strCals" action="searchLicenseHistory">
-	<input type="number" name="limit" placeholder="Limit" value="<#if limit??>${limit}</#if>">
-	<input type="number" name="skip" placeholder="Skip" value="<#if skip??>${skip}</#if>">
-	<input type="submit" id="searchBtn" value="Search">
-</form>
+<@standard.standardPage title=e.get('license.title')>
+<div class="board-wrapper board-full">
+${searchForm}
+<div style="clear: both;"></div>
 <#if message??>
    <div>
        <b style="color: red;">${message}</b>
    </div>
 </#if>
-<table border="1">
-	<thead>
+
+<table class="clientSearch table_list licenseTable">
+	<thead class="table_header">
 		<tr>
-			<th>区分</th>
-			<th>処理時刻</th>
-			<th>プロファイルID</th>
-			<th>使用可能ライセンス数</th>
-			<th>使用ライセンス数</th>
+			<td>${e.get('license.division')}</td>
+			<td>${e.get('license.processTime')}</td>
+			<td>${e.get('license.profileId')}</td>
+			<td>${e.get('license.numOfAvailableLicense')}</td>
+			<td>${e.get('license.numOfUsedLicense')}</td>
 		</tr>
 	</thead>
-	<tbody>
-		<#if strCals??>
+	<tbody class="table_body">
+		<#if strCals?? && strCals?has_content>
 	       <#list strCals as strCal>
 			   <tr>
-			       <td>${strCal.division!""}</td>
-			       <td>${strCal.processTime!""}</td>
-			       <td>${strCal.profileId!""}</td>
-			       <td>${strCal.availableLicenseCount!""}</td>
-			       <td>${strCal.useLicenseCount!""}</td>
+			       <td class="text">${strCal.division!""}</td>
+			       <td class="text processTime">${strCal.processTime!""}</td>
+			       <td class="text">${strCal.profileId!""}</td>
+			       <td class="number">${strCal.availableLicenseCount!""}</td>
+			       <td class="number">${strCal.useLicenseCount!""}</td>
 			   </tr>
 	       </#list>
 	    <#else>
-	       <tr>
-	           <td colspan="5">No result</td>
-	       </tr>
+	       <#include "../common/noResult.ftl">
 	   </#if>
 	</tbody>
 </table>
+</div>
 </@standard.standardPage>

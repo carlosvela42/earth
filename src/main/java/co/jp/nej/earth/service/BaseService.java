@@ -15,7 +15,7 @@ public abstract class BaseService {
     private static final Logger LOG = LoggerFactory.getLogger(BaseService.class);
 
     @Autowired
-    private EMessageResource messageSource;
+    protected EMessageResource messageSource;
 
     public interface ServiceCaller {
         Object execute() throws EarthException;

@@ -1,16 +1,5 @@
 package co.jp.nej.earth.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.util.StringUtils;
-
 import co.jp.nej.earth.dao.WorkspaceDao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
@@ -23,6 +12,18 @@ import co.jp.nej.earth.model.constant.Constant.WorkSpace;
 import co.jp.nej.earth.util.ConversionUtil;
 import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EMessageResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author longlt
@@ -30,7 +31,7 @@ import co.jp.nej.earth.util.EMessageResource;
  */
 @Service
 public class WorkspaceServiceImpl extends BaseService implements WorkspaceService {
-
+  private static final Logger LOG = LoggerFactory.getLogger(WorkspaceService.class);
   @Autowired
   private WorkspaceDao workspaceDao;
 
@@ -81,8 +82,11 @@ public class WorkspaceServiceImpl extends BaseService implements WorkspaceServic
       workspaceDao.insertOne(mgrWorkspaceConnect);
       earthTransactionManager.commit(earthStatus);
     } catch (EarthException ex) {
-      if (earthTransactionManager != null || systemTransactionManager != null) {
+      LOG.error(ex.getMessage());
+      if (earthTransactionManager != null) {
         earthTransactionManager.rollback(earthStatus);
+      }
+      if (systemTransactionManager != null) {
         systemTransactionManager.rollback(systemStatus);
       }
       throw new EarthException(ex);

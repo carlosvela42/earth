@@ -1,214 +1,167 @@
-<script type="text/javascript" src="../resources/js/lib/jquery.min.js"></script>
-<script type="text/javascript">
+<#assign contentFooter>
+    <@component.detailUpdatePanel object="templateAccessRight" formId="templateAuthorityForm"></@component.detailUpdatePanel>
+</#assign>
+<#assign addForm>
+    <@component.addFormTemplatePanel object="" formId=""></@component.addFormTemplatePanel>
+</#assign>
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/template.js"></script>
+</#assign>
+<@standard.standardPage title=e.get("template.authority.setting") contentFooter=contentFooter script=script>
 
-/* $("#addParent").click(function() {https://code.jquery.com/jquery-3.2.1.min.js
-	alert("1");
-	  var userAccessRightStr = "";
-	  $('#userAccessRightTable > tbody > tr').each(function() {
-		  userAccessRightStr += $(this).find("td").eq(1).html() + "|" + $(this).find("td").eq(2).html() + ",";  
-	});
-	  $('#userIdAccessRight').val(userAccessRightStr);
-	  
-	  var profileAccessRightStr = "";
-	  $('#profileAccessRightTable > tbody > tr').each(function(){
-		  profileAccessRightStr += $(this).find("td").eq(1).html() + "|" + $(this).find("td").eq(2).html() + ",";
-	  });
-	  
-	  $('#profileIdAccessRight').val(profileAccessRightStr);
-	}); */
-
-function addParent(){
-    var userAccessRightStr = "";
-    $('#userAccessRightTable > tbody > tr').each(function() {
-        userAccessRightStr += $(this).find("td").eq(1).html() + "|" + $(this).find("td").eq(2).html() + ",";  
-  });
-    $('#userIdAccessRight').val(userAccessRightStr);
-    
-    var profileAccessRightStr = "";
-    $('#profileAccessRightTable > tbody > tr').each(function(){
-        profileAccessRightStr += $(this).find("td").eq(1).html() + "|" + $(this).find("td").eq(2).html() + ",";
-    });
-    
-    $('#profileIdAccessRight').val(profileAccessRightStr);
-    //$("#formId").submit()
-}
-
-function addChildRecord(){
-	var choosenUserId = $("#userId").val();
-	var choosenProfileId = $("#profileId").val();
-	var choosenAccessRight = $("input[name='accessRight']:checked").data('name');
-	if((choosenUserId == null || choosenUserId == '') && (choosenProfileId == null || choosenProfileId == '')){
-		alert("Ban chua chon UserId hoac ProfileId");
-	} else if(choosenUserId != '' && choosenProfileId != ''){
-		alert("Ban chi duoc chon UserId hoac ProfileId");
-	} else if (choosenUserId != '' || choosenProfileId != ''){
-		if(choosenAccessRight != null){
-			if(choosenUserId != ''){
-				var userIdArr = new Array();
-				$('#userAccessRightTable > tbody > tr').each(function(){
-					userIdArr.push($(this).find("td").eq(1).html());
-				});
-				
-				var newUserRow = "<tr><td><input type=\"checkbox\" name=\"userRight\"></td><td>" + choosenUserId + "</td><td>" + choosenAccessRight + "</td></tr>";
-				
-				if(jQuery.inArray(choosenUserId, userIdArr) != -1){
-				    var index = jQuery.inArray(choosenUserId, userIdArr);
-				    $('#userAccessRightTable > tbody > tr').eq(index).replaceWith(newUserRow);
-				} else{
-					$("#userAccessRightTable").append(newUserRow);
-				}
-				$("#userId").val('');
-				$("input[name='accessRight']:checked").prop('checked', false);
-			}else if(choosenProfileId != ''){
-				var profileIdArr = new Array();
-				$('#profileAccessRightTable > tbody > tr').each(function(){
-					profileIdArr.push($(this).find("td").eq(1).html());
-                });
-                
-                var newProfileRow = "<tr><td><input type=\"checkbox\" name=\"userRight\"></td><td>" + choosenProfileId + "</td><td>" + choosenAccessRight + "</td></tr>";
-                
-                if(jQuery.inArray(choosenProfileId, profileIdArr) != -1){
-                    var index = jQuery.inArray(choosenProfileId, profileIdArr);
-                    $('#profileAccessRightTable > tbody > tr').eq(index).replaceWith(newProfileRow);
-                } else{
-                    $("#profileAccessRightTable").append(newProfileRow);
-                }
-				
-				$("#profileId").val('');
-				$("input[name='accessRight']:checked").prop('checked', false);
-			}
-		} else{
-			alert("Ban chua chon access right");
-		}
-	}
-}
-
-function deleteRecord(){
-	$('input:checkbox:checked').each(function(){
-		$(this).parent().parent().remove();
-	});
-}
-</script>
-<label>テンプレート権限設定</label>
-</br>
-<form method="post" action="${rc.getContextPath()}/templateAccessRight/updateTemplateAccessRight" id="formId">
-<input type="submit" onclick="addParent()" value="決定"> <button id="cancelParent">キャンセル</button>
-<input type="hidden" id="templateId" name="templateId" value="${templateId}">
-<input type="hidden" id="workspaceId" name="workspaceId" value="${workspaceId}">
-<#if message??>
-<label>${message}</label>
-</#if>
-<table>
-    <tr>
-        <td>テンプレートID</td>
-        <td>
-            <#if mgrTemplate??>
-                ${mgrTemplate.templateId}
-            </#if>
-        </td>
-    </tr>
-    <tr>
-        <td>テンプレート名</td>
-        <td>
-            <#if mgrTemplate??>
-                ${mgrTemplate.templateName}
-            </#if>
-        </td>
-    </tr>
-    <tr>
-        <td>ユーザID</td>
-        <td>
-            <button type="button" onclick="deleteRecord()">削除</button>
-            <table border="1" id="userAccessRightTable" >
-                <thead>
-	                <tr>
-	                    <th></th>
-	                    <th>ユーザID</th>
-	                    <th>アクセス権</th>
-	                </tr>
-                </thead>
-                <tbody>
-	                <#if userAccessRights??>
-	                    <#list userAccessRights as userAccessRight>
-		                    <tr id="${userAccessRight.userId}">
-		                        <td><input type="checkbox" name="userRight"></td>
-		                        <td>${userAccessRight.userId}</td>
-		                        <td>${userAccessRight.accessRight}</td>
-		                    </tr>
-	                    </#list>
-	                </#if>
-                </tbody>
+<form method="post" action="${rc.getContextPath()}/templateAccessRight/updateOne" id="templateAuthorityForm" object="templateAuthorityForm">
+    <#include "../common/messages.ftl">
+    <div class="board-wrapper">
+        <div class="board board-half">
+            <table class="table_form">
+                <tr>
+                    <td width="50%">${e.get('template.id')}</td>
+                    <td>
+                        <input type="text" name="templateId"
+                               value="${templateAuthorityForm.templateId!""}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('template.name')}</td>
+                    <td>
+                        <input type="text" name="templateName"
+                               value="${templateAuthorityForm.templateName!""}" readonly>
+                    </td>
+                </tr>
             </table>
-            <!-- <input type="hidden" id="userIdAccessRight" name="userIdAccessRight" value=""> -->
-            <input type="hidden" id="userIdAccessRight" name="userIdAccessRight">
-        </td>
-        
-        <tr>
-        <td>プロファイルID</td>
-        <td>
-            <button type="button" onclick="deleteRecord()">削除</button>
-            <table border="1" id="profileAccessRightTable">
-                <thead>
-	                <tr>
-	                    <th></th>
-	                    <th>プロファイルID</th>
-	                    <th>アクセス権</th>
-	                </tr>
-                </thead>
-                <tbody>
-	                <#if profileAccessRights??>
-	                    <#list profileAccessRights as profileAccessRight>
-	                        <tr>
-	                            <td><input type="checkbox" name="profileRight"></td>
-	                            <td>${profileAccessRight.profileId}</td>
-	                            <td>${profileAccessRight.accessRight}</td>
-	                        </tr>
-	                    </#list>
-	                </#if>
-                </tbody>
-            </table>
-            <!-- <input type="hidden" id="profileIdAccessRight" name="profileIdAccessRight" value=""> -->
-            <input type="hidden" id="profileIdAccessRight" name="profileIdAccessRight">
-        </td>
-    </tr>
-</table>
+        </div>
+        <div class="board-split"></div>
+        <div class="board board-half">
+            <div id="tabs" class="container">
+                <div class="panel with-nav-tabs panel-default">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tabs-user">${e.get('user.id')}</a></li>
+                            <li><a data-toggle="tab" href="#tabs-profile">${e.get('profile.id')}</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div id="tabs-user" class="tab-pane fade in active">
+                                <button type="button" class="btn btn_remove" id="deleteButton"
+                                        onclick="return delRow('user');">
+                                    <@spring.message code='button.delete'/></button>
+                                <div style="height: 10px;"></div>
+                                <table class="clientSearch table_list userAccessRightTable">
+                                    <thead>
+                                    <tr class="table_header">
+                                        <td><input type="checkbox" name="userRightTop" class="deleteAllCheckBox"></td>
+                                        <td class="text_center">
+                                            <button type="button" class="icon btn_add" id="addUser"
+                                                    data-target="#addFormuser"></button>
+                                        </td>
+                                        <td style="width: 40%">${e.get('user.id')}</td>
+                                        <td>${e.get('accessRight.name')}</td>
+                                    </tr>
+                                    <tr class="condition">
+                                        <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+                                        <td colspan="2"><input type="text" col="3" placeholder="Search">
+                                        </td>
+                                        <td><input type="text" col="4" placeholder="Search"></td>
+                                    </tr>
+                                    </thead>
+                                    <#assign index=(templateAuthorityForm.userAccessRights??)?then
+                                    (templateAuthorityForm.userAccessRights?size,0)>
+                                    <tbody id="userTbody" class="table_body" index="${index}">
+                                        <#if templateAuthorityForm.userAccessRights??>
+                                            <#list templateAuthorityForm.userAccessRights as userAccessRight>
+                                            <tr userId="${userAccessRight.userId}">
+                                                <td><input type="checkbox" class="deleteCheckBox"/></td>
+                                                <td class="text_center">
+                                                     <span class="icon icon_edit"
+                                                           onclick="editRow('user','${userAccessRight.userId!""}', '${userAccessRight.accessRight!""}');">
+                                                     </span>
+                                                </td>
+                                                <td class="text">
+                                                    <span> ${userAccessRight.userId!""}</span>
+                                                        <input type="hidden"
+                                                               name="userAccessRights[${userAccessRight?index}].userId"
+                                                               value="${userAccessRight.userId!""}"
+                                                        />
+                                                </td>
+                                                <td class="text" >
+                                                    <span> ${userAccessRight.accessRight!""}</span>
+                                                        <input type="hidden"
+                                                               name="userAccessRights[${userAccessRight?index}].accessRight"
+                                                               value="${userAccessRight.accessRight!""}"
+                                                        />
+                                                </td>
+                                            </tr>
+                                            </#list>
+                                        </#if>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="tabs-profile" class="tab-pane fade">
+                                <button type="button" class="btn btn_remove"
+                                        id="deleteButton"  onclick="return delRow('profile');">
+                                    <@spring.message code='button.delete'/></button>
+                                <div style="height: 10px;"></div>
+                                <table class="clientSearch table_list profileAccessRightTable">
+                                    <thead>
+                                    <tr class="table_header">
+                                        <td><input type="checkbox" name="userRightTop" class="deleteAllCheckBox"></td>
+                                        <td>
+                                            <button type="button" class="icon btn_add" id="addProfile"
+                                                    data-target="#addFormprofile"></button>
+                                        </td>
+                                        <td style="width: 40%">${e.get('profile.id')}</td>
+                                        <td>${e.get('accessRight.name')}</td>
+                                    </tr>
+                                    <tr class="condition">
+                                        <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+                                        <td colspan="2"><input type="text" col="3" placeholder="Search ">
+                                        </td>
+                                        <td><input type="text" col="4" placeholder="Search "></td>
+                                    </tr>
+                                    </thead>
+                                    <#assign index1=(templateAuthorityForm.profileAccessRights??)?then(templateAuthorityForm.profileAccessRights?size,0)>
+                                    <tbody id="profileTbody" class="table_body" index="${index1}">
+
+                                        <#if templateAuthorityForm.profileAccessRights??>
+                                            <#list templateAuthorityForm.profileAccessRights as profileAccessRight>
+                                            <tr profileId="${profileAccessRight.profileId}">
+                                                <td><input type="checkbox" name="profileRight" class="deleteCheckBox">
+                                                </td>
+                                                <td class="text_center">
+                                                     <span class="icon icon_edit"
+                                                           onclick="editRow('profile','${profileAccessRight.profileId!""}', '${profileAccessRight.accessRight!""}');">
+                                                    </span>
+                                                    <#--<a class="icon icon_edit"-->
+                                                       <#--onclick="editRow('profile','${profileAccessRight.profileId!""}', '${profileAccessRight.accessRight!""}');"-->
+                                                       <#--href="#addFormprofileTemplate">-->
+                                                    <#--</a>-->
+                                                </td>
+                                                <td type="text">
+                                                <span>${profileAccessRight.profileId!""}</span><input type="hidden"
+                                                        name="profileAccessRights[${profileAccessRight?index}].profileId"
+                                                                       value="${profileAccessRight.profileId!""}"/>
+                                                </td>
+                                                <td type="text">
+                                                <span>${profileAccessRight.accessRight!""}</span><input type="hidden"
+                                                                                                           name="profileAccessRights[${profileAccessRight?index}].accessRight" value="${profileAccessRight.accessRight!""}"
+                                                        readonly/></td>
+                                            </tr>
+                                            </#list>
+                                        </#if>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 </form>
-<button id="addChild" onclick="addChildRecord()">決定</button><button id="cancelChild">キャンセル</button>
-<table>
-    <tr>
-        <td>ユーザID</td>
-        <td>
-            <select id="userId">
-                <option value="">--Select--</option>
-                <#if mgrUsers??>
-                    <#list mgrUsers as mgrUser>
-                        <option value="${mgrUser.userId}">${mgrUser.userId}</option>
-                    </#list>
-                </#if>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <td>プロファイルID</td>
-        <td>
-            <select id="profileId">
-                <option value="">--Select--</option>
-                <#if mgrProfiles??>
-                    <#list mgrProfiles as mgrProfile>
-                        <option value="${mgrProfile.profileId}">${mgrProfile.profileId}</option>
-                    </#list>
-                </#if>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <td>アクセス権</td>
-        <td>
-            <#if accessRights??>
-                <#list accessRights as accessRight>
-                    <input type="radio" name="accessRight" data-name="${accessRight}" value="${accessRight.value}">${accessRight}</label></br>
-                </#list>
-            </#if>
-        </td>
-    </tr>
-</table>
+${addForm}
+</@standard.standardPage>

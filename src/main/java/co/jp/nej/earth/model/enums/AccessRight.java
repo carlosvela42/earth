@@ -12,11 +12,10 @@ package co.jp.nej.earth.model.enums;
 public enum AccessRight {
 
     NONE(0)
-    ,CAN_HIDE_MASKING(1)
-    ,SO(2)
-    ,RO(3)
-    ,RW(4)
-    ,FULL(5);
+    ,SO(1)
+    ,RO(2)
+    ,RW(3)
+    ,FULL(4);
 
     private int value;
 

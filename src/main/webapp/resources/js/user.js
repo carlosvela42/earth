@@ -14,11 +14,6 @@ $(function () {
             return;
         }
     });
-    $('.deleteAllCheckBox').click(function () {
-        $('#userTbody > tr').each(function () {
-            $(this).find('.deleteCheckBox').prop('checked',$('.deleteAllCheckBox').prop('checked'));
-        });
-    });
     // Edit User
     $("input[name=changePassword]").change(function () {
         $('input[type=password]').prop("disabled", !this.checked);

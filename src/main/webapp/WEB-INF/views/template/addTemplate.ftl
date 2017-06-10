@@ -1,197 +1,197 @@
-<@standard.standardPage title="ADDNEWTEMPLATE">
-<script type="text/javascript">
-	$(document)
-			.ready(
-					function() {
-						var i = 0;
-						$('#addRow')
-								.click(
-										function() {
-											var name = $('#name').val();
-											var description = $('#description')
-													.val();
-											var typeDisplay = $(
-													'#fieldType option:selected')
-													.text();
-											var typeValue = $(
-													'#fieldType option:selected')
-													.val();
-											var size = $('#size').val();
-											var required = $('#required').is(
-													':checked');
-											var encrypted = $('#encrypted').is(
-													':checked');
-															var generate = "<tr><td><input type='checkbox' id='delRow["+ i.toString()+"]'name='DeleteRow'></td>"
-														         + "<td><input  type='text' name='templateFields["+i.toString()+"].name' value='"+name+"'/></td>"
-																 + "<td><input  type='text'name='templateFields["+i.toString()+"].description' value='"+description+"'/></td>"
-																 + "<td><input type='text' value='"+typeDisplay+"'/><input type='hidden'name='templateFields["+i.toString()+"].type' value='"+typeValue+"'/></td>"
-																 + "<td><input  type='text'name='templateFields["+i.toString()+"].size' value='"+size+"'/></td>"
-															if(required){
-																generate +="<td><input  type='checkbox'  value='"+required+"' checked/>"
-																+ "<input  type='hidden' name='templateFields["+ i.toString()+ "].required' value='true'/></td>"
-															}
-															else{
-																generate +="<td><input  type='checkbox'  value='"+required+"'/>"
-                                                                + "<input  type='hidden' name='templateFields["+ i.toString()+ "].required' value='false'/></td>"
-															}
-															if(encrypted){
-																generate +="<td><input  type='checkbox' value='"+encrypted+"' checked/>"
-																+ "<input  type='hidden' name='templateFields["+ i.toString()+ "].encrypted' value='true'/></td></tr>"
-															}else{
-																generate +="<td><input  type='checkbox' name='templateFields["+ i.toString()+"].encrypted'  value='"+encrypted+"' />"
-																+ "<input  type='hidden' name='templateFields["+ i.toString()+ "].encrypted' value='false'/></td></tr>"
-															}
-															$('#fieldList tbody').append(generate);
-											i += 1;
-											$('#name').val("");
-											$('#description').val("");
-											$('#type').val("");
-											$('#size').val("");
-											$('#required').prop("checked",
-													false);
-											$('#encrypted').prop("checked",
-													false);
-										});
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/template.js"></script>
+</#assign>
 
-						$('#clearRow').click(function() {
-							$('#name').val("");
-							$('#description').val("");
-							$('#type').val("");
-							$('#size').val("");
-							$('#required').prop("checked", false);
-							$('#encrypted').prop("checked", false);
-						})
-						$(function() {
-							$("#fieldType").on(
-									'change',
-									function() {
-										var fieldType = $(
-												'#fieldType option:selected')
-												.text();
-										if (fieldType == 'NUMBER'
-												|| fieldType == 'LONG') {
-											$('#size').prop("disabled", true);
-										} else {
-											$('#size').prop("disabled", false);
-										}
-									});
-						})
-					});
+<#assign contentFooter>
+    <@component.detailUpdatePanel object="template" formId="templateForm"></@component.detailUpdatePanel>
+</#assign>
+
+<@standard.standardPage title=e.get('template.edit') contentFooter=contentFooter script=script>
+    <#assign isPersisted = (templateForm.lastUpdateTime??)>
+    <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
+<div class="board-wrapper board-full">
+    <form action="${rc.getContextPath()}/template/${formAction}"
+          object="templateForm" method="post" id="templateForm">
+        <#include "../common/messages.ftl">
+        <input type="hidden" id="workspaceId" name="workspaceId" value="${templateForm.workspaceId!""}">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table_form">
+                    <tr>
+                        <td width="50%">${e.get('template.id')}</td>
+                        <td><input type="text" id="txtTemplate" name="templateId"
+                                   value="${templateForm.templateId!""}" readonly="readonly"></td>
+                    </tr>
+                    <tr>
+                        <td>${e.get('template.name')}</td>
+                        <td><input type="text" id="txtTemplateName" name="templateName"
+                                   value="${templateForm.templateName!""}" ></td>
+                    </tr>
+                    <tr>
+                        <td>${e.get('template.tableName')}</td>
+                        <td><input type="text" id="txtTemplateTableName"
+                                   value="${templateForm.templateTableName!""}" name="templateTableName"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="region">${e.get('template.definition')}</div>
+        <div class="region">
+            <button id="removeField" type="button" class="btn btn_remove" id="deleteButton"
+                    onclick="return delRow('user');">
+                <@spring.message code='button.delete'/></button>
+        </div>
+
+        <table id="fieldList" class="clientSearch table_list no_search">
+            <thead>
+            <tr class="table_header">
+                <td class=""><input type="checkbox" class="deleteAllCheckBox" /></td>
+                <td>
+                    <button type="button" class="icon btn_add" id="addField" data-target="#addFieldModal"></button>
+                </td>
+                <td>${e.get('field.name')}</td>
+                <td>${e.get('field.description')}</td>
+                <td>${e.get('field.type')}</td>
+                <td>${e.get('field.size')}</td>
+                <td>${e.get('field.required')}</td>
+                <td>${e.get('field.encrypted')}</td>
+            </tr>
+            </thead>
+            <tbody id="userTbody" class="table_body">
+                <#if templateForm?? >
+                    <#if templateForm.templateFields??>
+                    <#list templateForm.templateFields as field>
+                        <tr  fieldId="${field.name}" data-row-id="${field?index}" class="template-row">
+                            <td><input type='checkbox' id='${field?index}' name='DeleteRow' class="deleteCheckBox"></td>
+                            <td class="text_center"><span class="icon icon_edit"  onclick='editTemplateRow(${field?index})
+                                    '></span></td>
+                            <td>${field.name!""}
+                                <input  type='hidden' name='templateFields[${field?index}].name' data-name="name"
+                                                         value='${field.name!""}'/>
+                            </td>
+                            <td>${field.description!""}
+                                <input  type='hidden' name='templateFields[${field?index}].description'
+                                                                data-name="description"
+                                                                value='${field.description!""}'/>
+                            </td>
+                            <td>${h.getDisplayType(field.type, fieldTypes)!""}
+                                <input type='hidden' name='templateFields[${field?index}].type'
+                                                        data-name="type"
+                                                        value='${field.type!""}'/>
+                            </td>
+                            <td> ${field.size!""}
+                                <input  type='hidden' name='templateFields[${field?index}].size'
+                                                          data-name="size"
+                                                          value='${field.size?c!""}'/>
+                            </td>
+                            <td>
+                                <input  type='checkbox' ${field.required?then("checked", "")}/>
+                                <input  type='hidden' name='templateFields[${field?index}].required' data-name="required"
+                                        value="${field.required?then('true', 'false')}">
+                            </td>
+
+                            <td>
+                                <input  type='checkbox'  ${field.encrypted?then("checked", "")}/>
+                                <input  type='hidden' name='templateFields[${field?index}].encrypted' data-name="encrypted"
+                                        value="${field.encrypted?then('true', 'false')}">
+                            </td>
+                        </tr>
+                    </#list>
+                </#if>
+                </#if>
+            </tbody>
+        </table>
+    </form>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addFieldModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">${e.get("file.edit")}</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-messages"></div>
+
+                    <table class="table_list">
+                        <thead class="table_header table_same_color">
+                        <tr>
+                            <td width="20%">${e.get('field.name')}</td>
+                            <td width="20%">${e.get('field.description')}</td>
+                            <td width="20%">${e.get('field.type')}</td>
+                            <td width="20%">${e.get('field.size')}</td>
+                            <td width="10%">${e.get('field.required')}</td>
+                            <td width="10%">${e.get('field.encrypted')}</td>
+                        </tr>
+                        </thead>
+                        <tbody class="table_body">
+
+                        </tbody>
+                    </table>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-default btn_cancel" data-dismiss="modal">
+                        ${e.get('button.cancel')}
+                        </button>
+                        <button align="center" colspan="3" class="btn btn-default btn_save" id="addRow">
+                        ${e.get('button.save')}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="template-row-template" type="text/x-handlebars-template">
+    <tr data-row-id="{{i}}" class="template-row">
+        <td><input type='checkbox' id='{{i}}' name='DeleteRow'></td>
+        <td><span class="icon icon_edit"  onclick='editTemplateRow({{i}})'></span></td>
+        <td>{{name}} <input  type='hidden' name='templateFields[{{i}}].name' data-name="name" value='{{name}}'/></td>
+        <td>{{description}} <input  type='hidden'name='templateFields[{{i}}].description' data-name="description"
+                                    value='{{description}}'/></td>
+        <td>{{typeDisplay}} <input type='hidden'name='templateFields[{{i}}].type' data-name="type"
+                                   value='{{typeValue}}'/></td>
+        <td> {{size}} <input  type='hidden'name='templateFields[{{i}}].size' data-name="size"
+                              value='{{size}}'/></td>"
+
+        <td><input  type='checkbox'  value='{{required}}' {{#if required}} checked {{/if}}/>
+            <input  type='hidden' name='templateFields[{{i}}].required' data-name="required"
+                    value={{#if required}} true
+                    {{else}} false {{/if}}/>
+        </td>
+
+        <td><input  type='checkbox'  value='{{encrypted}}' {{#if encrypted}} checked {{/if}}/>
+            <input  type='hidden' name='templateFields[{{i}}].encrypted' data-name="encrypted"
+                    value={{#if encrypted}} true
+                    {{else}} false {{/if}}/>
+        </td>
 </script>
-<form action="${rc.getContextPath()}/template/insertOne"
-	object="templateForm" method="post">
-	<table>
-		<tr>
-			<td>テンプレートID</td>
-			<td><input type="text" id="txtTemplate" name="templateId"
-				value="${templateForm.templateId!""}" height="20px" width="150px"
-				style="text-align: left" readonly="readonly"></td>
-		</tr>
-		<tr>
-			<td>テンプレート名</td>
-			<td><input type="text" id="txtTemplateName" name="templateName"
-				value="${templateForm.templateName!""}" height="20px" width="150px" style="text-align: left"></td>
-		</tr>
-		<tr>
-			<td>テンプレートテーブル名</td>
-			<td><input type="text" id="txtTemplateTableName"
-				value="${templateForm.templateTableName!""}" name="templateTableName"
-				height="20px" width="150px" style="text-align: left"></td>
-		</tr>
-	</table>
-	<div align="left">フィールド定義</div>
-	<table border="1" style="width: 100%;" id="fieldList">
-		<tr>
-			<th colspan="2">名前</th>
-			<th>説明</th>
-			<th>型</th>
-			<th>サイズ</th>
-			<th>必須</th>
-			<th>暗号化</th>
-		</tr>
-		<#if templateForm?? > <#if templateForm.templateFields??>
-		<#list templateForm.templateFields as field>
-		<tr id="row${field?index}">
-			<td><input type="checkbox" id="delRow${field?index}"
-				name="DeleteRow"></td>
-			<td><input type="text" id="delRow${field?index}"
-				name="templateFields[${field?index}].name" value="${field.name!""}"></td>
-			<td><input type="text" id="delRow${field?index}"
-				name="templateFields[${field?index}].description"value="${field.description!""}"></td>
-			<td><input type="text" id="delRow${field?index}"
-				name="templateFields[${field?index}].type" value="${field.type!""}"></td>
-			<td><input type="text" id="delRow${field?index}"
-				name="templateFields[${field?index}].size" value="${field.size!""}"></td>
-			<#if field.required>
-			<td><input type="checkbox" id="delRow${field?index}"
-				name="templateFields[${field?index}].required" checked disabled="disabled">
-				<input  type="hidden" name="templateFields[${field?index}].required" value='true'/></td>
-			<#else>
-			<td><input type="checkbox" id="delRow${field?index}"
-				name="templateFields[${field?index}].required" disabled="disabled">
-				<input  type="hidden" name="templateFields[${field?index}].required" value='false'/></td></#if>
-			<#if field.encrypted>
-			<td><input type="checkbox" id="delRow${field?index}"
-				name="templateFields[${field?index}].encrypted" checked disabled="disabled">
-				<input  type="hidden" name="templateFields[${field?index}].encrypted" value='true'/></td>
-			<#else>
-			<td><input type="checkbox" id="delRow${field?index}"
-				name="templateFields[${field?index}].encrypted" disabled="disabled">
-				<input  type="hidden" name="templateFields[${field?index}].encrypted" value='false'/></td></#if>
-		</tr>
-		</#list> </#if> </#if>
-	</table>
-	<br>
-	<div>
-		<input type="button" value="削除" disabled="disabled">
-	</div>
-	<br>
-	<table border="1" style="width: 100%;">
-		<tr>
-			<th>名前</th>
-			<th>説明</th>
-			<th>型</th>
-			<th>サイズ</th>
-			<th>必須</th>
-			<th>暗号化</th>
-		</tr>
-		<tr>
-			<td><input type="text" id="name" name="name" height="20px"
-				width="150px" style="text-align: left"></td>
-			<td><input type="text" id="description" name="description"
-				height="20px" width="150px" style="text-align: left"></td>
-			<td><select name="fieldType" id="fieldType">
-					<#if fieldTypes??> <#list fieldTypes as fieldType>
-					<option value="${fieldType.value!""}" selected>${fieldType}</option>
-					</#list> </#if>
-			</select></td>
-			<td><input type="text" id="size" name="size" height="20px"
-				width="150px" style="text-align: left"></td>
-			<td><input type="checkbox" id="required" name="required"
-				height="20px" width="150px" style="text-align: left"></td>
-			<td><input type="checkbox" id="encrypted" name="encrypted"
-				height="20px" width="150px" style="text-align: left"></td>
-		</tr>
-		<tr>
-			<td align="center" style="width: 50%;" colspan="3"><input
-				type="button" value="キャンセル" id="clearRow"></td>
-			<td align="center" colspan="3"><input type="button" value="決定"
-				id="addRow"></td>
-		</tr>
-	</table>
-	<br>
-	<table style="width: 100%;">
-		<tr>
-			<td align="center" style="width: 50%;"><a
-				href="${rc.getContextPath()}/template" class="button">キャンセル</a></td>
-			<td align="center"><input type="submit" value="決定"
-				class="button"></td>
-		</tr>
-	</table>
-	<#if messages??> <#list messages as message>
-	<div>
-		<b style="color: red;">${message.getContent()}</b>
-	</div>
-	</#list> </#if>
-</form>
+
+<script id="template-edit-row-template" type="text/x-handlebars-template">
+    <tr class="addTemplate" >
+        <input type="hidden" id="fieldId" name="id" value="{{id}}">
+        <td><input type="text" id="name" name="name" value="{{name}}"></td>
+        <td><input type="text" id="description" name="description" value="{{description}}"></td>
+        <td><select name="fieldType" id="fieldType">
+            <#if fieldTypes??>
+                <#list fieldTypes as fieldType>
+                    <option value="${fieldType.value!""}" {{#ifCond  ${fieldType.value} type }} selected
+                            {{/ifCond }}>${fieldType}</option>
+                </#list>
+            </#if>
+        </select>
+        </td>
+        <td><input type="text" id="size" name="size" value="{{size}}"></td>
+        <td class="text-center">
+            <input type="checkbox" id="required" name="required" {{#ifCond required 'true' }} checked {{/ifCond}}>
+        </td>
+        <td class="text-center">
+            <input type="checkbox" id="encrypted" name="encrypted"{{#ifCond encrypted 'true' }} checked {{/ifCond}} >
+        </td>
+    </tr>
+</script>
+
 </@standard.standardPage>

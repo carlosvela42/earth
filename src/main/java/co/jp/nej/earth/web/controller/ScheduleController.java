@@ -7,11 +7,12 @@ import co.jp.nej.earth.model.MgrSchedule;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrProcessService;
 import co.jp.nej.earth.model.entity.MgrTask;
-import co.jp.nej.earth.model.form.AddScheduleForm;
+import co.jp.nej.earth.model.form.DeleteListForm;
+import co.jp.nej.earth.model.form.ScheduleForm;
 import co.jp.nej.earth.service.ScheduleService;
 import co.jp.nej.earth.service.WorkspaceService;
 import co.jp.nej.earth.util.ConversionUtil;
-import co.jp.nej.earth.util.EStringUtil;
+import co.jp.nej.earth.util.SessionUtil;
 import co.jp.nej.earth.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -38,24 +40,28 @@ public class ScheduleController extends BaseController {
     @Autowired
     private ValidatorUtil validatorUtil;
 
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+    private static final String URL = "schedule";
+
+    /*@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
     public String showList(Model model) throws EarthException {
         model.addAttribute("mgrWorkspaces", workspaceService.getAll());
         return "schedule/scheduleList";
-    }
+    }*/
 
-    @RequestMapping(value = "/switchWorkspace", method = RequestMethod.POST)
-    public String switchWorkspace(@ModelAttribute("workspaceId") String workspaceId, Model model)
+    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+    public String switchWorkspace(Model model, HttpServletRequest request)
             throws EarthException {
-        model.addAttribute("mgrWorkspaces", workspaceService.getAll());
-        model.addAttribute("workspaceId", workspaceId);
+        SessionUtil.loadWorkspaces(workspaceService, model, request);
+        String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
         model.addAttribute("mgrSchedules", scheduleService.getSchedulesByWorkspaceId(workspaceId));
-
+        model.addAttribute("messages", model.asMap().get("messages"));
         return "schedule/scheduleList";
     }
 
     @RequestMapping(value = "/addNew", method = RequestMethod.GET)
-    public String addNew(@ModelAttribute("workspaceId") String workspaceId, Model model) throws EarthException {
+    public String addNew(Model model, HttpServletRequest request) throws EarthException {
+        SessionUtil.loadWorkspaces(workspaceService, model, request);
+        String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
         Map<String, Object> info = scheduleService.getInfo(workspaceId);
         model.addAttribute("mgrProcesses", ConversionUtil.castList(info.get("mgrProcesses"), MgrProcess.class));
         model.addAttribute("mgrTasks", ConversionUtil.castList(info.get("mgrTasks"), MgrTask.class));
@@ -64,15 +70,15 @@ public class ScheduleController extends BaseController {
         MgrSchedule mgrSchedule = new MgrSchedule();
         mgrSchedule.setScheduleId((String) info.get("scheduleId"));
         model.addAttribute("mgrSchedule", mgrSchedule);
-        model.addAttribute("workspaceId", workspaceId);
         return "schedule/addSchedule";
     }
 
     @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
-    public String insertOne(@ModelAttribute("workspaceId") String workspaceId,
-                            @Valid @ModelAttribute("addScheduleForm") AddScheduleForm addScheduleForm,
-                            BindingResult result, Model model) throws EarthException {
-        MgrSchedule mgrSchedule = setMgrSchedule(addScheduleForm);
+    public String insertOne(@Valid @ModelAttribute("scheduleForm") ScheduleForm scheduleForm,
+                            BindingResult result, Model model, HttpServletRequest request) throws EarthException {
+        SessionUtil.loadWorkspaces(workspaceService, model, request);
+        String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
+        MgrSchedule mgrSchedule = setMgrSchedule(scheduleForm);
         model.addAttribute("workspaceId", workspaceId);
         model.addAttribute("mgrSchedule", mgrSchedule);
 
@@ -88,7 +94,7 @@ public class ScheduleController extends BaseController {
             } else {
                 boolean insertSchedule = scheduleService.insertOne(workspaceId, mgrSchedule);
                 if (insertSchedule) {
-                    return switchWorkspace(workspaceId, model);
+                    return redirectToList(URL);
                 } else {
                     model.addAttribute("messageError", Constant.ErrorCode.E1009);
                     return "schedule/addSchedule";
@@ -98,8 +104,8 @@ public class ScheduleController extends BaseController {
     }
 
     @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
-    public String showDetail(Model model, @ModelAttribute("workspaceId") String workspaceId, String scheduleId) {
-        try {
+    public String showDetail(String scheduleId, HttpServletRequest request, Model model) throws EarthException {
+            String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
             Map<String, Object> info = scheduleService.showDetail(workspaceId, scheduleId);
             model.addAttribute("mgrProcesses", ConversionUtil.castList(info.get("mgrProcesses"), MgrProcess.class));
             model.addAttribute("mgrTasks", ConversionUtil.castList(info.get("mgrTasks"), MgrTask.class));
@@ -108,18 +114,17 @@ public class ScheduleController extends BaseController {
             model.addAttribute("mgrSchedule", ConversionUtil.castObject(info.get("mgrSchedule"),
                     MgrSchedule.class));
             model.addAttribute("workspaceId", workspaceId);
-            return "schedule/editSchedule";
-        } catch (Exception ex) {
-            return redirectToList();
-        }
+            return "schedule/addSchedule";
+
     }
 
     @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
-    public String updateOne(@ModelAttribute("workspaceId") String workspaceId,
-                            @Valid @ModelAttribute("addScheduleForm") AddScheduleForm addScheduleForm,
-                            BindingResult result, Model model) throws EarthException {
+    public String updateOne(@Valid @ModelAttribute("addScheduleForm") ScheduleForm addScheduleForm,
+                            BindingResult result, Model model, HttpServletRequest request) throws EarthException {
         List<Message> messages = validatorUtil.validate(result);
         MgrSchedule mgrSchedule = setMgrSchedule(addScheduleForm);
+        SessionUtil.loadWorkspaces(workspaceService, model, request);
+        String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
         model.addAttribute("workspaceId", workspaceId);
         model.addAttribute("mgrSchedule", mgrSchedule);
         if (messages.size() > 0) {
@@ -132,7 +137,7 @@ public class ScheduleController extends BaseController {
             } else {
                 boolean insertSchedule = scheduleService.updateOne(workspaceId, mgrSchedule);
                 if (insertSchedule) {
-                    return switchWorkspace(workspaceId, model);
+                    return redirectToList(URL);
                 } else {
                     model.addAttribute("messageError", Constant.ErrorCode.E1009);
                     return "schedule/editSchedule";
@@ -142,15 +147,19 @@ public class ScheduleController extends BaseController {
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public String deleteList(@ModelAttribute("scheduleIds") String scheduleIds,
-                             @ModelAttribute("workspaceId") String workspaceId, Model model) {
+    public String deleteList(DeleteListForm deleteForm) {
         try {
-            List<String> scheduleId = EStringUtil.getListFromString(scheduleIds, "\\s*,\\s*");
-            scheduleService.deleteList(workspaceId, scheduleId);
-            return switchWorkspace(workspaceId, model);
+            List<String> scheduleId = deleteForm.getListIds();
+            scheduleService.deleteList(deleteForm.getWorkspaceId(), scheduleId);
+            return redirectToList(URL);
         } catch (Exception ex) {
-            return redirectToList();
+            return redirectToList(URL);
         }
+    }
+
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    public String cancel() {
+        return redirectToList(URL);
     }
 
     private String getView(Model model, List<Message> messages, String workspaceId, boolean insert) throws
@@ -170,12 +179,13 @@ public class ScheduleController extends BaseController {
 
     }
 
-    private MgrSchedule setMgrSchedule(AddScheduleForm addScheduleForm) {
+    private MgrSchedule setMgrSchedule(ScheduleForm addScheduleForm) {
         return new MgrSchedule(addScheduleForm.getScheduleId(), Integer.parseInt(addScheduleForm
                 .getProcessId()), addScheduleForm.getTaskId(), addScheduleForm.getHostName(),
                 addScheduleForm.getProcessIServiceId(), addScheduleForm.getEnableDisable(),
                 addScheduleForm.getStartTime(), addScheduleForm.getEndTime(), addScheduleForm.getStartTime(),
                 addScheduleForm.getRunIntervalDay(), addScheduleForm.getRunIntervalHour(),
-                addScheduleForm.getRunIntervalMinute(), addScheduleForm.getRunIntervalSecond());
+                addScheduleForm.getRunIntervalMinute(), addScheduleForm.getRunIntervalSecond(),
+                addScheduleForm.getLastUpdateTime());
     }
 }

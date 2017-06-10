@@ -42,6 +42,7 @@ import co.jp.nej.earth.model.sql.QMgrTemplateP;
 import co.jp.nej.earth.util.ConversionUtil;
 import co.jp.nej.earth.util.EMessageResource;
 import co.jp.nej.earth.util.UserAccessRightUtil;
+import co.jp.nej.earth.web.form.SearchForm;
 
 @Service
 public class TemplateServiceImpl extends BaseService implements TemplateService {
@@ -275,5 +276,12 @@ public class TemplateServiceImpl extends BaseService implements TemplateService 
   private boolean isExistTable(String workspaceId, String templateTableName, String dbUser) throws EarthException {
     long isExit = templateDao.isExistsTableData(workspaceId, templateTableName, dbUser);
     return isExit > 0L;
+  }
+
+  @Override
+  public String getFieldJson(String workspaceId, SearchForm searchForm) throws EarthException {
+    return (String) executeTransaction(workspaceId, () -> {
+      return templateDao.getFieldJson(workspaceId, searchForm);
+    });
   }
 }

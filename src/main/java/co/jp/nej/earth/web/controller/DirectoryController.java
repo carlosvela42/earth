@@ -1,8 +1,6 @@
 package co.jp.nej.earth.web.controller;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +21,7 @@ import co.jp.nej.earth.model.Directory;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.constant.Constant.Session;
+import co.jp.nej.earth.model.form.DeleteProcessForm;
 import co.jp.nej.earth.service.DirectoryService;
 import co.jp.nej.earth.util.EStringUtil;
 import co.jp.nej.earth.util.ValidatorUtil;
@@ -41,24 +40,24 @@ public class DirectoryController extends BaseController {
   @Autowired
   private EDatadirectoryId eDatadirectoryId;
 
-  @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+  private static final String URL = "directory";
+  private static final String ADD_URL = "directory/addDirectory";
+
+  @RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
   public String showList(Model model, HttpServletRequest request) throws EarthException {
     model.addAttribute("directorys", directoryService.getAllDirectories());
     return "directory/directoryList";
   }
 
   @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-  public String deleteList(@ModelAttribute("dataDirectoryIds") String dataDirectoryIds, Model model,
-      HttpServletRequest request) throws EarthException {
-    if (!EStringUtil.isEmpty(dataDirectoryIds)) {
-      List<Integer> intDataDirectoryIds = new ArrayList<>();
-      List<String> stringDataDirectoryIds = Arrays.asList(dataDirectoryIds.split("\\s*,\\s*"));
-      for (String stringDataDirectoryId : stringDataDirectoryIds) {
-        intDataDirectoryIds.add(Integer.valueOf(stringDataDirectoryId));
-      }
+  public String deleteList(DeleteProcessForm deleteForm) {
+    try {
+      List<Integer> intDataDirectoryIds = deleteForm.getProcessIds();
       directoryService.deleteDirectorys(intDataDirectoryIds, Constant.EARTH_WORKSPACE_ID);
+      return redirectToList(URL);
+    } catch (Exception ex) {
+      return redirectToList(URL);
     }
-    return redirectToList("directory");
   }
 
   @RequestMapping(value = "/addNew", method = RequestMethod.GET)
@@ -68,17 +67,18 @@ public class DirectoryController extends BaseController {
     directoryForm.setDiskVolSize(String.valueOf(Constant.Directory.DEFAULT_VALUE));
     directoryForm.setNewCreateFile(String.valueOf(Constant.Directory.YES));
     model.addAttribute("directoryForm", directoryForm);
-    return "directory/addDirectory";
+    return ADD_URL;
   }
 
   @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
   public String insertOne(@Valid @ModelAttribute("directoryForm") DirectoryForm directoryForm, BindingResult result,
       HttpServletRequest request, Model model) throws EarthException {
     List<Message> messages = validatorUtil.validate(result);
+    directoryForm.setLastUpdateTime(null);
     if (messages.size() > 0) {
       model.addAttribute("directoryForm", directoryForm);
       model.addAttribute(Session.MESSAGES, messages);
-      return "directory/addDirectory";
+      return ADD_URL;
     }
     Directory directory = new Directory();
     directory.setDataDirectoryId(Integer.valueOf(directoryForm.getDataDirectoryId()));
@@ -91,10 +91,10 @@ public class DirectoryController extends BaseController {
     if (messages != null && messages.size() > 0) {
       model.addAttribute(Session.MESSAGES, messages);
       model.addAttribute("directory", directory);
-      return "directory/addDirectory";
+      return ADD_URL;
     } else {
       directoryService.insertOne(directory, Constant.EARTH_WORKSPACE_ID);
-      return redirectToList("directory");
+      return redirectToList(URL);
     }
   }
 
@@ -109,9 +109,10 @@ public class DirectoryController extends BaseController {
       directoryForm.setReservedDiskVolSize(directory.getReservedDiskVolSize());
       directoryForm.setDiskVolSize(directory.getDiskVolSize());
       directoryForm.setFolderPath(directory.getFolderPath());
+      directoryForm.setLastUpdateTime(directory.getLastUpdateTime());
       model.addAttribute("directoryForm", directoryForm);
     }
-    return "directory/editDirectory";
+    return ADD_URL;
   }
 
   @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
@@ -121,7 +122,7 @@ public class DirectoryController extends BaseController {
     if (messages.size() > 0) {
       model.addAttribute("directoryForm", directoryForm);
       model.addAttribute(Session.MESSAGES, messages);
-      return "directory/editDirectory";
+      return ADD_URL;
     }
     Directory directory = new Directory();
     directory.setDataDirectoryId(Integer.valueOf(directoryForm.getDataDirectoryId()));
@@ -130,7 +131,7 @@ public class DirectoryController extends BaseController {
     directory.setReservedDiskVolSize(directoryForm.getReservedDiskVolSize());
     directory.setFolderPath(directoryForm.getFolderPath());
     directoryService.updateDirectory(directory, Constant.EARTH_WORKSPACE_ID);
-    return redirectToList("directory");
+    return redirectToList(URL);
   }
 
   @RequestMapping(value = "/getSizeFolder", method = RequestMethod.GET)
@@ -143,5 +144,10 @@ public class DirectoryController extends BaseController {
       freeSpace = freeSpace / (Constant.Directory.CONVERT);
     }
     return freeSpace;
+  }
+
+  @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+  public String cancel() {
+    return redirectToList(URL);
   }
 }

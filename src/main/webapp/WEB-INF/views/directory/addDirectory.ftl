@@ -1,96 +1,60 @@
-<@standard.standardPage title="NEWDIRECTORY">
-<script type="text/javascript">
-$(function() {
-    $('input[name=CreateFile]:radio').change(
-            function() {
-                if($("input[name=CreateFile]:checked").val()=="enable"){
-                    $("#newCreateFile").val(1);
-                }else{
-                    $("#newCreateFile").val(0);
-                }
-            });
-})
-$(document).ready(function(){
-	function getSize(){
-        var folderPath = $("#txtFolderPath").val();
-        folderPath = folderPath.replace(/\\/g, "/");
-        var urlSwitchWorkspace = "http://localhost:8080/Earth/directory/getSizeFolder" + "?folderPath=" + folderPath; 
-          $.ajax({
-              type: 'GET',
-              url: urlSwitchWorkspace,
-              dataType: "json",
-              success: function(data){
-                 $("#txtDiskVolSize").val(data);
-              }
-          });
-      }
-  
-$("#directoryForm").on('keyup keypress', function(e) {
-        var keyCode = e.keyCode || e.which;
-        if (keyCode === 13) { 
-            getSize();
-          e.preventDefault();
-          return false;
-        }
-});
-}); 
-  
-	 
-</script>
-<form action="${rc.getContextPath()}/directory/insertOne"
-    object="directoryForm" method="post" id="directoryForm">
-    <input type="hidden" id="folderPath"name="workspaceId" value="0">
-    <table>
-        <tr>
-            <td>データディレクトリID</td>
-            <td><input type="text" id="txtDirectoryForm" name="dataDirectoryId"
-                value="${directoryForm.dataDirectoryId!""}" height="20px" width="150px"
-                style="text-align: left" readonly="readonly"></td>
-        </tr>
-        <tr>
-            <td colspan="2">新規ファイル作成</td>
-            <td><#if directoryForm.newCreateFile=="1"> 
-                     <#assign enable="checked"></#if> 
-                <#if directoryForm.newCreateFile=="0">
-                     <#assign disable="checked"></#if> 
-                <input type="radio" name="CreateFile" value="enable"${enable!""}>許可する<br>
-                <input type="radio" name="CreateFile" value="disable"${disable!""}> 許可しない<br>
-                <input type="hidden" id="newCreateFile" name="newCreateFile" height="20px" width="150px"
-                            style="text-align: left" value="${directoryForm.newCreateFile!""}">
-           </td>
-        </tr>
-        <tr>
-            <td>確保ディスク容量[MB]</td>
-            <td><input type="text" id="txtReservedDiskVolSize"
-                value="${directoryForm.reservedDiskVolSize!""}" name="reservedDiskVolSize"
-                height="20px" width="150px" style="text-align: left"></td>
-        </tr>
-        <tr>
-            <td>ディスク容量[MB]</td>
-            <td><input type="text" id="txtDiskVolSize"
-                value="${directoryForm.diskVolSize!""}" name="diskVolSize"
-                height="20px" width="150px" style="text-align: left" readonly="readonly"></td>
-        </tr>
-        <tr>
-            <td>フォルダパス</td>
-            <td><input type="text" id="txtFolderPath"
-                value="${directoryForm.folderPath!""}" name="folderPath" 
-                height="20px" width="150px" style="text-align: left"></td>
-        </tr>
-    </table>
-    <br>
-    <table style="width: 100%;">
-        <tr>
-            <td align="center" style="width: 50%;"><a
-                href="${rc.getContextPath()}/directory" class="button">キャンセル</a></td>
-            <td align="center"><input type="submit" value="決定"
-                class="button"></td>
-        </tr>
-    </table>
-    <#if messages??> <#list messages as message>
-    <div>
-        <b style="color: red;">${message.getContent()}</b>
+<#assign contentFooter>
+    <@component.detailUpdatePanel object="directory" formId="directoryForm"></@component.detailUpdatePanel>
+</#assign>
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/directory.js"></script>
+</#assign>
+<@standard.standardPage title=e.get("directory.add") contentFooter=contentFooter script=script>
+<br>
+    <#assign isPersisted = (directoryForm.lastUpdateTime??)>
+    <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
+
+<form id="directoryForm" action="${rc.getContextPath()}/directory/${formAction}" object="directoryForm" method="post"
+      class="">
+    <#include "../common/messages.ftl">
+    <div class="board-wrapper">
+        <div class="board board-half">
+            <table class="table_form">
+                <tr>
+                    <td width="50%">${e.get('directory.id')}</td>
+                    <td>${directoryForm.dataDirectoryId!""}<input type="hidden" name="dataDirectoryId"
+                                                           value="${directoryForm.dataDirectoryId!""}"/></td>
+                </tr>
+                <tr>
+                    <td width="50%">${e.get('create.new.file')}</td>
+                    <td>
+	                <#if directoryForm.newCreateFile??>
+	                    <#if directoryForm.newCreateFile=="1">
+	                        <#assign enable="checked">
+	                    </#if>
+	
+	                    <#if directoryForm.newCreateFile=="0">
+	                        <#assign disable="checked">
+	                    </#if>
+	                </#if>
+	                <input type="radio" name="enable_disable" value="1" ${enable!""}> <label class="permision">${e.get('give.permission')}</label>
+	                <br /><br />
+	                <input type="radio" name="enable_disable" value="0" ${disable!""}> <label class="permision">${e.get('not.allow')}</label>
+	                <input type="hidden" id="newCreateFile" name="newCreateFile" height="20px" width="150px"
+	                       style="text-align: left" value="${directoryForm.newCreateFile!""}">
+	            </td>
+                </tr>
+                <tr>
+                    <td>${e.get('secured.disk.space')}</td>
+                    <td><input type="text" name="reservedDiskVolSize" value="${directoryForm.reservedDiskVolSize!""}"/></td>
+                </tr>
+                <tr>
+                    <td>${e.get('disk.space')}</td>
+                    <td><input type="text" name="diskVolSize" value="${directoryForm.diskVolSize!""}" readonly="readonly" id="txtDiskVolSize"/></td>
+                </tr>
+                <tr>
+                    <td>${e.get('folder.path')}</td>
+                    <td><input type="text" name="folderPath" value="${directoryForm.folderPath!""}" id="txtFolderPath"/></td>
+                </tr>
+            </table>
+            <input type="hidden" name="lastUpdateTime" value="${directoryForm.lastUpdateTime!""}"/>
+        </div>
+        <div class="board-split"></div>
     </div>
-    </#list> </#if>
 </form>
 </@standard.standardPage>

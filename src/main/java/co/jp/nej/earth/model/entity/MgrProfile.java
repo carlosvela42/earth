@@ -26,7 +26,15 @@ public class MgrProfile extends BaseModel<MgrProfile> implements Serializable {
         this.description=description;
         this.ldapIdentifier=ldapIdentifier;
     }
-
+    public MgrProfile(String profileId, int availableLicenceCount,String description,String ldapIdentifier,
+                      String lastUpdateTime){
+        this();
+        this.profileId=profileId;
+        this.availableLicenceCount=availableLicenceCount;
+        this.description=description;
+        this.ldapIdentifier=ldapIdentifier;
+        this.setLastUpdateTime(lastUpdateTime);
+    }
     public String getProfileId() {
         return profileId;
     }

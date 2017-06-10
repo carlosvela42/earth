@@ -1,6 +1,7 @@
 package co.jp.nej.earth.model;
 
-import co.jp.nej.earth.model.sql.*;
+import co.jp.nej.earth.model.sql.QMgrProcess;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
@@ -13,6 +14,7 @@ public class MgrProcess extends BaseModel<MgrProcess> {
      */
     private static final long serialVersionUID = 1L;
     private Integer processId;
+    @NotEmpty(message = "E0001,processName")
     private String processName;
     private Float processVersion;
     private String description;

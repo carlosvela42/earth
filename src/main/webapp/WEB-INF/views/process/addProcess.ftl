@@ -8,7 +8,7 @@
 
 <@standard.standardPage title=e.get("process.edit") contentFooter=contentFooter script=script>
 <br>
-    <#assign isPersisted = (process.processId??)>
+    <#assign isPersisted = (process.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
 
 <form id="processForm" action="${rc.getContextPath()}/process/${formAction}" object="processForm" method="post" class="">
@@ -34,7 +34,14 @@
                 </tr>
                 <tr>
                     <td>${e.get('process.definition')}</td>
-                    <td><input type="file" id="fileUpload" value="upload"/><input type="button" id="fileDownload" value="download"></td>
+
+                    <td>
+                        <span class="btn btn-default btn_popup  btn-file btn_upload">
+    ${e.get('button.upload')}
+        <input type="file" id="fileUpload"/>
+</span>
+                        <input type="button" id="fileDownload" class="btn btn-default btn_popup btn_download" value=${e.get('button.download')
+                        }"></td>
                 </tr>
             </table>
         </div>

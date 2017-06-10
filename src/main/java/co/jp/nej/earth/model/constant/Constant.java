@@ -164,6 +164,7 @@ public class Constant {
     public static final String E1008 = "E1008";
     public static final String E1009 = "E1009";
     public static final String E1012 = "E1012";
+    public static final String E_TYPE_MISMATCH = "typeMismatch";
 
     public static final String SESSION_INVALID = "session.invalid";
   }

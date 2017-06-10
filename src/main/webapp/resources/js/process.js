@@ -19,7 +19,7 @@ window.onload = function () {
       $('#fileArea').hide();
       $('#databaseArea').show();
     } else if($(this).val()== "file"){
-      $('#fileArea').show();
+        $('#fileArea').show();
       $('#databaseArea').hide();
     }
   });

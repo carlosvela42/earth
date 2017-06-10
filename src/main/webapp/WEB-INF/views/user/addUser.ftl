@@ -10,6 +10,7 @@
 <br>
     <#assign isPersisted = (user.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
+    <#assign readonly = (formAction=='updateOne')?then('readonly',"")>
 <form id="userForm" action="${rc.getContextPath()}/user/${formAction}" object="userForm" method="post" class="">
     <#include "../common/messages.ftl">
     <div class="board-wrapper">
@@ -18,7 +19,7 @@
                 <tr>
                     <td width="50%">${e.get('user.id')}</td>
                     <td>
-                        <input type="text" name="userId" value="${user.userId!""}">
+                        <input type="text" name="userId" value="${user.userId!""}" ${readonly!""}>
                     </td>
                 </tr>
                 <tr>
@@ -50,38 +51,31 @@
             <div><input type="hidden" name="lastUpdateTime" value="${user.lastUpdateTime!""}"/></div>
         </div>
         <div class="board-split"></div>
-        <#if mgrProfiles??>
-            <div class="board board-half">
-                <table class="clientSearch table_list">
-                    <thead>
-                    <tr class="table_header">
-                        <td width="50%" colspan="2">${e.get('profile.id')}</td>
-                        <td>${e.get('profile.description')}</td>
-                    </tr>
-                    <tr class="condition">
-                        <td><span class="icon icon_search"></span></td>
-                        <td><input type="text" col="1" placeholder="Search for ID.."></td>
-                        <td><input type="text" col="2" placeholder="Search for name.."></td>
-                    </tr>
-                    </thead>
-                    <tbody id="userTbody" class="table_body">
-                        <#if mgrProfiles??>
-                            <#list mgrProfiles as mgrProfile>
-                            <tr profileId="${mgrProfile.profileId}">
-                                <td class="text" width="50%" colspan="2">${mgrProfile.profileId!""}</td>
-                                <td class="text">${mgrProfile.description!""}</td>
-                            </tr>
-                            </#list>
-                        <#else>
-                        <tr>
-                            <td width="50%" colspan="2"></td>
-                            <td></td>
+        <div class="board board-half">
+            <table class="clientSearch table_list">
+                <thead>
+                <tr class="table_header">
+                    <td  colspan="2">${e.get('profile.id')}</td>
+                    <td>${e.get('profile.description')}</td>
+                </tr>
+                <tr class="condition">
+                    <td style="width: 5%;"><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+                    <td ><input type="text" col="1" placeholder="Search for ID.."></td>
+                    <td ><input type="text" col="2" placeholder="Search for name.."></td>
+                </tr>
+                </thead>
+                <tbody id="userTbody" class="table_body">
+                    <#if mgrProfiles??>
+                        <#list mgrProfiles as mgrProfile>
+                        <tr profileId="${mgrProfile.profileId}">
+                            <td class="text" colspan="2">${mgrProfile.profileId!""}</td>
+                            <td class="text">${mgrProfile.description!""}</td>
                         </tr>
-                        </#if>
-                    </tbody>
-                </table>
-            </div>
-        </#if>
+                        </#list>
+                    </#if>
+                </tbody>
+            </table>
+        </div>
     </div>
 </form>
 </@standard.standardPage>

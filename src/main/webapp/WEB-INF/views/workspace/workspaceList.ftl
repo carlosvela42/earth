@@ -1,118 +1,48 @@
-<@standard.standardPage title="WORKSPACELIST">
-<script>
-    window.onload = function() {
-        var countChecked = function() {
-            var str = ""
-            $('input[name=DeleteRow]:checked').each(function() {
-                str += $(this).attr('value') + ",";
-            });
+<#assign contentFooter>
+    <@component.removePanel></@component.removePanel>
+</#assign>
 
-            if (str.length > 0) {
-                str = str.substring(0, str.length - 1);
-            }
-            $("#workspaceIds").val(str);
-        };
-        countChecked();
-        var countDeleted = function() {
-            var str = "0";
-            $('input[name=deleteWorkspace]:checked').each(function() {
-                str = "1";
-            });
-            $("#deleted").val(str);
-        };
+<#assign script>
+<script src="${rc.getContextPath()}/resources/js/workspace.js"></script>
+</#assign>
 
-        $("input[name=DeleteRow]").on("click", countChecked);
-        $("input[name=deleteWorkspace]").on("click", countDeleted);
-
-    }
-    function validate() {
-        var deleted = parseInt($("#deleted").val());
-        var str = $("#workspaceIds").val();
-        console.log("workspaceIds: " + str);
-
-        if (deleted > 0 && str.length > 0) {
-            document.forms[0].submit();
-        } else {
-            if (deleted == 0 && str.length == 0) {
-                $("#message").html("choose user and Confirm");
-            } else if (deleted == 0 && str.length > 0) {
-                $("#message").html("choose Confirm");
-            } else if (deleted > 0 && str.length == 0) {
-                $("#message").html("choose user");
-            }
-        }
-    }
-    function filter() {
-        // Declare variables
-        var workspaceIdInput, workspaceNameInput, filter, i;
-        workspaceIdInput = document.getElementById('workspaceIdInput').value
-                .toUpperCase();
-        workspaceNameInput = document.getElementById('workspaceNameInput').value
-                .toUpperCase();
-
-        // Loop through all list items, and hide those who don't match the search query
-        for (i = 0; i < $("#workspaceList tr ").length - 2; i++) {
-
-            if (($("#workspaceId" + i).html().toUpperCase()
-                    .indexOf(workspaceIdInput) > -1)
-                    && ($("#workspaceName" + i).html().toUpperCase().indexOf(
-                            workspaceNameInput) > -1)) {
-                $("#row" + i).show();
-
-            } else {
-                $("#row" + i).hide();
-            }
-        }
-    }
-</script>
-
-<form object="mgrWorkspaces" method="post"
-    action="${rc.getContextPath()}/workspace/deleteList">
-    <div id="count"></div>
-    <table id="button">
-        <tr>
-            <td><a href="${rc.getContextPath()}/workspace/addNew"
-                class="button">新規</a></td>
-            <td><input type="button" class="button" value="削除"
-                onclick="validate()" disabled="disabled"></td>
-            <td><input type="checkbox" name="deleteWorkspace"
-                value="deleteWorkspace" disabled="disabled">Confirm Delete</td>
-        </tr>
-    </table>
-    <div>
-        <b id="message" style="color: red;"></b>
+<@standard.standardPage title=e.get('workspace.list') contentFooter=contentFooter script=script>
+<div class="board-wrapper">
+    <div class="board board-half">
+        <#include "../common/messages.ftl">
+        <table class="clientSearch table_list">
+            <thead>
+                <tr class="table_header">
+                    <td class=""><input type="checkbox" class="deleteAllCheckBox"/></td>
+                    <td class="text_center">
+                        <a id="addButton" class="icon icon_add" href="${rc.getContextPath()}/workspace/addNew">
+                        </a>
+                    </td>
+                    <td>${e.get('workspace.id')}</td>
+                    <td>${e.get('workspace.id')}</td>
+                </tr>
+                <tr class="condition">
+                    <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+                    <td colspan="2"><input id="tests" type="text" col="3" placeholder="search"/></td>
+                    <td><input id="tests2" type="text" col="4" placeholder="search"/></td>
+                </tr>
+            </thead>
+            <tbody id="scheduleTbody" class="table_body">
+                <#if mgrWorkspaces??>
+                    <#list mgrWorkspaces as mgrWorkspace>
+                    <tr workspaceId="${mgrWorkspace.workspaceId}">
+                        <td><input type="checkbox" class="deleteCheckBox" /></td>
+                        <td class="text_center">
+                            <a class="icon icon_edit"  href="${rc.getContextPath()}/workspace/showDetail?workspaceId=${mgrWorkspace.workspaceId}"></a>
+                        </td>
+                        <td class="text">${mgrWorkspace.workspaceId!""}</td>
+                        <td class="text">${mgrWorkspace.workspaceName!""}</td>
+                    </tr>
+                    </#list>
+                </#if>
+            </tbody>
+        </table>
     </div>
-    <input type="hidden" id="workspaceIds" name="workspaceIds" >
-    <input type="hidden" id="deleted" name="deleted" value="0"> 
-    <table border="1" id="workspaceList">
-        <tr>
-            <th></th>
-            <th>ワークスペースID</th>
-            <th>ワークスペース名</th>
-        </tr>
-        <tr>
-            <td></td>
-            <td><input
-                type="text" id="workspaceIdInput" onkeyup="filter()"
-                 placeholder="Search for ID.."> </td>
-            <td><input type="text"id="workspaceNameInput" onkeyup="filter()" 
-                placeholder="Search for names.."></td>
-        </tr>
-        <#if mgrWorkspaces??> 
-            <#list mgrWorkspaces as mgrWorkspace>
-		        <tr id="row${mgrWorkspace?index}">
-		            <td><input type="checkbox" id="delRow${mgrWorkspace?index}"
-		               name="DeleteRow" value="${mgrWorkspace.workspaceId}" disabled="disabled"></td>
-		            <td><a id="workspaceId${mgrWorkspace?index}">${mgrWorkspace.workspaceId}</a></td>
-		            <td id="workspaceName${mgrWorkspace?index}">${mgrWorkspace.workspaceName}</td>
-		        </tr>
-            </#list>        
-        </#if>
-    </table>
-    <#if messages??> <#list messages as message>
-    <div>
-        <b style="color: red;">${message.getContent()}</b>
-    </div>
-    </#list> </#if>
-</form>
+    <div class="board-split"></div>
+</div>
 </@standard.standardPage>

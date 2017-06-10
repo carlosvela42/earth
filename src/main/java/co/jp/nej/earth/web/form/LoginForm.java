@@ -7,7 +7,7 @@ public class LoginForm {
     @NotEmpty(message = "E0001,userId")
     private String userId;
 
-    @NotEmpty(message = "E0001,password")
+//    @NotEmpty(message = "E0001,password")
     private String password;
 
     /**

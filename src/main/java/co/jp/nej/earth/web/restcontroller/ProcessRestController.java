@@ -26,8 +26,8 @@ public class ProcessRestController extends BaseRestController {
     private ValidatorUtil validatorUtil;
 
     @RequestMapping(value = "/openProcess", method = RequestMethod.GET)
-    public RestResponse openProcess(OpenProcessForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
+    public RestResponse openProcess(OpenProcessForm form, BindingResult result, HttpServletRequest request)
+            throws EarthException {
         RestResponse respone = new RestResponse();
         List<Message> messages = validatorUtil.validate(result);
         if (messages != null && messages.size() > 0) {
@@ -35,24 +35,21 @@ public class ProcessRestController extends BaseRestController {
             respone.setData(messages);
             return respone;
         }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                respone.setResult(processService.openProcess(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), null, form.getWorkItemId(),
-                        OpenProcessMode.findOpenModeByMode(form.getMode())));
-                return respone;
-            } catch (EarthException e) {
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
-        });
+        try {
+            respone.setResult(
+                    processService.openProcess(EarthSessionManager.find(form.getSessionId()), form.getWorkspaceId(),
+                            null, form.getWorkItemId(), OpenProcessMode.findOpenModeByMode(form.getMode())));
+            return respone;
+        } catch (EarthException e) {
+            respone.setResult(false);
+            respone.setData(e.getMessage());
+            return respone;
+        }
     }
 
     @RequestMapping(value = "/closeProcess", method = RequestMethod.POST)
-    public RestResponse closeProcess(@Valid CloseProcessForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
+    public RestResponse closeProcess(@Valid CloseProcessForm form, BindingResult result, HttpServletRequest request)
+            throws EarthException {
         RestResponse respone = new RestResponse();
         List<Message> messages = validatorUtil.validate(result);
         if (messages != null && messages.size() > 0) {
@@ -75,8 +72,8 @@ public class ProcessRestController extends BaseRestController {
     }
 
     @RequestMapping(value = "/getProcess", method = RequestMethod.POST)
-    public RestResponse getProcess(@Valid GetProcessForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
+    public RestResponse getProcess(@Valid GetProcessForm form, BindingResult result, HttpServletRequest request)
+            throws EarthException {
 
         RestResponse respone = new RestResponse();
         List<Message> messages = validatorUtil.validate(result);
@@ -100,8 +97,8 @@ public class ProcessRestController extends BaseRestController {
     }
 
     @RequestMapping(value = "/updateProcess", method = RequestMethod.POST)
-    public RestResponse updateProcess(@Valid ProcessRestForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
+    public RestResponse updateProcess(@Valid ProcessRestForm form, BindingResult result, HttpServletRequest request)
+            throws EarthException {
 
         RestResponse respone = new RestResponse();
         List<Message> messages = validatorUtil.validate(result);
@@ -125,8 +122,8 @@ public class ProcessRestController extends BaseRestController {
     }
 
     @RequestMapping(value = "/closeAndSaveWorkItem", method = RequestMethod.POST)
-    public RestResponse closeAndSaveWorkItem(WorkItemChangeForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
+    public RestResponse closeAndSaveWorkItem(WorkItemChangeForm form, BindingResult result, HttpServletRequest request)
+            throws EarthException {
 
         RestResponse respone = new RestResponse();
         List<Message> messages = validatorUtil.validate(result);
