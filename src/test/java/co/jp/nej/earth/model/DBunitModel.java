@@ -1,8 +1,8 @@
 package co.jp.nej.earth.model;
 
-import java.io.File;
-
 import co.jp.nej.earth.model.constant.Constant;
+
+import java.io.File;
 
 public class DBunitModel {
     private String workspaceId;
@@ -21,8 +21,7 @@ public class DBunitModel {
     }
 
     /**
-     * @param workspaceId
-     *            the workspaceId to set
+     * @param workspaceId the workspaceId to set
      */
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId == null || workspaceId.isEmpty() ? Constant.EARTH_WORKSPACE_ID : workspaceId;
@@ -36,8 +35,7 @@ public class DBunitModel {
     }
 
     /**
-     * @param fileInput
-     *            the fileInput to set
+     * @param fileInput the fileInput to set
      */
     public void setFileInput(File fileInput) {
         this.fileInput = fileInput;

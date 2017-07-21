@@ -14,8 +14,7 @@ public class DocumentData {
     }
 
     /**
-     * @param documentId
-     *            the documentId to set
+     * @param documentId the documentId to set
      */
     public void setDocumentId(long documentId) {
         this.documentId = documentId;
@@ -29,8 +28,7 @@ public class DocumentData {
     }
 
     /**
-     * @param seqNo
-     *            the seqNo to set
+     * @param seqNo the seqNo to set
      */
     public void setSeqNo(int seqNo) {
         this.seqNo = seqNo;
@@ -44,8 +42,7 @@ public class DocumentData {
     }
 
     /**
-     * @param binaryFile
-     *            the binaryFile to set
+     * @param binaryFile the binaryFile to set
      */
     public void setBinaryFile(Byte[] binaryFile) {
         this.binaryFile = binaryFile;
@@ -59,8 +56,7 @@ public class DocumentData {
     }
 
     /**
-     * @param filePath
-     *            the filePath to set
+     * @param filePath the filePath to set
      */
     public void setFilePath(String filePath) {
         this.filePath = filePath;

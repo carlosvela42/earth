@@ -23,6 +23,7 @@ import co.jp.nej.earth.model.constant.Constant.AgentBatch;
 import co.jp.nej.earth.model.entity.CtlEvent;
 import co.jp.nej.earth.model.sql.QCtlEvent;
 import co.jp.nej.earth.util.ConversionUtil;
+import co.jp.nej.earth.util.DateUtil;
 
 
 @Repository
@@ -41,7 +42,7 @@ public class EventDaoImpl extends BaseDaoImpl<CtlEvent> implements EventDao {
             List<MgrWorkspace> mgrWorkspaces = workspaceDao.getAll();
             for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
                 List<Map<Path<?>, Object>> conditions = new ArrayList<>();
-                for(String userId: userIds){
+                for (String userId : userIds) {
                     Map<Path<?>, Object> condition = new HashMap<>();
                     condition.put(qCtlEvent.userId, userId);
                     conditions.add(condition);
@@ -81,6 +82,99 @@ public class EventDaoImpl extends BaseDaoImpl<CtlEvent> implements EventDao {
         Predicate pre1 = qCtlEvent.userId.in(userIds);
         condition.and(pre1);
 
-        return this.search(workspaceId,condition).size();
+        return this.search(workspaceId, condition).size();
+    }
+
+    /**
+     * Update status and TransactionToken for event
+     *
+     * @param transactionToken
+     * @param workSpaceId
+     * @return
+     */
+    @Override
+    public CtlEvent getEventIsEditing(String transactionToken, String workSpaceId, String userId)
+        throws EarthException {
+        QBean<CtlEvent> selectList = Projections.bean(CtlEvent.class, qCtlEvent.all());
+        EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workSpaceId);
+        return ConversionUtil.castObject(executeWithException(() -> {
+            return earthQueryFactory.select(selectList)
+                .from(qCtlEvent)
+                .where(qCtlEvent.userId.eq(userId))
+                .where(qCtlEvent.status.eq(AgentBatch.STATUS_EDITTING))
+                .where(qCtlEvent.transactionToken.eq(transactionToken))
+                .fetchFirst();
+        }), CtlEvent.class);
+    }
+
+    /**
+     * Update status and transactionToken for one
+     *
+     * @param transactionToken
+     * @param workSpaceId
+     * @return
+     * @throws EarthException
+     */
+    @Override
+    public boolean updateStatusAndTokenEvent(String transactionToken, String workSpaceId) throws
+        EarthException {
+        EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workSpaceId);
+        return (boolean) executeWithException(() -> {
+            earthQueryFactory.update(qCtlEvent)
+                .set(qCtlEvent.status, AgentBatch.STATUS_EDITTING)
+                .set(qCtlEvent.transactionToken, transactionToken)
+                .where(qCtlEvent.status.eq(AgentBatch.STATUS_EDIT))
+                .limit(1)
+                .execute();
+            return true;
+        });
+    }
+
+    @Override
+    public CtlEvent getEventByWorkItemId(String workspaceId, String workItemId) throws EarthException {
+        return  ConversionUtil.castObject(executeWithException(() -> {
+            QBean<CtlEvent> selectList = Projections.bean(CtlEvent.class, qCtlEvent.all());
+            EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
+            return earthQueryFactory.select(selectList).from(qCtlEvent).where(qCtlEvent.workitemId.eq(workItemId))
+                    .fetchFirst();
+        }), CtlEvent.class);
+    }
+
+    @Override
+    public boolean deleteEvent(String workSpaceId, CtlEvent event) throws EarthException {
+        try {
+            QCtlEvent qCtlEvent = QCtlEvent.newInstance();
+            Map<Path<?>, Object> condition = new HashMap<>();
+            condition.put(qCtlEvent.eventId, event.getEventId());
+            condition.put(qCtlEvent.status, AgentBatch.STATUS_EDITTING);
+            return delete(workSpaceId, condition) > 0;
+        } catch (Exception e) {
+            throw new EarthException(e);
+        }
+    }
+
+    @Override
+    public long deleteBulkEvents(String workspaceId, List<String> eventIds, String status) throws EarthException {
+        QCtlEvent qCtlEvent = QCtlEvent.newInstance();
+        EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
+        return earthQueryFactory
+                .delete(qCtlEvent)
+                    .where(qCtlEvent.eventId.in(eventIds)
+                            .and(qCtlEvent.status.eq(status)))
+                .execute();
+    }
+
+    @Override
+    public long updateBulkEventStatus(String workspaceId, List<String> eventIds, String oldStatus, String newStatus)
+            throws EarthException {
+        QCtlEvent qCtlEvent = QCtlEvent.newInstance();
+        EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(workspaceId);
+        return earthQueryFactory
+                .update(qCtlEvent)
+                    .where(qCtlEvent.eventId.in(eventIds)
+                            .and(qCtlEvent.status.eq(oldStatus)))
+                .set(qCtlEvent.status, newStatus)
+                .set(qCtlEvent.lastUpdateTime, DateUtil.getCurrentDateString())
+                .execute();
     }
 }

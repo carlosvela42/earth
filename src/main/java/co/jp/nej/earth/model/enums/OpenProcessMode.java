@@ -16,12 +16,11 @@ public enum OpenProcessMode {
         return mode;
     }
 
-    public static OpenProcessMode findOpenModeByMode(Integer mode) {
-        for (OpenProcessMode openProcessMode : OpenProcessMode.values()) {
-            if (mode.equals(openProcessMode.getMode())) {
-                return openProcessMode;
-            }
-        }
-        return null;
+    public static boolean isEdit(int mode) {
+        return OpenProcessMode.EDIT.getMode() == mode;
+    }
+
+    public static boolean isReadOnly(int mode) {
+        return OpenProcessMode.READ_ONLY.getMode() == mode;
     }
 }

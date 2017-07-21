@@ -11,8 +11,8 @@ public class StrDataDb extends BaseModel<StrDataDb> {
     private static final long serialVersionUID = 1L;
 
     private String workitemId;
-    private int folderItemNo;
-    private int documentNo;
+    private String folderItemNo;
+    private String documentNo;
     private String documentData;
 
     public StrDataDb() {
@@ -27,8 +27,7 @@ public class StrDataDb extends BaseModel<StrDataDb> {
     }
 
     /**
-     * @param workitemId
-     *            the workitemId to set
+     * @param workitemId the workitemId to set
      */
     public void setWorkitemId(String workitemId) {
         this.workitemId = workitemId;
@@ -37,30 +36,28 @@ public class StrDataDb extends BaseModel<StrDataDb> {
     /**
      * @return the folderItemNo
      */
-    public int getFolderItemNo() {
+    public String getFolderItemNo() {
         return folderItemNo;
     }
 
     /**
-     * @param folderItemNo
-     *            the folderItemNo to set
+     * @param folderItemNo the folderItemNo to set
      */
-    public void setFolderItemNo(int folderItemNo) {
+    public void setFolderItemNo(String folderItemNo) {
         this.folderItemNo = folderItemNo;
     }
 
     /**
      * @return the documentNo
      */
-    public int getDocumentNo() {
+    public String getDocumentNo() {
         return documentNo;
     }
 
     /**
-     * @param documentNo
-     *            the documentNo to set
+     * @param documentNo the documentNo to set
      */
-    public void setDocumentNo(int documentNo) {
+    public void setDocumentNo(String documentNo) {
         this.documentNo = documentNo;
     }
 
@@ -72,8 +69,7 @@ public class StrDataDb extends BaseModel<StrDataDb> {
     }
 
     /**
-     * @param documentData
-     *            the documentData to set
+     * @param documentData the documentData to set
      */
     public void setDocumentData(String documentData) {
         this.documentData = documentData;

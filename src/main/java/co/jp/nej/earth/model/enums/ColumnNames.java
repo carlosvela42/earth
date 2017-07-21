@@ -32,8 +32,10 @@ public enum ColumnNames {
     ,FUNCTION_INFORMATION("functionInformation")
     ,HISTORY_NO("historyNo")
     ,LAST_HISTORY_NO("lastHistoryNo")
+    ,INSERT_DATE_TIME("insertDateTime")
     ,LAST_UPDATE_TIME("lastUpdateTime")
     ,LAYER_NO("layerNo")
+    ,LAYER_NAME("layerName")
     ,LDAP_IDENTIFIER("ldapIdentifier")
     ,LOGIN_TIME("loginTime")
     ,LOGOUT_TIME("logoutTime")
@@ -55,6 +57,7 @@ public enum ColumnNames {
     ,SCHEDULE_ID("scheduleId")
     ,SCHEMA_NAME("schemaName")
     ,SECTION("section")
+    ,SECTION_VALUE("sectionValue")
     ,SESSION_ID("sessionId")
     ,SITE_ID("siteId")
     ,SITE_MANAGEMENT_TYPE("siteManagementType")
@@ -71,11 +74,13 @@ public enum ColumnNames {
     ,VARIABLE_NAME("variableName")
     ,VIEW_INFORMATION("viewInformation")
     ,WORKITEM_DATA("workitemData")
+    ,TRANSACTION_TOKEN("transactionToken")
     ,WORKITEM_ID("workitemId")
     ,WORKSPACE_ID("workspaceId")
     ,WORKSPACE_NAME("workspaceName")
     ,PROCESS_TIME("processTime")
     ,TASK_NAME("taskName")
+    ,CUSTOM_TASK_ID("customTaskId")
     ,CLASS_NAME("className")
     ,NEW_CREATE_FILE("newCreateFile")
     ,RESERVED_DISK_VOL_SIZE("reservedDiskVolSize")
@@ -91,7 +96,15 @@ public enum ColumnNames {
     ,RUN_INTERVAL_HOUR("runIntervalHour")
     ,RUN_INTERVAL_MINUTE("runIntervalMinute")
     ,RUN_INTERVAL_SECOND("runIntervalSecond")
-    ,COUNT("count");
+    ,CUSTOM_TASK_NAME("customTaskName")
+    ,COUNT("count")
+    ,FOLDER_ITEM_ORDER("folderItemOrder")
+    ,DOCUMENT_ORDER("documentOrder")
+    ,LAYER_ORDER("layerOrder")
+    ,INCREMENTTYPE("incrementType")
+    ,INCREMENTDATA("incrementData")
+    ,INCREMENTDATETIME("incrementDateTime");
+    //,INCREMENT_ID("id");
 
     private String propertyName;
 

@@ -11,7 +11,7 @@
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
 
 <form id="scheduleForm" action="${rc.getContextPath()}/schedule/${formAction}" object="scheduleForm" method="post"
-      class="">
+      class="" imageLink="process">
     <#include "../common/messages.ftl">
     <div class="board-wrapper">
         <div class="board board-half">
@@ -29,7 +29,7 @@
                     <td>${e.get('process.service')}</td>
                     <td>
                         <select id="processIServiceName" name="processIServiceName">
-                            <option value="0" selected="selected"></option>
+                            <option value="" selected="selected"></option>
                             <#if mgrProcessServices??>
                                 <#list mgrProcessServices as mgrProcessService>
                                     <#if mgrSchedule.processIServiceId??>
@@ -67,7 +67,7 @@
                     <td>${e.get('schedule.taskName')}</td>
                     <td>
                         <select id="taskName" name="taskName">
-                            <option value="0" selected="selected"></option>
+                            <option value="" selected="selected"></option>
                             <#if mgrTasks??>
                                 <#list mgrTasks as mgrTask>
                                     <#if mgrSchedule.taskId??>
@@ -100,11 +100,11 @@
                         </#if>
                         <div class="row">
                             <div class="col-md-6">
-                                <input type="radio" name="enable_Disable"
+                                <input type="radio" name="enable" id="enable"
                                        value="enable" ${enable!""}>${e.get('schedule.enable')}
                             </div>
                             <div class="col-md-6">
-                                <input type="radio" name="enable_Disable"
+                                <input type="radio" name="disable" id="disable"
                                        value="disable" ${disable!""}>${e.get('schedule.disable')}
                             </div>
                         </div>
@@ -114,11 +114,11 @@
                 </tr>
                 <tr>
                     <td width="50%">${e.get('schedule.startDateTime')}</td>
-                    <td><input type="text" name="startTime" value="${mgrSchedule.startTime!""}"/></td>
+                    <td><input type="text" name="startTime" value="${mgrSchedule.startTime!""}" placeholder="StartTime"/></td>
                 </tr>
                 <tr>
                     <td>${e.get('schedule.endDateTime')}</td>
-                    <td><input type="text" name="endTime" value="${mgrSchedule.endTime!""}"/></td>
+                    <td><input type="text" name="endTime" value="${mgrSchedule.endTime!""}" placeholder="EndTime"/></td>
                 </tr>
                 <tr class="nextDateTimeSchedule">
                     <td>${e.get('schedule.executionInterval')}</td>
@@ -139,7 +139,6 @@
             </table>
             <div><input type="hidden" name="lastUpdateTime" value="${mgrSchedule.lastUpdateTime!""}"/></div>
         </div>
-    <#--<div class="clearfix"></div>-->
     </div>
     <div><input type="hidden" name="workspaceId" value="${workspaceId!""}"/></div>
 </form>

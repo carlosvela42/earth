@@ -6,21 +6,25 @@
     <@component.detailUpdatePanel object="template" formId="templateForm"></@component.detailUpdatePanel>
 </#assign>
 
-<@standard.standardPage title=e.get('template.edit') contentFooter=contentFooter script=script>
+<@standard.standardPage title=e.get('template.edit') contentFooter=contentFooter script=script imageLink="data">
     <#assign isPersisted = (templateForm.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
+    <#assign disabledIfExist = isPersisted?then('disabled', '')>
 <div class="board-wrapper board-full">
     <form action="${rc.getContextPath()}/template/${formAction}"
           object="templateForm" method="post" id="templateForm">
         <#include "../common/messages.ftl">
         <input type="hidden" id="workspaceId" name="workspaceId" value="${templateForm.workspaceId!""}">
+        <input type="hidden" id="isPersisted" name="isPersisted" value="${isPersisted?then('Y', 'N')}" />
         <div class="row">
             <div class="col-md-6">
                 <table class="table_form">
                     <tr>
                         <td width="50%">${e.get('template.id')}</td>
-                        <td><input type="text" id="txtTemplate" name="templateId"
-                                   value="${templateForm.templateId!""}" readonly="readonly"></td>
+                        <td>${templateForm.templateId!""}</td>
+                        <input type="hidden" id="txtTemplate" name="templateId"
+                                   value="${templateForm.templateId!""}">
+
                     </tr>
                     <tr>
                         <td>${e.get('template.name')}</td>
@@ -29,8 +33,9 @@
                     </tr>
                     <tr>
                         <td>${e.get('template.tableName')}</td>
-                        <td><input type="text" id="txtTemplateTableName"
-                                   value="${templateForm.templateTableName!""}" name="templateTableName"></td>
+                        <td>${templateForm.templateTableName!""}</td>
+                        <input type="hidden" id="txtTemplateTableName"
+                                   value="${templateForm.templateTableName!""}" name="templateTableName">
                     </tr>
                 </table>
             </div>
@@ -38,7 +43,7 @@
 
         <div class="region">${e.get('template.definition')}</div>
         <div class="region">
-            <button id="removeField" type="button" class="btn btn_remove" id="deleteButton"
+            <button id="removeField" type="button" class="btn btn_remove" id="deleteButton" ${disabledIfExist} 
                     onclick="return delRow('user');">
                 <@spring.message code='button.delete'/></button>
         </div>
@@ -48,7 +53,7 @@
             <tr class="table_header">
                 <td class=""><input type="checkbox" class="deleteAllCheckBox" /></td>
                 <td>
-                    <button type="button" class="icon btn_add" id="addField" data-target="#addFieldModal"></button>
+                    <button type="button" class="icon btn_add" id="addField" data-target="#addFieldModal" ${disabledIfExist} ></button>
                 </td>
                 <td>${e.get('field.name')}</td>
                 <td>${e.get('field.description')}</td>
@@ -83,7 +88,7 @@
                             <td> ${field.size!""}
                                 <input  type='hidden' name='templateFields[${field?index}].size'
                                                           data-name="size"
-                                                          value='${field.size?c!""}'/>
+                                                          value='${field.size???then(field.size?c!"","")}'/>
                             </td>
                             <td>
                                 <input  type='checkbox' ${field.required?then("checked", "")}/>
@@ -147,7 +152,7 @@
 
 <script id="template-row-template" type="text/x-handlebars-template">
     <tr data-row-id="{{i}}" class="template-row">
-        <td><input type='checkbox' id='{{i}}' name='DeleteRow'></td>
+        <td><input type='checkbox' id='{{i}}' name='DeleteRow' class="deleteCheckBox"></td>
         <td><span class="icon icon_edit"  onclick='editTemplateRow({{i}})'></span></td>
         <td>{{name}} <input  type='hidden' name='templateFields[{{i}}].name' data-name="name" value='{{name}}'/></td>
         <td>{{description}} <input  type='hidden'name='templateFields[{{i}}].description' data-name="description"
@@ -157,13 +162,19 @@
         <td> {{size}} <input  type='hidden'name='templateFields[{{i}}].size' data-name="size"
                               value='{{size}}'/></td>"
 
-        <td><input  type='checkbox'  value='{{required}}' {{#if required}} checked {{/if}}/>
+        <td>
+    {{#if required}}
+                レ
+            {{/if}}
             <input  type='hidden' name='templateFields[{{i}}].required' data-name="required"
                     value={{#if required}} true
                     {{else}} false {{/if}}/>
         </td>
 
-        <td><input  type='checkbox'  value='{{encrypted}}' {{#if encrypted}} checked {{/if}}/>
+        <td>
+    {{#if encrypted}}
+                レ
+            {{/if}}
             <input  type='hidden' name='templateFields[{{i}}].encrypted' data-name="encrypted"
                     value={{#if encrypted}} true
                     {{else}} false {{/if}}/>

@@ -28,8 +28,7 @@ public class MgrWorkspace implements Serializable {
     }
 
     /**
-     * @param workspaceId
-     *            the workspaceId to set
+     * @param workspaceId the workspaceId to set
      */
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
@@ -43,8 +42,7 @@ public class MgrWorkspace implements Serializable {
     }
 
     /**
-     * @param workspaceName
-     *            the workspaceName to set
+     * @param workspaceName the workspaceName to set
      */
     public void setWorkspaceName(String workspaceName) {
         this.workspaceName = workspaceName;
@@ -58,8 +56,7 @@ public class MgrWorkspace implements Serializable {
     }
 
     /**
-     * @param lastUpdateTime
-     *            the lastUpdateTime to set
+     * @param lastUpdateTime the lastUpdateTime to set
      */
     public void setLastUpdateTime(String lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;

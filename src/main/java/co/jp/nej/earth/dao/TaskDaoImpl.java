@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrTask;
 
 @Repository
@@ -22,10 +21,10 @@ public class TaskDaoImpl extends BaseDaoImpl<MgrTask> implements TaskDao {
     }
 
     @Override
-    public Map<String, String> getAllTasks() throws EarthException {
+    public Map<String, String> getAllTasks(String workspaceId) throws EarthException {
         try {
             Map<String, String> mapTaks = new HashMap<>();
-            List<MgrTask> mgrTasks = this.findAll(Constant.EARTH_WORKSPACE_ID);
+            List<MgrTask> mgrTasks = this.findAll(workspaceId);
             for (MgrTask mgrTask : mgrTasks) {
                 mapTaks.put(mgrTask.getTaskId(), mgrTask.getTaskName());
             }

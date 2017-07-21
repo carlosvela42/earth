@@ -1,14 +1,13 @@
 package co.jp.nej.earth.web.restcontroller;
 
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,253 +16,143 @@ import org.springframework.web.bind.annotation.RestController;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.session.EarthSessionManager;
 import co.jp.nej.earth.model.Document;
-import co.jp.nej.earth.model.Message;
-import co.jp.nej.earth.model.WorkItem;
-import co.jp.nej.earth.model.form.CloseAndSaveForm;
-import co.jp.nej.earth.model.form.CloseImageForm;
-import co.jp.nej.earth.model.form.DocumentForm;
-import co.jp.nej.earth.model.form.DocumentUpdateForm;
-import co.jp.nej.earth.model.form.SaveImageForm;
-import co.jp.nej.earth.model.ws.ImageResponse;
-import co.jp.nej.earth.model.ws.RestResponse;
+import co.jp.nej.earth.model.constant.Constant.ErrorCode;
+import co.jp.nej.earth.model.ws.CloseImageRequest;
+import co.jp.nej.earth.model.ws.DisplayImageRequest;
+import co.jp.nej.earth.model.ws.DisplayImageResponse;
+import co.jp.nej.earth.model.ws.GetDocumentRequest;
+import co.jp.nej.earth.model.ws.GetDocumentResponse;
+import co.jp.nej.earth.model.ws.GetThumbernailResponse;
+import co.jp.nej.earth.model.ws.Response;
+import co.jp.nej.earth.model.ws.SaveAndCloseImagesRequest;
+import co.jp.nej.earth.model.ws.SaveImageRequest;
+import co.jp.nej.earth.model.ws.UpdateDocumentRequest;
 import co.jp.nej.earth.service.DocumentService;
-import co.jp.nej.earth.util.ValidatorUtil;
 
 @RestController
 @RequestMapping("/WS")
 public class DocumentRestController extends BaseRestController {
+
     @Autowired
     private DocumentService documentService;
-    @Autowired
-    private ValidatorUtil validatorUtil;
 
-    @CrossOrigin(origins = "*")
-    @RequestMapping("/displayImage")
-    public ImageResponse displayImage(String jsessionId, String workspaceId, String workitemId, String folderItemNo,
-            String documentNo, HttpServletRequest request) {
-        ImageResponse imageResponse = new ImageResponse();
-        boolean isSuccess = false;
-        try {
-            isSuccess = true;
-            List<Document> doc = documentService.getDocumentListInfo(workspaceId, workitemId,
-                    Integer.parseInt(folderItemNo), documentNo);
-            imageResponse.setResult(doc);
-        } catch (EarthException e) {
-            isSuccess = false;
-            imageResponse.setMessage(e.getMessage());
-        }
-        imageResponse.setResult(isSuccess);
-        return imageResponse;
-    }
-
-    @RequestMapping(value = "/getDocumentInfo", method = RequestMethod.POST)
-    public RestResponse getDocumentInfo(@ModelAttribute("DocumentForm") DocumentForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
+    @RequestMapping(value = "/getDocument", method = RequestMethod.GET)
+    public Response getDocument(@Valid GetDocumentRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return (Response)getRestResponse(request, bindingResult, () -> {
+            Document doc = documentService.getDocumentSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId(), request.getFolderItemNo(),
+                    request.getDocumentNo());
+            if (doc == null) {
+                return new GetDocumentResponse(messageSource.get(ErrorCode.E0029, new String[] { "document" }));
             }
-        RestResponse respone = new RestResponse();
-        Object imageDocument = request.getSession()
-                .getAttribute("TMP" + form.getWorkspaceId() + "&" + form.getWorkitemId());
-        if (imageDocument == null){
-            imageDocument = documentService.getDocumentList(form.getWorkspaceId(), form.getWorkitemId()
-                    , form.getFolderItemNo(),form.getDocumentNo(), "new");
-            request.getSession().setAttribute("TMP" + form.getWorkspaceId() + "&" + form.getWorkitemId()
-            ,imageDocument);
-        }
-        respone.setResult(true);
-        respone.setData(imageDocument);
-        return respone;
-    }
-
-    @RequestMapping(value = "/getDocument", method = RequestMethod.POST)
-    public RestResponse getDocument(@Valid @RequestBody DocumentForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return documentService.getDocument(EarthSessionManager.find(form.getSessionId()), form.getWorkspaceId(),
-                        form.getWorkitemId(), form.getFolderItemNo(), form.getDocumentNo());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+            return new GetDocumentResponse(true, doc);
         });
 
     }
 
     @RequestMapping(value = "/updateDocument", method = RequestMethod.POST)
-    public RestResponse updateDocument(@Valid @RequestBody DocumentUpdateForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return documentService.updateDocument(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getWorkitemId(), form.getFolderItemNo(), form.getDocument());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    public Response updateDocument(@Valid @RequestBody UpdateDocumentRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+            boolean result = documentService.updateDocumentSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId(), request.getFolderItemNo(),
+                    request.getDocument());
+            return new Response(result);
         });
     }
 
-    @RequestMapping(value = "/displayImage1")
-    public RestResponse displayImage1(@ModelAttribute("DocumentForm") DocumentForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-        WorkItem workItem = new WorkItem();
-        workItem.setWorkspaceId(form.getWorkspaceId());
-        request.getSession().setAttribute("ORIGIN" + form.getWorkspaceId() + "&" + form.getWorkitemId(), workItem);
-        return getRestResponse(form.getSessionId(), form, () -> {
-            return documentService.displayImage(request.getSession(), form.getWorkspaceId(), form.getWorkitemId(),
-                    form.getFolderItemNo(), form.getDocumentNo());
+    @RequestMapping("/displayImage")
+    public Response displayImage(@Valid DisplayImageRequest request, BindingResult bindingResult) {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+
+            DisplayImageResponse displayImageResponse = documentService.displayImage(
+                    EarthSessionManager.find(request.getSessionId()), request.getWorkspaceId(), request.getWorkItemId(),
+                    request.getFolderItemNo(), request.getDocumentNo());
+            if (displayImageResponse.getDocumentMap().size() == 0) {
+                return new GetDocumentResponse(messageSource.get(ErrorCode.E0029, new String[] { "document" }));
+            }
+
+            displayImageResponse.setResult(true);
+            return displayImageResponse;
         });
     }
 
     @RequestMapping(value = "/saveImage", method = RequestMethod.POST)
-    public RestResponse saveImage(@Valid @RequestBody SaveImageForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return documentService.saveImage(EarthSessionManager.find(form.getSessionId()), form.getWorkspaceId(),
-                        form.getDocument());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    public Response saveImage(@Valid @RequestBody SaveImageRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+            boolean result = documentService.saveImageSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getDocument());
+            return new Response(result);
         });
-
     }
 
     @RequestMapping(value = "/closeImage", method = RequestMethod.POST)
-    public RestResponse closeImage(@Valid @RequestBody CloseImageForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return documentService.closeImage(EarthSessionManager.find(form.getSessionId()), form.getWorkspaceId(),
-                        form.getWorkitemId());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    public Response closeImage(@Valid @RequestBody CloseImageRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+            boolean result = documentService.closeImage(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId(), request.getFolderItemNo(),
+                    request.getDocumentNo());
+            return new Response(result);
         });
     }
 
-    @RequestMapping(value = "/saveAndCloseImages", method = RequestMethod.POST)
-    public RestResponse saveAndCloseImages(@Valid @RequestBody CloseAndSaveForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return documentService.saveAndCloseImages(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getWorkitemId(), form.getDocImages());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    @RequestMapping(value = "/saveAndCloseImageViewer", method = RequestMethod.POST)
+    public Response saveAndCloseImageViewer(@Valid SaveAndCloseImagesRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+            boolean result = documentService.saveAndCloseImages(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId(), request.getFolderItemNo());
+            return new Response(result);
         });
     }
 
-    @RequestMapping(value = "/closeWithoutSavingImage", method = RequestMethod.POST)
-    public RestResponse closeWithoutSavingImage(@Valid @RequestBody CloseImageForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return documentService.closeWithoutSavingImage(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getWorkitemId());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    @RequestMapping(value = "/closeImageViewer", method = RequestMethod.POST)
+    public Response closeImageViewer(@Valid @RequestBody CloseImageRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return getRestResponse(request, bindingResult, () -> {
+            boolean result = documentService.closeWithoutSavingImage(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId());
+            return new Response(result);
         });
     }
 
-    @RequestMapping(value = "/getThumbnail", method = RequestMethod.POST)
-    public RestResponse getThumbnail(@Valid @RequestBody DocumentForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return documentService.getThumbnail(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getWorkitemId(), form.getFolderItemNo(), form.getDocumentNo());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    @RequestMapping(value = "/getThumbnail")
+    public Response getThumbnail(@Valid GetDocumentRequest request, HttpServletResponse response,
+            BindingResult bindingResult) throws EarthException {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+            String thumbernail = documentService.getThumbnail(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId(), request.getFolderItemNo(),
+                    request.getDocumentNo());
+
+            return new GetThumbernailResponse(true, thumbernail);
         });
+    }
+
+    @RequestMapping(value = "/getDocumentBinary")
+    public void getDocumentBinary(@Valid GetDocumentRequest request, BindingResult bindingResult,
+            HttpServletResponse response) throws EarthException {
+        getRestResponse(request, bindingResult, () -> {
+            byte[] binary = documentService.getBinaryDataOfDocument(request.getWorkspaceId(),
+                    documentService.getDocumentSession(EarthSessionManager.find(request.getSessionId()),
+                            request.getWorkspaceId(), request.getWorkItemId(), request.getFolderItemNo(),
+                            request.getDocumentNo()));
+            if (binary == null) {
+                return new Response(messageSource.get(ErrorCode.E0029, new String[] { "data" }));
+            }
+
+            try {
+                ByteArrayInputStream bis = new ByteArrayInputStream(binary);
+                org.apache.commons.io.IOUtils.copy(bis, response.getOutputStream());
+                response.flushBuffer();
+            } catch (IOException e) {
+                throw new EarthException(e);
+            }
+
+            return new Response(true);
+        });
+
     }
 }

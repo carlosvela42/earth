@@ -1,6 +1,8 @@
 package co.jp.nej.earth.util;
 
 import co.jp.nej.earth.model.enums.Type;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -17,9 +19,15 @@ import java.util.Properties;
 @Component
 public class Helper {
     private static final int length = 8;
+    private static final String QUOTE = "'";
+    private static final String QCOMMA = "',";
+
+    @Autowired
+    private EMessageResource messageResource;
+
     public Type getDisplayType(Integer currentType, List<Type> types) {
-        for(Type type : types) {
-            if(type.getValue() == currentType) {
+        for (Type type : types) {
+            if (type.getValue() == currentType) {
                 return type;
             }
         }
@@ -48,5 +56,31 @@ public class Helper {
         buildInfo.put("url", url + revision);
 
         return buildInfo;
+    }
+
+    public String getMessageSourceJS() {
+        StringBuilder messageJS = new StringBuilder("earth.Messages = {");
+
+        //messageJS.append("'temp':'").append(messageResource.get("temp")).append(QCOMMA);
+        messageJS.append("'E0001':'").append(messageResource.get("E0001")).append(QCOMMA).append("\n");
+        messageJS.append("'E0005':'").append(messageResource.get("E0005")).append(QCOMMA).append("\n");
+        messageJS.append("'E0012':'").append(messageResource.get("E0012")).append(QCOMMA).append("\n");
+        messageJS.append("'E1014':'").append(messageResource.get("E1014")).append(QCOMMA).append("\n");
+        messageJS.append("'directory':'").append(messageResource.get("directory")).append(QCOMMA).append("\n");
+        messageJS.append("'process':'").append(messageResource.get("process")).append(QCOMMA).append("\n");
+        messageJS.append("'profile':'").append(messageResource.get("profile")).append(QCOMMA).append("\n");
+        messageJS.append("'schedule':'").append(messageResource.get("schedule")).append(QCOMMA).append("\n");
+        messageJS.append("'site':'").append(messageResource.get("site")).append(QCOMMA).append("\n");
+        messageJS.append("'template':'").append(messageResource.get("template")).append(QCOMMA).append("\n");
+        messageJS.append("'field.name':'").append(messageResource.get("field.name")).append(QCOMMA).append("\n");
+        messageJS.append("'field.description':'")
+            .append(messageResource.get("field.description")).append(QCOMMA).append("\n");
+        messageJS.append("'field.size':'").append(messageResource.get("field.size")).append(QCOMMA).append("\n");
+        messageJS.append("'user':'").append(messageResource.get("user")).append(QCOMMA).append("\n");
+        messageJS.append("'workspace':'").append(messageResource.get("workspace")).append(QCOMMA).append("\n");
+        messageJS.append("'button.confirmDelete':'").append(messageResource.get("button.confirmDelete")).append(QUOTE);
+        messageJS.append("};");
+
+        return messageJS.toString();
     }
 }

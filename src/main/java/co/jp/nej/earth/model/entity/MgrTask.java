@@ -4,9 +4,7 @@ import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrTask;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public class MgrTask extends BaseModel<MgrTask> {
     /**
@@ -15,18 +13,18 @@ public class MgrTask extends BaseModel<MgrTask> {
     private static final long serialVersionUID = 1L;
     private String taskId;
     private String taskName;
-    private String className;
+    private String customTaskId;
     private String processId;
 
     public MgrTask() {
         this.setqObj(QMgrTask.newInstance());
     }
 
-    public MgrTask(String taskId, String taskName, String className, String processId) {
+    public MgrTask(String taskId, String taskName, String customTaskId, String processId) {
         this();
         this.taskId = taskId;
         this.taskName = taskName;
-        this.className = className;
+        this.customTaskId = customTaskId;
         this.processId = processId;
     }
 
@@ -38,8 +36,7 @@ public class MgrTask extends BaseModel<MgrTask> {
     }
 
     /**
-     * @param taskId
-     *            the taskId to set
+     * @param taskId the taskId to set
      */
     public void setTaskId(String taskId) {
         this.taskId = taskId;
@@ -53,26 +50,18 @@ public class MgrTask extends BaseModel<MgrTask> {
     }
 
     /**
-     * @param taskName
-     *            the taskName to set
+     * @param taskName the taskName to set
      */
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
 
-    /**
-     * @return the className
-     */
-    public String getClassName() {
-        return className;
+    public String getCustomTaskId() {
+        return customTaskId;
     }
 
-    /**
-     * @param className
-     *            the className to set
-     */
-    public void setClassName(String className) {
-        this.className = className;
+    public void setCustomTaskId(String customTaskId) {
+        this.customTaskId = customTaskId;
     }
 
     /**
@@ -83,8 +72,7 @@ public class MgrTask extends BaseModel<MgrTask> {
     }
 
     /**
-     * @param processId
-     *            the processId to set
+     * @param processId the processId to set
      */
     public void setProcessId(String processId) {
         this.processId = processId;

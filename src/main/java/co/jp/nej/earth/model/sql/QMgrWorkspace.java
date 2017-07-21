@@ -1,15 +1,13 @@
 package co.jp.nej.earth.model.sql;
 
-import com.querydsl.core.types.PathMetadataFactory;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
-
 import co.jp.nej.earth.model.MgrWorkspace;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
+import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
 
-public class QMgrWorkspace extends RelationalPathBase<MgrWorkspace> {
+public class QMgrWorkspace extends QBase<MgrWorkspace> {
 
     /**
      * Serial Version UID.

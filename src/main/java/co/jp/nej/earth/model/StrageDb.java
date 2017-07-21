@@ -3,9 +3,7 @@ package co.jp.nej.earth.model;
 import co.jp.nej.earth.model.sql.QStrageDb;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public class StrageDb extends BaseModel<StrageDb> {
     /**
@@ -34,8 +32,7 @@ public class StrageDb extends BaseModel<StrageDb> {
     }
 
     /**
-     * @param processId
-     *            the processId to set
+     * @param processId the processId to set
      */
     public void setProcessId(Integer processId) {
         this.processId = processId;
@@ -49,8 +46,7 @@ public class StrageDb extends BaseModel<StrageDb> {
     }
 
     /**
-     * @param schemaName
-     *            the schemaName to set
+     * @param schemaName the schemaName to set
      */
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
@@ -64,8 +60,7 @@ public class StrageDb extends BaseModel<StrageDb> {
     }
 
     /**
-     * @param dbUser
-     *            the dbUser to set
+     * @param dbUser the dbUser to set
      */
     public void setDbUser(String dbUser) {
         this.dbUser = dbUser;
@@ -79,8 +74,7 @@ public class StrageDb extends BaseModel<StrageDb> {
     }
 
     /**
-     * @param dbPassword
-     *            the dbPassword to set
+     * @param dbPassword the dbPassword to set
      */
     public void setDbPassword(String dbPassword) {
         this.dbPassword = dbPassword;
@@ -94,8 +88,7 @@ public class StrageDb extends BaseModel<StrageDb> {
     }
 
     /**
-     * @param owner
-     *            the owner to set
+     * @param owner the owner to set
      */
     public void setOwner(String owner) {
         this.owner = owner;
@@ -109,8 +102,7 @@ public class StrageDb extends BaseModel<StrageDb> {
     }
 
     /**
-     * @param dbServer
-     *            the dbServer to set
+     * @param dbServer the dbServer to set
      */
     public void setDbServer(String dbServer) {
         this.dbServer = dbServer;

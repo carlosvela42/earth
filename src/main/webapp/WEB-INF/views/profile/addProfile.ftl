@@ -6,7 +6,7 @@
 <script src="${rc.getContextPath()}/resources/js/profile.js"></script>
 </#assign>
 
-<@standard.standardPage title=e.get("profile.edit") contentFooter=contentFooter script=script>
+<@standard.standardPage title=e.get("profile.edit") imageLink="user" contentFooter=contentFooter script=script>
 <br>
     <#assign isPersisted = (mgrProfile.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
@@ -14,9 +14,10 @@
 
 <form  id="profileForm"  action="${rc.getContextPath()}/profile/${formAction}"  object="profileForm" method="post"
        class="">
+
     <#include "../common/messages.ftl">
     <div class="board-wrapper">
-        <div class="board board-half">
+        <div class="board profile-scroll">
             <table class="table_form">
                 <tr>
                     <td width="50%">${e.get('profile.id')}</td>
@@ -36,15 +37,21 @@
                         <input type="text" name="ldapIdentifier" value="${mgrProfile.ldapIdentifier!""}">
                     </td>
                 </tr>
+                <tr>
+                    <td width="50%">${e.get('user.list')}</td>
+                    <td>
+
+                    </td>
+                </tr>
             </table>
             <div><input type="hidden" name="lastUpdateTime" value="${mgrProfile.lastUpdateTime!""}"/></div>
-            <div class="board board-half"><b>${e.get('user.list')}</b></div>
+
             <table class="clientSearch table_list">
                 <thead>
-                <tr class="table_header">
+                <tr class="table_header profile-border">
                     <td class=""><input type="checkbox" class="deleteAllCheckBox"/></td>
-                    <td class="text">${e.get('user.id')}</td>
-                    <td class="text">${e.get('user.name')}</td>
+                    <td class="text profile-width">${e.get('user.id')}</td>
+                    <td class="text">${e.get('user.description')}</td>
                 </tr>
                 </thead>
                 <tbody id="userTbody" class="table_body">

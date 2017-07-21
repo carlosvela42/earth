@@ -1,15 +1,14 @@
 package co.jp.nej.earth.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.constant.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import co.jp.nej.earth.model.Message;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ValidatorUtil {
@@ -22,7 +21,7 @@ public class ValidatorUtil {
         if (result.hasErrors()) {
             List<FieldError> fieldErrors = result.getFieldErrors();
             for (FieldError fieldError : fieldErrors) {
-                if(fieldError.getCode().equals(Constant.ErrorCode.E_TYPE_MISMATCH)){
+                if (fieldError.getCode().equals(Constant.ErrorCode.E_TYPE_MISMATCH)) {
                     String fieldName = fieldError.getField();
                     String[] params = {eMessageResource.get(fieldName)};
                     messages.add(new Message(fieldError.getCode(),
@@ -37,7 +36,7 @@ public class ValidatorUtil {
                         if (arrMessages.length > 1) {
                             params = new String[arrMessages.length - 1];
                             for (int i = 1; i < arrMessages.length; i++) {
-                                params[i - 1] = eMessageResource.get(arrMessages[i].trim());
+                                params[i - 1] = arrMessages[i].trim();
                             }
                         }
                     }

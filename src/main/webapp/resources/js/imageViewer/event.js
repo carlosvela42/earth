@@ -1,31 +1,15 @@
-var zoomDefault = 0.1;
-var panDefault = -0.1;
-var waitMouseUpFlg = false;
-
-var ctrlDown = false;
-var CTRLKEY = 17;
-var CMDKEY = 91;
-var VKEY = 86;
-var CKEY = 67;
-var clickOnSelectedBound = false;
-
-function onKeydown(e) {
-    e = e || window.event;
-    var key = e.which || e.keyCode;
-    // keyCode detection
-    var ctrlDown = e.CTRLKEY ? e.CTRLKEY : ((key === 17) ? true : false);
-    // ctrl detection
-
-    if (key == VKEY && ctrlDown) {
-        console.log("Ctrl + V Pressed !");
-        paste();
-        return;
-    } else if (key == CKEY && ctrlDown) {
-        console.log("Ctrl + C Pressed !");
-        copy();
-        return;
+$(document).on('keydown', function ( e ) {
+    // You may replace `c` with whatever key you want
+    if ((e.metaKey || e.ctrlKey) && ( String.fromCharCode(e.which).toLowerCase() === 'x') ) {
+        onCut();
     }
-}
+    else if ((e.metaKey || e.ctrlKey) && ( String.fromCharCode(e.which).toLowerCase() === 'c') ) {
+        onCopy();
+    }
+    else if ((e.metaKey || e.ctrlKey) && ( String.fromCharCode(e.which).toLowerCase() === 'v') ) {
+        onPaste();
+    }
+});
 
 function onClick(e) {
     var id = "#" + $(this).attr('id');
@@ -63,10 +47,12 @@ function onPaste() {
         displaySelectedAnnos();
         // Update transform as copy time.
         if (selectedAnnos.length == 1) {
-            //			smartTransform("#" + e.node.id, copyTimeRotation - currentRotation);
+            // smartTransform("#" + e.node.id, copyTimeRotation -
+            // currentRotation);
             SVG.get(selectedAnnos[0]).rotate(copyTimeRotation - currentRotation);
         } else {
-            //			smartTransform("#" + iv.selectedGroup.node.id, copyTimeRotation - currentRotation);
+            // smartTransform("#" + iv.selectedGroup.node.id, copyTimeRotation -
+            // currentRotation);
             for (var i in selectedAnnos) {
                 SVG.get(iv.selectedGroup.node.id).rotate(copyTimeRotation - currentRotation);
             }
@@ -79,7 +65,7 @@ function onMouseDown(e) {
     iv.drawStartX = e.x;
     iv.drawStartY = e.y;
 
-    //	unSelectMultipleSvg();
+    // unSelectMultipleSvg();
     if (iv.toolbarFlg == toolbars.BTN_SELECT) {
         if (waitMouseUpFlg) {
             selectMultipleSvg();
@@ -93,46 +79,51 @@ function onMouseDown(e) {
             unSelectMultipleSvg();
             iv.sMultipleSvg.front();
             console.log("waitMouseUpFlg=" + waitMouseUpFlg);
-            if (waitMouseUpFlg) {
-                iv.sMultipleSvg.draw('cancel');
-            } else {
+
                 iv.sMultipleSvg.draw(e);
-            }
+
         }
         iv.drawFlg = true;
     } else {
         unSelectMultipleSvg();
-        //draw text then open text popup
+        // draw text then open text popup
         if (iv.settingAnno == "text") {
             iv.drawAnno = iv.svg.text("");
             iv.drawAnno.front();
             iv.drawAnno.draw(e);
             textPopup();
-            //draw comment are draw image and draw text, then add text to class to get, then get user login to set, then reset comment text area, then open comment popup
+            // draw comment are draw image and draw text, then add text to class
+            // to get, then get user login to set, then reset comment text area,
+            // then open comment popup
         } else if (iv.settingAnno == "comment") {
+            iv.drawAnno = iv.svg.image(getResource(commentImage)).attr('width','48').attr('height','48');
+            iv.drawAnno.front();
+            iv.drawAnno.draw(e);
+            iv.drawAnno.width(48).height(48);
             iv.drawAnno = iv.svg.text(userInfo).attr("class", "newComment");
             iv.drawAnno.front();
             iv.drawAnno.draw(e);
-            iv.drawAnno = iv.svg.image(getResource(commentImage));
-            iv.drawAnno.front();
-            iv.drawAnno.draw(e);
+
             $(commentExample.COMMENTTEXTBOX).val(userInfo);
 
             $(commentExample.COMMENTTEXTAREA).val("");
 
             $(commentExample.COMMENTPOPUP).modal();
+            iv.drawAnno.front();
+            iv.drawAnno.draw(e);
+            iv.drawAnno.y(iv.drawAnno.y()+48);
 
         } else {
             iv.drawAnno = iv.settingAnno.clone();
+            iv.drawAnno.front();
+            iv.drawAnno.draw(e);
         }
-        iv.drawAnno.attr("class", iv.layerActive);
-        iv.drawAnno.front();
-        iv.drawAnno.draw(e);
+        iv.drawAnno.attr("class", iv.drawAnno.attr("class")+" "+iv.layerActive);
     }
     waitMouseUpFlg = true;
 }
 
-//text popup when draw
+// text popup when draw
 function textPopup() {
     $(textExample.COMMENTTEXT).val('');
     $(textExample.COMMENTTEXT).css("font-family", propertiesType.fontFamily);
@@ -147,16 +138,16 @@ function textPopup() {
     $("#myModalText").modal();
 }
 
-//get value of select option by text
+// get value of select option by text
 function selectOptionByText(id, value) {
-    return $(id + ' option').filter(function() {
-        return $(this).html() == value;
+    return $(id + ' option').filter(function () {
+        return $(this).html().toLowerCase() === value.toLowerCase();
     }).val();
 }
 function onMouseUp(e) {
     console.log("onMouseUp!");
     waitMouseUpFlg = false;
-    if ((iv.toolbarFlg == toolbars.BTN_SELECT) || (iv.drawStartX == e.x && iv.drawStartY == e.y)) {
+
         if (iv.toolbarFlg == toolbars.BTN_SELECT) {
             if (iv.drawStartX == e.x && iv.drawStartY == e.y) {
                 unSelectMultipleSvg();
@@ -165,67 +156,35 @@ function onMouseUp(e) {
                 selectMultipleSvg();
             }
             iv.sMultipleSvg.draw('cancel');
-        } else {
+        } else if (iv.drawStartX == e.x && iv.drawStartY == e.y){
             iv.drawAnno.draw('cancel');
         }
-    } else {
+     else {
         iv.drawAnno.draw('stop', e);
         if (allAnnos.indexOf(iv.drawAnno.node.id) == -1) {
             allAnnos.push(iv.drawAnno.node.id);
         }
-        //		if (iv.drawAnno.node.id.startsWith('SvgjsLine')) {
-        //			var lrect = iv.svg.rect(iv.drawAnno.attr("x2") - iv.drawAnno.attr("x1"), iv.drawAnno.attr("y2") - iv.drawAnno.attr("y1")).stroke(1)
-        //							.fill("transparent").x(iv.drawAnno.attr("x1")).y(iv.drawAnno.attr("y1"));
-        //			var lgroup = iv.svg.group().add(iv.drawAnno).add(lrect);
-        //			
-        //			if (allAnnos.indexOf(lgroup.node.id) == -1) {
-        //				allAnnos.push(lgroup.node.id);
-        //			}
-        //		} else {
-        //			if (allAnnos.indexOf(iv.drawAnno.node.id) == -1) {
-        //				allAnnos.push(iv.drawAnno.node.id);
-        //			}
-        //		}
-        //		iv.drawAnno.on("mousedown", function(e) {
-        //			onMouseDownSvg(e);
-        //		});
     }
 }
-
-//function onMouseDownSvg(e) {
-//	console.log("svg element click down!");
-////	unSelectMultipleSvg();
-////	createMultipleSelectRect(e);
-////	if (!waitMouseUpFlg) {
-//		iv.drawStartX = e.x;
-//		iv.drawStartY = e.y;
-//		createMultipleSelectRect(e);
-//		iv.drawFlg = setDrawFlgWhenClick();
-//		if (iv.drawFlg) {
-//			unSelectMultipleSvg();
-//		}
-////		waitMouseUpFlg = true;
-////	}
-//}
 
 function selectMultipleSvg() {
     if (selectedFlg) {
         return;
     }
     console.log("selectMultipleSvg!");
-    //	unSelectMultipleSvg();
+    // unSelectMultipleSvg();
     for (var i in allAnnos) {
         var e = SVG.get(allAnnos[i]);
         if (hasIntersection(iv.sMultipleSvg, e)) {
             if (e != null && (selectedAnnos.indexOf(allAnnos[i]) == -1)) {
-                //process with select text or image then select all comment
-                if (allAnnos[i].startsWith('SvgjsText')) {
-                    if (typeof allAnnos[parseInt(i) + 1] != "undefined") {
+                // process with select text or image then select all comment
+                if (allAnnos[i].startsWith('SvgjsText')&&typeof allAnnos[parseInt(i) + 1] != "undefined") {
+
                         if (allAnnos[parseInt(i) + 1].startsWith('SvgjsImage')) {
                             selectedAnnos.push(allAnnos[parseInt(i) + 1]);
                             i++;
                         }
-                    }
+
                 }
 
                 selectedAnnos.push(allAnnos[i]);
@@ -234,8 +193,8 @@ function selectMultipleSvg() {
                         selectedAnnos.push(allAnnos[i - 1]);
                 }
 
-                //				iv.selectedGroup.add(e);
-                //				iv.selectedGroup.selectize().resize().draggable();
+                // iv.selectedGroup.add(e);
+                // iv.selectedGroup.selectize().resize().draggable();
             }
         }
     }
@@ -249,15 +208,15 @@ function selectOneSvg() {
         return;
     }
     console.log("selectOneSvg!");
-    //	unSelectMultipleSvg();
+    // unSelectMultipleSvg();
     for (var i in allAnnos) {
         var e = SVG.get(allAnnos[i]);
         if (hasIntersection(iv.sMultipleSvg, e)) {
             var index = selectedAnnos.indexOf(allAnnos[i]);
             selectedAnnos = [];
             if (index == -1) {
-                //process with select text object
-                if (allAnnos[i].endsWith('R')) {
+                // process with select text object
+                if ($('#'+allAnnos[i]).attr('class')=='textDraw') {
                     selectedAnnos.push(allAnnos[i]);
                     selectedAnnos.push(allAnnos[parseInt(i) + 1]);
                     displaySelectedAnnos();
@@ -266,10 +225,10 @@ function selectOneSvg() {
                     allAnnos.push(selectedAnnos[1]);
                     return;
                 }
-                //process with select image of comment
+                // process with select image of comment
                 if (allAnnos[i].startsWith('SvgjsImage')) {
                     selectedAnnos.push(allAnnos[i]);
-                    selectedAnnos.push(allAnnos[i - 1]);
+                    selectedAnnos.push(allAnnos[parseInt(i) + 1]);
                     displaySelectedAnnos();
                     allAnnos.splice(i - 1, 2);
                     allAnnos.push(selectedAnnos[1]);
@@ -305,23 +264,22 @@ function displaySelectedAnnos() {
         e.selectize({
             deepSelect: true
         }).resize(true).draggable(true);
-        //		iv.selectedGroup.add(e);
-        //		iv.selectedGroup.selectize({deepSelect:true}).draggable(true);
-        //		iv.selectedGroup.front();
         // Change selection priority of element.
         var index = allAnnos.indexOf(selectedAnnos[0]);
         allAnnos.splice(index, 1);
         allAnnos.push(selectedAnnos[0]);
     } else if (selectedAnnos.length > 1) {
+        iv.selectedGroup = iv.svg.group();
         for (var i in selectedAnnos) {
             var e = SVG.get(selectedAnnos[i]);
             e.show();
             e.selectize(false, {
                 deepSelect: true
             }).resize(false).draggable(false);
+
             iv.selectedGroup.add(e);
         }
-        //		var selectedBounds = $(".svg_select_boundingRect").parent();
+        // var selectedBounds = $(".svg_select_boundingRect").parent();
         iv.selectedGroup.selectize({
             deepSelect: true
         });
@@ -332,10 +290,22 @@ function displaySelectedAnnos() {
     console.log("allAnnos.lenth=" + allAnnos.length);
     console.log("selectedAnnos.lenth=" + selectedAnnos.length);
 
-    var boundingRects = [".svg_select_boundingRect", ".svg_select_points_lt", ".svg_select_points_rt", ".svg_select_points_rb", ".svg_select_points_lb", ".svg_select_points_t", ".svg_select_points_r", ".svg_select_points_b", ".svg_select_points_l", ".svg_select_points_rot", ".svg_select_points_point"];
+    var boundingRects = [
+        ".svg_select_boundingRect"
+        , ".svg_select_points_lt"
+        , ".svg_select_points_rt"
+        , ".svg_select_points_rb"
+        , ".svg_select_points_lb"
+        , ".svg_select_points_t"
+        , ".svg_select_points_r"
+        , ".svg_select_points_b"
+        , ".svg_select_points_l"
+        , ".svg_select_points_rot"
+        , ".svg_select_points_point"
+    ];
 
     for (var c in boundingRects) {
-        $(boundingRects[c]).mousedown(function() {
+        $(boundingRects[c]).mousedown(function () {
             resetDrawFlg();
         });
     }
@@ -350,7 +320,6 @@ function unSelectMultipleSvg() {
     console.log("unSelectMultipleSvg!");
 
     if (selectedAnnos.length > 1) {
-        //		iv.hiddenRect.remove();
         for (var i in selectedAnnos) {
             var e = SVG.get(selectedAnnos[i]);
             e.selectize(false, {
@@ -361,7 +330,8 @@ function unSelectMultipleSvg() {
             deepSelect: true
         });
         iv.selectedGroup.draggable(false, {});
-        //		iv.selectedGroup.selectize(false);
+        // iv.selectedGroup.selectize(false);
+        //no know
         iv.selectedGroup.ungroup();
         iv.selectedGroup = iv.svg.group();
     } else if (selectedAnnos.length == 1) {
@@ -370,15 +340,15 @@ function unSelectMultipleSvg() {
             deepSelect: true
         }).resize(false).draggable(false);
     }
-    //	iv.hiddenRect.remove();
-    //	for (var i in selectedAnnos) {
-    //		var e = SVG.get(selectedAnnos[i]);
-    //		e.selectize(false).draggable(false).resize(false);
-    //	}
-    //	iv.selectedGroup.selectize(false,{});
-    //	iv.selectedGroup.draggable(false,{});
-    //	iv.selectedGroup.ungroup(iv.svg);
-    //	iv.selectedGroup = iv.svg.group();	
+    // iv.hiddenRect.remove();
+    // for (var i in selectedAnnos) {
+    // var e = SVG.get(selectedAnnos[i]);
+    // e.selectize(false).draggable(false).resize(false);
+    // }
+    // iv.selectedGroup.selectize(false,{});
+    // iv.selectedGroup.draggable(false,{});
+    // iv.selectedGroup.ungroup(iv.svg);
+    // iv.selectedGroup = iv.svg.group();
     selectedAnnos = [];
     console.log("allAnnos.lenth=" + allAnnos.length);
     console.log("selectedAnnos.lenth=" + selectedAnnos.length);
@@ -404,132 +374,596 @@ function processClick(id) {
         if (id != toolbars.BTN_SELECT) {
             createSettingAnnotation(id);
         }
+        else{
+            $(iv.svg.svgId).css('cursor', 'auto');
+        }
         return;
     } else {
         iv.drawFlg = false;
     }
 
     switch (id) {
-    case toolbars.BTN_ZOOMFP:
-        currentScale = ($('#imageDrawing').width() - getScrollBarWidth()) / iv.imgWidth;
-        zoomPan(0);
-        break;
+        case toolbars.BTN_ZOOMFP:
+            if (($('#imageDrawing').width() - getScrollBarWidth()) / iv.imgWidth > ($('#imageDrawing').height() - getScrollBarWidth()) / iv.imgHeight) {
+                currentScale = ($('#imageDrawing').height() - getScrollBarWidth()) / iv.imgHeight;
+            }
+            else {
+                currentScale = ($('#imageDrawing').width() - getScrollBarWidth()) / iv.imgWidth;
+            }
+            smartTransform(iv.svg.svgId, currentRotation);
+            break;
 
-    case toolbars.BTN_ZOOMFW:
-        currentScale = ($('#imageDrawing').width() - getScrollBarWidth()) / iv.imgWidth;
-        zoomPan(0);
-        break;
-    case toolbars.BTN_ZOOM200:
-        currentScale = 2;
-        zoomPan(0);
-        break;
-    case toolbars.BTN_ZOOM100:
-        currentScale = 1;
-        zoomPan(0);
-        break;
-    case toolbars.BTN_ZOOM75:
-        currentScale = 0.75;
-        zoomPan(0);
-        break;
-    case toolbars.BTN_ZOOM50:
-        currentScale = 0.5;
-        zoomPan(0);
-        break;
-    case toolbars.BTN_ZOOMIN:
-        zoomPan(zoomDefault);
-        break;
-    case toolbars.BTN_ZOOMOUT:
-        if (currentScale > 0) {
-            zoomPan(panDefault)
-        }
-        break;
-    case toolbars.BTN_ROTATE_LEFT:
-        onRotate(rotateType.LEFT);
-        break;
-    case toolbars.BTN_ROTATE_RIGHT:
-        onRotate(rotateType.RIGHT);
-        break;
-    case toolbars.BTN_PRINTALL:
-        printAll();
-        break;
-    case toolbars.BTN_PRINTIMAGE:
-        printImage('<img src="' + iv.documentPath + '">');
-        break;
-    case toolbars.BTN_LAYER:
-        layerPopup();
-        break;
-    case toolbars.BTN_COPY:
-        onCopy();
-        break;
-    case toolbars.BTN_CUT:
-        onCut();
-        break;
-    case toolbars.BTN_PASTE:
-        onPaste();
-        break;
-    case toolbars.BTN_PROPERTIES:
-        properties();
-        break;
-    case toolbars.BTN_OKPROPERTIES:
-        okProperties();
-        break;
-    case toolbars.BTN_TEXTPROPERTIES:
-        textProperties();
-        break;
-    case toolbars.BTN_COMMENTPROPERTIES:
-        commentProperties();
-        break;
-    case toolbars.BTN_CANCELCOMMENTPROPERTIES:
-        cancelCommentProperties();
-        break;
-    case toolbars.BTN_LAST:
-        last();
-        break;
-    case toolbars.BTN_NEXT:
-        next();
-        break;
-    case toolbars.BTN_PREVIOUS:
-        previous();
-        break;
-    case toolbars.BTN_FIRST:
-        first();
-        break;
+        case toolbars.BTN_ZOOMFW:
+            currentScale = ($('#imageDrawing').width() - getScrollBarWidth()) / iv.imgWidth;
+            smartTransform(iv.svg.svgId, currentRotation);
+            break;
+        case toolbars.BTN_ZOOM200:
+            currentScale = 2;
+            smartTransform(iv.svg.svgId, currentRotation);
+            break;
+        case toolbars.BTN_ZOOM100:
+            currentScale = 1;
+            smartTransform(iv.svg.svgId, currentRotation);
+            break;
+        case toolbars.BTN_ZOOM75:
+            currentScale = 0.75;
+            smartTransform(iv.svg.svgId, currentRotation);
+            break;
+        case toolbars.BTN_ZOOM50:
+            currentScale = 0.5;
+            smartTransform(iv.svg.svgId, currentRotation);
+            break;
+        case toolbars.BTN_ZOOMIN:
+            if (currentScale < 4) {
+                currentScale = Math.floor(currentScale * 10) / 10 + iv.zoomDefault;
+                smartTransform(iv.svg.svgId, currentRotation);
+            }
+            break;
+        case toolbars.BTN_ZOOMOUT:
+            if (currentScale > 0.1) {
+                currentScale = Math.ceil(currentScale * 10) / 10 + iv.panDefault;
+                smartTransform(iv.svg.svgId, currentRotation);
+            }
+            break;
+        case toolbars.BTN_ROTATE_LEFT:
+            onRotate(rotateType.LEFT);
+            break;
+        case toolbars.BTN_ROTATE_RIGHT:
+            onRotate(rotateType.RIGHT);
+            break;
+        case toolbars.BTN_PRINTALL:
+            printAll();
+            break;
+        case toolbars.BTN_PRINTIMAGE:
+            printImage('<img src="' + iv.documentPath + '">');
+            break;
+        case toolbars.BTN_LAYER:
+            layerPopup();
+            break;
+        case toolbars.BTN_COPY:
+            onCopy();
+            break;
+        case toolbars.BTN_CUT:
+            onCut();
+            break;
+        case toolbars.BTN_PASTE:
+            onPaste();
+            break;
+        case toolbars.BTN_PROPERTIES:
+            properties();
+            break;
+        case toolbars.BTN_OKPROPERTIES:
+            okProperties();
+            break;
+        case toolbars.BTN_CANCELPROPERTIES:
+            cancelProperties();
+            break;
+
+        case toolbars.BTN_TEXTPROPERTIES:
+            textProperties();
+            break;
+        case toolbars.BTN_COMMENTPROPERTIES:
+            commentProperties();
+            break;
+        case toolbars.BTN_CANCELCOMMENTPROPERTIES:
+            cancelCommentProperties();
+            break;
+        case toolbars.BTN_LAST:
+            last();
+            break;
+        case toolbars.BTN_NEXT:
+            next();
+            break;
+        case toolbars.BTN_PREVIOUS:
+            previous();
+            break;
+        case toolbars.BTN_FIRST:
+            first();
+            break;
+        case toolbars.BTN_ADDLAYER:
+            addLayer();
+            break;
+        case toolbars.BTN_REMOVELAYER:
+            removeLayer();
+            break;
+        case toolbars.BTN_RENAMELAYER:
+            renameLayer();
+            break;
+        case toolbars.BTN_ACTIVELAYER:
+            activeLayer();
+            break;
+        case toolbars.BTN_DISPLAYLAYER:
+            displayLayer();
+            break;
+        case toolbars.BTN_OKLAYER:
+            okLayer();
+            break;
+        case toolbars.BTN_OKLAYERDELETE:
+            okLayerDelete();
+            break;
+        case toolbars.BTN_GRAYSCALE:
+            grayScale();
+            break;
+        case toolbars.BTN_OKGRAYSCALE:
+            okGrayScale();
+            break;
+        case toolbars.BTN_CANCELGRAYSCALE:
+            cancelGrayScale();
+            break;
+        case toolbars.BTN_CONTROLS:
+            changeGrayScale();
+            break;
+        case toolbars.BTN_CONTROLS1:
+            changeGrayScale();
+            break;
+        case toolbars.BTN_CBOX1:
+            changeGrayScale();
+            break;
+        case toolbars.BTN_SAVEIMAGE:
+            saveImage();
+            break;
+        case toolbars.BTN_SUBIMAGE:
+            subImage();
+            break;
     }
 }
 
-function first() {}
+function subImage() {
+    window.open(window.location.href + "&mode=1");
+}
 
-function next() {}
+function saveImage() {
+    saveAnnoToLayer();
+    saveDocument(getResource("WS/saveImage"), window.sessionId, window.workspaceId, iv.currentDocument, function (data, res) {
+        if (res == result.SUCCESS) {
+             postImage(getResource("WS/saveAndCloseImageViewer?sessionId=" + window.sessionId+"&workspaceId="+ window.workspaceId+"&workItemId="+ window.workItemId+"&folderItemNo="+ window.folderItemNo), function (data, res) {
+                 if (res == result.SUCCESS) {
 
-function previous() {}
+            window.close();
+                 }
+             });
+        }
+        else{
+            alert('Save unsuccessful!');
+        }
+    });
+}
 
-function last() {//    iv.swapBefore();
-//    iv.cDocId = iv.documentsLength;
-//    iv.changeDocument();
-//    $('#first').prop('disabled', false);
-//    $('#previous').prop('disabled', false);
-//    $('#next').prop('disabled', true);
-//    $('#last').prop('disabled', true);
-//    $('#btnImage').text('#' + iv.cDocId);
+function cancelGrayScale() {
+    var val;
+    if (checkGrayscale) {
+        val = (contrast + brightness) / 4;
+        if (val > 50 || val < -50)
+            return false;
+    } else {
+        val = 50;
+    }
+    $('#imageDrawing').css("backgroundColor", val > 0 ? 'white' : 'black');
+    $('#imageDrawing').css("opacity", Math.abs(val / 100) * 2);
+}
+
+function okGrayScale() {
+    brightness = tmpBrightness;
+    contrast = tmpContrast;
+    checkGrayscale = tmpCheckGrayscale;
+}
+
+function changeGrayScale() {
+    tmpBrightness = brightness;
+    tmpContrast = contrast;
+    tmpCheckGrayscale = checkGrayscale;
+    tmpContrast = parseInt($('#controls1').val());
+    tmpBrightness = parseInt($('#controls').val());
+    tmpCheckGrayscale = cbox1.checked;
+    $('#brightnessValue').val(tmpBrightness);
+    $('#contrastValue').val(tmpContrast);
+    var val;
+    if (tmpCheckGrayscale) {
+        val = (tmpContrast + tmpBrightness) / 4;
+        if (val > 50 || val < -50)
+            return false;
+    } else {
+        val = 50;
+    }
+    $('#imageDrawing').css("backgroundColor", val > 0 ? 'white' : 'black');
+    $('#imageDrawing').css("opacity", Math.abs(val / 100) * 2);
+}
+
+function grayScale() {
+    $('#controls1').val(contrast);
+    $('#controls').val(brightness);
+    $('#contrastValue').val(contrast);
+    $('#brightnessValue').val(brightness);
+    if (checkGrayscale) {
+        $("#cbox1").prop('checked', true);
+    } else {
+        $("#cbox1").prop('checked', false);
+    }
+    $("#myModal2").modal();
+}
+
+function okLayerDelete(){
+    deleteLayerFlag = false;
+    removeLayer();
+}
+
+function okLayer() {
+    iv.cDocId = $("#newLayerBody tr").length;
+    for (var j = 0; j < iv.cDocId; j++) {
+
+        if (typeof iv.currentDocument.layers[j] == "undefined") {
+            iv.currentDocument.layers[j] = $.extend(true, {}, iv.currentDocument.layers[j - 1]);
+            iv.currentDocument.layers[j].annotations = "";
+            iv.currentDocument.layers[j].layerNo = null;
+        }
+
+        if ($("#newLayerBody tr:eq(" + j + ") td:eq(0)")
+                .text() == "") {
+            $('.'+iv.currentDocument.layers[j].layerName).remove();
+            iv.currentDocument.layers.splice(j, 1);
+            $("#newLayerBody tr:eq(" + j + ") td:eq(0)").parent().remove();
+            j--;
+            iv.cDocId--;
+        }
+        else {
+            $('.'+iv.currentDocument.layers[j].layerName).each(function () {
+                $(this).attr("class",$("#newLayerBody tr:eq(" + j + ") td:eq(0)")
+                    .text());
+            });
+            iv.currentDocument.layers[j].layerName = $("#newLayerBody tr:eq(" + j + ") td:eq(0)")
+                .text();
+
+            iv.currentDocument.layers[j].ownerId = $("#newLayerBody tr:eq(" + j + ") td:eq(1)")
+                .text();
+            iv.currentDocument.layers[j].layerDisplay = $("#newLayerBody tr:eq(" + j + ") td:eq(2) input").is(
+                ':checked');
+            iv.currentDocument.layers[j].lastUpdateTime = dateReformat($("#newLayerBody tr:eq(" + j + ") td:eq(4)").text());
+            iv.currentDocument.layers[j].insertDateTime = dateReformat($("#newLayerBody tr:eq(" + j + ") td:eq(5)").text());
+            if ($("#newLayerBody tr:eq(" + j + ") td:eq(6) input").is(
+                    ':checked')) {
+                iv.layerActive = iv.currentDocument.layers[j].layerName;
+            }
+            if ($("#newLayerBody tr:eq(" + j + ") td:eq(2) input").is(
+                    ':checked')) {
+                $('.' + iv.currentDocument.layers[j].layerName).each(function () {
+                    if ($(this).parent().css("visibility") == "hidden") {
+
+                    } else {
+                        $(this).css("visibility", "visible");
+                    }
+                });
+            } else {
+                $('.' + iv.currentDocument.layers[j].layerName).css("visibility", "hidden");
+            }
+        }
+    }
+    unSelectMultipleSvg();
+}
+
+function displayLayer() {
+
+    $(
+        "input[type=checkbox][name=display][value="
+        + $('#layerName').val() + "]").trigger(
+        "click");
+
+
+}
+
+function activeLayer() {
+
+
+
+                $('#layerActive').val($('#layerName').val());
+        $(
+                    "input[type=radio][name=active][value="
+                    + $('#layerName').val() + "]").prop(
+                    "checked", true).trigger("click");
+
+
+
+}
+
+function renameLayer() {
+
+        var countRow = $("#newLayerBody tr").length;
+        $(
+            "input[type=radio][name=active][value="
+            + $('#layerActive').val() + "]").attr(
+            'value', $('#layerName').val());
+
+        for (var j = 1; j <= countRow; j++) {
+            if ($('#layerActive').val() == $('#layer' + j).text()) {
+
+                $('#layer' + j).replaceWith('<input type="checkbox" name="layerName" value="' + $('#layerName').val() + '"' +
+                    ' style="margin-top: 0px">' + $('#layerName').val());
+
+                return $('#layerActive').val($('#layerName').val());
+
+
+            }
+        }
+
+}
+
+function removeLayer() {
+
+
+    if($('.'+$('#layerName').val()).length>0&&deleteLayerFlag)
+    {
+        deleteLayerFlag = true;
+        $('#myModalConfirm').modal();
+    }
+    else{
+        var countRow = $("#newLayerBody tr").length;
+        for (var j = 1; j <= countRow; j++) {
+            if ($('#layerName').val() == $('#layer' + j).text()) {
+
+                $('#layer' + j).text("");
+                 $('#layer' + j).parent().parent().hide();
+                if ($('input[name=active]:checked').val() == $(
+                        '#layerName').val()) {
+                    for (var k = 0; k <= countRow; k++) {
+                        if ($("#newLayerBody tr:eq(" + k + ")").css('display') != 'none') {
+                            $('#layerName').val($('#layer' + (k + 1)).text());
+                            return $('#activeLayer').trigger('click');
+                        }
+                    }
+                }
+                }
+
+            }
+        }
+
+
+}
+
+function addLayer() {
+
+        var countRow = $("#newLayerBody tr").length;
+            var d = new Date();
+            var currentDate = dateLayer(d);
+            addNewLayer(countRow + 1, $('#layerName').val(),
+                userInfo, true, currentDate, currentDate, false, templateLayerName);
+            $('input[name=active]').change(function () {
+                $('#layerActive').val($('input[name=active]:checked').val());
+            });
+        activeLayer();
+
+}
+
+function resetLayer() {
+    // reset popup layer
+    $("#newLayerBody").find("tr").remove();
 }
 
 //open layer popup
 function layerPopup() {
-    //reset popup layer
-    for (var j = 1; j <= iv.cDocId; j++) {
-        $("#layerBody .row:eq(1)").remove();
-    }
-    //re-add popup layer
+    resetLayer();
+    // re-add popup layer
     for (var k = 0; k < iv.cDocId; k++) {
-        addNewLayer(k + 1, Document.layers[k].layerName, Document.layers[k].layerOwner, Document.layers[k].layerDisplay, Document.layers[k].layerModified, Document.layers[k].layerCreated, iv.layerActive);
+        if(iv.currentDocument.layers[k].mgrTemplate!=null){
+            templateLayerName = iv.currentDocument.layers[k].mgrTemplate.templateName;}
+        addNewLayer(k + 1, iv.currentDocument.layers[k].layerName, iv.currentDocument.layers[k].ownerId, iv.currentDocument.layers[k].layerDisplay, iv.currentDocument.layers[k].lastUpdateTime, iv.currentDocument.layers[k].insertDateTime, iv.layerActive, templateLayerName);
     }
-    //reset layer name
-    $('#layerName').val("");
+    // reset layer name
+    $('#layerName').val($('input[name=active]:checked').val());
+    $('#layerActive').val($('input[name=active]:checked').val());
+    $(toolbars.BTN_ADDLAYER).css('pointer-events', 'none');
+    $(toolbars.BTN_REMOVELAYER).css('pointer-events', 'none');
+    $(toolbars.BTN_RENAMELAYER).css('pointer-events', 'none');
+    $(toolbars.BTN_ACTIVELAYER).css('pointer-events', 'none');
+    $(toolbars.BTN_DISPLAYLAYER).css('pointer-events', 'none');
+    $('input[name=active]').change(function () {
+        $('#layerActive').val($('input[name=active]:checked').val());
+    });
+    $("#myModal3").modal();
 }
 
-//print include annotation
+function first() {
+    callSaveApi(1);
+}
+
+function next() {
+    callSaveApi(iv.indexCurrent + 2);
+}
+
+function previous() {
+    callSaveApi(iv.indexCurrent);
+}
+
+function last() {
+    callSaveApi(iv.documentsLength);
+}
+
+function changeDocument() {
+    iv.currentDocument = iv.documents[iv.cDocId - 1];
+    iv.documentImage = getResource(jQuery.parseJSON(iv.currentDocument.viewInformation).Image);
+    switch (iv.currentDocument.documentType) {
+        case "1":
+            displayImage();
+            break;
+        case "2":
+            var url = iv.documentImage;
+            $('body').append('<canvas id="the-canvas" ></canvas>');
+            // The workerSrc property shall be specified.
+            PDFJS.workerSrc = IV.url('resources/js/lib/pdf.worker.js');
+            var pdfDoc = null,
+                pageNum = iv.currentDocument.pageCount,
+                pageRendering = false,
+                pageNumPending = null,
+                scale = 0.8,
+                canvas = document.getElementById('the-canvas'),
+                ctx = canvas.getContext('2d');
+
+
+        /**
+         * Get page info from document, resize canvas accordingly, and render page.
+         * @param num Page number.
+         */
+        function renderPage(num) {
+            pageRendering = true;
+            // Using promise to fetch the page
+            pdfDoc.getPage(num).then(function (page) {
+                var viewport = page.getViewport(scale);
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Render PDF page into ca0nvas context
+                var renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                var renderTask = page.render(renderContext);
+                // Wait for rendering to finish
+                renderTask.promise.then(function () {
+                    iv.documentImage = canvas.toDataURL("image/png");
+                    canvas.style.display = "none";
+                    var img = new Image();
+                    img.onload = function () {
+                        iv.x2[0] = -parseInt(this.width);
+                        iv.y2[0] = -parseInt(this.height);
+                        iv.vis.append("image").attr("x", 0).attr("y", 0).attr("xlink:href", iv.documentImage).attr("id", "0").attr("transform", "rotate(0) scale(1)").attr("width", -iv.x2[0]).attr("height", -iv.y2[0]);
+                        iv.load();
+                        iv.switchImage();
+                    }
+                    img.src = iv.documentImage;
+                    //vis.append("foreignObject").attr("id", "0").attr("transform","rotate(0) scale(1)");
+                    //$('#0').append(canvas);
+
+                    pageRendering = false;
+                    if (pageNumPending !== null) {
+                        // New page rendering is pending
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+            });
+            // Update page counters
+            //document.getElementById('page_num').textContent = pageNum;
+        }
+
+        /**
+         * If another page rendering in progress, waits until the rendering is
+         * finised. Otherwise, executes rendering immediately.
+         */
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        /**
+         * Displays previous page.
+         */
+        function onPrevPage() {
+            if (pageNum <= 1) {
+                return;
+            }
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+
+            $('body').append('<button type="button" class="btn btn-default" title="prev" id="prev"></button>');
+            document.getElementById('prev').addEventListener('click', onPrevPage);
+
+        /**
+         * Displays next page.
+         */
+        function onNextPage() {
+            if (pageNum >= pdfDoc.numPages) {
+                return;
+            }
+            pageNum++;
+            queueRenderPage(pageNum);
+        }
+
+            $('body').append('<button type="button" class="btn btn-default" title="next2" id="next2"></button>');
+            document.getElementById('next2').addEventListener('click', onNextPage);
+
+            /**
+             * Asynchronously downloads PDF.
+             */
+            PDFJS.getDocument(url).then(function (pdfDoc_) {
+                pdfDoc = pdfDoc_;
+                //document.getElementById('page_count').textContent = pdfDoc.numPages;
+
+                // Initial/first page rendering
+                renderPage(pageNum);
+            });
+            break;
+        case "3":
+            $(function () {
+                Tiff.initialize({
+                    TOTAL_MEMORY: 16777216 * 10
+                });
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', iv.documentImage);
+                xhr.responseType = 'arraybuffer';
+                xhr.onload = function (e) {
+                    var buffer = xhr.response;
+                    var tiff = new Tiff({
+                        buffer: buffer
+                    });
+                    tiff.setDirectory(iv.currentDocument.pageCount - 1);
+                    var canvas = tiff.toCanvas();
+                    iv.documentImage = canvas.toDataURL("image/png");
+                    var img = new Image();
+                    img.onload = function () {
+                        iv.x2[0] = -parseInt(this.width);
+                        iv.y2[0] = -parseInt(this.height);
+                        iv.vis.append("image").attr("x", 0).attr("y", 0).attr("xlink:href", iv.documentImage).attr("id", "0").attr("transform", "rotate(0) scale(1)").attr("width", -iv.x2[0]).attr("height", -iv.y2[0]);
+                        iv.load();
+                        iv.switchImage();
+                    }
+                    img.src = iv.documentImage;
+
+//				vis.append("foreignObject").attr("id", "0").attr(
+//						"transform", "rotate(0) scale(1)");
+//				$('#0').append(canvas);			
+
+                    return;
+
+                };
+                xhr.send();
+            });
+            break;
+    }
+    iv.layerCount = iv.currentDocument.layers.length;
+    loadBefore();
+}
+
+function loadBefore() {
+    // luu annotation voi anh truoc->xoa trang object, reset page
+    $('#chooseImage').empty();
+    $("#svg").empty();
+}
+
+// print include annotation
 function printAll() {
-    //reset rotate, scale, select before print
+    // reset rotate, scale, select before print
     var tmpScale = currentScale;
     var tmpRotate = currentRotation;
     currentRotation = 0;
@@ -537,7 +971,7 @@ function printAll() {
     smartTransform(iv.svg.svgId, 0);
     unSelectMultipleSvg();
 
-    //print then return rotate, scale
+    // print then return rotate, scale
     printImage(document.getElementById("imageDrawing").innerHTML);
     currentRotation = tmpRotate;
     currentScale = tmpScale;
@@ -561,45 +995,45 @@ function printImage(image) {
     printWin.close();
 }
 
-//button cancel of comment popup
-//remove comment if cancel create new
+// button cancel of comment popup
+// remove comment if cancel create new
 function cancelCommentProperties() {
-    if (selectedAnnos.lenth == 0) {
+    if (selectedAnnos.length == 0) {
         $("#" + iv.drawAnno.node.id).remove();
-        $('.' + commentExample.COMMENTCLASS).remove();
+        $('#SvgjsImage' + +(parseInt(iv.drawAnno.node.id.substr(-4))-1)).remove();
     }
 }
 
-//button ok of comment popup
+// button ok of comment popup
 function commentProperties() {
-    //create new
+    // create new
     if (selectedAnnos.length == 0) {
         $('.' + commentExample.COMMENTCLASS).children().text($("#tbComment").val());
         $('.' + commentExample.COMMENTCLASS).attr('value', $('#commentTxtArea').val());
 
-        //remove tmpClass and push to allAnnos object
+        // remove tmpClass and push to allAnnos object
         $('.' + commentExample.COMMENTCLASS).removeAttr("class");
         if (allAnnos.indexOf(iv.drawAnno.node.id) == -1) {
-            allAnnos.push(iv.drawAnno.node.id.replace("Image", "Text").slice(0, 9) + (iv.drawAnno.node.id.slice(10) - 2));
+            allAnnos.push(iv.drawAnno.node.id.replace("Text", "Image").slice(0, 10) + (parseInt(iv.drawAnno.node.id.slice(9) - 1)));
             allAnnos.push(iv.drawAnno.node.id);
         }
-    }//exist comment
+    }// exist comment
     else {
         $('#' + selectedAnnos[1]).attr('value', $("#commentTxtArea").val());
         $('#' + selectedAnnos[1]).children().text($("#tbComment").val());
     }
 }
 
-//button ok of text popup
+// button ok of text popup
 function textProperties() {
-    //create new
+    // create new
     if (selectedAnnos.length == 0) {
-        //properties of text
-        $("#" + iv.drawAnno.node.id).text($(textExample.COMMENTTEXT).val());
+        // properties of text
+        $('#' + iv.drawAnno.node.id).children().text($(textExample.COMMENTTEXT).val());
         $("#" + iv.drawAnno.node.id).attr("fill", $('#color').find(":selected").text());
         $("#" + iv.drawAnno.node.id).attr("font-family", $('#font').find(":selected").text());
-        //bug font size: set text of line 539 to tspan, not delete tspan
-        $("#" + iv.drawAnno.node.id).attr("fontSize", $('#fontSize').find(":selected").text());
+
+        $("#" + iv.drawAnno.node.id).attr("font-size", $('#fontSize').find(":selected").text());
         if ($(textExample.FONTSTYLEID).find(":selected").text() == "Regular") {
             $("#" + iv.drawAnno.node.id).attr("font-style", "");
             $("#" + iv.drawAnno.node.id).attr("font-weight", "");
@@ -617,16 +1051,18 @@ function textProperties() {
             $("#" + iv.drawAnno.node.id).attr("font-weight", "bold");
         }
 
-        //create rect around
-        var ctx = document.getElementById("SvgjsSvg1001")
-          , textElm = ctx.getElementById(iv.drawAnno.node.id)
-          , SVGRect = textElm.getBBox();
+        // create rect around
+        var ctx = document.getElementById(iv.svg.node.id)
+            , textElm = ctx.getElementById(iv.drawAnno.node.id)
+            , SVGRect = textElm.getBBox();
         if (allAnnos.indexOf(iv.drawAnno.node.id) == -1) {
-            allAnnos.push(iv.drawAnno.node.id + "R");
+            allAnnos.push("SvgjsRect"+SVG.did);
             allAnnos.push(iv.drawAnno.node.id);
         }
         var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rect.setAttribute("id", iv.drawAnno.node.id + "R");
+        rect.setAttribute("id", "SvgjsRect"+SVG.did);
+        SVG.did++;
+        rect.setAttribute("class", "textDraw");
         rect.setAttribute("x", SVGRect.x);
         rect.setAttribute("y", SVGRect.y);
         rect.setAttribute("width", SVGRect.width);
@@ -634,14 +1070,14 @@ function textProperties() {
         rect.setAttribute("fill", $('#fill').find(":selected").text());
         rect.setAttribute("stroke", $('#border').find(":selected").text());
         ctx.insertBefore(rect, textElm);
-    }//exist text
+    }// exist text
     else {
-        //properties of text
-        $('#' + selectedAnnos[1][1]).text($(textExample.COMMENTTEXT).val());
+        // properties of text
+        $('#' + selectedAnnos[1]).children().text($(textExample.COMMENTTEXT).val());
         $('#' + selectedAnnos[1]).attr("fill", $('#color').find(":selected").text());
         $('#' + selectedAnnos[1]).attr("font-family", $('#font').find(":selected").text());
-        //bug font size: set text of line 539 to tspan, not delete tspan
-        $('#' + selectedAnnos[1]).attr("fontSize", $('#fontSize').find(":selected").text());
+
+        $('#' + selectedAnnos[1]).attr("font-size", $('#fontSize').find(":selected").text());
         if ($(textExample.FONTSTYLEID).find(":selected").text() == "Regular") {
             $('#' + selectedAnnos[1]).attr("font-style", "");
             $('#' + selectedAnnos[1]).attr("font-weight", "");
@@ -659,40 +1095,45 @@ function textProperties() {
             $('#' + selectedAnnos[1]).attr("font-weight", "bold");
         }
 
-        //set properties of exist rect around
-        $('#' + selectedAnnos[1] + 'R').attr("fill", $('#fill').find(":selected").text());
-        $('#' + selectedAnnos[1] + 'R').attr("stroke", $('#border').find(":selected").text());
+        // set properties of exist rect around
+        $('#' + selectedAnnos[0]).attr("fill", $('#fill').find(":selected").text());
+        $('#' + selectedAnnos[0]).attr("stroke", $('#border').find(":selected").text());
     }
 }
 
-//button ok of default popup
+function cancelProperties(){
+
+}
+
+// button ok of default popup
 function okProperties() {
-    //not select, set properties variable
+    // not select, set properties variable
     if (selectedAnnos.length == 0) {
         propertiesType.penColor = $(textExample.INPUTCOLOR).val();
         propertiesType.fillColor = $(textExample.INPUTFILL).val();
         propertiesType.highlightColor = $(textExample.INPUTHIGHLIGHT).val();
         propertiesType.lineSize = $(textExample.WIDTH).val();
     } else {
-        //properties of line
-        if ($('#' + selectedAnnos).prop("tagName") == "line") {
-            $('#' + selectedAnnos).attr("stroke-width", $(textExample.WIDTH).val());
-            $('#' + selectedAnnos).attr("stroke", $(textExample.INPUTCOLOR).val());
-        } else if ($('#' + selectedAnnos).prop("tagName") == "rect") {
-            //properties of highlight
-            if ($('#' + selectedAnnos).attr("fill-opacity") == "0.4") {
-                $('#' + selectedAnnos).attr("fill", $(textExample.INPUTHIGHLIGHT).val());
-            }//properties of rect
+        for(var j = 0; j < selectedAnnos.length; j++){
+        // properties of line
+        if ($('#' + selectedAnnos[j]).prop("tagName") == "line") {
+            $('#' + selectedAnnos[j]).attr("stroke-width", $(textExample.WIDTH).val());
+            $('#' + selectedAnnos[j]).attr("stroke", $(textExample.INPUTCOLOR).val());
+        } else if ($('#' + selectedAnnos[j]).prop("tagName") == "rect") {
+            // properties of highlight
+            if ($('#' + selectedAnnos[j]).attr("fill-opacity") == "0.4") {
+                $('#' + selectedAnnos[j]).attr("fill", $(textExample.INPUTHIGHLIGHT).val());
+            }// properties of rect
             else {
-                $('#' + selectedAnnos).attr("stroke", $(textExample.INPUTCOLOR).val());
-                $('#' + selectedAnnos).attr("fill", $(textExample.INPUTFILL).val());
-                $('#' + selectedAnnos).attr("stroke-width", $(textExample.WIDTH).val());
+                $('#' + selectedAnnos[j]).attr("stroke", $(textExample.INPUTCOLOR).val());
+                $('#' + selectedAnnos[j]).attr("fill", $(textExample.INPUTFILL).val());
+                $('#' + selectedAnnos[j]).attr("stroke-width", $(textExample.WIDTH).val());
             }
-        }
+        }}
     }
 }
 
-//default properties popup
+// default properties popup
 function modalLineProperties() {
     $("#" + propertiesType.penColor).prop("checked", true);
     $("#1" + propertiesType.fillColor).prop("checked", true);
@@ -701,105 +1142,135 @@ function modalLineProperties() {
     $("#myModalLine").modal();
 }
 
-//button properties of toolbar, controller to correct popup
+// button properties of toolbar, controller to correct popup
 function properties() {
     switch (selectedAnnos.length) {
-    case 1:
-        // disable
-        $("#" + $('#' + selectedAnnos).attr("stroke")).prop("checked", true);
-        $(textExample.WIDTH).val($('#' + selectedAnnos).attr("stroke-width"));
-        $("#1" + $('#' + selectedAnnos).attr("fill")).prop("checked", true);
-        $("#2" + $('#' + selectedAnnos).attr("fill")).prop("checked", true);
-        $("#myModalLine").modal();
-        break;
-    case 2:
-        if ($('#' + selectedAnnos).attr('id').startsWith('SvgjsText')) {
-            var textId = "#" + selectedAnnos[1];
-            $(textExample.COMMENTTEXT).val($(textId).text());
-            $(textExample.COMMENTTEXT).css("font-family", $(textId).attr("font-family"));
-            $("#color").val(selectOptionByText("#color", $(textId).attr("fill")));
-            $("#fill").val(selectOptionByText("#fill", $("#" + selectedAnnos).attr("fill")));
-            $("#border").val(selectOptionByText("#border", $("#" + selectedAnnos).attr("stroke")));
-            $("#font").val(selectOptionByText("#font", $(textId).attr("font-family")));
-            $("#fontSize").val(selectOptionByText("#fontSize", $(textId).attr("fontsize")));
-            if ($(textId).attr("font-style") == "italic") {
-                if ($(textId).attr("font-weight") == "bold") {
-                    $("#fontStyle").val("boldItalic");
-                    $(textExample.COMMENTTEXT).css("font-style", "italic");
-                    $(textExample.COMMENTTEXT).css("font-weight", "bold");
-                } else {
-                    $("#fontStyle").val("italic");
-                    $(textExample.COMMENTTEXT).css("font-style", "italic");
-                    $(textExample.COMMENTTEXT).css("font-weight", "");
-                }
-            } else {
-                if ($(textId).attr("font-weight") == "bold") {
-                    $("#fontStyle").val("bold");
-                    $(textExample.COMMENTTEXT).css("font-weight", "bold");
-                    $(textExample.COMMENTTEXT).css("font-style", "");
-                } else {
-                    $("#fontStyle").val("normal");
-                    $(textExample.COMMENTTEXT).css("font-style", "");
-                    $(textExample.COMMENTTEXT).css("font-weight", "");
+        case 1:
+            // disable
+            if(selectedAnnos[0].startsWith('SvgjsLine')){
+                $('#li2').parent().addClass('disabled');
+                $('#li3').parent().addClass('disabled');
+                $('#li1').parent().removeClass('disabled');
+                $('#width').removeClass('disabled');
+                $('#li1').trigger('click');
+            }
+            else if(selectedAnnos[0].startsWith('SvgjsRect')){
+                if ($('#' + selectedAnnos).attr("fill-opacity") == "0.4") {
+                    $('#li1').parent().addClass('disabled');
+                    $('#li2').parent().addClass('disabled');
+                    $('#li3').parent().removeClass('disabled');
+                    $('#width').addClass('disabled');
+                    $('#li3').trigger('click');
+                }// properties of rect
+                else{
+                $('#li1').parent().removeClass('disabled');
+                $('#li2').parent().removeClass('disabled');
+                    $('#li1').trigger('click');
+                $('#li3').parent().addClass('disabled');
+                    $('#width').removeClass('disabled');
                 }
             }
-            $("#myModalText").modal();
+            $("#" + $('#' + selectedAnnos).attr("stroke")).prop("checked", true);
+            $(textExample.WIDTH).val($('#' + selectedAnnos).attr("stroke-width"));
+            $("#1" + $('#' + selectedAnnos).attr("fill")).prop("checked", true);
+            $("#2" + $('#' + selectedAnnos).attr("fill")).prop("checked", true);
+
+            $("#myModalLine").modal();
             break;
-        }
-        if ($('#' + selectedAnnos).attr('id').startsWith('SvgjsImage')) {
-            $("#commentTxtArea").val($('#' + selectedAnnos[1]).attr('value'));
-            $("#tbComment").val($('#' + selectedAnnos[1])[0].textContent);
-            $("#myModalComment").modal();
+        case 2:
+            //cut xong paste thi rect lai trc text
+            if ($('#' + selectedAnnos).attr('class')=='textDraw') {
+                var textId = "#" + selectedAnnos[1];
+                $(textExample.COMMENTTEXT).val($(textId).text());
+                $(textExample.COMMENTTEXT).css("font-family", $(textId).attr("font-family"));
+                $("#color").val(selectOptionByText("#color", $(textId).attr("fill")));
+                $("#fill").val(selectOptionByText("#fill", $("#" + selectedAnnos).attr("fill")));
+                $("#border").val(selectOptionByText("#border", $("#" + selectedAnnos).attr("stroke")));
+                $("#font").val(selectOptionByText("#font", $(textId).attr("font-family")));
+                $("#fontSize").val(selectOptionByText("#fontSize", $(textId).attr("font-size")));
+                if ($(textId).attr("font-style") == "italic") {
+                    if ($(textId).attr("font-weight") == "bold") {
+                        $("#fontStyle").val("boldItalic");
+                        $(textExample.COMMENTTEXT).css("font-style", "italic");
+                        $(textExample.COMMENTTEXT).css("font-weight", "bold");
+                    } else {
+                        $("#fontStyle").val("italic");
+                        $(textExample.COMMENTTEXT).css("font-style", "italic");
+                        $(textExample.COMMENTTEXT).css("font-weight", "");
+                    }
+                } else {
+                    if ($(textId).attr("font-weight") == "bold") {
+                        $("#fontStyle").val("bold");
+                        $(textExample.COMMENTTEXT).css("font-weight", "bold");
+                        $(textExample.COMMENTTEXT).css("font-style", "");
+                    } else {
+                        $("#fontStyle").val("normal");
+                        $(textExample.COMMENTTEXT).css("font-style", "");
+                        $(textExample.COMMENTTEXT).css("font-weight", "");
+                    }
+                }
+                $("#myModalText").modal();
+                break;
+            }
+            else if ($('#' + selectedAnnos).attr('id').startsWith('SvgjsImage')) {
+                $("#commentTxtArea").val($('#' + selectedAnnos[1]).attr('value'));
+                $("#tbComment").val($('#' + selectedAnnos[1])[0].textContent);
+                $("#myModalComment").modal();
+                break;
+            }
+            modalLineProperties();
             break;
-        }
-        modalLineProperties();
-        break;
-    default:
-        modalLineProperties();
-        break;
+        default:
+            $('#li1').parent().removeClass('disabled');
+            $('#li2').parent().removeClass('disabled');
+            $('#li3').parent().removeClass('disabled');
+            $('#width').removeClass('disabled');
+            $('#li1').trigger('click');
+            modalLineProperties();
+            break;
     }
 }
 
 // Create new annotation by selecting type of annotation on the screen.
 function createSettingAnnotation(annoType) {
+
     switch (annoType) {
-    case annoTypes.LINE:
-        iv.settingAnno = iv.svg.line().stroke(propertiesType.penColor).stroke({
-            width: propertiesType.lineSize
-        });
-        break;
-    case annoTypes.RECTANGLE:
-        iv.settingAnno = iv.svg.rect().stroke(propertiesType.penColor).fill(propertiesType.fillColor).stroke({
-            width: propertiesType.lineSize
-        });
-        break;
-    case annoTypes.TEXT:
-        iv.settingAnno = "text";
-        break;
-    case annoTypes.HIGHLIGHT:
-        iv.settingAnno = iv.svg.rect().fill(propertiesType.highlightColor).fill({
-            opacity: 0.4
-        });
-        break;
-    case annoTypes.COMMENT:
-        iv.settingAnno = "comment";
-        break;
+        case annoTypes.LINE:
+            $(iv.svg.svgId).css('cursor', 'auto');
+            iv.settingAnno = iv.svg.line().stroke(propertiesType.penColor).stroke({
+                width: propertiesType.lineSize
+            });
+            break;
+        case annoTypes.RECTANGLE:
+            $(iv.svg.svgId).css('cursor', 'auto');
+            iv.settingAnno = iv.svg.rect().stroke(propertiesType.penColor).fill(propertiesType.fillColor).stroke({
+                width: propertiesType.lineSize
+            });
+            break;
+        case annoTypes.TEXT:
+            $(iv.svg.svgId).css('cursor', 'auto');
+            iv.settingAnno = "text";
+            break;
+        case annoTypes.HIGHLIGHT:
+            $(iv.svg.svgId).css('cursor', 'url(' + getResource(cursorImage) + '), auto');
+            iv.settingAnno = iv.svg.rect().fill(propertiesType.highlightColor).fill({
+                opacity: 0.4
+            });
+            break;
+        case annoTypes.COMMENT:
+            $(iv.svg.svgId).css('cursor', 'auto');
+            iv.settingAnno = "comment";
+            break;
     }
 
-    //not set if text and comment
+    // not set if text and comment
     if (iv.settingAnno != "text" && iv.settingAnno != "comment") {
         setAttribute(iv.settingAnno.node.id, "pointer-events", "all");
     }
 }
 
-// Process zoomin or zoomout.
-function zoomPan(amount) {
-    console.log("zoomPan");
-    currentScale = Math.ceil10(currentScale * 10, -2) / 10 + amount;
-    smartTransform(iv.svg.svgId, currentRotation);
-}
-
-// Process dynamically transform, automatically translate to start position after rotating.
+// Process dynamically transform, automatically translate to start position
+// after rotating.
 function smartTransform(svgId, rotate) {
     var transform = getTransform(0, 0, rotate, currentScale);
     setTransform(svgId, transform);
@@ -812,6 +1283,7 @@ function smartTransform(svgId, rotate) {
 
     var transform = getTransform(cTranslateTop, cTranslateLeft, rotate, currentScale);
     setTransform(svgId, transform);
+    $('#zoomInput').val(Math.floor(currentScale * 100));
 }
 
 // Check type of browser is IE or not.
@@ -830,9 +1302,9 @@ function isMsiBrowser() {
 function getTransform(translateTop, translateLeft, rotate, scale) {
     if (isMsiBrowser()) {
         return ( "transform",
-        "translate(" + translateLeft + "px," + translateTop + "px)" + " scale(" + scale + "," + scale + ")" + " rotate(" + rotate + "deg)") ;
+        "translate(" + translateLeft + "px," + translateTop + "px)" + " scale(" + scale + "," + scale + ")" + " rotate(" + rotate + "deg)");
     } else {
-        return ( "translate(" + translateLeft + "," + translateTop + ")" + " scale(" + scale + "," + scale + ")" + " rotate(" + rotate + ")") ;
+        return ( "translate(" + translateLeft + "," + translateTop + ")" + " scale(" + scale + "," + scale + ")" + " rotate(" + rotate + ")");
     }
 }
 
@@ -859,7 +1331,7 @@ function hasIntersection(tmpRect, svg) {
         return checkInterscetion(tmpRect, el);
     } else {
         for (var c in childNodes) {
-            if (childNodes[c]instanceof SVGElement) {
+            if (childNodes[c] instanceof SVGElement) {
                 check = checkInterscetion(tmpRect, childNodes[c]);
                 if (check) {
                     return check;
@@ -882,8 +1354,10 @@ function checkInterscetion(tmpRect, el) {
 }
 
 // This method to update drawFlg when click on the screen.
-// In case point click in selected Annotations area(in selectedAnnos) => drawFlg = false, this means preparing for selecting, dragging or resizing.
-// In case point click out of selected Annotations area(not in selectedAnnos) => drawFlg = true, this means preparing for drawing.
+// In case point click in selected Annotations area(in selectedAnnos) => drawFlg
+// = false, this means preparing for selecting, dragging or resizing.
+// In case point click out of selected Annotations area(not in selectedAnnos) =>
+// drawFlg = true, this means preparing for drawing.
 function setDrawFlgWhenClick() {
     console.log("setDrawFlgWhenClick");
     for (var i in selectedAnnos) {

@@ -4,13 +4,13 @@
 <#assign script>
 <script src="${rc.getContextPath()}/resources/js/directory.js"></script>
 </#assign>
-<@standard.standardPage title=e.get("directory.add") contentFooter=contentFooter script=script>
+<@standard.standardPage title=e.get("directory.add") contentFooter=contentFooter script=script imageLink="process">
 <br>
     <#assign isPersisted = (directoryForm.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
 
 <form id="directoryForm" action="${rc.getContextPath()}/directory/${formAction}" object="directoryForm" method="post"
-      class="">
+      class="" >
     <#include "../common/messages.ftl">
     <div class="board-wrapper">
         <div class="board board-half">
@@ -32,24 +32,24 @@
 	                        <#assign disable="checked">
 	                    </#if>
 	                </#if>
-	                <input type="radio" name="enable_disable" value="1" ${enable!""}> <label class="permision">${e.get('give.permission')}</label>
+	                <input type="radio" name="enable" id='enable' value="1" ${enable!""} > <label class="permision">${e.get('give.permission')}</label>
 	                <br /><br />
-	                <input type="radio" name="enable_disable" value="0" ${disable!""}> <label class="permision">${e.get('not.allow')}</label>
+	                <input type="radio" name="disable" id='disable' value="0" ${disable!""} > <label class="permision">${e.get('not.allow')}</label>
 	                <input type="hidden" id="newCreateFile" name="newCreateFile" height="20px" width="150px"
 	                       style="text-align: left" value="${directoryForm.newCreateFile!""}">
 	            </td>
                 </tr>
                 <tr>
                     <td>${e.get('secured.disk.space')}</td>
-                    <td><input type="text" name="reservedDiskVolSize" value="${directoryForm.reservedDiskVolSize!""}"/></td>
+                    <td><input type="text" name="reservedDiskVolSize" value="${directoryForm.reservedDiskVolSize!""}" /></td>
                 </tr>
                 <tr>
                     <td>${e.get('disk.space')}</td>
-                    <td><input type="text" name="diskVolSize" value="${directoryForm.diskVolSize!""}" readonly="readonly" id="txtDiskVolSize"/></td>
+                    <td><input type="text" name="diskVolSize" value="${directoryForm.diskVolSize!""}" readonly="readonly" id="txtDiskVolSize" /></td>
                 </tr>
                 <tr>
                     <td>${e.get('folder.path')}</td>
-                    <td><input type="text" name="folderPath" value="${directoryForm.folderPath!""}" id="txtFolderPath"/></td>
+                    <td><input type="text" name="folderPath" value="${directoryForm.folderPath!""}" id="txtFolderPath" /></td>
                 </tr>
             </table>
             <input type="hidden" name="lastUpdateTime" value="${directoryForm.lastUpdateTime!""}"/>

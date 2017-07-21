@@ -3,9 +3,7 @@ package co.jp.nej.earth.model;
 import co.jp.nej.earth.model.sql.QStrageFile;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public class StrageFile extends BaseModel<StrageFile> {
 
@@ -31,8 +29,7 @@ public class StrageFile extends BaseModel<StrageFile> {
     }
 
     /**
-     * @param processId
-     *            the processId to set
+     * @param processId the processId to set
      */
     public void setProcessId(Integer processId) {
         this.processId = processId;
@@ -46,8 +43,7 @@ public class StrageFile extends BaseModel<StrageFile> {
     }
 
     /**
-     * @param siteId
-     *            the siteId to set
+     * @param siteId the siteId to set
      */
     public void setSiteId(Integer siteId) {
         this.siteId = siteId;
@@ -61,8 +57,7 @@ public class StrageFile extends BaseModel<StrageFile> {
     }
 
     /**
-     * @param siteManagementType
-     *            the siteManagementType to set
+     * @param siteManagementType the siteManagementType to set
      */
     public void setSiteManagementType(String siteManagementType) {
         this.siteManagementType = siteManagementType;

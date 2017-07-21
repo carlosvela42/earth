@@ -1,16 +1,14 @@
 package co.jp.nej.earth.model.sql;
 
+import co.jp.nej.earth.model.entity.MgrMenuP;
+import co.jp.nej.earth.model.enums.ColumnNames;
+import co.jp.nej.earth.model.enums.TableNames;
 import com.querydsl.core.types.PathMetadataFactory;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
 
-import co.jp.nej.earth.model.entity.MgrMenuP;
-import co.jp.nej.earth.model.enums.ColumnNames;
-import co.jp.nej.earth.model.enums.TableNames;
-
-public class QMgrMenuP extends RelationalPathBase<MgrMenuP> {
+public class QMgrMenuP extends QBase<MgrMenuP> {
 
     /**
      * @author p-tvo-thuynd

@@ -1,13 +1,10 @@
 package co.jp.nej.earth.dao;
 
+import co.jp.nej.earth.model.MgrProcess;
 import org.springframework.stereotype.Repository;
 
-import co.jp.nej.earth.model.MgrProcess;
-
 /**
- *
  * @author p-tvo-sonta
- *
  */
 @Repository
 public class ProcessDaoImpl extends BaseDaoImpl<MgrProcess> implements ProcessDao {

@@ -1,14 +1,12 @@
 package co.jp.nej.earth.dao;
 
-import co.jp.nej.earth.exception.*;
-import co.jp.nej.earth.model.*;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.Site;
 
-import java.util.*;
+import java.util.List;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public interface SiteDao extends BaseDao<Site> {
 

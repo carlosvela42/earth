@@ -1,38 +1,35 @@
 package co.jp.nej.earth.model.form;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.MgrWorkspace;
-import co.jp.nej.earth.model.constant.Constant;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.Pattern;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.MgrWorkspace;
 
 public class WorkspaceForm extends BaseModel<MgrWorkspace> {
 
-    @NotEmpty(message = "E0001,workspaceId")
-    @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0007,workspaceId")
+    @NotEmpty(message = "E0001,workspace.id")
+    // @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0011,workspaceId")
     private String workspaceId;
 
-    @NotEmpty(message = "E0001,schemaName")
-    @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0007,schemaName")
+    @NotEmpty(message = "E0001,workspace.schemaName")
+    // @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0011,schemaName")
     private String schemaName;
 
-    @NotEmpty(message = "E0001,dbUser")
-    @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0007,dbUser")
+    @NotEmpty(message = "E0001,workspace.dbUser")
+    // @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0011,dbUser")
     private String dbUser;
 
-    @NotEmpty(message = "E0001,dbPassword")
-    @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0007,dbPassword")
+    @NotEmpty(message = "E0001,workspace.dbPassword")
+    // @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0011,dbPassword")
     private String dbPassword;
 
-    @NotEmpty(message = "E0001,owner")
-    @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0007,owner")
+    @NotEmpty(message = "E0001,workspace.owner")
+    // @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0011,owner")
     private String owner;
 
-    @NotEmpty(message = "E0001,dbServer")
-    @Pattern(regexp = Constant.WorkSpace.IP_VALIDATION, message = "E0017,dbServer")
+    @NotEmpty(message = "E0001,workspace.dbServer")
+    // @Pattern(regexp = Constant.WorkSpace.IP_VALIDATION, message = "E0011,dbServer")
     private String dbServer;
-
 
     private String dbType;
 

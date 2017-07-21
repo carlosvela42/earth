@@ -1,17 +1,14 @@
 package co.jp.nej.earth.util;
 
-import java.util.Base64;
-import java.util.Date;
-
-import javax.servlet.http.HttpSession;
-
 import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.entity.MgrUser;
 
+import javax.servlet.http.HttpSession;
+import java.util.Base64;
+import java.util.Date;
+
 /**
- *
  * @author p-tvo-thuynd
- *
  */
 public class LoginUtil {
     public static boolean isLogin(HttpSession session) {
@@ -26,7 +23,7 @@ public class LoginUtil {
      * generate token based on userId and current date and time.
      *
      * @param userId id of current user.
-     * @param date time when user logs in
+     * @param date   time when user logs in
      * @return token.
      */
     public static String generateToken(String userId, Date date) {
@@ -50,7 +47,7 @@ public class LoginUtil {
      * @param mgrUser.
      * @return boolean value.
      */
-    public static boolean isUserExisted(String password, MgrUser mgrUser){
+    public static boolean isUserExisted(String password, MgrUser mgrUser) {
         return mgrUser.getPassword().equals(password);
     }
 }

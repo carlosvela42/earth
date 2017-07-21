@@ -1,16 +1,15 @@
 package co.jp.nej.earth.dao;
 
-import org.springframework.stereotype.Repository;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.StrCal;
 import co.jp.nej.earth.model.sql.QStrCal;
+import org.springframework.stereotype.Repository;
 
 @Repository
-public class LicenseHistoryDaoImplTest extends BaseDaoImpl<StrCal> implements LicenseHistoryDaoTest{
+public class LicenseHistoryDaoImplTest extends BaseDaoImpl<StrCal> implements LicenseHistoryDaoTest {
 
     public LicenseHistoryDaoImplTest() throws Exception {
         super();

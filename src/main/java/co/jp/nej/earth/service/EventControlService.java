@@ -1,27 +1,32 @@
 package co.jp.nej.earth.service;
 
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.entity.CtlEvent;
+
 import java.util.List;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.WorkItem;
-import co.jp.nej.earth.model.entity.CtlEvent;
-import co.jp.nej.earth.model.ws.RestResponse;
-
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public interface EventControlService {
 
     /**
      * insert event
      *
-     * @param workItem
+     * @param event
      * @return
      * @throws EarthException
      */
-    boolean insertEvent(String workspaceId, WorkItem workItem) throws EarthException;
+    boolean insertEvent(String workspaceId, CtlEvent event) throws EarthException;
+
+    /**
+     * insert list of event
+     *
+     * @param events
+     * @return
+     * @throws EarthException
+     */
+    boolean insertEvents(String workspaceId, List<CtlEvent> events) throws EarthException;
 
     /**
      * get list event by status
@@ -70,5 +75,26 @@ public interface EventControlService {
      * @return
      * @throws EarthException
      */
-    RestResponse unlockEventControl(String workspaceId, String eventId) throws EarthException;
+    boolean unlockEventControl(String workspaceId, String eventId) throws EarthException;
+
+
+    /**
+     * unlock event control
+     *
+     * @param workspaceId
+     * @param eventIds
+     * @return
+     * @throws EarthException
+     */
+    boolean unlockEventControls(String workspaceId, List<String> eventIds) throws EarthException;
+
+    /**
+     * Get one event by status for update
+     *
+     * @param status
+     * @param workSpaceId
+     * @return
+     * @throws EarthException
+     */
+    CtlEvent getOneEventByStatusForUpdate(String status, String workSpaceId, String userId) throws EarthException;
 }

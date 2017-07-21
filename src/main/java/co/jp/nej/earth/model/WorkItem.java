@@ -3,20 +3,20 @@
  */
 package co.jp.nej.earth.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.enums.AccessRight;
+import co.jp.nej.earth.model.sql.QWorkItem;
+import co.jp.nej.earth.util.EStringUtil;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import co.jp.nej.earth.model.entity.MgrTemplate;
-import co.jp.nej.earth.model.sql.QWorkItem;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author p-dcv-khanhnv
- *
  */
 @XmlRootElement
 public class WorkItem extends BaseModel<WorkItem> {
@@ -28,17 +28,32 @@ public class WorkItem extends BaseModel<WorkItem> {
      *
      */
     private String workspaceId;
-    @NotEmpty(message = "E0002,workitemId")
+    @NotEmpty(message = "E0001,workitemId")
     private String workitemId;
-    private Integer eventStatus;
     private String taskId;
     private MgrTemplate mgrTemplate;
     private TemplateData workItemData;
     private String templateId;
     private List<FolderItem> folderItems = new ArrayList<FolderItem>();
     private int lastHistoryNo;
+    private AccessRight accessRight;
 
-    private ProcessMap processMap;
+    private DatProcess dataProcess;
+
+    /**
+     * @param workitemId
+     * @param taskId
+     * @param templateId
+     * @param lastHistoryNo
+     */
+    public WorkItem(String workitemId, String taskId, String templateId, int lastHistoryNo, String lastUpdateTime) {
+        super();
+        this.workitemId = workitemId;
+        this.taskId = taskId;
+        this.templateId = templateId;
+        this.lastHistoryNo = lastHistoryNo;
+        this.setLastUpdateTime(lastUpdateTime);
+    }
 
     public WorkItem() {
         this.setqObj(QWorkItem.newInstance());
@@ -52,8 +67,7 @@ public class WorkItem extends BaseModel<WorkItem> {
     }
 
     /**
-     * @param workspaceId
-     *            the workspaceId to set
+     * @param workspaceId the workspaceId to set
      */
     @XmlElement
     public void setWorkspaceId(String workspaceId) {
@@ -68,27 +82,11 @@ public class WorkItem extends BaseModel<WorkItem> {
     }
 
     /**
-     * @param workitemId
-     *            the workitemId to set
+     * @param workitemId the workitemId to set
      */
     @XmlElement
     public void setWorkitemId(String workitemId) {
         this.workitemId = workitemId;
-    }
-
-    /**
-     * @return the eventStatus
-     */
-    public Integer getEventStatus() {
-        return eventStatus;
-    }
-
-    /**
-     * @param eventStatus
-     *            the eventStatus to set
-     */
-    public void setEventStatus(Integer eventStatus) {
-        this.eventStatus = eventStatus;
     }
 
     /**
@@ -99,8 +97,7 @@ public class WorkItem extends BaseModel<WorkItem> {
     }
 
     /**
-     * @param taskId
-     *            the taskId to set
+     * @param taskId the taskId to set
      */
     @XmlElement
     public void setTaskId(String taskId) {
@@ -123,8 +120,7 @@ public class WorkItem extends BaseModel<WorkItem> {
     }
 
     /**
-     * @param workItemData
-     *            the workItemData to set
+     * @param workItemData the workItemData to set
      */
     public void setWorkItemData(TemplateData workItemData) {
         this.workItemData = workItemData;
@@ -138,8 +134,7 @@ public class WorkItem extends BaseModel<WorkItem> {
     }
 
     /**
-     * @param templateId
-     *            the templateId to set
+     * @param templateId the templateId to set
      */
     @XmlElement
     public void setTemplateId(String templateId) {
@@ -154,8 +149,7 @@ public class WorkItem extends BaseModel<WorkItem> {
     }
 
     /**
-     * @param folderItems
-     *            the folderItems to set
+     * @param folderItems the folderItems to set
      */
     @XmlElement
     public void setFolderItems(List<FolderItem> folderItems) {
@@ -163,7 +157,8 @@ public class WorkItem extends BaseModel<WorkItem> {
     }
 
     public void addFolderItem(FolderItem folderItem) {
-        if (!folderItems.contains(folderItem)) {
+        if (folderItem != null && (!EStringUtil.isEmpty(folderItem.getFolderItemNo()))
+                && !folderItems.contains(folderItem)) {
             folderItems.add(folderItem);
         }
     }
@@ -176,24 +171,31 @@ public class WorkItem extends BaseModel<WorkItem> {
     }
 
     /**
-     * @param lastHistoryNo
-     *            the lastHistoryNo to set
+     * @param lastHistoryNo the lastHistoryNo to set
      */
     public void setLastHistoryNo(int lastHistoryNo) {
         this.lastHistoryNo = lastHistoryNo;
     }
 
     /**
-     * @return the processMap
+     * @return the dataProcess
      */
-    public ProcessMap getProcessMap() {
-        return processMap;
+    public DatProcess getDataProcess() {
+        return dataProcess;
     }
 
     /**
-     * @param processMap the processMap to set
+     * @param dataProcess the dataProcess to set
      */
-    public void setProcessMap(ProcessMap processMap) {
-        this.processMap = processMap;
+    public void setDataProcess(DatProcess dataProcess) {
+        this.dataProcess = dataProcess;
+    }
+
+    public AccessRight getAccessRight() {
+        return accessRight;
+    }
+
+    public void setAccessRight(AccessRight accessRight) {
+        this.accessRight = accessRight;
     }
 }

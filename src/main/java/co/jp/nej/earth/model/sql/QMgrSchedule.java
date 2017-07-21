@@ -1,24 +1,22 @@
 package co.jp.nej.earth.model.sql;
 
+import co.jp.nej.earth.model.MgrSchedule;
+import co.jp.nej.earth.model.enums.ColumnNames;
+import co.jp.nej.earth.model.enums.TableNames;
 import com.querydsl.core.types.PathMetadataFactory;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
 
-import co.jp.nej.earth.model.MgrSchedule;
-import co.jp.nej.earth.model.enums.ColumnNames;
-import co.jp.nej.earth.model.enums.TableNames;
-
-public class QMgrSchedule extends RelationalPathBase<MgrSchedule> {
+public class QMgrSchedule extends QBase<MgrSchedule> {
 
     private static final long serialVersionUID = 1L;
 
     public final StringPath scheduleId = createString(ColumnNames.SCHEDULE_ID.toString());
-    public final NumberPath<Integer> processId = createNumber(ColumnNames.PROCESS_ID.toString(),Integer.class);
-    public final StringPath taskId = createString(ColumnNames.TASK_ID.toString());
     public final StringPath hostName = createString(ColumnNames.HOST_NAME.toString());
+    public final NumberPath<Integer> processId = createNumber(ColumnNames.PROCESS_ID.toString(), Integer.class);
     public final StringPath processIServiceId = createString(ColumnNames.PROCESS_ISERVICEID.toString());
+    public final StringPath taskId = createString(ColumnNames.TASK_ID.toString());
     public final StringPath startTime = createString(ColumnNames.START_TIME.toString());
     public final StringPath endTime = createString(ColumnNames.END_TIME.toString());
     public final StringPath enableDisable = createString(ColumnNames.ENABLEDISABLE.toString());

@@ -62,7 +62,7 @@ public class ProfileServiceTest extends BaseTest {
             String password = PASS + i.toString();
             boolean changePassword = true;
             mgrUser = new MgrUser(userId, name, password, password, changePassword, DateUtil.getCurrentDate(Constant
-                    .DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                    .DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
             userService.insertOne(mgrUser);
 
             String profileId = PROFILE + i.toString();

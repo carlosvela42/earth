@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 public class UserForm extends BaseModel<MgrUser> {
 
     @NotEmpty(message = "E0001,UserId")
-    @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0007,UserId")
+    @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0004,UserId")
     private String userId;
 
     @NotEmpty(message = "E0001,UserName")

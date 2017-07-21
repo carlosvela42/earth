@@ -11,7 +11,8 @@
     <#assign isPersisted = (process.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
 
-<form id="processForm" action="${rc.getContextPath()}/process/${formAction}" object="processForm" method="post" class="">
+<form id="processForm" action="${rc.getContextPath()}/process/${formAction}" object="processForm" method="post"
+      class="" imageLink="process">
     <#include "../common/messages.ftl">
     <div class="board-wrapper">
         <div class="board board-half">
@@ -37,11 +38,10 @@
 
                     <td>
                         <span class="btn btn-default btn_popup  btn-file btn_upload">
-    ${e.get('button.upload')}
-        <input type="file" id="fileUpload"/>
-</span>
-                        <input type="button" id="fileDownload" class="btn btn-default btn_popup btn_download" value=${e.get('button.download')
-                        }"></td>
+						    ${e.get('button.upload')}
+						        <input type="file" id="fileUpload" disabled="disabled"/>
+						</span>
+                        <input type="button" id="fileDownload" disabled="disabled" class="btn btn-default btn_popup btn_download" value=${e.get('button.download')}"></td>
                 </tr>
             </table>
         </div>

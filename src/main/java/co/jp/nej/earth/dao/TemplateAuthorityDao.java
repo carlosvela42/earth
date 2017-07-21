@@ -1,18 +1,18 @@
 package co.jp.nej.earth.dao;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.ProfileAccessRight;
-import co.jp.nej.earth.model.TemplateAccessRight;
-import co.jp.nej.earth.model.TemplateKey;
-import co.jp.nej.earth.model.UserAccessRight;
-import co.jp.nej.earth.model.entity.CtlTemplate;
-
 import java.util.List;
 import java.util.Map;
 
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.ProfileAccessRight;
+import co.jp.nej.earth.model.TemplateKey;
+import co.jp.nej.earth.model.UserAccessRight;
+import co.jp.nej.earth.model.entity.CtlTemplate;
+import co.jp.nej.earth.model.enums.AccessRight;
+
 public interface TemplateAuthorityDao extends BaseDao<CtlTemplate> {
 
-    Map<TemplateKey, TemplateAccessRight> getMixAuthority(String userId, String workspaceId) throws EarthException;
+    Map<TemplateKey, AccessRight> getMixAuthority(String userId, String workspaceId) throws EarthException;
 
     long deleteListByUserIds(String workspaceId, List<String> userIds) throws EarthException;
 
@@ -29,6 +29,8 @@ public interface TemplateAuthorityDao extends BaseDao<CtlTemplate> {
     List<UserAccessRight> getUserAuthority(TemplateKey templateKey) throws EarthException;
 
     List<ProfileAccessRight> getProfileAuthority(TemplateKey templateKey) throws EarthException;
+
+    List<String> getProfiles(TemplateKey templateKey) throws EarthException;
 
     long deleteAllUserAuthority(TemplateKey templateKey) throws EarthException;
 

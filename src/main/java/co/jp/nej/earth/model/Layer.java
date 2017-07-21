@@ -1,9 +1,9 @@
 package co.jp.nej.earth.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.sql.QLayer;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class Layer extends BaseModel<Layer> {
 
@@ -12,16 +12,20 @@ public class Layer extends BaseModel<Layer> {
      */
     private static final long serialVersionUID = 1L;
     private String workitemId;
-    private Integer folderItemNo;
-    private Integer documentNo;
-    @NotEmpty(message = "E0002,layerNo")
-    private Integer layerNo;
+    private String folderItemNo;
+    private String documentNo;
+    @NotEmpty(message = "E0001,layerNo")
+    private String layerNo;
+    private Integer layerOrder;
+    private String layerName;
     private MgrTemplate mgrTemplate;
     private String ownerId;
     private Integer action;
     private TemplateData layerData;
     private String templateId;
     private String annotations;
+    private String insertDateTime;
+    private AccessRight accessRight;
 
     public Layer() {
         this.setqObj(QLayer.newInstance());
@@ -35,8 +39,7 @@ public class Layer extends BaseModel<Layer> {
     }
 
     /**
-     * @param workitemId
-     *            the workitemId to set
+     * @param workitemId the workitemId to set
      */
     public void setWorkitemId(String workitemId) {
         this.workitemId = workitemId;
@@ -45,45 +48,42 @@ public class Layer extends BaseModel<Layer> {
     /**
      * @return the folderItemNo
      */
-    public Integer getFolderItemNo() {
+    public String getFolderItemNo() {
         return folderItemNo;
     }
 
     /**
-     * @param folderItemNo
-     *            the folderItemNo to set
+     * @param folderItemNo the folderItemNo to set
      */
-    public void setFolderItemNo(Integer folderItemNo) {
+    public void setFolderItemNo(String folderItemNo) {
         this.folderItemNo = folderItemNo;
     }
 
     /**
      * @return the documentNo
      */
-    public Integer getDocumentNo() {
+    public String getDocumentNo() {
         return documentNo;
     }
 
     /**
-     * @param documentNo
-     *            the documentNo to set
+     * @param documentNo the documentNo to set
      */
-    public void setDocumentNo(Integer documentNo) {
+    public void setDocumentNo(String documentNo) {
         this.documentNo = documentNo;
     }
 
     /**
      * @return the layerNo
      */
-    public Integer getLayerNo() {
+    public String getLayerNo() {
         return layerNo;
     }
 
     /**
-     * @param layerNo
-     *            the layerNo to set
+     * @param layerNo the layerNo to set
      */
-    public void setLayerNo(Integer layerNo) {
+    public void setLayerNo(String layerNo) {
         this.layerNo = layerNo;
     }
 
@@ -103,8 +103,7 @@ public class Layer extends BaseModel<Layer> {
     }
 
     /**
-     * @param ownerId
-     *            the ownerId to set
+     * @param ownerId the ownerId to set
      */
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
@@ -118,8 +117,7 @@ public class Layer extends BaseModel<Layer> {
     }
 
     /**
-     * @param action
-     *            the action to set
+     * @param action the action to set
      */
     public void setAction(Integer action) {
         this.action = action;
@@ -133,8 +131,7 @@ public class Layer extends BaseModel<Layer> {
     }
 
     /**
-     * @param layerData
-     *            the layerData to set
+     * @param layerData the layerData to set
      */
     public void setLayerData(TemplateData layerData) {
         this.layerData = layerData;
@@ -148,8 +145,7 @@ public class Layer extends BaseModel<Layer> {
     }
 
     /**
-     * @param templateId
-     *            the templateId to set
+     * @param templateId the templateId to set
      */
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
@@ -163,11 +159,53 @@ public class Layer extends BaseModel<Layer> {
     }
 
     /**
-     * @param annotations
-     *            the annotations to set
+     * @param annotations the annotations to set
      */
     public void setAnnotations(String annotations) {
         this.annotations = annotations;
     }
 
+    /**
+     * @return the layerName
+     */
+    public String getLayerName() {
+        return layerName;
+    }
+
+    /**
+     * @param layerName the layerName to set
+     */
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
+    }
+
+    /**
+     * @return the insertDateTime
+     */
+    public String getInsertDateTime() {
+        return insertDateTime;
+    }
+
+    /**
+     * @param insertDateTime the insertDateTime to set
+     */
+    public void setInsertDateTime(String insertDateTime) {
+        this.insertDateTime = insertDateTime;
+    }
+
+    public AccessRight getAccessRight() {
+        return accessRight;
+    }
+
+    public void setAccessRight(AccessRight accessRight) {
+        this.accessRight = accessRight;
+    }
+
+    public Integer getLayerOrder() {
+        return layerOrder;
+    }
+
+    public void setLayerOrder(Integer layerOrder) {
+        this.layerOrder = layerOrder;
+    }
 }

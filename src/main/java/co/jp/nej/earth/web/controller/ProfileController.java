@@ -11,7 +11,10 @@ import co.jp.nej.earth.service.ProfileService;
 import co.jp.nej.earth.service.UserService;
 import co.jp.nej.earth.util.ConversionUtil;
 import co.jp.nej.earth.util.EStringUtil;
+import co.jp.nej.earth.util.SessionUtil;
 import co.jp.nej.earth.util.ValidatorUtil;
+import co.jp.nej.earth.web.form.ClientSearchForm;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,17 +45,28 @@ public class ProfileController extends BaseController {
 
     private static final String URL = "profile";
 
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
-    public String showList(Model model) throws EarthException {
+    @RequestMapping(value = {"", "/"}, method = {RequestMethod.GET, RequestMethod.POST})
+    public String showList(Model model, HttpServletRequest request) throws EarthException {
         List<MgrProfile> mgrProfiles = profileService.getAll();
+        HttpSession session = request.getSession();
+        SessionUtil.clearAllOtherSearchCondition(session, Constant.ScreenKey.USER_PROFILE);
+        ClientSearchForm searchForm = (ClientSearchForm) SessionUtil.getSearchCondtionValue(session,
+            Constant.ScreenKey.USER_PROFILE);
+
+        if(searchForm == null) {
+            searchForm = new ClientSearchForm();
+        }
+        model.addAttribute("searchForm", searchForm);
         model.addAttribute("mgrProfiles", mgrProfiles);
         model.addAttribute("userIds", new ArrayList<String>());
         return "profile/profileList";
 
     }
 
-    @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
-    public String showDetail(Model model, String profileId) throws EarthException {
+    @RequestMapping(value = "/showDetail", method = {RequestMethod.GET, RequestMethod.POST})
+    public String showDetail(Model model, String profileId, ClientSearchForm searchForm,
+            HttpServletRequest request) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.USER_PROFILE, searchForm);
         Map<String, Object> profileDetail = profileService.getDetail(profileId);
         MgrProfile mgrProfile = ConversionUtil.castObject(profileDetail.get("mgrProfile"), MgrProfile.class);
         List<MgrUser> mgrUsers = ConversionUtil.castList(profileDetail.get("mgrUsers"), MgrUser.class);
@@ -85,8 +101,9 @@ public class ProfileController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/addNew", method = RequestMethod.GET)
-    public String addNew(Model model) throws EarthException {
+    @RequestMapping(value = "/addNew", method = {RequestMethod.GET, RequestMethod.POST})
+    public String addNew(Model model, HttpServletRequest request, ClientSearchForm searchForm) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.USER_PROFILE, searchForm);
         List<MgrUser> mgrUsers = userService.getAll();
         model.addAttribute("mgrUsers", mgrUsers);
         model.addAttribute("mgrProfile", new MgrProfile());
@@ -116,8 +133,9 @@ public class ProfileController extends BaseController {
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public String deleteList(DeleteListForm form) throws EarthException {
-
+    public String deleteList(DeleteListForm form, HttpServletRequest request,
+            ClientSearchForm searchForm) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.USER_PROFILE, searchForm);
         List<String> profileId = form.getListIds();
         profileService.deleteList(profileId);
         return redirectToList(URL);

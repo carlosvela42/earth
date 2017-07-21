@@ -6,7 +6,7 @@
 <script src="${rc.getContextPath()}/resources/js/user.js"></script>
 </#assign>
 
-<@standard.standardPage title=e.get("user.edit") contentFooter=contentFooter script=script>
+<@standard.standardPage title=e.get("user.edit") imageLink="user" contentFooter=contentFooter script=script>
 <br>
     <#assign isPersisted = (user.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
@@ -52,6 +52,8 @@
         </div>
         <div class="board-split"></div>
         <div class="board board-half">
+        <div>${e.get('profile')}</div>
+        <br>
             <table class="clientSearch table_list">
                 <thead>
                 <tr class="table_header">

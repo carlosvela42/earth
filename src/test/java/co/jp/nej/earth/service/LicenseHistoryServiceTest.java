@@ -1,7 +1,8 @@
 package co.jp.nej.earth.service;
 
-import java.util.List;
-
+import co.jp.nej.earth.BaseTest;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.entity.StrCal;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -9,12 +10,10 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import co.jp.nej.earth.BaseTest;
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.entity.StrCal;
+import java.util.List;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class LicenseHistoryServiceTest extends BaseTest{
+public class LicenseHistoryServiceTest extends BaseTest {
     @Autowired
     private LicenseHistoryService licenseHistoryService;
 
@@ -31,7 +30,7 @@ public class LicenseHistoryServiceTest extends BaseTest{
 
     @Before
     public void setUp() throws EarthException {
-        if (setUpfinished){
+        if (setUpfinished) {
             return;
         }
 
@@ -162,7 +161,7 @@ public class LicenseHistoryServiceTest extends BaseTest{
 
     @Test
     public void testSearch1() throws EarthException {
-        List<StrCal> strCals = licenseHistoryService.search( null, null);
+        List<StrCal> strCals = licenseHistoryService.search(null, null);
         Assert.assertTrue(strCals != null && strCals.size() == 15);
     }
 
@@ -180,12 +179,12 @@ public class LicenseHistoryServiceTest extends BaseTest{
 
     @Test
     public void testSearch4() throws EarthException {
-        List<StrCal> strCals = licenseHistoryService.search( null, 10L);
+        List<StrCal> strCals = licenseHistoryService.search(null, 10L);
         Assert.assertTrue(strCals != null && strCals.size() == 5L);
     }
 
     @Test
-    public void testXDelete() throws EarthException{
+    public void testXDelete() throws EarthException {
         data.deleteAllLicenseHistory();
     }
 }

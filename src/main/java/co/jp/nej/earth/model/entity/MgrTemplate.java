@@ -1,33 +1,25 @@
 package co.jp.nej.earth.model.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.Field;
 import co.jp.nej.earth.model.sql.QMgrTemplate;
 import co.jp.nej.earth.util.EStringUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author p-tvo-khanhnv
- *
  */
 public class MgrTemplate extends BaseModel<MgrTemplate> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MgrTemplate.class);
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Workspace Id.
-     */
-    private String workspaceId;
 
     private String templateId;
     private String templateName;
@@ -46,35 +38,19 @@ public class MgrTemplate extends BaseModel<MgrTemplate> {
         this.setqObj(QMgrTemplate.newInstance());
     }
 
-    public MgrTemplate(String workspaceId, String templateId, String templateName, String templateTableName,
-            String templateType, String templateField, List<Field> templateFields) {
+    public MgrTemplate(String templateId, String templateName, String templateTableName,
+                       String templateType, String templateField, List<Field> templateFields) {
         super();
 
         LOG.debug("Call to (workspaceId, templateId, templateName, templateTableName,"
                 + "templateType, templateField, templateFields) constructor");
 
-        this.workspaceId = workspaceId;
         this.templateId = templateId;
         this.templateName = templateName;
         this.templateTableName = templateTableName;
         this.templateType = templateType;
         this.templateField = templateField;
         this.templateFields = templateFields;
-    }
-
-    /**
-     * @return the workspaceId
-     */
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    /**
-     * @param workspaceId
-     *            the workspaceId to set
-     */
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
     }
 
     /**
@@ -85,8 +61,7 @@ public class MgrTemplate extends BaseModel<MgrTemplate> {
     }
 
     /**
-     * @param templateId
-     *            the templateId to set
+     * @param templateId the templateId to set
      */
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
@@ -100,8 +75,7 @@ public class MgrTemplate extends BaseModel<MgrTemplate> {
     }
 
     /**
-     * @param templateName
-     *            the templateName to set
+     * @param templateName the templateName to set
      */
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
@@ -115,8 +89,7 @@ public class MgrTemplate extends BaseModel<MgrTemplate> {
     }
 
     /**
-     * @param templateTableName
-     *            the templateTableName to set
+     * @param templateTableName the templateTableName to set
      */
     public void setTemplateTableName(String templateTableName) {
         this.templateTableName = templateTableName;
@@ -130,8 +103,7 @@ public class MgrTemplate extends BaseModel<MgrTemplate> {
     }
 
     /**
-     * @param templateFields
-     *            the templateFields to set
+     * @param templateFields the templateFields to set
      */
     public void setTemplateFields(List<Field> templateFields) {
         this.templateFields = templateFields;
@@ -145,8 +117,7 @@ public class MgrTemplate extends BaseModel<MgrTemplate> {
     }
 
     /**
-     * @param templateType
-     *            the templateType to set
+     * @param templateType the templateType to set
      */
     public void setTemplateType(String templateType) {
         this.templateType = templateType;
@@ -166,8 +137,7 @@ public class MgrTemplate extends BaseModel<MgrTemplate> {
     }
 
     /**
-     * @param templateField
-     *            the templateField to set
+     * @param templateField the templateField to set
      */
     public void setTemplateField(String templateField) {
         this.templateField = templateField;

@@ -7,16 +7,17 @@ import java.util.List;
 
 /**
  * Created Stucture MgrMenu
- *      MgrMenu Parent
- *          List MgrMenu
+ * MgrMenu Parent
+ * List MgrMenu
  */
-public class MenuStructure implements Serializable{
+public class MenuStructure implements Serializable {
     /**
      *
      */
     private static final long serialVersionUID = 1L;
     private String menuParentId;
     private String menuParentName;
+    private String cssClass;
     private List<MgrMenu> mgrMenus;
 
     public String getMenuParentId() {
@@ -41,5 +42,13 @@ public class MenuStructure implements Serializable{
 
     public void setMgrMenus(List<MgrMenu> mgrMenus) {
         this.mgrMenus = mgrMenus;
+    }
+
+    public String getCssClass() {
+        return cssClass;
+    }
+
+    public void setCssClass(String cssClass) {
+        this.cssClass = cssClass;
     }
 }

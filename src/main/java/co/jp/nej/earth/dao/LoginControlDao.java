@@ -14,4 +14,5 @@ public interface LoginControlDao extends BaseDao<CtlLogin> {
 
     long deleteListByUserIds(List<String> userIds) throws EarthException;
 
+    List<StrCal> getLicenceOfEntireSystem() throws EarthException;
 }

@@ -1,7 +1,7 @@
 	$.contextMenu({
-		selector : '#container',
+		selector : '#imageDrawing',
 		callback : function(key, options) {
-			switch (key) {		
+			switch (key) {
 			case "fold1-key1":
 				$("#zoomFullPage").trigger("click");
 				break;
@@ -26,20 +26,20 @@
 			}
 		},
 		items : {
-			radio1: {
-                name: "Select", 
-                type: 'radio', 
-                radio: 'radio', 
-                value: '1'
-            },
-            radio2: {
-                name: "Zoom", 
-                type: 'radio', 
-                radio: 'radio', 
-                value: '2', 
-                selected: true
-            },
-            sep2: "---------",
+//			radio1: {
+//                name: "Select", 
+//                type: 'radio', 
+//                radio: 'radio', 
+//                value: '1'
+//            },
+//            radio2: {
+//                name: "Zoom", 
+//                type: 'radio', 
+//                radio: 'radio', 
+//                value: '2', 
+//                selected: true
+//            },
+//            sep2: "---------",
             "fold1": {
                 "name": "Zoom to", 
                 "items": {

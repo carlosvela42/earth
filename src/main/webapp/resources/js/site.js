@@ -1,43 +1,61 @@
 // Site management
 $(function () {
     earth.onDeleteButtonClick(function () {
-        var siteIds = [];
-        $('#processTbody > tr').each(function () {
+        var siteIds = "";
+        $('#siteTbody > tr').each(function () {
             if ($(this).find('.deleteCheckBox').prop('checked')) {
-                siteIds.push($(this).attr('siteId'));
+                siteIds+=$(this).attr('siteId') + ",";
             }
         });
         console.log(siteIds);
+        cSiteId = $("#searchColumns\\[0\\]").val();
         if (siteIds.length > 0) {
-            $.form(window.baseUrl + "/site/deleteList", {"listIds": siteIds}).submit();
+            $.form(window.baseUrl + "/site/deleteList", {"siteIds": siteIds, "searchColumns[0]":cSiteId}).submit();
         } else {
             earth.addMessage("E1014");
             return;
         }
+    },earth.Messages['site']);
+
+    $(".deleteCheckBox").click(function(){
+        checked();
     });
-$(".deleteCheckBox").click(function(){
-    checked();
-});
 
     $(".deleteAllCheckBox").click(function(){
         checked();
     });
+    
+
+    $('#addButton').click(function (e) { 
+        var $form = $("#siteSearchForm");
+        $form.attr("action", window.baseUrl + "/site/addNew");
+        $form.submit(); 
+       return  e.preventDefault ? e.preventDefault() : e.returnValue = false;
+    });
+
+    $('.editButton').click(function () { 
+    	var id = $(this).data('id');
+    	var $form = $("#siteSearchForm");
+    	$form.attr("action", window.baseUrl + "/site/showDetail?siteId=" + id);
+        $form.submit();
+        return  e.preventDefault ? e.preventDefault() : e.returnValue = false;
+    });
 
 });
 
+
 function checked () {
     var siteIds = "";
-    $('#userTbody > tr').each(function () {
+    $('#siteTbody > tr').each(function () {
         if ($(this).find('.deleteCheckBox').prop('checked')) {
-            console.log($(this).attr('siteId').toString());
-            siteIds += $(this).attr('siteId').toString() + ",";
+            siteIds += $(this).find('input').val() + ","
         }
     });
     console.log(siteIds);
     if (siteIds.length > 0) {
         siteIds = siteIds.substring(0, siteIds.length - 1);
     }
-    $("#siteIds").val(siteIds);
+    $("#directoryIds").val(siteIds);
     return;
 };
 
@@ -45,8 +63,9 @@ function checked () {
 function filter() {
     // Declare variables
     var siteIdInput, i;
-    siteIdInput = document.getElementById('siteIdInput').value
+    siteIdInput = document.getElementById('searchColumns[0]').value
             .toUpperCase();
+    $('#valueSearch').val(siteIdInput);
     // Loop through all list items, and hide those who don't match the search query
     for (i = 0; i < $("#sitesTable tr ").length - 2; i++) {
 
@@ -75,11 +94,14 @@ window.onload = function() {
     }
     $("input[name=ChooseRow]").on("click", countChecked);
 }
+
+
 function validate() {
     var str = $("#directoryIds").val();
 
     if (str.length > 0) {
         document.forms[0].submit();
+        $("siteSearchForm").submit();
     } else {
         $("#message").html("choose directory");
     }

@@ -36,7 +36,7 @@ $("#editDirectoryForm").on('keyup keypress', function(e) {
 }); 
 </script>
 <form action="${rc.getContextPath()}/directory/updateOne" id="editDirectoryForm"
-	object="directoryForm" method="post">
+	object="directoryForm" method="post" imageLink="process">
 	<input type="hidden" id="folderPath" name="workspaceId" value="0">
 	<table>
 		<tr>

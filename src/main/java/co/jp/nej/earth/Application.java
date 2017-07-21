@@ -1,3 +1,4 @@
 package co.jp.nej.earth;
 
-public interface Application {}
+public interface Application {
+}

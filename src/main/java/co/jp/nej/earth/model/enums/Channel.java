@@ -5,7 +5,7 @@ package co.jp.nej.earth.model.enums;
  * and read 5: Full
  */
 public enum Channel {
-    LOGIN(0), WEB_SERVICE(1);
+    INTERNAL(0), WEB_SERVICE(1);
     private int value;
 
     public int getValue() {

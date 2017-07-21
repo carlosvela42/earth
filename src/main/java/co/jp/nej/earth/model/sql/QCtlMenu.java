@@ -1,16 +1,14 @@
 package co.jp.nej.earth.model.sql;
 
+import co.jp.nej.earth.model.entity.CtlMenu;
+import co.jp.nej.earth.model.enums.ColumnNames;
+import co.jp.nej.earth.model.enums.TableNames;
 import com.querydsl.core.types.PathMetadataFactory;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
 
-import co.jp.nej.earth.model.entity.CtlMenu;
-import co.jp.nej.earth.model.enums.ColumnNames;
-import co.jp.nej.earth.model.enums.TableNames;
-
-public class QCtlMenu extends RelationalPathBase<CtlMenu> {
+public class QCtlMenu extends QBase<CtlMenu> {
 
     /**
      * @author p-tvo-thuynd
@@ -20,7 +18,7 @@ public class QCtlMenu extends RelationalPathBase<CtlMenu> {
     public final StringPath functionId = createString(ColumnNames.FUNCTION_ID.toString());
     public final StringPath userId = createString(ColumnNames.USER_ID.toString());
     public final NumberPath<Integer> accessAuthority = createNumber(ColumnNames.ACCESS_AUTHORITY.toString(),
-            Integer.class);
+        Integer.class);
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());
 
     public static QCtlMenu newInstance() {

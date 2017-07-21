@@ -1,16 +1,17 @@
 package co.jp.nej.earth.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.querydsl.core.types.OrderSpecifier;
-
 import co.jp.nej.earth.dao.StrLogAccessDao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.entity.StrLogAccess;
+import co.jp.nej.earth.model.sql.QStrLogAccess;
 import co.jp.nej.earth.util.ConversionUtil;
+import co.jp.nej.earth.web.form.SearchByColumnsForm;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class EvidentLogServiceImpl extends BaseService implements EvidentLogService {
@@ -23,6 +24,20 @@ public class EvidentLogServiceImpl extends BaseService implements EvidentLogServ
                                                    List<OrderSpecifier<?>> orderBys) throws EarthException {
         return ConversionUtil.castList(executeTransaction(workspaceId, () -> {
             return strLogAccessDao.findAll(workspaceId, offset, limit, orderBys, null);
+        }), StrLogAccess.class);
+    }
+
+    @Override
+    public List<StrLogAccess> getListByWorkspaceIdColumn(String workspaceId,SearchByColumnsForm searchByColumnsForm,
+                                                         List<OrderSpecifier<?>> orderBys) throws EarthException {
+        QStrLogAccess qStrLogAccess= QStrLogAccess.newInstance();
+        SearchColumn searchColumn = new SearchColumn();
+        BooleanBuilder condition =
+            searchColumn.searchColumns(qStrLogAccess, searchByColumnsForm.getValid(),
+                searchByColumnsForm.getSearchByColumnForms());
+        return ConversionUtil.castList(executeTransaction(workspaceId, () -> {
+            return strLogAccessDao.search(workspaceId,condition, searchByColumnsForm.getSkip(),
+                searchByColumnsForm.getLimit(),orderBys, null);
         }), StrLogAccess.class);
     }
 }

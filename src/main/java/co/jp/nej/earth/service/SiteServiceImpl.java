@@ -1,14 +1,14 @@
 package co.jp.nej.earth.service;
 
-import co.jp.nej.earth.dao.*;
-import co.jp.nej.earth.exception.*;
-import co.jp.nej.earth.model.*;
-import co.jp.nej.earth.model.constant.*;
-import co.jp.nej.earth.util.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import co.jp.nej.earth.dao.SiteDao;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.Site;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.util.ConversionUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 public class SiteServiceImpl extends BaseService implements SiteService {
@@ -47,9 +47,9 @@ public class SiteServiceImpl extends BaseService implements SiteService {
     @Override
     public boolean updateSite(String siteId, List<String> directoryIds, String workspaceId) throws EarthException {
         return (boolean) executeTransaction(workspaceId, () -> {
-             siteDao.deleteSite(siteId, workspaceId);
+            siteDao.deleteSite(siteId, workspaceId);
             siteDao.insertOne(siteId, directoryIds, workspaceId);
-             return true;
+            return true;
         });
     }
 

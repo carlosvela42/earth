@@ -1,12 +1,9 @@
 package co.jp.nej.earth.service;
 
 import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.ws.RestResponse;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public interface SystemConfigurationService {
     /**
@@ -24,5 +21,5 @@ public interface SystemConfigurationService {
      * @return
      * @throws EarthException
      */
-    RestResponse updateSystemConfig(String inputDate) throws EarthException;
+    boolean updateSystemConfig(String inputDate) throws EarthException;
 }

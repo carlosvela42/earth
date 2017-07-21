@@ -1,10 +1,9 @@
 package co.jp.nej.earth.service;
 
-import javax.servlet.http.HttpSession;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Layer;
-import co.jp.nej.earth.model.ws.RestResponse;
+
+import javax.servlet.http.HttpSession;
 
 public interface LayerService {
     /**
@@ -19,8 +18,8 @@ public interface LayerService {
      * @return
      * @throws EarthException
      */
-    RestResponse getLayer(HttpSession session, String workspaceId, String workitemId, Integer folderItemNo,
-            Integer documentNo, Integer layerNo) throws EarthException;
+    Layer getLayerSession(HttpSession session, String workspaceId, String workItemId, String folderItemNo,
+                          String documentNo, String layerNo) throws EarthException;
 
     /**
      * update layer data in session
@@ -30,10 +29,9 @@ public interface LayerService {
      * @param workItemId
      * @param folderItemNo
      * @param documentNo
-     * @param layerNo
      * @return
      * @throws EarthException
      */
-    RestResponse updateLayer(HttpSession session, String workspaceId, String workitemId, Integer folderItemNo,
-            Integer documentNo, Layer layer) throws EarthException;
+    boolean updateLayerSession(HttpSession session, String workspaceId, String workItemId, String folderItemNo,
+                               String documentNo, Layer layer) throws EarthException;
 }

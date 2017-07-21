@@ -7,7 +7,7 @@ public class LoginForm {
     @NotEmpty(message = "E0001,userId")
     private String userId;
 
-//    @NotEmpty(message = "E0001,password")
+    //@NotEmpty(message = "E0001,password")
     private String password;
 
     /**
@@ -18,8 +18,7 @@ public class LoginForm {
     }
 
     /**
-     * @param userId
-     *            the userId to set
+     * @param userId the userId to set
      */
     public void setUserId(String userId) {
         this.userId = userId;
@@ -33,8 +32,7 @@ public class LoginForm {
     }
 
     /**
-     * @param password
-     *            the password to set
+     * @param password the password to set
      */
     public void setPassword(String password) {
         this.password = password;

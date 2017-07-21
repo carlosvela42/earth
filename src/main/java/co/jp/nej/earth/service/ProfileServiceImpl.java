@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import co.jp.nej.earth.dao.MenuAuthorityDao;
 import co.jp.nej.earth.dao.ProfileDao;
+import co.jp.nej.earth.dao.StrCalDaoImpl;
 import co.jp.nej.earth.dao.TemplateAuthorityDao;
 import co.jp.nej.earth.dao.UserDao;
 import co.jp.nej.earth.dao.UserProfileDao;
@@ -31,6 +32,7 @@ import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.model.entity.MgrUserProfile;
+import co.jp.nej.earth.model.entity.StrCal;
 import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EMessageResource;
@@ -63,6 +65,9 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Autowired
     private WorkspaceDao workspaceDao;
+
+    @Autowired
+    private StrCalDaoImpl strCalDaoImpl;
 
     private static final Logger LOG = LoggerFactory.getLogger(ProfileServiceImpl.class);
 
@@ -121,20 +126,27 @@ public class ProfileServiceImpl implements ProfileService {
     public List<Message> validate(MgrProfile mgrProfile, boolean insert) {
         List<Message> listMessage = new ArrayList<>();
         try {
-
             if (insert) {
                 if (!EStringUtil.checkAlphabet(mgrProfile.getProfileId())) {
-                    Message message = new Message(Constant.MessageUser.USR_SPECIAL,
-                            eMessageResource.get(ErrorCode.E0007, new String[] { ScreenItem.PROFILE_ID }));
-                    listMessage.add(message);
-                    return listMessage;
+                    listMessage.add(new Message(ErrorCode.E0004,
+                            eMessageResource.get(ErrorCode.E0004, new String[] { ScreenItem.PROFILE_ID.toString() })));
                 }
-
                 if (isExist(mgrProfile.getProfileId())) {
-                    Message message = new Message(Constant.MessageUser.USR_EXIST, eMessageResource.get(ErrorCode.E0005,
+                    Message message = new Message(Constant.MessageUser.USR_EXIST, eMessageResource.get(ErrorCode.E0003,
                             new String[] { mgrProfile.getProfileId(), ScreenItem.PROFILE }));
                     listMessage.add(message);
-                    return listMessage;
+                }
+                if (mgrProfile.getProfileId().length() > Constant.Regexp.MAX_LENGTH) {
+                    listMessage.add(new Message(ErrorCode.E0026, eMessageResource.get(ErrorCode.E0026, new String[] {
+                            ScreenItem.PROFILE_ID.toString(), String.valueOf(Constant.Regexp.MAX_LENGTH) })));
+                }
+                if (mgrProfile.getDescription().length() > Constant.Regexp.MAX_LENGTH) {
+                    listMessage.add(new Message(ErrorCode.E0026, eMessageResource.get(ErrorCode.E0026, new String[] {
+                            ScreenItem.PROFILE_DESCRIPTION.toString(), String.valueOf(Constant.Regexp.MAX_LENGTH) })));
+                }
+                if (mgrProfile.getDescription().length() < Constant.Regexp.MIN_LENGTH) {
+                    listMessage.add(new Message(ErrorCode.E0031, eMessageResource.get(ErrorCode.E0031, new String[] {
+                            ScreenItem.PROFILE_DESCRIPTION.toString(), String.valueOf(Constant.Regexp.MIN_LENGTH) })));
                 }
             }
 
@@ -157,7 +169,7 @@ public class ProfileServiceImpl implements ProfileService {
 
             profileDao.insertOne(mgrProfile);
             boolean assignUser = true;
-            if (userIds.size() > 0) {
+            if (userIds.size() > 0 && !userIds.contains("")) {
                 assignUser = profileDao.assignUsers(mgrProfile.getProfileId(), userIds) == userIds.size();
             }
             if (!assignUser) {
@@ -188,8 +200,11 @@ public class ProfileServiceImpl implements ProfileService {
             List<String> profileIds = new ArrayList<>();
             profileIds.add(mgrProfile.getProfileId());
             userProfileDao.deleteListByProfileIds(profileIds);
-
-            if (profileDao.assignUsers(mgrProfile.getProfileId(), userIds) != userIds.size()) {
+            long size = userIds.size();
+            if (userIds.contains("")) {
+                size = 0L;
+            }
+            if (profileDao.assignUsers(mgrProfile.getProfileId(), userIds) != size) {
                 throw new EarthException("Assign User to Profile fail");
             }
 
@@ -292,57 +307,48 @@ public class ProfileServiceImpl implements ProfileService {
         TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
         transactionManagers.add(transactionManager);
         try {
-            long usersProfile = userProfileDao.getListByProfileIds(profileIds).size();
+            List<MgrUserProfile> mgrUserProfileDeletes = userProfileDao.getListByProfileIds(profileIds);
+            long usersProfile = mgrUserProfileDeletes.size();
             if (userProfileDao.deleteListByProfileIds(profileIds) != usersProfile) {
                 throw new EarthException("UnAssign Users for Profile fail");
             }
-
+            List<StrCal> qStrCal = strCalDaoImpl.getListByProfileIds(profileIds);
+            long strCalProfile = qStrCal.size();
+            if (strCalDaoImpl.deleteListByProfileIds(profileIds) != strCalProfile) {
+                throw new EarthException("UnAssign strCal for Profile fail");
+            }
             List<MgrMenu> mgrMenus = menuService.getMenuByProfileId(profileIds);
-
-            // Insert mix authority for menu.
-            for (MgrMenu mgrMenu : mgrMenus) {
-
-                menuAuthorityDao.deleteAllMixAuthority(new ArrayList<>(Arrays.asList(mgrMenu.getFunctionId())));
-
-                List<UserAccessRight> userAccessRights = menuAuthorityDao.getUserAuthority(mgrMenu.getFunctionId());
-
-                if (userAccessRights != null && userAccessRights.size() > 0) {
-                    if (menuAuthorityDao.insertMixAuthority(mgrMenu.getFunctionId(),
-                            userAccessRights) != userAccessRights.size()) {
-                        throw new EarthException("Insert Mix Menu fail");
-                    }
-                }
+            if (profileDao.deleteList(profileIds) != profileIds.size()) {
+                throw new EarthException("Delete profile fail");
             }
             if (menuAuthorityDao.deleteListByProfileIds(profileIds) != mgrMenus.size()) {
                 throw new EarthException("Delete Authority Menu of Profile fail");
             }
+            // Insert mix authority for menus.
+            insertMenusMixAuthority(mgrMenus);
 
-            // Insert mix authority for template.
+            // Insert mix authority for templates.
             List<MgrWorkspace> mgrWorkspaces = workspaceDao.getAll();
-            for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
-                transactionManager = new TransactionManager(mgrWorkspace.getWorkspaceId());
-                transactionManagers.add(transactionManager);
-                for (String profileId : profileIds) {
-                    List<TemplateKey> templateKeys = templateAuthorityDao
-                            .getTemplateKeysByProfile(mgrWorkspace.getWorkspaceId(), profileId);
-                    for (TemplateKey templateKey : templateKeys) {
-                        templateAuthorityDao.deleteAllMixAuthority(templateKey);
+            if (mgrWorkspaces != null && mgrWorkspaces.size() > 0) {
 
-                        List<UserAccessRight> userAccessRights = templateAuthorityDao.getUserAuthority(templateKey);
-                        if (userAccessRights != null && userAccessRights.size() > 0) {
-                            if (templateAuthorityDao.insertMixAuthority(templateKey,
-                                    userAccessRights) != userAccessRights.size()) {
-                                throw new EarthException("Insert Mix template " + templateKey.getTemplateId()
-                                        + " in workspace " + templateKey.getTemplateId());
-                            }
+                for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
+                    transactionManagers.add(new TransactionManager(mgrWorkspace.getWorkspaceId()));
+                    for (String profileId : profileIds) {
+                        List<TemplateKey> templateKeys = templateAuthorityDao
+                                .getTemplateKeysByProfile(mgrWorkspace.getWorkspaceId(), profileId);
+                        templateAuthorityDao.deleteListByProfileIds(mgrWorkspace.getWorkspaceId(),
+                                new ArrayList<>(Arrays.asList(profileId)));
+                        List<String> profileIdsTemplate = new ArrayList<>();
+                        for (TemplateKey templateKey : templateKeys) {
+                            profileIdsTemplate = templateAuthorityDao.getProfiles(templateKey);
+                        }
+                        List<MgrUserProfile> mgrUserProfiles = userProfileDao.getListByProfileIds(profileIdsTemplate);
+                        if (templateKeys != null && templateKeys.size() > 0 && mgrUserProfiles != null
+                                && mgrUserProfiles.size() > 0) {
+                            insertTemplatesMixAuthority(templateKeys, mgrUserProfiles);
                         }
                     }
-                    templateAuthorityDao.deleteListByProfileIds(mgrWorkspace.getWorkspaceId(),
-                            new ArrayList<>(Arrays.asList(profileId)));
                 }
-            }
-            if (profileDao.deleteList(profileIds) != profileIds.size()) {
-                throw new EarthException("Delete profile fail");
             }
 
         } catch (Exception ex) {

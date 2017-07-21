@@ -1,21 +1,18 @@
 package co.jp.nej.earth.model.xml;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.w3c.dom.Element;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.namespace.QName;
-
-import org.w3c.dom.Element;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public class MapAdapter extends XmlAdapter<MapWrapper, Map<String, Object>> {
 

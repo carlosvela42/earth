@@ -31,7 +31,7 @@ public class RequestLoggingFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession();
-        String loginURI = request.getContextPath() + "/login";
+        String loginURI = request.getContextPath() + "/login";// imageDisplay login
         String requestUri = request.getRequestURI();
 
         if (LoginUtil.isLogin(session) || requestUri.equals(loginURI) || requestUri.contains("/resources/")
@@ -39,7 +39,7 @@ public class RequestLoggingFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             String lastRequestView = StringUtils.removeStart(request.getRequestURI(), request.getContextPath() + "/");
-            if(!EStringUtil.isEmpty(request.getQueryString())){
+            if (!EStringUtil.isEmpty(request.getQueryString())) {
                 lastRequestView = lastRequestView + "?" + request.getQueryString();
             }
             if (!EStringUtil.isEmpty(lastRequestView)) {

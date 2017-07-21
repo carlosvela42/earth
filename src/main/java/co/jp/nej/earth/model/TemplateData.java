@@ -1,11 +1,10 @@
 package co.jp.nej.earth.model;
 
-import java.util.Map;
+import co.jp.nej.earth.model.xml.MapAdapter;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import co.jp.nej.earth.model.xml.MapAdapter;
+import java.util.Map;
 
 public class TemplateData {
     private Integer historyNo;
@@ -48,8 +47,7 @@ public class TemplateData {
     }
 
     /**
-     * @param historyNo
-     *            the historyNo to set
+     * @param historyNo the historyNo to set
      */
     public void setHistoryNo(Integer historyNo) {
         this.historyNo = historyNo;
@@ -63,8 +61,7 @@ public class TemplateData {
     }
 
     /**
-     * @param lastUpdateTime
-     *            the lastUpdateTime to set
+     * @param lastUpdateTime the lastUpdateTime to set
      */
     public void setLastUpdateTime(String lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
@@ -78,13 +75,11 @@ public class TemplateData {
     }
 
     /**
-     * @param dataMap
-     *            the dataMap to set
+     * @param dataMap the dataMap to set
      */
     @XmlElement
     @XmlJavaTypeAdapter(MapAdapter.class)
     public void setDataMap(Map<String, Object> dataMap) {
         this.dataMap = dataMap;
     }
-
 }

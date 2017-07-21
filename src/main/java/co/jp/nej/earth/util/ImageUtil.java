@@ -1,28 +1,28 @@
 package co.jp.nej.earth.util;
 
-import java.awt.Color;
-import java.awt.Image;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
 public class ImageUtil {
     public static final String JPG_TYPE = "jpg";
     public static final String PNG_TYPE = "png";
+    public static final int WIDTH_DEFAULT = 500;
+    public static final int HEIGHT_DEFAULT = 500;
 
-    public static byte[] getThumbnail(byte[] imageData, int width, int height, String outPutType) {
+    public static byte[] getThumbnail(byte[] imageData, Integer width, Integer height, String outPutType) {
         ByteArrayInputStream in = new ByteArrayInputStream(imageData);
         try {
             BufferedImage img = ImageIO.read(in);
-            if (height == 0) {
-                height = (width * img.getHeight()) / img.getWidth();
+            if (height == null || height.intValue() == 0) {
+                height = HEIGHT_DEFAULT;
             }
 
-            if (width == 0) {
-                width = (height * img.getWidth()) / img.getHeight();
+            if (width == null || width.intValue() == 0) {
+                width = WIDTH_DEFAULT;
             }
 
             Image scaledImage = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);

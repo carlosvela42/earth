@@ -1,15 +1,14 @@
 package co.jp.nej.earth;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
+import co.jp.nej.earth.config.AppConfig;
+import co.jp.nej.earth.config.JdbcConfig;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.manager.connection.ConnectionManager;
+import co.jp.nej.earth.model.DBunitModel;
+import co.jp.nej.earth.model.MgrWorkspaceConnect;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.enums.DatabaseType;
+import co.jp.nej.earth.service.WorkspaceService;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
@@ -24,15 +23,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import co.jp.nej.earth.config.AppConfig;
-import co.jp.nej.earth.config.JdbcConfig;
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.manager.connection.ConnectionManager;
-import co.jp.nej.earth.model.DBunitModel;
-import co.jp.nej.earth.model.MgrWorkspaceConnect;
-import co.jp.nej.earth.model.constant.Constant;
-import co.jp.nej.earth.model.enums.DatabaseType;
-import co.jp.nej.earth.service.WorkspaceService;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -130,7 +128,7 @@ public class BaseTest {
         MgrWorkspaceConnect mgrWorkspaceConnect = wkService.getMgrConnectionByWorkspaceId(workspaceId);
         if (mgrWorkspaceConnect == null) {
             throw new EarthException(
-                    messageSource.getMessage("connection.notfound", new String[] { "workspaceId" }, Locale.ENGLISH));
+                    messageSource.getMessage("connection.notfound", new String[]{"workspaceId"}, Locale.ENGLISH));
         } else {
             dataSource = config.dataSource(mgrWorkspaceConnect.getWorkspaceId(), mgrWorkspaceConnect);
         }

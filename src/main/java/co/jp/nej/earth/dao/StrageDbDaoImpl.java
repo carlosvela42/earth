@@ -1,13 +1,10 @@
 package co.jp.nej.earth.dao;
 
+import co.jp.nej.earth.model.StrageDb;
 import org.springframework.stereotype.Repository;
 
-import co.jp.nej.earth.model.StrageDb;
-
 /**
- *
  * @author p-tvo-sonta
- *
  */
 @Repository
 public class StrageDbDaoImpl extends BaseDaoImpl<StrageDb> implements StrageDbDao {

@@ -1,60 +1,44 @@
 package co.jp.nej.earth.model.form;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.MgrSchedule;
-import co.jp.nej.earth.model.constant.Constant;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.MgrSchedule;
 
 public class ScheduleForm extends BaseModel<MgrSchedule> {
 
-    @NotEmpty(message = "E0001,scheduleId")
+    @NotEmpty(message = "E0001,schedule.id")
     private String scheduleId;
 
-    @NotEmpty(message = "E0001,hostName")
+    @NotEmpty(message = "E0001,schedule.hostname")
     private String hostName;
 
-    @NotEmpty(message = "E0001,processId")
-    @Pattern(regexp = Constant.Regexp.STRING_NUMBER, message = "E0017,processId")
-    @Min(value = 1, message = "E0017,processId")
     private String processId;
 
-    @NotEmpty(message = "E0001,taskId")
-    @Pattern(regexp = Constant.Regexp.STRING_NUMBER, message = "E0017,taskId")
-    @Min(value = 1, message = "E0017,processId")
+    @NotEmpty(message = "E0001,task.name")
     private String taskId;
 
-    @NotEmpty(message = "E0001,processIServiceId")
-    @Pattern(regexp = Constant.Regexp.STRING_NUMBER, message = "E0017,processIServiceId")
-    @Min(value = 1, message = "E0017,processId")
+    @NotEmpty(message = "E0001,process.service")
     private String processIServiceId;
 
-    @NotEmpty(message = "E0001,startTime")
-    @Pattern(regexp = Constant.Regexp.DATETIME_VALIDATION, message = "E0017,startTime")
+    @NotEmpty(message = "E0001,schedule.startDateTime")
     private String startTime;
 
-    @NotEmpty(message = "E0001,endTime")
-    @Pattern(regexp = Constant.Regexp.DATETIME_VALIDATION, message = "E0017,endTime")
+    @NotEmpty(message = "E0001,schedule.endDateTime")
     private String endTime;
 
     private String enableDisable;
 
-    @NotEmpty(message = "E0001,runIntervalDay")
-    @Pattern(regexp = Constant.Regexp.STRING_NUMBER, message = "E0017,runIntervalSecond")
+    @NotEmpty(message = "E0001,schedule.day")
     private String runIntervalDay;
 
-    @NotEmpty(message = "E0001,runIntervalHour")
-    @Pattern(regexp = Constant.Regexp.STRING_NUMBER, message = "E0017,runIntervalSecond")
+    @NotEmpty(message = "E0001,schedule.hour")
     private String runIntervalHour;
 
-    @NotEmpty(message = "E0001,runIntervalMinute")
-    @Pattern(regexp = Constant.Regexp.STRING_NUMBER, message = "E0017,runIntervalMinute")
+    @NotEmpty(message = "E0001,schedule.minute")
     private String runIntervalMinute;
 
-    @NotEmpty(message = "E0001,runIntervalSecond")
-    @Pattern(regexp = Constant.Regexp.STRING_NUMBER, message = "E0017,runIntervalSecond")
+    @NotEmpty(message = "E0001,schedule.second")
     private String runIntervalSecond;
 //    public ScheduleForm(MgrSchedule mgrSchedule){
 //        super();

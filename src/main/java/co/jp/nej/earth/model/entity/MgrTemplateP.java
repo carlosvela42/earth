@@ -1,12 +1,11 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrTemplateP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QMgrTemplateP;
+import java.io.Serializable;
 
 public class MgrTemplateP extends BaseModel<MgrTemplateP> implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(MgrTemplateP.class);

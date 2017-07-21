@@ -3,9 +3,7 @@ package co.jp.nej.earth.model.form;
 import java.util.List;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public class DeleteProcessForm {
     private List<Integer> processIds;
@@ -20,8 +18,7 @@ public class DeleteProcessForm {
     }
 
     /**
-     * @param processIds
-     *            the processIds to set
+     * @param processIds the processIds to set
      */
     public void setProcessIds(List<Integer> processIds) {
         this.processIds = processIds;
@@ -35,8 +32,7 @@ public class DeleteProcessForm {
     }
 
     /**
-     * @param confirmDelete
-     *            the confirmDelete to set
+     * @param confirmDelete the confirmDelete to set
      */
     public void setConfirmDelete(boolean confirmDelete) {
         this.confirmDelete = confirmDelete;
@@ -50,8 +46,7 @@ public class DeleteProcessForm {
     }
 
     /**
-     * @param workspaceId
-     *            the workspaceId to set
+     * @param workspaceId the workspaceId to set
      */
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;

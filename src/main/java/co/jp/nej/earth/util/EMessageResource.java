@@ -16,8 +16,16 @@ public class EMessageResource {
         return messageSource.getMessage(errorCode, new Object[]{}, Locale.JAPAN);
     }
 
-    public String get(String errorCode, Object[] args) {
-        return messageSource.getMessage(errorCode, args, Locale.JAPAN);
-    }
+    public String get(String errorCode, String[] args) {
+        if (args == null) {
+            return messageSource.getMessage(errorCode, null, Locale.JAPAN);
+        }
 
+        String[] params = new String[args.length];
+        for (int i = 0; i < params.length; i++) {
+            params[i] = messageSource.getMessage(args[i], new String[]{}, Locale.JAPAN);
+        }
+
+        return messageSource.getMessage(errorCode, params, Locale.JAPAN);
+    }
 }

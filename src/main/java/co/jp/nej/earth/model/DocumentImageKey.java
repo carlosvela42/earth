@@ -22,8 +22,7 @@ public class DocumentImageKey {
     }
 
     /**
-     * @param workitemId
-     *            the workitemId to set
+     * @param workitemId the workitemId to set
      */
     public void setWorkitemId(String workitemId) {
         this.workitemId = workitemId;
@@ -37,8 +36,7 @@ public class DocumentImageKey {
     }
 
     /**
-     * @param folderItemNo
-     *            the folderItemNo to set
+     * @param folderItemNo the folderItemNo to set
      */
     public void setFolderItemNo(Integer folderItemNo) {
         this.folderItemNo = folderItemNo;
@@ -52,8 +50,7 @@ public class DocumentImageKey {
     }
 
     /**
-     * @param documentNo
-     *            the documentNo to set
+     * @param documentNo the documentNo to set
      */
     public void setDocumentNo(Integer documentNo) {
         this.documentNo = documentNo;
@@ -113,6 +110,8 @@ public class DocumentImageKey {
             return false;
         }
         return true;
-    };
+    }
+
+    ;
 
 }

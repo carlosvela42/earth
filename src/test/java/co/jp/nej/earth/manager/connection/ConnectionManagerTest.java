@@ -1,4 +1,3 @@
-
 package co.jp.nej.earth.manager.connection;
 
 import co.jp.nej.earth.BaseTest;

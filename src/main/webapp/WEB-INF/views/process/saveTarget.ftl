@@ -2,18 +2,18 @@
 
 <div class="tab_head">
     <table class="table_form">
-        <td width="40%">Document data save path</td>
+        <td width="40%">${e.get('process.DocumentPath')}</td>
         <td>
             <div class="row">
                 <div class="col-md-6">
                     <input type="radio" name="process.documentDataSavePath" class="documentDataSavePath"
                            value="database" ${(isDatabase)?string('checked', '')}
-                           >Database
+                           >${e.get('process.Database')}
                 </div>
                 <div class="col-md-6">
                     <input type="radio" name="process.documentDataSavePath" class="documentDataSavePath"
                            value="file" ${(isDatabase)?string('', 'checked')}
-                    >file
+                    >${e.get('process.File')}
                 </div>
             </div>
         </td>
@@ -24,23 +24,23 @@
     <div id="databaseArea" style="display: ${(isDatabase)?string('block', 'none')}">
         <table class="table_form">
             <tr>
-                <td width="40%">Schema name</td>
+                <td width="40%">${e.get('process.SchemaName')}</td>
                 <td><input type="text" name="strageDb.schemaName" value="${(strageDb.schemaName!"")}"/></td>
             </tr>
             <tr>
-                <td>DB user</td>
+                <td>${e.get('process.DBuser')}</td>
                 <td><input type="text" name="strageDb.dbUser" value="${strageDb.dbUser!""}"/></td>
             </tr>
             <tr>
-                <td>DB passsword</td>
+                <td>${e.get('process.DBpasssword')}</td>
                 <td><input type="text" name="strageDb.dbPassword" value="${strageDb.dbPassword!""}"/></td>
             </tr>
             <tr>
-                <td>Owner</td>
+                <td>${e.get('process.Owner')}</td>
                 <td><input type="text" name="strageDb.owner" value="${strageDb.owner!""}"/></td>
             </tr>
             <tr>
-                <td>DB server</td>
+                <td>${e.get('process.DBserver')}</td>
                 <td><input type="text" name="strageDb.dbServer" value="${strageDb.dbServer!""}"/></td>
             </tr>
         </table>
@@ -49,7 +49,7 @@
     <div id="fileArea" style="display: ${(isDatabase)?string('none', 'block')}">
         <table class="table_form">
             <tr>
-                <td width="40%">Site ID</td>
+                <td width="40%">${e.get('process.SiteID')}</td>
                 <td>
                     <select id="siteId" name="strageFile.siteId">
                     <#if siteIds??>
@@ -65,7 +65,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Site management method</td>
+                <td>${e.get('process.SiteManagement')}</td>
                 <td>
                 <#if strageFile.siteManagementType?? && "fileUtilFull" == strageFile.siteManagementType>
                     <input type="radio" name="strageFile.siteManagementType" class="siteManagementMethod"

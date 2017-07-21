@@ -1,9 +1,9 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QCtlMenu;
+
+import java.io.Serializable;
 
 public class CtlMenu extends BaseModel<CtlMenu> implements Serializable {
     /**
@@ -14,15 +14,15 @@ public class CtlMenu extends BaseModel<CtlMenu> implements Serializable {
     private String userId;
     private int accessAuthority;
 
-    public CtlMenu(){
+    public CtlMenu() {
         this.setqObj(QCtlMenu.newInstance());
     }
 
-    public CtlMenu(String functionId,String userId,int accessAuthority){
+    public CtlMenu(String functionId, String userId, int accessAuthority) {
         this();
-        this.functionId=functionId;
-        this.userId=userId;
-        this.accessAuthority=accessAuthority;
+        this.functionId = functionId;
+        this.userId = userId;
+        this.accessAuthority = accessAuthority;
     }
 
     public String getFunctionId() {

@@ -1,14 +1,11 @@
 package co.jp.nej.earth.model;
 
+import co.jp.nej.earth.model.sql.QSite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.sql.QSite;
-
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public class Site extends BaseModel<Site> {
     /**
@@ -32,6 +29,7 @@ public class Site extends BaseModel<Site> {
         this.siteId = siteId;
         this.dataDirectoryId = dataDirectoryId;
     }
+
     /**
      * @return the siteId
      */
@@ -40,8 +38,7 @@ public class Site extends BaseModel<Site> {
     }
 
     /**
-     * @param siteId
-     *            the siteId to set
+     * @param siteId the siteId to set
      */
     public void setSiteId(Integer siteId) {
         this.siteId = siteId;
@@ -55,8 +52,7 @@ public class Site extends BaseModel<Site> {
     }
 
     /**
-     * @param dataDirectoryId
-     *            the dataDirectoryId to set
+     * @param dataDirectoryId the dataDirectoryId to set
      */
     public void setDataDirectoryId(Integer dataDirectoryId) {
         this.dataDirectoryId = dataDirectoryId;

@@ -1,7 +1,7 @@
 SVG.Element.prototype.draw.extend('text', {
 	init:function(e){
 		var p = this.startPoint;
-		this.el.attr({ x: p.x, y: p.y+45});
+		this.el.attr({ x: p.x, y: p.y});
 	},
 	calc:function (e) {
 		var text = {

@@ -1,82 +1,95 @@
-<@standard.standardPage title="Home">
-<form class="form-narrow form-horizontal" method="get" action="${rc.getContextPath()}/index">
-    <div>
-        <p align="center" style="font-size: large;">EARTH</p>
+<#ftl encoding='UTF-8'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <title>Earth</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" media="screen"
+          href="${rc.getContextPath()}/resources/css/bootstrap.min.css" />
+    <link rel="stylesheet" media="screen"
+          href="${rc.getContextPath()}/resources/css/style.css" />
+    <link rel="stylesheet" media="screen"
+          href="${rc.getContextPath()}/resources/css/sass_compiled/components.css" />
+    <link rel="stylesheet" media="screen"
+          href="${rc.getContextPath()}/resources/css/style_nev.css" />
+    <link rel="shortcut icon" href="${rc.getContextPath()}/resources/images/favicon.ico" type="image/x-icon">
+    <script>window.baseUrl = "${rc.getContextPath()}"</script>
+    <script src="${rc.getContextPath()}/resources/js/libs/jquery-2.2.4.min.js"></script>
+    <script src="${rc.getContextPath()}/resources/js/lib/bootstrap.min.js"></script>
+    <script src="${rc.getContextPath()}/resources/js/lib/jquery.query-object.js"></script>
+    <script src="${rc.getContextPath()}/resources/js/lib/handlebars-v4.0.10.js"></script>
+    <script src="${rc.getContextPath()}/resources/js/common.js"></script>
+    <script>${h.getMessageSourceJS()}</script>
+</head>
+
+<body id="mainIndex">
+<header id="header" role="banner">
+    <div class="inner">
+        <#include "/common/navigation.ftl">
+        <h1>
+            <img src="${rc.getContextPath()}/resources/images/global/logo.png"
+                 alt="xStra SERIES" width="184" height="30"/>
+        </h1>
+
+        <div class="info">
+            <div class="name">
+            <#--<figure><img src="${rc.getContextPath()}/resources/images/global/header_icon.png" alt="header_icon"-->
+            <#--width="44"-->
+            <#--height="44" /></figure>-->
+                <p>
+                    <#if Session.userInfo??>
+                        <#assign userInfo =Session.userInfo>
+                        <label>${userInfo.userId} | ${userInfo.userName}</label>
+                    </#if>
+                </p>
+            </div><!-- .name -->
+            <div class="logout">
+                <a href="${rc.getContextPath()}/logout">
+                    <img src="${rc.getContextPath()}/resources/images/global/btn_logout.png"
+                         alt="LOGOUT" width="130" height="30" />
+                </a>
+            </div>
+        </div><!-- .info -->
+
+    </div><!-- .inner -->
+
+</header><!-- #header -->
+
+<div id="content">
+    <div class="content_main">
+        <#--<#nested/>-->
+        <MAP name="19">
+            <AREA shape="rect" coords="53,97,77,121" href="19_1.html">
+        </MAP>
+            <div class="board-wrapper board-full" style="height: 800px;">
+                <table style="margin: 20px">
+                    <tr>
+                        <td><b style="font-weight: bold">システム情報</b></td>
+                    </tr>
+                    <tr>
+                        <td>_________________________________________</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px 0px 8px 0px;">システム情報表示 システム情報表示 1234567890    </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0px;">システム情報表示 1234567890</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0px;">システム情報表示 システ</td>
+                    </tr>
+                </table>
+            </div>
     </div>
+</div><!-- #content -->
 
-    <ul id="ul-System-managed" class="nav nav-second-level">
-        <h3>LONGLT</h3>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/workspace/">WorkSpace<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/template/dataMenu">Template<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/site/">Site<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/directory/">Directory<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/workItem/">WorkItem<span
-                    class="fa arrow"></span></a>
-        </li>
-        <h3>TUNGNT</h3>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/imageviewer">Image Viewer New<span
-                    class="fa arrow"></span></a>
-        </li>
-        <h3>MINHTV</h3>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/user">User<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/profile">Profile<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/evidentLog/">Evident Log<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/loginView">Login Status<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/menuAccessRight/menuList">Menu List<span
-                    class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/schedule">Schedule List<span
-                    class="fa arrow"></span></a>
-        </li>
+<#include "/common/footer.ftl">
 
-        <h3>ThuyND Test</h3>
 
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/templateAccessRight/">Initialize
-                Template List Screen<span
-                        class="fa arrow"></span></a>
-        </li>
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/licenseHistory/">License
-                History<span
-                        class="fa arrow"></span></a>
-        </li>
-        <h3>SONTA Test</h3>
-
-        <li>
-            <a id="a-system-managed-TCKT" href="${rc.getContextPath()}/process">ProcessList<span
-                    class="fa arrow"></span></a>
-        </li>
-    </ul>
-    </div>
-    </div>
-</form>
-</@standard.standardPage>
+<div class="info" style="display: none">
+    <input id="data_baseUrl" type="text" value="${rc.getContextPath()}" />
+</div>
+</body>
+</html>

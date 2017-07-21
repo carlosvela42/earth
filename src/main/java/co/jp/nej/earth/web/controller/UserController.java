@@ -2,6 +2,7 @@ package co.jp.nej.earth.web.controller;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
+import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.entity.MgrProfile;
 import co.jp.nej.earth.model.entity.MgrUser;
@@ -10,7 +11,10 @@ import co.jp.nej.earth.model.form.UserForm;
 import co.jp.nej.earth.service.ProfileService;
 import co.jp.nej.earth.service.UserService;
 import co.jp.nej.earth.util.ConversionUtil;
+import co.jp.nej.earth.util.SessionUtil;
 import co.jp.nej.earth.util.ValidatorUtil;
+import co.jp.nej.earth.web.form.ClientSearchForm;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +44,19 @@ public class UserController extends BaseController {
 
     private static final String URL = "user";
 
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
-    public String showList(Model model) {
+    @RequestMapping(value = {"", "/"}, method = {RequestMethod.GET, RequestMethod.POST})
+    public String showList(Model model, HttpServletRequest request) {
         try {
             List<MgrUser> mgrUsers = userService.getAll();
+            HttpSession session = request.getSession();
+            SessionUtil.clearAllOtherSearchCondition(session, Constant.ScreenKey.USER);
+            ClientSearchForm searchForm = (ClientSearchForm) SessionUtil.getSearchCondtionValue(session,
+                Constant.ScreenKey.USER);
+
+            if(searchForm == null) {
+                searchForm = new ClientSearchForm();
+            }
+            model.addAttribute("searchForm", searchForm);
             model.addAttribute("mgrUsers", mgrUsers);
             return "user/userList";
         } catch (EarthException ex) {
@@ -49,8 +64,9 @@ public class UserController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/addNew", method = RequestMethod.GET)
-    public String addNew(Model model) {
+    @RequestMapping(value = "/addNew", method = {RequestMethod.GET, RequestMethod.POST})
+    public String addNew(Model model, ClientSearchForm searchForm, HttpServletRequest request) throws EarthException{
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.USER, searchForm);
         model.addAttribute("user", new MgrUser());
         return "user/addUser";
     }
@@ -85,9 +101,10 @@ public class UserController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
-    public String showDetail(Model model, String userId) {
+    @RequestMapping(value = "/showDetail", method = {RequestMethod.GET, RequestMethod.POST})
+    public String showDetail(Model model, String userId, ClientSearchForm searchForm, HttpServletRequest request) {
         try {
+            SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.USER, searchForm);
             Map<String, Object> userDetail = userService.getDetail(userId);
             MgrUser mgrUser = (MgrUser) userDetail.get("mgrUser");
             List<MgrProfile> mgrProfiles = ConversionUtil.castList(userDetail.get("mgrProfiles"), MgrProfile.class);
@@ -100,8 +117,9 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public String deleteList(DeleteListForm form) {
+    public String deleteList(DeleteListForm form, ClientSearchForm searchForm, HttpServletRequest request) {
         try {
+            SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.USER, searchForm);
             List<String> userIds = form.getListIds();
             userService.deleteList(userIds);
             return redirectToList(URL);
@@ -133,7 +151,6 @@ public class UserController extends BaseController {
             }
         }
     }
-
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
     public String cancel() {

@@ -1,19 +1,21 @@
+-- Updated by データベース設計書_V0.92.xls
+
 CREATE TABLE "##"."STR_CAL" 
-   ("PROCESSTIME" nchar(50) NOT NULL,
+   ("PROCESSTIME" nvarchar2(17),
     "DIVISION" nvarchar2(20), 
-    "PROFILEID" nvarchar2(255) NOT NULL,
+    "PROFILEID" nvarchar2(255),
     "AVAILABLELICENSECOUNT" int, 
     "USELICENSECOUNT" int, 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (PROCESSTIME,PROFILEID)
    );
    
    CREATE TABLE "##"."CTL_LOGIN" 
    ("SESSIONID" nvarchar2(255) NOT NULL,
     "USERID" nvarchar2(255) NOT NULL, 
-    "LOGINTIME" nchar(50),
-    "LOGOUTTIME" nchar(50), 
-    "LASTUPDATETIME" nchar(50),
+    "LOGINTIME" nvarchar2(17),
+    "LOGOUTTIME" nvarchar2(17), 
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (SESSIONID)
    );
    
@@ -21,7 +23,7 @@ CREATE TABLE "##"."STR_CAL"
    ("FUNCTIONID" nvarchar2(255) NOT NULL,
     "USERID" nvarchar2(255) NOT NULL, 
     "ACCESSAUTHORITY" int,
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (FUNCTIONID,USERID)
    );
    
@@ -29,7 +31,7 @@ CREATE TABLE "##"."STR_CAL"
    ("FUNCTIONID" nvarchar2(255) NOT NULL,
     "PROFILEID" nvarchar2(255) NOT NULL, 
     "ACCESSAUTHORITY" int,
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (FUNCTIONID,PROFILEID)
    );
    
@@ -37,14 +39,14 @@ CREATE TABLE "##"."STR_CAL"
    ("FUNCTIONID" nvarchar2(255) NOT NULL,
     "USERID" nvarchar2(255) NOT NULL, 
     "ACCESSAUTHORITY" int,
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (FUNCTIONID,USERID)
    );
    
     CREATE TABLE "##"."MGR_SITE" 
    ("SITEID" int NOT NULL,
     "DATADIRECTORYID" int NOT NULL, 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (SITEID,DATADIRECTORYID)
    );
    
@@ -54,26 +56,26 @@ CREATE TABLE "##"."STR_CAL"
     "NEWCREATEFILE" nchar(1),
     "RESERVEDDISKVOLSIZE" nvarchar2(255),
     "DISKVOLSIZE" nvarchar2(255),
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (DATADIRECTORYID)
    );
    
    CREATE TABLE "##"."MGR_WORKSPACE" 
    ("WORKSPACEID" int NOT NULL,
     "WORKSPACENAME" nvarchar2(255), 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (WORKSPACEID)
    );
    
     CREATE TABLE "##"."MGR_WORKSPACE_CONNECT" 
    ("WORKSPACEID" int NOT NULL,
+    "DBSERVER" nvarchar2(255),
     "SCHEMANAME" nvarchar2(255), 
     "PORT" int,
     "DBUSER" nvarchar2(255),
     "DBPASSWORD" nvarchar2(515),
     "OWNER" nvarchar2(255),
-    "DBSERVER" nvarchar2(255),
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
      PRIMARY KEY (WORKSPACEID)
    );
    
@@ -81,24 +83,24 @@ CREATE TABLE "##"."STR_CAL"
    ("USERID" NVARCHAR2(255) NOT NULL, 
     "NAME" NVARCHAR2(255), 
     "PASSWORD" NVARCHAR2(515), 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
     PRIMARY KEY (USERID)
-   ) 
+   ); 
    
    CREATE TABLE "##"."MGR_PROFILE" 
    ("PROFILEID" NVARCHAR2(255) NOT NULL, 
     "DESCRIPTION" NVARCHAR2(255), 
     "LDAPIDENTIFIER" NVARCHAR2(2048), 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
     PRIMARY KEY (PROFILEID)
-   ) 
+   ); 
    
    CREATE TABLE "##"."MGR_USER_PROFILE" 
    ("PROFILEID" NVARCHAR2(255) NOT NULL, 
     "USERID" NVARCHAR2(255) NOT NULL, 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
     PRIMARY KEY (PROFILEID,USERID)
-   )
+   );
    
    CREATE TABLE "##"."MGR_MENU" 
    ("FUNCTIONID" nvarchar2(255) NOT NULL,
@@ -116,76 +118,70 @@ CREATE TABLE "##"."STR_CAL"
     "FUNCTIONCATEGORYNAME" NVARCHAR2(255), 
     "FUNCTIONSORTNO" int,
     PRIMARY KEY (FUNCTIONCATEGORYID)
-   )
+   );
    
-   CREATE TABLE "##"."MGR_TASK" 
-   ("TASKID" NVARCHAR2(20) NOT NULL, 
-    "TASKNAME" NVARCHAR2(255), 
-    "CLASSNAME" NVARCHAR2(255),
-    "PROCESSID" int,
-    "LASTUPDATETIME" nchar(50),
-    PRIMARY KEY (TASKID)
-   )
+   CREATE TABLE "##"."MGR_PROCESS_SERVICE" 
+   ("PROCESSISERVICEID" int NOT NULL, 
+    "WORKSPACEID" int NOT NULL, 
+    "PROCESSISERVICENAME" nvarchar2(255),
+    "LASTUPDATETIME" nvarchar2(17),
+    PRIMARY KEY (PROCESSISERVICEID)
+   );
    
    CREATE TABLE "##"."MGR_INCREMENT" 
-   ("PROCESSID" int NOT NULL, 
-    "TEMPLATEID" NVARCHAR2(20), 
-    "WORKSPACEID" int,
-    "DATADIRECTORYID" int,
-    "SITEID" int,
-    "SCHEDULEID" int,
-    "LASTUPDATETIME" nchar(50),
-    PRIMARY KEY (PROCESSID)
-   )
-   
-   CREATE TABLE "##"."MGR_WORKITEMINCREMENT" 
-   ("WORKITEMID" NVARCHAR2(20) NOT NULL, 
-    "FOLDERITEMNO" int, 
-    "DOCUMENTNO" int,
-    "LAYERNO" int,
-    "LASTHISTORYNO" int,
-    "LASTUPDATETIME" nchar(50),
-    PRIMARY KEY (WORKITEMID)
-   )
+   ("INCREMENTTYPE" nvarchar2(20) NOT NULL, 
+    "INCREMENTDATA" int NOT NULL, 
+    "INCREMENTDATETIME" nvarchar2(17),
+    "SESSIONID" nvarchar2(255),
+    "LASTUPDATETIME" nvarchar2(17),
+    PRIMARY KEY (INCREMENTTYPE,INCREMENTDATA)
+   );
    
    CREATE TABLE "##"."MGR_WORKITEMID" 
-   ("ISSUEDATE" nchar(50) NOT NULL, 
+   ("ISSUEDATE" nvarchar2(17) NOT NULL, 
     "COUNT" int, 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
     PRIMARY KEY (ISSUEDATE)
-   )
+   );
    
    CREATE TABLE "##"."MGR_EVENTID" 
-   ("ISSUEDATE" nchar(50) NOT NULL, 
+   ("ISSUEDATE" nvarchar2(17) NOT NULL, 
     "COUNT" int, 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
     PRIMARY KEY (ISSUEDATE)
-   )
+   );
    
    CREATE TABLE "##"."MST_SYSTEM" 
    ("SECTION" nvarchar2(255) NOT NULL, 
     "VARIABLENAME" nvarchar2(255), 
     "CONFIGVALUE" nvarchar2(255),
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
     PRIMARY KEY (SECTION)
-   )
+   );
    
    CREATE TABLE "##"."MST_CODE" 
    ("CODEID" nvarchar2(20) NOT NULL, 
-    "CODEVALUE" nvarchar2(255), 
+    "CODEVALUE" nvarchar2(255) NOT NULL, 
     "SECTION" nvarchar2(20),
     "SECTIONVALUE" nvarchar2(255),
-    "LASTUPDATETIME" nchar(50),
-    PRIMARY KEY (CODEID)
-   )
+    "LASTUPDATETIME" nvarchar2(17),
+    PRIMARY KEY (CODEID,SECTION)
+   );
    
    CREATE TABLE "##"."MST_CALENDAR" 
    ("BUSINESSDAY" nvarchar2(8) NOT NULL, 
     "BUSINESSDAYFLAG" nchar(1), 
-    "LASTUPDATETIME" nchar(50),
+    "LASTUPDATETIME" nvarchar2(17),
     PRIMARY KEY (BUSINESSDAY)
-   )
+   );
    
+   CREATE TABLE "##"."MGR_CUSTOM_TASK" 
+   ("CUSTOMTASKID" nvarchar2(20) NOT NULL, 
+    "CUSTOMTASKNAME" nvarchar2(255), 
+    "CLASSNAME" nvarchar2(255),
+    "LASTUPDATETIME"nvarchar2(17),
+    PRIMARY KEY (CUSTOMTASKID)
+   )
    
    
    

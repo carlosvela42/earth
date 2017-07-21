@@ -1,21 +1,17 @@
 package co.jp.nej.earth.model.sql;
 
+import co.jp.nej.earth.model.MgrProcess;
+import co.jp.nej.earth.model.enums.ColumnNames;
+import co.jp.nej.earth.model.enums.TableNames;
 import com.querydsl.core.types.PathMetadataFactory;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
-
-import co.jp.nej.earth.model.MgrProcess;
-import co.jp.nej.earth.model.enums.ColumnNames;
-import co.jp.nej.earth.model.enums.TableNames;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
-public class QMgrProcess extends RelationalPathBase<MgrProcess> {
+public class QMgrProcess extends QBase<MgrProcess> {
 
     /**
      *

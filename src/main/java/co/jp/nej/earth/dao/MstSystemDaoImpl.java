@@ -1,18 +1,16 @@
 package co.jp.nej.earth.dao;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.manager.connection.EarthQueryFactory;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MstSystem;
 import co.jp.nej.earth.model.sql.QMstSystem;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.QBean;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class MstSystemDaoImpl implements MstSystemDao {
@@ -62,7 +60,6 @@ public class MstSystemDaoImpl implements MstSystemDao {
     public int updateMstSystem(String section, String variable, String configValue) throws EarthException {
         QMstSystem qMstSystem = QMstSystem.newInstance();
         EarthQueryFactory earthQueryFactory = ConnectionManager.getEarthQueryFactory(Constant.EARTH_WORKSPACE_ID);
-        // update system date
         try {
             return (int) earthQueryFactory.update(qMstSystem).set(qMstSystem.configValue, configValue)
                     .where(qMstSystem.section.eq(section).and(qMstSystem.variableName.eq(variable))).execute();

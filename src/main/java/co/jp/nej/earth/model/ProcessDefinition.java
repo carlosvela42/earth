@@ -13,8 +13,7 @@ public class ProcessDefinition {
     }
 
     /**
-     * @param siteId
-     *            the siteId to set
+     * @param siteId the siteId to set
      */
     public void setSiteId(Integer siteId) {
         this.siteId = siteId;
@@ -28,8 +27,7 @@ public class ProcessDefinition {
     }
 
     /**
-     * @param schemaName
-     *            the schemaName to set
+     * @param schemaName the schemaName to set
      */
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;

@@ -7,9 +7,10 @@
 <#assign script>
 <script src="${rc.getContextPath()}/resources/js/template.js"></script>
 </#assign>
-<@standard.standardPage title=e.get("template.authority.setting") contentFooter=contentFooter script=script>
+<@standard.standardPage title=e.get("template.authority.setting") contentFooter=contentFooter script=script imageLink="authority">
 
-<form method="post" action="${rc.getContextPath()}/templateAccessRight/updateOne" id="templateAuthorityForm" object="templateAuthorityForm">
+<form method="post" action="${rc.getContextPath()}/templateAccessRight/updateOne" id="templateAuthorityForm"
+      object="templateAuthorityForm" >
     <#include "../common/messages.ftl">
     <div class="board-wrapper">
         <div class="board board-half">
@@ -36,15 +37,15 @@
                 <div class="panel with-nav-tabs panel-default">
                     <div class="panel-heading">
                         <ul class="nav nav-tabs">
-                            <li class="active"><a data-toggle="tab" href="#tabs-user">${e.get('user.id')}</a></li>
-                            <li><a data-toggle="tab" href="#tabs-profile">${e.get('profile.id')}</a></li>
+                            <li class="active" style="width: 48%; text-align: center;"><a data-toggle="tab" href="#tabs-user">${e.get('user.id')}</a></li>
+                            <li style="width: 48%; text-align: center;"><a data-toggle="tab" href="#tabs-profile">${e.get('profile.id')}</a></li>
                         </ul>
                     </div>
                     <div class="panel-body">
                         <div class="tab-content">
                             <div id="tabs-user" class="tab-pane fade in active">
-                                <button type="button" class="btn btn_remove" id="deleteButton"
-                                        onclick="return delRow('user');">
+                                <button type="button" class="btn btn_remove" id="deleteButtonPopup"
+                                        onclick="return proxyDelRow('user');">
                                     <@spring.message code='button.delete'/></button>
                                 <div style="height: 10px;"></div>
                                 <table class="clientSearch table_list userAccessRightTable">
@@ -59,7 +60,7 @@
                                         <td>${e.get('accessRight.name')}</td>
                                     </tr>
                                     <tr class="condition">
-                                        <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+                                        <td class="search_icon"><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
                                         <td colspan="2"><input type="text" col="3" placeholder="Search">
                                         </td>
                                         <td><input type="text" col="4" placeholder="Search"></td>
@@ -70,11 +71,12 @@
                                     <tbody id="userTbody" class="table_body" index="${index}">
                                         <#if templateAuthorityForm.userAccessRights??>
                                             <#list templateAuthorityForm.userAccessRights as userAccessRight>
-                                            <tr userId="${userAccessRight.userId}">
+                                            <tr userId="${userAccessRight.userId}" index="${userAccessRight?index}">
                                                 <td><input type="checkbox" class="deleteCheckBox"/></td>
                                                 <td class="text_center">
                                                      <span class="icon icon_edit"
-                                                           onclick="editRow('user','${userAccessRight.userId!""}', '${userAccessRight.accessRight!""}');">
+                                                           onclick="editRow('user','${userAccessRight.userId!""}',
+                                                                   '${userAccessRight.accessRight!""}','1');">
                                                      </span>
                                                 </td>
                                                 <td class="text">
@@ -99,7 +101,7 @@
                             </div>
                             <div id="tabs-profile" class="tab-pane fade">
                                 <button type="button" class="btn btn_remove"
-                                        id="deleteButton"  onclick="return delRow('profile');">
+                                        id="deleteButtonPopup"  onclick="return proxyDelRow('profile');">
                                     <@spring.message code='button.delete'/></button>
                                 <div style="height: 10px;"></div>
                                 <table class="clientSearch table_list profileAccessRightTable">
@@ -114,7 +116,7 @@
                                         <td>${e.get('accessRight.name')}</td>
                                     </tr>
                                     <tr class="condition">
-                                        <td><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
+                                        <td class="search_icon"><img src="${rc.getContextPath()}/resources/images/search.png"/></td>
                                         <td colspan="2"><input type="text" col="3" placeholder="Search ">
                                         </td>
                                         <td><input type="text" col="4" placeholder="Search "></td>
@@ -125,17 +127,13 @@
 
                                         <#if templateAuthorityForm.profileAccessRights??>
                                             <#list templateAuthorityForm.profileAccessRights as profileAccessRight>
-                                            <tr profileId="${profileAccessRight.profileId}">
+                                            <tr profileId="${profileAccessRight.profileId}" index="${profileAccessRight?index}">
                                                 <td><input type="checkbox" name="profileRight" class="deleteCheckBox">
                                                 </td>
                                                 <td class="text_center">
                                                      <span class="icon icon_edit"
-                                                           onclick="editRow('profile','${profileAccessRight.profileId!""}', '${profileAccessRight.accessRight!""}');">
+                                                           onclick="editRow('profile','${profileAccessRight.profileId!""}', '${profileAccessRight.accessRight!""}','1');">
                                                     </span>
-                                                    <#--<a class="icon icon_edit"-->
-                                                       <#--onclick="editRow('profile','${profileAccessRight.profileId!""}', '${profileAccessRight.accessRight!""}');"-->
-                                                       <#--href="#addFormprofileTemplate">-->
-                                                    <#--</a>-->
                                                 </td>
                                                 <td type="text">
                                                 <span>${profileAccessRight.profileId!""}</span><input type="hidden"

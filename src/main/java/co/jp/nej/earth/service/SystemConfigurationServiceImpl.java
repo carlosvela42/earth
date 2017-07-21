@@ -12,12 +12,9 @@ import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.constant.Constant.AgentBatch;
 import co.jp.nej.earth.model.entity.MstSystem;
-import co.jp.nej.earth.model.ws.RestResponse;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 @Service
 public class SystemConfigurationServiceImpl extends BaseService implements SystemConfigurationService {
@@ -45,7 +42,7 @@ public class SystemConfigurationServiceImpl extends BaseService implements Syste
                 }
                 // add systemdate to 1 day
                 configDate.add(Calendar.DATE, 1);
-                // update system date to system config
+                // update system date to system config.
                 return (int) mstSystemDao.updateMstSystem(AgentBatch.OPERATION_DATE, AgentBatch.CURRENT_DATE,
                         formatter.format(configDate.getTime()));
             } catch (Exception e) {
@@ -55,17 +52,10 @@ public class SystemConfigurationServiceImpl extends BaseService implements Syste
     }
 
     @Override
-    public RestResponse updateSystemConfig(String inputDate) throws EarthException {
-        return (RestResponse) this.executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
-            try {
-                RestResponse respone = new RestResponse();
-                // update system date to system config
-                respone.setResult(mstSystemDao.updateMstSystem(AgentBatch.OPERATION_DATE, AgentBatch.CURRENT_DATE,
-                        inputDate) > 0);
-                return respone;
-            } catch (Exception e) {
-                throw new EarthException(e);
-            }
+    public boolean updateSystemConfig(String inputDate) throws EarthException {
+        return (boolean) this.executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            // Update system date to system configuration.
+            return mstSystemDao.updateMstSystem(AgentBatch.OPERATION_DATE, AgentBatch.CURRENT_DATE, inputDate) > 0;
         });
     }
 }

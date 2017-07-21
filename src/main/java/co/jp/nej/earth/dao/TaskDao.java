@@ -6,5 +6,5 @@ import co.jp.nej.earth.model.entity.MgrTask;
 import java.util.Map;
 
 public interface TaskDao extends BaseDao<MgrTask> {
-    Map<String, String> getAllTasks() throws EarthException;
+    Map<String, String> getAllTasks(String workspaceId) throws EarthException;
 }

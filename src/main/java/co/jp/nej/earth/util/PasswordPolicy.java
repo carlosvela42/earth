@@ -47,10 +47,10 @@ public class PasswordPolicy {
             for (String msg : validator.getMessages(result)) {
                 if (!msg.contains("INSUFFICIENT_CHARACTERISTICS")) {
                     listResult.add(msg);
+                    return listResult;
                 }
             }
         }
-
         return listResult;
     }
 

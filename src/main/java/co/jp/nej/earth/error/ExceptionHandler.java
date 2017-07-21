@@ -1,12 +1,11 @@
 package co.jp.nej.earth.error;
 
+import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.google.common.base.Throwables;
 
 /**
  * General error handler for the application.

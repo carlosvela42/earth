@@ -2,7 +2,7 @@ package co.jp.nej.earth.model;
 
 import java.io.Serializable;
 
-public class Message implements Serializable{
+public class Message implements Serializable {
     /**
      *
      */

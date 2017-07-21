@@ -1,10 +1,10 @@
 package co.jp.nej.earth.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
+import co.jp.nej.earth.BaseTest;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.entity.CtlLogin;
+import co.jp.nej.earth.util.DateUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,11 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import co.jp.nej.earth.BaseTest;
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.constant.Constant;
-import co.jp.nej.earth.model.entity.CtlLogin;
-import co.jp.nej.earth.util.DateUtil;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by p-dcv-minhtv on 5/8/2017.
@@ -36,7 +34,7 @@ public class LoginStatusServiceTest extends BaseTest {
 
     @Autowired
     private PreparingDataService preparingDataService;
-    
+
     @Autowired
     private HttpSession httpSession;
 
@@ -44,12 +42,12 @@ public class LoginStatusServiceTest extends BaseTest {
     public void before() throws EarthException {
         LOG.info("Before: Insert CtlLogin");
         CtlLogin ctlLogin;
-        for(int i = 0; i< RECORD; i++){
+        for (int i = 0; i < RECORD; i++) {
             String userId = USERID + i;
-            String sessionId= httpSession.getId() +i;
-            String loginTime= DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD);
-            String logoutTime= DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD);
-            ctlLogin =new CtlLogin(sessionId,userId,loginTime,logoutTime);
+            String sessionId = httpSession.getId() + i;
+            String loginTime = DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD);
+            String logoutTime = DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD);
+            ctlLogin = new CtlLogin(sessionId, userId, loginTime, logoutTime);
             preparingDataService.insertOneCtlLogin(ctlLogin);
             ctlLogins.add(ctlLogin);
             sessionIds.add(sessionId);
@@ -58,9 +56,9 @@ public class LoginStatusServiceTest extends BaseTest {
     }
 
     @After
-    public void after()throws EarthException{
-        LOG.info("Before: Delete CtlLogin"+ RECORD);
-        LOG.info("After Delete CtlLogin:" +loginStatusService.deleteList(sessionIds));
+    public void after() throws EarthException {
+        LOG.info("Before: Delete CtlLogin" + RECORD);
+        LOG.info("After Delete CtlLogin:" + loginStatusService.deleteList(sessionIds));
     }
 
     @Test

@@ -39,5 +39,66 @@ public interface EventDao extends BaseDao<CtlEvent> {
      * @return
      * @throws EarthException
      */
-    long countEventByUserIds(List<String> userIds,String workspaceId) throws EarthException;
+    long countEventByUserIds(List<String> userIds, String workspaceId) throws EarthException;
+
+    /**
+     * Update status and TransactionToken for event
+     *
+     * @param workSpaceId
+     * @return
+     */
+    boolean updateStatusAndTokenEvent(String transactionToken, String workSpaceId)
+        throws EarthException;
+
+    /**
+    * Get clEvent by workItem.
+     *
+     * @param workspaceId
+     * @param workItemId
+     * @return
+     * @throws EarthException
+     */
+    CtlEvent getEventByWorkItemId(String workspaceId, String workItemId) throws EarthException;
+
+    /**
+     * Get one event for update by status
+     *
+     * @param transactionToken
+     * @param workSpaceId
+     * @return
+     * @throws EarthException
+     */
+    CtlEvent getEventIsEditing(String transactionToken, String workSpaceId, String userId)
+        throws EarthException;
+
+    /**
+     * Delete event
+     *
+     * @param workspaceId
+     * @param event
+     * @return
+     * @throws EarthException
+     */
+    boolean deleteEvent(String workspaceId, CtlEvent event) throws EarthException;
+
+    /**
+     * Delete list of events
+     *
+     * @param workspaceId
+     * @param event
+     * @return
+     * @throws EarthException
+     */
+    long deleteBulkEvents(String workspaceId, List<String> eventIds, String status) throws EarthException;
+
+    /**
+     * Update Bulk events Status
+     *
+     * @param workspaceId
+     * @param event
+     * @return
+     * @throws EarthException
+     */
+    long updateBulkEventStatus(String workspaceId, List<String> eventIds, String oldStatus, String newStatus)
+            throws EarthException;
 }

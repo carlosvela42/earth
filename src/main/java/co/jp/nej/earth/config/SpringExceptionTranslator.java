@@ -13,16 +13,16 @@
  */
 package co.jp.nej.earth.config;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLStateSQLExceptionTranslator;
+
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * {@code SpringExceptionTranslator} is an {@link SQLExceptionTranslator} implementation which uses Spring's
  * exception translation functionality internally
- *
+ * <p>
  * <p>Usage example</p>
  * <pre>
  * {@code
@@ -30,7 +30,6 @@ import org.springframework.jdbc.support.SQLStateSQLExceptionTranslator;
  * configuration.setExceptionTranslator(new SpringExceptionTranslator());
  * }
  * </pre>
- *
  */
 public class SpringExceptionTranslator implements com.querydsl.sql.SQLExceptionTranslator {
 

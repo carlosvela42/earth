@@ -22,7 +22,7 @@ public class StrLogAccess extends BaseModel<StrLogAccess> {
     }
 
     public StrLogAccess(String eventId, String processTime, String userId, String workitemId, int historyNo,
-            int processId, long processVersion, String taskId) {
+                        int processId, long processVersion, String taskId) {
         this();
         this.eventId = eventId;
         this.processTime = processTime;

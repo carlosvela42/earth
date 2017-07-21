@@ -1,24 +1,24 @@
 package co.jp.nej.earth.service;
 
-import javax.servlet.http.HttpSession;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.FolderItem;
-import co.jp.nej.earth.model.ws.RestResponse;
+
+import javax.servlet.http.HttpSession;
 
 public interface FolderItemService {
+
     /**
-     * get folderitem from session
+     * get FolderItem from session
      *
      * @param session
      * @param workspaceId
-     * @param workitemId
+     * @param workItemId
      * @param folderItemNo
      * @return
      * @throws EarthException
      */
-    RestResponse getFolderItem(HttpSession session, String workspaceId, String workitemId, Integer folderItemNo)
-            throws EarthException;
+    FolderItem getFolderItemSession(HttpSession session, String workspaceId, String workItemId, String folderItemNo)
+        throws EarthException;
 
     /**
      * update folder item data in session
@@ -30,6 +30,6 @@ public interface FolderItemService {
      * @return
      * @throws EarthException
      */
-    RestResponse updateFolderItem(HttpSession session, String workspaceId, String workitemId, FolderItem folderItem)
-            throws EarthException;
+    boolean updateFolderItemSession(HttpSession session, String workspaceId, String workitemId, FolderItem folderItem)
+        throws EarthException;
 }

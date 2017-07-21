@@ -1,4 +1,4 @@
-<@standard.standardPage title="EDITTEMPLATE">
+<@standard.standardPage title="EDITTEMPLATE" imageLink="data">
 <form action="${rc.getContextPath()}/template/updateOne"
     object="templateForm" method="post">
     <table>

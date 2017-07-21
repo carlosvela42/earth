@@ -1,16 +1,14 @@
 package co.jp.nej.earth.config;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.inject.Provider;
 import javax.sql.DataSource;
-
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * @author p-dcv-khanhnv
- *
  */
 public class SpringConnectionProvider implements Provider<Connection> {
 

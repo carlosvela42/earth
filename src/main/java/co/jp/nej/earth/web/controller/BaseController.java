@@ -8,10 +8,10 @@ public class BaseController {
     protected EMessageResource messageSource;
 
     protected String redirectToList() {
-        return  "redirect:";
+        return "redirect:";
     }
 
     protected String redirectToList(String url) {
-        return  "redirect:/" + url;
+        return "redirect:/" + url;
     }
 }

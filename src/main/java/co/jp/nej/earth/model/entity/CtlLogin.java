@@ -1,12 +1,11 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QCtlLogin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QCtlLogin;
+import java.io.Serializable;
 
 public class CtlLogin extends BaseModel<CtlLogin> implements Serializable {
 

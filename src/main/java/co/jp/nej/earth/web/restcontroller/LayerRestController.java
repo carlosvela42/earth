@@ -1,8 +1,5 @@
 package co.jp.nej.earth.web.restcontroller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,66 +11,43 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.session.EarthSessionManager;
-import co.jp.nej.earth.model.Message;
-import co.jp.nej.earth.model.form.LayerForm;
-import co.jp.nej.earth.model.form.LayerUpdateForm;
-import co.jp.nej.earth.model.ws.RestResponse;
+import co.jp.nej.earth.model.Layer;
+import co.jp.nej.earth.model.constant.Constant.ErrorCode;
+import co.jp.nej.earth.model.ws.GetLayerResponse;
+import co.jp.nej.earth.model.ws.LayerRequest;
+import co.jp.nej.earth.model.ws.Response;
+import co.jp.nej.earth.model.ws.UpdateLayerRequest;
 import co.jp.nej.earth.service.LayerService;
-import co.jp.nej.earth.util.ValidatorUtil;
 
 @RestController
 @RequestMapping("/WS")
 public class LayerRestController extends BaseRestController {
     @Autowired
     private LayerService layerService;
-    @Autowired
-    private ValidatorUtil validatorUtil;
 
-    @RequestMapping(value = "/getLayer", method = RequestMethod.POST)
-    public RestResponse getLayer(@Valid @RequestBody LayerForm form, BindingResult result, HttpServletRequest request)
-            throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
+    @RequestMapping(value = "/getLayer")
+    public Response getLayer(@Valid LayerRequest request, BindingResult bindingResult) throws EarthException {
 
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return layerService.getLayer(EarthSessionManager.find(form.getSessionId()), form.getWorkspaceId(),
-                        form.getWorkitemId(), form.getFolderItemNo(), form.getDocumentNo(), form.getLayerNo());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
+        return (Response) getRestResponse(request, bindingResult, () -> {
+            Layer layer = layerService.getLayerSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId(), request.getFolderItemNo(),
+                    request.getDocumentNo(), request.getLayerNo());
+            if (layer == null) {
+                return new GetLayerResponse(messageSource.get(ErrorCode.E0029, new String[] { "folderItem" }));
             }
+
+            return new GetLayerResponse(true, layer);
         });
     }
 
     @RequestMapping(value = "/updateLayer", method = RequestMethod.POST)
-    public RestResponse updateLayer(@Valid @RequestBody LayerUpdateForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return layerService.updateLayer(EarthSessionManager.find(form.getSessionId()), form.getWorkspaceId(),
-                        form.getWorkitemId(), form.getFolderItemNo(), form.getDocumentNo(), form.getLayer());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    public Response updateLayer(@Valid @RequestBody UpdateLayerRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return getRestResponse(request, bindingResult, () -> {
+            boolean result = layerService.updateLayerSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId(), request.getFolderItemNo(),
+                    request.getDocumentNo(), request.getLayer());
+            return new Response(result);
         });
     }
 }

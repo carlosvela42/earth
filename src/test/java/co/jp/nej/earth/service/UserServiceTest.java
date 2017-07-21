@@ -59,7 +59,7 @@ public class UserServiceTest extends BaseTest {
             String password = PASS + i.toString();
             boolean changePassword = true;
             MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword,
-                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
             userService.insertOne(mgrUser);
             String profileId = PROFILE + i.toString();
             String description = DESCRIPTION + i.toString();
@@ -117,7 +117,7 @@ public class UserServiceTest extends BaseTest {
         String password = PASS + (RECORD + 1);
         boolean changePassword = true;
         MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword,
-                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
         List<Message> messages = userService.validate(mgrUser, changePassword);
         Assert.assertFalse(messages != null && messages.size() > 0);
         insertUser = userService.insertOne(mgrUser);
@@ -136,7 +136,7 @@ public class UserServiceTest extends BaseTest {
         String password = PASS + (RECORD + 1);
         boolean changePassword = false;
         MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword,
-                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
         List<Message> messages = userService.validate(mgrUser, false);
         Assert.assertFalse(messages != null && messages.size() > 0);
         updateUser = userService.updateOne(mgrUser);
@@ -145,7 +145,7 @@ public class UserServiceTest extends BaseTest {
         changePassword = false;
         messages = userService.validate(mgrUser, false);
         mgrUser = new MgrUser(userId, name, password, password, changePassword,
-                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
         Assert.assertFalse(messages != null && messages.size() > 0);
         updateUser = userService.updateOne(mgrUser);
         Assert.assertTrue(updateUser);
@@ -180,7 +180,7 @@ public class UserServiceTest extends BaseTest {
             String password = PASS + (RECORD + i);
             boolean changePassword = true;
             MgrUser mgrUser = new MgrUser(userId, name, password, password, changePassword,
-                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
             mgrUsers1.add(mgrUser);
             userIds.add(userId);
             LOG.info("Insert User : " + mgrUser.getUserId());

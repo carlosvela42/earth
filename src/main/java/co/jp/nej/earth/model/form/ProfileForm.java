@@ -1,23 +1,21 @@
 package co.jp.nej.earth.model.form;
 
-import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.constant.Constant;
-import co.jp.nej.earth.model.entity.MgrProfile;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.Pattern;
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.entity.MgrProfile;
 
 public class ProfileForm extends BaseModel<MgrProfile> {
 
-    @NotEmpty(message = "E0001,ProfileId")
-    @Pattern(regexp = Constant.Regexp.ALPHABETS_VALIDATION, message = "E0007,UserId")
+    final String value = Constant.ErrorCode.E0001 + "," + Constant.ScreenItem.PROFILE_ID;
+    @NotEmpty(message =value)
     private String profileId;
-
-    private String availableLicenceCount;
 
     @NotEmpty(message = "E0001,Description")
     private String description;
 
+    private String availableLicenceCount;
     private String ldapIdentifier;
     private String userIds;
 

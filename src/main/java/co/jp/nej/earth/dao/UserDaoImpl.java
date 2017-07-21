@@ -1,24 +1,22 @@
 package co.jp.nej.earth.dao;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.connection.ConnectionManager;
 import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrUser;
 import co.jp.nej.earth.model.sql.QMgrUser;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.QBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class UserDaoImpl extends BaseDaoImpl<MgrUser> implements UserDao {

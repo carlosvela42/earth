@@ -1,12 +1,9 @@
 package co.jp.nej.earth.model;
 
 import co.jp.nej.earth.model.sql.QMgrProcess;
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public class MgrProcess extends BaseModel<MgrProcess> {
     /**
@@ -14,7 +11,6 @@ public class MgrProcess extends BaseModel<MgrProcess> {
      */
     private static final long serialVersionUID = 1L;
     private Integer processId;
-    @NotEmpty(message = "E0001,processName")
     private String processName;
     private Float processVersion;
     private String description;
@@ -33,8 +29,7 @@ public class MgrProcess extends BaseModel<MgrProcess> {
     }
 
     /**
-     * @param processId
-     *            the processId to set
+     * @param processId the processId to set
      */
     public void setProcessId(Integer processId) {
         this.processId = processId;
@@ -48,8 +43,7 @@ public class MgrProcess extends BaseModel<MgrProcess> {
     }
 
     /**
-     * @param processName
-     *            the processName to set
+     * @param processName the processName to set
      */
     public void setProcessName(String processName) {
         this.processName = processName;
@@ -63,8 +57,7 @@ public class MgrProcess extends BaseModel<MgrProcess> {
     }
 
     /**
-     * @param processVersion
-     *            the processVersion to set
+     * @param processVersion the processVersion to set
      */
     public void setProcessVersion(Float processVersion) {
         this.processVersion = processVersion;
@@ -78,8 +71,7 @@ public class MgrProcess extends BaseModel<MgrProcess> {
     }
 
     /**
-     * @param description
-     *            the description to set
+     * @param description the description to set
      */
     public void setDescription(String description) {
         this.description = description;
@@ -93,8 +85,7 @@ public class MgrProcess extends BaseModel<MgrProcess> {
     }
 
     /**
-     * @param processDefinition
-     *            the processDefinition to set
+     * @param processDefinition the processDefinition to set
      */
     public void setProcessDefinition(String processDefinition) {
         this.processDefinition = processDefinition;
@@ -108,8 +99,7 @@ public class MgrProcess extends BaseModel<MgrProcess> {
     }
 
     /**
-     * @param documentDataSavePath
-     *            the documentDataSavePath to set
+     * @param documentDataSavePath the documentDataSavePath to set
      */
     public void setDocumentDataSavePath(String documentDataSavePath) {
         this.documentDataSavePath = documentDataSavePath;

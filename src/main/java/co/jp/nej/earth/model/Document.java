@@ -1,12 +1,14 @@
 package co.jp.nej.earth.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.enums.AccessRight;
+import co.jp.nej.earth.model.sql.QDocument;
+import co.jp.nej.earth.util.EStringUtil;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import co.jp.nej.earth.model.entity.MgrTemplate;
-import co.jp.nej.earth.model.sql.QDocument;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Document extends BaseModel<Document> {
 
@@ -14,12 +16,13 @@ public class Document extends BaseModel<Document> {
      *
      */
     private static final long serialVersionUID = 1L;
-    @NotEmpty(message = "E0002,workitemId")
+    @NotEmpty(message = "E0001,workitemId")
     private String workitemId;
-    @NotEmpty(message = "E0002,folderItemNo")
-    private Integer folderItemNo;
-    @NotEmpty(message = "E0002,documentNo")
-    private Integer documentNo;
+    @NotEmpty(message = "E0001,folderItemNo")
+    private String folderItemNo;
+    @NotEmpty(message = "E0001,documentNo")
+    private String documentNo;
+    private Integer documentOrder;
     private MgrTemplate mgrTemplate;
     private Integer pageCount;
     private String viewInformation;
@@ -30,6 +33,7 @@ public class Document extends BaseModel<Document> {
     private byte[] documentBinary;
     private String templateId;
     private List<Layer> layers = new ArrayList<Layer>();
+    private AccessRight accessRight;
 
     public Document() {
         this.setqObj(QDocument.newInstance());
@@ -43,8 +47,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param workitemId
-     *            the workitemId to set
+     * @param workitemId the workitemId to set
      */
     public void setWorkitemId(String workitemId) {
         this.workitemId = workitemId;
@@ -53,30 +56,28 @@ public class Document extends BaseModel<Document> {
     /**
      * @return the folderItemNo
      */
-    public Integer getFolderItemNo() {
+    public String getFolderItemNo() {
         return folderItemNo;
     }
 
     /**
-     * @param folderItemNo
-     *            the folderItemNo to set
+     * @param folderItemNo the folderItemNo to set
      */
-    public void setFolderItemNo(Integer folderItemNo) {
+    public void setFolderItemNo(String folderItemNo) {
         this.folderItemNo = folderItemNo;
     }
 
     /**
      * @return the documentNo
      */
-    public Integer getDocumentNo() {
+    public String getDocumentNo() {
         return documentNo;
     }
 
     /**
-     * @param documentNo
-     *            the documentNo to set
+     * @param documentNo the documentNo to set
      */
-    public void setDocumentNo(Integer documentNo) {
+    public void setDocumentNo(String documentNo) {
         this.documentNo = documentNo;
     }
 
@@ -96,8 +97,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param pageCount
-     *            the pageCount to set
+     * @param pageCount the pageCount to set
      */
     public void setPageCount(Integer pageCount) {
         this.pageCount = pageCount;
@@ -111,8 +111,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param viewInformation
-     *            the viewInformation to set
+     * @param viewInformation the viewInformation to set
      */
     public void setViewInformation(String viewInformation) {
         this.viewInformation = viewInformation;
@@ -126,8 +125,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param documentType
-     *            the documentType to set
+     * @param documentType the documentType to set
      */
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
@@ -141,8 +139,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param action
-     *            the action to set
+     * @param action the action to set
      */
     public void setAction(Integer action) {
         this.action = action;
@@ -156,8 +153,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param documentData
-     *            the documentData to set
+     * @param documentData the documentData to set
      */
     public void setDocumentData(TemplateData documentData) {
         this.documentData = documentData;
@@ -171,8 +167,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param documentPath
-     *            the documentPath to set
+     * @param documentPath the documentPath to set
      */
     public void setDocumentPath(String documentPath) {
         this.documentPath = documentPath;
@@ -186,8 +181,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param documentBinary
-     *            the documentBinary to set
+     * @param documentBinary the documentBinary to set
      */
     public void setDocumentBinary(byte[] documentBinary) {
         this.documentBinary = documentBinary;
@@ -201,8 +195,7 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param templateId
-     *            the templateId to set
+     * @param templateId the templateId to set
      */
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
@@ -216,11 +209,31 @@ public class Document extends BaseModel<Document> {
     }
 
     /**
-     * @param layers
-     *            the layers to set
+     * @param layers the layers to set
      */
     public void setLayers(List<Layer> layers) {
         this.layers = layers;
     }
 
+    public void addLayer(Layer layer) {
+        if (layer != null && (!EStringUtil.isEmpty(layer.getLayerNo())) && (!layers.contains(layer))) {
+            layers.add(layer);
+        }
+    }
+
+    public AccessRight getAccessRight() {
+        return accessRight;
+    }
+
+    public void setAccessRight(AccessRight accessRight) {
+        this.accessRight = accessRight;
+    }
+
+    public Integer getDocumentOrder() {
+        return documentOrder;
+    }
+
+    public void setDocumentOrder(Integer documentOrder) {
+        this.documentOrder = documentOrder;
+    }
 }

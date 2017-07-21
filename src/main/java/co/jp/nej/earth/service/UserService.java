@@ -1,21 +1,21 @@
 package co.jp.nej.earth.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Predicate;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.entity.CtlLogin;
 import co.jp.nej.earth.model.entity.MgrUser;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Map;
 
 public interface UserService {
     List<Message> login(String userId, String password, HttpSession session, int channel) throws EarthException;
+
+    List<Message> loginBatch(String userId, String password) throws EarthException;
 
     boolean logout(HttpSession session) throws EarthException;
 

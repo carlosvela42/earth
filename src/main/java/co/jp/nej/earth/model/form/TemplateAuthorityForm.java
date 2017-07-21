@@ -1,9 +1,9 @@
 package co.jp.nej.earth.model.form;
 
-import java.util.List;
-
 import co.jp.nej.earth.model.ProfileAccessRight;
 import co.jp.nej.earth.model.UserAccessRight;
+
+import java.util.List;
 
 public class TemplateAuthorityForm {
 
@@ -16,7 +16,7 @@ public class TemplateAuthorityForm {
     }
 
     public TemplateAuthorityForm(String templateId, String templateName, List<UserAccessRight> userAccessRights,
-            List<ProfileAccessRight> profileAccessRights) {
+                                 List<ProfileAccessRight> profileAccessRights) {
         super();
         this.templateId = templateId;
         this.templateName = templateName;

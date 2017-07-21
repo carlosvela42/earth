@@ -29,21 +29,21 @@
 //        Assert.assertEquals(controller.deleteList(form), reuslt);
 //    }
 
-    // @Test
-    // public void deleteList2() throws EarthException {
-    // DeleteProcessForm form = new DeleteProcessForm();
-    // form.setConfirmDelte(false);
-    // form.setWorkspaceId(Constant.EARTH_WORKSPACE_ID);
-    // System.out.println(controller.deleteList(form).get("message"));
-    // }
-    //
-    // @Test
-    // public void deleteList3() throws EarthException {
-    // DeleteProcessForm form = new DeleteProcessForm();
-    // List<Integer> processIds = new ArrayList<>();
-    // processIds.form.setConfirmDelte(true);
-    // form.setProcessIds(new ArrayList<>());
-    // form.setWorkspaceId(Constant.EARTH_WORKSPACE_ID);
-    // System.out.println(controller.deleteList(form).get("message"));
-    // }
+// @Test
+// public void deleteList2() throws EarthException {
+// DeleteProcessForm form = new DeleteProcessForm();
+// form.setConfirmDelte(false);
+// form.setWorkspaceId(Constant.EARTH_WORKSPACE_ID);
+// System.out.println(controller.deleteList(form).get("message"));
+// }
+//
+// @Test
+// public void deleteList3() throws EarthException {
+// DeleteProcessForm form = new DeleteProcessForm();
+// List<Integer> processIds = new ArrayList<>();
+// processIds.form.setConfirmDelte(true);
+// form.setProcessIds(new ArrayList<>());
+// form.setWorkspaceId(Constant.EARTH_WORKSPACE_ID);
+// System.out.println(controller.deleteList(form).get("message"));
+// }
 //}

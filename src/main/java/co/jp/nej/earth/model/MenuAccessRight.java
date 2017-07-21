@@ -1,11 +1,11 @@
 package co.jp.nej.earth.model;
 
-import java.io.Serializable;
-
 import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.enums.AccessRight;
 
-public class MenuAccessRight implements Serializable{
+import java.io.Serializable;
+
+public class MenuAccessRight implements Serializable {
     /**
      *
      */

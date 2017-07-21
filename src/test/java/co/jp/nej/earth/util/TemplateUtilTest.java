@@ -1,12 +1,12 @@
 package co.jp.nej.earth.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
+import co.jp.nej.earth.BaseTest;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.TemplateAccessRight;
+import co.jp.nej.earth.model.TemplateKey;
+import co.jp.nej.earth.model.entity.CtlTemplate;
+import co.jp.nej.earth.model.enums.AccessRight;
+import co.jp.nej.earth.service.PreparingDataService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,13 +15,11 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import co.jp.nej.earth.BaseTest;
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.TemplateAccessRight;
-import co.jp.nej.earth.model.TemplateKey;
-import co.jp.nej.earth.model.entity.CtlTemplate;
-import co.jp.nej.earth.model.enums.AccessRight;
-import co.jp.nej.earth.service.PreparingDataService;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TemplateUtilTest extends BaseTest {
@@ -63,9 +61,9 @@ public class TemplateUtilTest extends BaseTest {
         listWorkspaceId.add("001");
         listWorkspaceId.add("002");
         listWorkspaceId.add("003");
-        Map<TemplateKey, TemplateAccessRight> templateAccessRightMap = new HashMap<TemplateKey, TemplateAccessRight>();
+        TemplateAccessRight templateAccessRightMap = new TemplateAccessRight();
         for (String s : listWorkspaceId) {
-            templateAccessRightMap.putAll(data.getMixAuthorityTemplate("admin", s));
+            templateAccessRightMap.setTemplatesAccessRights(data.getMixAuthorityTemplate("admin", s));
         }
         TemplateUtil.saveToSession(session, templateAccessRightMap);
     }

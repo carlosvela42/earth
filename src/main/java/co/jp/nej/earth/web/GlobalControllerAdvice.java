@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
  */
 @ControllerAdvice(basePackages = {"co.jp.nej.earth.web.controller"})
 public class GlobalControllerAdvice {
-  @Autowired
-  protected EMessageResource messageSource;
+    @Autowired
+    protected EMessageResource messageSource;
 
-  @Autowired
-  protected Helper helper;
+    @Autowired
+    protected Helper helper;
 
-  @ModelAttribute
-  public void globalAttributes(Model model) {
-    model.addAttribute("h", helper);
-    model.addAttribute("e", messageSource);
-    model.addAttribute("buildInfo", helper.getBuildInfo());
-  }
+    @ModelAttribute
+    public void globalAttributes(Model model) {
+        model.addAttribute("h", helper);
+        model.addAttribute("e", messageSource);
+        model.addAttribute("buildInfo", helper.getBuildInfo());
+    }
 }

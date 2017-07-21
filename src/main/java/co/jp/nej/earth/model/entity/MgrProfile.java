@@ -1,9 +1,9 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrProfile;
+
+import java.io.Serializable;
 
 public class MgrProfile extends BaseModel<MgrProfile> implements Serializable {
     /**
@@ -15,26 +15,28 @@ public class MgrProfile extends BaseModel<MgrProfile> implements Serializable {
     private String description;
     private String ldapIdentifier;
 
-    public MgrProfile(){
+    public MgrProfile() {
         this.setqObj(QMgrProfile.newInstance());
     }
 
-    public MgrProfile(String profileId, int availableLicenceCount,String description,String ldapIdentifier){
+    public MgrProfile(String profileId, int availableLicenceCount, String description, String ldapIdentifier) {
         this();
-        this.profileId=profileId;
-        this.availableLicenceCount=availableLicenceCount;
-        this.description=description;
-        this.ldapIdentifier=ldapIdentifier;
+        this.profileId = profileId;
+        this.availableLicenceCount = availableLicenceCount;
+        this.description = description;
+        this.ldapIdentifier = ldapIdentifier;
     }
-    public MgrProfile(String profileId, int availableLicenceCount,String description,String ldapIdentifier,
-                      String lastUpdateTime){
+
+    public MgrProfile(String profileId, int availableLicenceCount, String description, String ldapIdentifier,
+                      String lastUpdateTime) {
         this();
-        this.profileId=profileId;
-        this.availableLicenceCount=availableLicenceCount;
-        this.description=description;
-        this.ldapIdentifier=ldapIdentifier;
+        this.profileId = profileId;
+        this.availableLicenceCount = availableLicenceCount;
+        this.description = description;
+        this.ldapIdentifier = ldapIdentifier;
         this.setLastUpdateTime(lastUpdateTime);
     }
+
     public String getProfileId() {
         return profileId;
     }

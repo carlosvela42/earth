@@ -11,7 +11,7 @@ $content_width: 1250px;
 //icon
 $icon_size: 25px;
 
-$table_form_row_height: 60px;
+$table_form_row_height: 48px;
 
 $table_form_login_row_height: 45px;
 
@@ -32,7 +32,7 @@ $action_panel_height: 80px;
 .table_list {
   width: 100%;
   td {
-    border: 1px $grey solid;
+    border: 1px #B0AFB0 solid;
     height: 30px;
     vertical-align: middle;
   }
@@ -42,7 +42,10 @@ $action_panel_height: 80px;
       font-weight: bold;
       font-size: 14px;
       background: $lighter_grey;
+      border: 1px solid #B0AFB0;
     }
+
+
 
     td:nth-child(2n+1) {  /* or 4n+1 */
       background: $grey;
@@ -54,8 +57,17 @@ $action_panel_height: 80px;
       }
     }
   }
-
+  tr{
+    &.rowSearch{
+      td {
+        text-align: left;
+        white-space: nowrap;
+      }
+    }
+  }
   .condition {
+    border-left:1px solid #B0AFB0;
+    border-right:1px solid #B0AFB0;
     input {
       height: 100%;
       width: 100%;
@@ -63,9 +75,19 @@ $action_panel_height: 80px;
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-      padding-left: 10px;
       font-weight: bold;
+      background:url('../../images/search.png') left center no-repeat;
+       background-position: 10px;
     }
+     td {
+      border-left:1pt solid #B0AFB0;
+      border-right:1pt solid #B0AFB0;
+      border-bottom:1pt solid black;
+    }
+    .searchInput{
+        padding-left:40px;
+    }
+
   }
 
   td:nth-child(1) {
@@ -81,12 +103,17 @@ $action_panel_height: 80px;
     //  background: $table_body_even_row_color;
     //}
     td {
+      border: 1px solid #B0AFB0;
       padding-left: 10px;
       padding-right: 10px;
       &.number {
         text-align: right;
       }
       &.text {
+        text-align: left;
+        white-space: nowrap;
+      }
+      &.text_time {
         text-align: left;
         white-space: nowrap;
       }
@@ -105,6 +132,10 @@ $action_panel_height: 80px;
       padding-right: 10px;
     }
     &.number{
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    &.text_time{
       padding-left: 10px;
       padding-right: 10px;
     }
@@ -132,10 +163,10 @@ $action_panel_height: 80px;
       display: inline-block;
       vertical-align: top;
       //margin-top: 28px;
-      color: #01A9DB;
-      font-size: 18px;
+      color: #5DB8FF;
+      font-size: 21px;
       font-weight: bold;
-      margin-top: 15px;
+      margin-top: 10px;
       padding-left: 15px;
     }
 
@@ -195,18 +226,26 @@ header {
 }
 .board-half {
   width: 49%;
+  border: 1px solid #B0AFB0;
+
+}
+
+.board_template {
+  background: $white;
+  padding: 15px;
+  display: table-cell;
+  //vertical-align: baseline;
 }
 
 //input component
-input[type=text] {
-  border-radius: 5px;
-  border: 1px solid $grey;
-  padding: 5px 10px;
+input[type=text]:not(.imageViewerInput):not(.searchInput) {
+  padding: 7px 10px;
+  border: 1px solid #CBCBCB;
+  border-radius:3px;
   width: 100%;
 }
 //input component
 input[type=password] {
-  border-radius: 5px;
   border: 1px solid $grey;
   padding: 5px 10px;
   width: 100%;
@@ -223,6 +262,7 @@ input[type=password] {
     }
     td {
       vertical-align: middle;
+      padding-left:5px;
     }
   }
 }
@@ -262,4 +302,45 @@ input[type=password] {
   height: 20px;
   padding-left: 10px;
   z-index: 1000;
+}
+
+input[type=checkbox], input[type=radio] {
+  width: 10px;
+  height: 10px;
+  margin:5px;
+}
+
+<!-- Fix bug khanhNv10 added-->
+-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #B3B2B3;
+}
+:-moz-placeholder { /* Firefox 19+ */
+  color: #B3B2B3;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: #B3B2B3;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: #B3B2B3;
+}
+
+.btn_confirm_delete{
+    background-color: white;
+    padding:7px;
+    text-align: left;
+    border-radius: 5px;
+    border: 1px solid #b2b1b2;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.btn_confirm_delete:hover{
+    text-decoration: none;
+}
+
+.btn_confirm_delete span{
+    padding-left: 15px;
+    vertical-align: middle;
+    color:#252525;
+    margin-right:25px;
 }

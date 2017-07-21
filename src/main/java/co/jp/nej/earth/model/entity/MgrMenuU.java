@@ -1,12 +1,11 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrMenuU;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QMgrMenuU;
+import java.io.Serializable;
 
 /**
  * Created by minhtv on 3/29/2017.
@@ -35,18 +34,23 @@ public class MgrMenuU extends BaseModel<MgrMenuU> implements Serializable {
     public String getFunctionId() {
         return functionId;
     }
+
     public void setFunctionId(String functionId) {
         this.functionId = functionId;
     }
+
     public String getUserId() {
         return userId;
     }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
     public int getAccessAuthority() {
         return accessAuthority;
     }
+
     public void setAccessAuthority(int accessAuthority) {
         this.accessAuthority = accessAuthority;
     }

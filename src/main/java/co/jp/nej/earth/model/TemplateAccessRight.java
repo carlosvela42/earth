@@ -1,28 +1,59 @@
 package co.jp.nej.earth.model;
 
-import java.io.Serializable;
-
 import co.jp.nej.earth.model.enums.AccessRight;
 
-public class TemplateAccessRight implements Serializable{
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class TemplateAccessRight implements Serializable {
 
     /**
      *
      */
     private static final long serialVersionUID = 1L;
-    private TemplateKey templateKey;
-    private AccessRight accessRight;
 
-    public TemplateKey getTemplateKey() {
-        return templateKey;
-    }
-    public void setTemplateKey(TemplateKey templateKey) {
-        this.templateKey = templateKey;
-    }
-    public AccessRight getAccessRight() {
+    private Map<TemplateKey, AccessRight> templatesAccessRights = new HashMap<>();
+
+    public AccessRight get(TemplateKey key) {
+        AccessRight accessRight = templatesAccessRights.get(key);
+        if (accessRight == null) {
+            return AccessRight.NONE;
+        }
         return accessRight;
     }
-    public void setAccessRight(AccessRight accessRight) {
-        this.accessRight = accessRight;
+
+    /**
+     * @return the templatesAccessRights
+     */
+    public Map<TemplateKey, AccessRight> getTemplatesAccessRights() {
+        return templatesAccessRights;
+    }
+
+    /**
+     * @param templatesAccessRights the templatesAccessRights to set
+     */
+    public void setTemplatesAccessRights(Map<TemplateKey, AccessRight> templatesAccessRights) {
+        this.templatesAccessRights = templatesAccessRights;
+    }
+
+    public void putAll(Map<TemplateKey, AccessRight> accessMap) {
+        this.templatesAccessRights.putAll(accessMap);
+    }
+
+    public void put(TemplateKey key, AccessRight value) {
+        templatesAccessRights.put(key, value);
+    }
+
+    public void putAll(TemplateKey key, AccessRight value) {
+        templatesAccessRights.put(key, value);
+    }
+
+    public int size() {
+        return templatesAccessRights.size();
+    }
+
+    public boolean exists(String id) {
+        return templatesAccessRights.containsKey(id);
     }
 }

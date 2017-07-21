@@ -1,4 +1,4 @@
-<@standard.standardPage title="TEMPLATELIST">
+<@standard.standardPage title="TEMPLATELIST" imageLink="data">
 <form object="templateTypes" method="POST">
 	<table>
 		<tr>

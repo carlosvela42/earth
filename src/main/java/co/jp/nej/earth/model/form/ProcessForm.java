@@ -5,11 +5,9 @@ import co.jp.nej.earth.model.StrageDb;
 import co.jp.nej.earth.model.StrageFile;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
-public class  ProcessForm {
+public class ProcessForm {
     private MgrProcess process;
     private StrageFile strageFile;
     private StrageDb strageDb;
@@ -24,8 +22,7 @@ public class  ProcessForm {
     }
 
     /**
-     * @param process
-     *            the process to set
+     * @param process the process to set
      */
     public void setProcess(MgrProcess process) {
         this.process = process;
@@ -39,8 +36,7 @@ public class  ProcessForm {
     }
 
     /**
-     * @param strageFile
-     *            the strageFile to set
+     * @param strageFile the strageFile to set
      */
     public void setStrageFile(StrageFile strageFile) {
         this.strageFile = strageFile;
@@ -54,8 +50,7 @@ public class  ProcessForm {
     }
 
     /**
-     * @param strageDb
-     *            the strageDb to set
+     * @param strageDb the strageDb to set
      */
     public void setStrageDb(StrageDb strageDb) {
         this.strageDb = strageDb;
@@ -69,8 +64,7 @@ public class  ProcessForm {
     }
 
     /**
-     * @param workspaceId
-     *            the workspaceId to set
+     * @param workspaceId the workspaceId to set
      */
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;

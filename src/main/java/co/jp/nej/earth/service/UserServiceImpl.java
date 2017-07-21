@@ -36,7 +36,6 @@ import co.jp.nej.earth.model.MenuAccessRight;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.MgrWorkspace;
 import co.jp.nej.earth.model.TemplateAccessRight;
-import co.jp.nej.earth.model.TemplateKey;
 import co.jp.nej.earth.model.TransactionManager;
 import co.jp.nej.earth.model.UserInfo;
 import co.jp.nej.earth.model.constant.Constant;
@@ -140,8 +139,9 @@ public class UserServiceImpl extends BaseService implements UserService {
         List<Message> listMessage = new ArrayList<Message>();
         if (!EStringUtil.isEmpty(userId) && !EStringUtil.checkAlphabet(userId)) {
             Message message = new Message(MessageUser.USR_SPECIAL,
-                    eMessageResource.get(ErrorCode.E0007, new String[]{ScreenItem.USER_ID}));
+                    eMessageResource.get(ErrorCode.E0004, new String[] { ScreenItem.USER_ID }));
             listMessage.add(message);
+            return listMessage;
         }
 
         if (!EStringUtil.isEmpty(userId)) {
@@ -153,7 +153,7 @@ public class UserServiceImpl extends BaseService implements UserService {
                 if (mgrUser != null) {
                     if (!LoginUtil.isUserExisted(encryptedPassword, mgrUser)) {
                         Message message = new Message(MessageCodeLogin.INVALID_LOGIN,
-                                eMessageResource.get(ErrorCode.E0003, null));
+                                eMessageResource.get(ErrorCode.E0002,null));
                         listMessage.add(message);
                     } else {
                         String loginToken = LoginUtil.generateToken(userId, DateUtil.getCurrentDate());
@@ -168,20 +168,20 @@ public class UserServiceImpl extends BaseService implements UserService {
                         session.setAttribute(Session.WORKSPACES, mgrWorkspaces);
 
                         // Save All templates access right into session.
-                        Map<TemplateKey, TemplateAccessRight> templateAccessRightMap
-                                = getTemplatesAccessRightOfAllWorkspaces(userId, mgrWorkspaces);
-                        TemplateUtil.saveToSession(session, templateAccessRightMap);
+                        TemplateAccessRight templateAccessRights = getTemplatesAccessRightOfAllWorkspaces(userId,
+                                mgrWorkspaces);
+                        TemplateUtil.saveToSession(session, templateAccessRights);
 
                         // Save All Menus Access right into session.
                         Map<String, MenuAccessRight> menuAccessRightMap = menuAuthorityDao.getMixAuthority(userId);
-                        if (channel == Channel.LOGIN.getValue()) {
+                        if (channel == Channel.INTERNAL.getValue()) {
                             MenuUtil.saveToSession(session, menuAccessRightMap);
                             session.setAttribute(Session.MENU_STRUCTURE, MenuUtil.buildMenuTree(menuAccessRightMap));
                         }
                     }
                 } else {
-                    Message message = new Message(
-                            MessageCodeLogin.INVALID_LOGIN, eMessageResource.get(ErrorCode.E0003, null));
+                    Message message = new Message(MessageCodeLogin.INVALID_LOGIN,
+                            eMessageResource.get(ErrorCode.E0002, null));
                     listMessage.add(message);
                 }
             } catch (Exception e) {
@@ -204,26 +204,87 @@ public class UserServiceImpl extends BaseService implements UserService {
         return listMessage;
     }
 
-    private Map<TemplateKey, TemplateAccessRight> getTemplatesAccessRightOfAllWorkspaces(String userId,
-                                                                                   List<MgrWorkspace> mgrWorkspaces) {
-        Map<TemplateKey, TemplateAccessRight> templateAccessRightMap = new HashMap<TemplateKey, TemplateAccessRight>();
+    /**
+     * @param userId   id of user
+     * @param password password of user
+     * @param session  HttpSession object
+     * @return list message determined that user log in successfully or not
+     */
+    public List<Message> loginBatch(String userId, String password) throws EarthException {
+        List<Message> listMessage = new ArrayList<Message>();
+        if (!EStringUtil.isEmpty(userId) && !EStringUtil.checkAlphabet(userId)) {
+            Message message = new Message(MessageUser.USR_SPECIAL,
+                eMessageResource.get(ErrorCode.E0004, new String[]{ScreenItem.USER_ID}));
+            listMessage.add(message);
+        }
+
+        if (!EStringUtil.isEmpty(userId)) {
+            TransactionManager transactionManager = null;
+            try {
+                transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
+                String encryptedPassword = CryptUtil.encryptOneWay(password);
+                MgrUser mgrUser = userDao.getById(userId);
+                if (mgrUser != null) {
+                    if (!LoginUtil.isUserExisted(encryptedPassword, mgrUser)) {
+                        Message message = new Message(MessageCodeLogin.INVALID_LOGIN,
+                            eMessageResource.get(ErrorCode.E0002, null));
+                        listMessage.add(message);
+                    } else {
+                        String loginToken = LoginUtil.generateToken(userId, DateUtil.getCurrentDate());
+
+                        CtlLogin ctlLogin = new CtlLogin(loginToken, userId, DateUtil.getCurrentDateString(), null);
+                        loginControlDao.add(Constant.EARTH_WORKSPACE_ID, ctlLogin);
+                        countAndUpdateLicenseHistory(userId);
+
+                    }
+                } else {
+                    Message message = new Message(MessageCodeLogin.INVALID_LOGIN,
+                        eMessageResource.get(ErrorCode.E0002, null));
+                    listMessage.add(message);
+                }
+            } catch (Exception e) {
+                if (transactionManager != null) {
+                    transactionManager.getManager().rollback(transactionManager.getTxStatus());
+                }
+                throw new EarthException(e);
+            }
+
+            if (listMessage.size() > 0) {
+                if (transactionManager != null) {
+                    transactionManager.getManager().rollback(transactionManager.getTxStatus());
+                }
+            } else {
+                if (transactionManager != null) {
+                    transactionManager.getManager().commit(transactionManager.getTxStatus());
+                }
+            }
+        }
+        return listMessage;
+    }
+
+    private TemplateAccessRight getTemplatesAccessRightOfAllWorkspaces(String userId,
+            List<MgrWorkspace> mgrWorkspaces) {
+        TemplateAccessRight templateAccessRights = new TemplateAccessRight();
 
         TransactionManager transactionMgr = null;
         for (MgrWorkspace mgrWorkspace : mgrWorkspaces) {
             try {
                 transactionMgr = new TransactionManager(mgrWorkspace.getWorkspaceId());
-                templateAccessRightMap
-                        .putAll(templateAuthorityDao.getMixAuthority(userId, mgrWorkspace.getWorkspaceId()));
+                templateAccessRights.putAll(
+                        templateAuthorityDao.getMixAuthority(userId, mgrWorkspace.getWorkspaceId()));
                 transactionMgr.getManager().commit(transactionMgr.getTxStatus());
             } catch (Exception ex) {
                 LOG.error(ex.getMessage(), ex);
+                LOG.error("EARTH: Reason could be can not connect with workspace with Id: "
+                        + mgrWorkspace.getWorkspaceId()
+                        + ". If so, consider removing this workspace record from database.");
                 if (transactionMgr != null) {
                     transactionMgr.getManager().rollback(transactionMgr.getTxStatus());
                 }
             }
         }
 
-        return templateAccessRightMap;
+        return templateAccessRights;
     }
 
     public boolean logout(HttpSession session) throws EarthException {
@@ -232,7 +293,7 @@ public class UserServiceImpl extends BaseService implements UserService {
                 UserInfo userInfo = (UserInfo) session.getAttribute(Session.USER_INFO);
                 String sessionId = userInfo.getLoginToken();
 
-                loginControlDao.updateOutTime(sessionId, DateUtil.getCurrentDate().toString());
+                loginControlDao.updateOutTime(sessionId, DateUtil.getCurrentDateString());
                 String userId = userInfo.getUserId();
                 countAndUpdateLicenseHistory(userId);
                 session.invalidate();
@@ -246,7 +307,11 @@ public class UserServiceImpl extends BaseService implements UserService {
     private void countAndUpdateLicenseHistory(String userId) throws EarthException {
         try {
             List<StrCal> strCals = loginControlDao.getNumberOnlineUserByProfile(userId);
-            String currentDate = DateUtil.getCurrentDate(DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS);
+            List<StrCal> strCalEntireSystem = loginControlDao.getLicenceOfEntireSystem();
+            if (strCalEntireSystem != null && strCalEntireSystem.size() > 0) {
+                strCals.addAll(strCalEntireSystem);
+            }
+            String currentDate = DateUtil.getCurrentDate(DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999);
             for (StrCal ls : strCals) {
                 ls.setProcessTime(currentDate);
                 licenseHistoryDao.add(Constant.EARTH_WORKSPACE_ID, ls);
@@ -274,46 +339,34 @@ public class UserServiceImpl extends BaseService implements UserService {
         try {
             if (!EStringUtil.checkJapanese(mgrUser.getName())) {
                 Message message = new Message(MessageUser.NAME_SPECIAL,
-                        eMessageResource.get(ErrorCode.E0007, new String[]{ScreenItem.NAME}));
+                    eMessageResource.get(ErrorCode.E0004, new String[]{ScreenItem.NAME}));
                 listMessage.add(message);
                 return listMessage;
             }
-           /* if (insert) {
-                if (!EStringUtil.equals(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
-                    Message message = new Message(MessageUser.PWD_CORRECT, eMessageResource.get(ErrorCode.E1008,
-                            new String[] { ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD }));
-                    listMessage.add(message);
-                    return listMessage;
-                }
-                List<String> passwordValidate = passwordPolicy.validate(mgrUser.getPassword());
-                if (passwordValidate != null && passwordValidate.size() > 0) {
-                    listMessage = getMessagePasswordPolicy(passwordValidate);
-                    return listMessage;
-                }
+            if (insert) {
                 if (isExist(mgrUser.getUserId())) {
-                    Message message = new Message(MessageUser.USR_EXIST, eMessageResource.get(ErrorCode.E0005,
-                            new String[] { mgrUser.getUserId(), ScreenItem.USER }));
+                    Message message = new Message(MessageUser.USR_EXIST, eMessageResource.get(ErrorCode.E0003,
+                        new String[]{mgrUser.getUserId(), ScreenItem.USER}));
                     listMessage.add(message);
                     return listMessage;
                 }
-
-            } else {*/
+            }
             if (mgrUser.isChangePassword()) {
                 if (EStringUtil.isEmpty(mgrUser.getPassword())) {
                     Message message = new Message(MessageUser.PWD_BLANK,
-                            eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.NEW_PASSWORD}));
+                        eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.NEW_PASSWORD}));
                     listMessage.add(message);
                     return listMessage;
                 }
                 if (EStringUtil.isEmpty(mgrUser.getConfirmPassword())) {
                     Message message = new Message(MessageUser.PWD_BLANK,
-                            eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.CONFIRM_PASSWORD}));
+                        eMessageResource.get(ErrorCode.E0001, new String[]{ScreenItem.CONFIRM_PASSWORD}));
                     listMessage.add(message);
                     return listMessage;
                 }
                 if (!EStringUtil.contains(mgrUser.getConfirmPassword(), mgrUser.getPassword())) {
                     Message message = new Message(MessageUser.PWD_CORRECT, eMessageResource.get(ErrorCode.E1008,
-                            new String[]{ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD}));
+                        new String[]{ScreenItem.NEW_PASSWORD, ScreenItem.CONFIRM_PASSWORD}));
                     listMessage.add(message);
                     return listMessage;
                 }
@@ -323,7 +376,6 @@ public class UserServiceImpl extends BaseService implements UserService {
                     return listMessage;
                 }
             }
-//            }
             return listMessage;
         } catch (Exception ex) {
             Message message = new Message(MessageUser.USR_BLANK, eMessageResource.get("E1009", new String[]{""}));
@@ -332,15 +384,27 @@ public class UserServiceImpl extends BaseService implements UserService {
         }
     }
 
+    private boolean isExist(String userId) throws EarthException {
+        TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
+        try {
+            MgrUser mgrUser = userDao.getById(userId);
+            transactionManager.getManager().commit(transactionManager.getTxStatus());
+            return (mgrUser != null);
+        } catch (Exception ex) {
+            transactionManager.getManager().rollback(transactionManager.getTxStatus());
+            return true;
+        }
+    }
+
     public boolean insertOne(MgrUser mgrUser) throws EarthException {
         TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
         try {
             mgrUser.setLastUpdateTime(DateUtil.getCurrentDate(DatePattern.DATE_FORMAT_YYYY_MM_DD));
-                mgrUser.setPassword(CryptUtil.encryptOneWay(!EStringUtil.isEmpty(mgrUser.getPassword())?mgrUser
-                        .getPassword():""));
+            mgrUser.setPassword(CryptUtil.encryptOneWay(!EStringUtil.isEmpty(mgrUser.getPassword()) ? mgrUser
+                .getPassword() : ""));
 
             mgrUser.setConfirmPassword(CryptUtil.encryptOneWay(!EStringUtil.isEmpty(mgrUser.getConfirmPassword())
-                    ?mgrUser.getConfirmPassword():""));
+                ? mgrUser.getConfirmPassword() : ""));
             long insert = userDao.add(Constant.EARTH_WORKSPACE_ID, mgrUser);
             if (insert == 0) {
                 throw new EarthException("Insert unsuccessfully!");
@@ -471,18 +535,6 @@ public class UserServiceImpl extends BaseService implements UserService {
         } catch (Exception ex) {
             transactionManager.getManager().rollback(transactionManager.getTxStatus());
             throw new EarthException(ex);
-        }
-    }
-
-    private boolean isExist(String userId) throws EarthException {
-        TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
-        try {
-            MgrUser mgrUser = userDao.getById(userId);
-            transactionManager.getManager().commit(transactionManager.getTxStatus());
-            return (mgrUser != null);
-        } catch (Exception ex) {
-            transactionManager.getManager().rollback(transactionManager.getTxStatus());
-            return true;
         }
     }
 

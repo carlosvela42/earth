@@ -4465,7 +4465,7 @@ SVG.Image = SVG.invent({
 
         // ensure image size        
         if (self.width() == 0 && self.height() == 0)
-          self.size(img.width, img.height)
+          self.size(img.width, img.height);
 
         // ensure pattern size if not set
         if (p && p.width() == 0 && p.height() == 0)

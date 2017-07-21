@@ -1,8 +1,18 @@
 package co.jp.nej.earth.config;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.manager.connection.ConnectionManager;
+import co.jp.nej.earth.model.MgrWorkspaceConnect;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.enums.DatabaseType;
+import co.jp.nej.earth.util.EStringUtil;
+import com.querydsl.sql.OracleTemplates;
+import com.querydsl.sql.SQLServer2012Templates;
+import com.querydsl.sql.SQLTemplates;
+import com.querydsl.sql.types.DateTimeType;
+import com.querydsl.sql.types.LocalDateType;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,31 +23,18 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.querydsl.sql.OracleTemplates;
-import com.querydsl.sql.SQLServer2012Templates;
-import com.querydsl.sql.SQLTemplates;
-import com.querydsl.sql.types.DateTimeType;
-import com.querydsl.sql.types.LocalDateType;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.manager.connection.ConnectionManager;
-import co.jp.nej.earth.model.MgrWorkspaceConnect;
-import co.jp.nej.earth.model.constant.Constant;
-import co.jp.nej.earth.model.enums.DatabaseType;
-import co.jp.nej.earth.util.EStringUtil;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 
 /**
  * @author p-tvo-khanhnv
- *
  */
 @Configuration
 @PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 public class JdbcConfig {
     private static final String ORACLE_URL_FORMAT = "jdbc:oracle:thin:@{server}:{port}:earth";
-    private static final String SQL_SERVER_URL_FORMAT = "jdbc:sqlserver://{server}:{port};"
+    private static final String SQL_SERVER_URL_FORMAT = "jdbc:jtds:sqlserver://{server}:{port};"
             + "databaseName={schema};integratedSecurity=false;";
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcConfig.class);
@@ -68,6 +65,7 @@ public class JdbcConfig {
                 config.setDriverClassName(DatabaseType.ORACLE.toString());
             } else if (DatabaseType.SQL_SERVER.name().equals(dbType)) {
                 config.setDriverClassName(DatabaseType.SQL_SERVER.toString());
+                config.setConnectionTestQuery("SELECT 1");
             }
 
             config.setJdbcUrl(createDbUrl(mgrConnect));

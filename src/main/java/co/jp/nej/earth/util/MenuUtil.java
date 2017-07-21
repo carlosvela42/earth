@@ -1,20 +1,18 @@
 package co.jp.nej.earth.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.servlet.http.HttpSession;
-
-import org.springframework.util.ObjectUtils;
-
 import co.jp.nej.earth.model.MenuAccessRight;
 import co.jp.nej.earth.model.MenuStructure;
 import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.enums.AccessRight;
+import org.springframework.util.ObjectUtils;
+
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MenuUtil {
 
@@ -44,6 +42,7 @@ public class MenuUtil {
                 String categoryId = mgrMenu.getFunctionCategoryId().trim();
                 String key = map.getKey().trim();
                 if (!categoryId.equals("") && !key.equals("") && categoryId.equals(key)) {
+                    menuStructure.setCssClass(mgrMenu.getMenuInformation().getCssClass());
                     mgrMenus.add(mgrMenu);
                 }
             }

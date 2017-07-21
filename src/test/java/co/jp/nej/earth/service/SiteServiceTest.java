@@ -1,12 +1,11 @@
 package co.jp.nej.earth.service;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import co.jp.nej.earth.BaseTest;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.constant.Constant;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class SiteServiceTest extends BaseTest {
 

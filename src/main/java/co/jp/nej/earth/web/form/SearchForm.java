@@ -1,66 +1,68 @@
 package co.jp.nej.earth.web.form;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import co.jp.nej.earth.model.Column;
 import co.jp.nej.earth.model.Row;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SearchForm {
 
-  private String templateId;
-  public String getTemplateId() {
-    return templateId;
-  }
+    private String templateId;
 
-  public void setTemplateId(String templateId) {
-    this.templateId = templateId;
-  }
+    public String getTemplateId() {
+        return templateId;
+    }
 
-  private String templateName;
-  private String templateType;
-  private String templateTableName;
-  public String getTemplateTableName() {
-    return templateTableName;
-  }
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
+    }
 
-  public void setTemplateTableName(String templateTableName) {
-    this.templateTableName = templateTableName;
-  }
+    private String templateName;
+    private String templateType;
+    private String templateTableName;
 
-  private List<Row> rows = new ArrayList<Row>();
-  private List<Column> columns = new ArrayList<Column>();
+    public String getTemplateTableName() {
+        return templateTableName;
+    }
 
-  public List<Row> getRows() {
-    return rows;
-  }
+    public void setTemplateTableName(String templateTableName) {
+        this.templateTableName = templateTableName;
+    }
 
-  public void setRows(List<Row> rows) {
-    this.rows = rows;
-  }
+    private List<Row> rows = new ArrayList<Row>();
+    private List<Column> columns = new ArrayList<Column>();
 
-  public List<Column> getColumns() {
-    return columns;
-  }
+    public List<Row> getRows() {
+        return rows;
+    }
 
-  public void setColumns(List<Column> columns) {
-    this.columns = columns;
-  }
+    public void setRows(List<Row> rows) {
+        this.rows = rows;
+    }
 
-  public String getTemplateName() {
-    return templateName;
-  }
+    public List<Column> getColumns() {
+        return columns;
+    }
 
-  public void setTemplateName(String templateName) {
-    this.templateName = templateName;
-  }
+    public void setColumns(List<Column> columns) {
+        this.columns = columns;
+    }
 
-  public String getTemplateType() {
-    return templateType;
-  }
+    public String getTemplateName() {
+        return templateName;
+    }
 
-  public void setTemplateType(String templateType) {
-    this.templateType = templateType;
-  }
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
+    public String getTemplateType() {
+        return templateType;
+    }
+
+    public void setTemplateType(String templateType) {
+        this.templateType = templateType;
+    }
 
 }

@@ -13,8 +13,6 @@ import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.sql.QMgrMenu;
 import co.jp.nej.earth.util.ConversionUtil;
 import co.jp.nej.earth.util.UserAccessRightUtil;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,13 +45,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     @Override
     public List<MgrMenu> getAll() throws EarthException {
         return ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
-            QMgrMenu qMgrMenu = QMgrMenu.newInstance();
-            List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
-            orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, qMgrMenu.functionCategoryId));
-            orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, qMgrMenu.functionId));
-            orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, qMgrMenu.functionSortNo));
-
-            return menuDao.findAll(Constant.EARTH_WORKSPACE_ID, null, null, orderSpecifiers, null);
+            return menuDao.getAll();
         }), MgrMenu.class);
     }
 
@@ -114,9 +106,9 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                     mgrUserProfiles, accessRightPMap);
             List<UserAccessRight> menuAccessRights = UserAccessRightUtil.mixAuthority(userAccessRights,
                     userAccessRightByProfiles);
-            if(menuAccessRights.size()>0){
+            if (menuAccessRights.size() > 0) {
                 return menuAuthorityDao.insertMixAuthority(functionId, menuAccessRights);
-            }else{
+            } else {
                 return 0L;
             }
 

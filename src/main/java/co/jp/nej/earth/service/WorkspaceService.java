@@ -1,11 +1,11 @@
 package co.jp.nej.earth.service;
 
-import java.util.List;
-
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.MgrWorkspace;
 import co.jp.nej.earth.model.MgrWorkspaceConnect;
+
+import java.util.List;
 
 public interface WorkspaceService {
     List<MgrWorkspaceConnect> getAllWorkspaceConnections() throws EarthException;

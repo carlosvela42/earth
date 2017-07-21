@@ -1,8 +1,10 @@
 var ImageViewer = function() {
-    toolbarFlg = annoTypes.RECTANGLE;
     documents = [];
     currentDocument = null;
     documentPath = null;
+
+    this.zoomDefault = 0.1;
+    this.panDefault = -0.1;
 
     existUser = false;
     layerActive = null;
@@ -44,16 +46,40 @@ var ImageViewer = function() {
 
     selectedGroup = null;
     hiddenRect = null;
-    toolbarFlg = annoTypes.RECTANGLE;
+    this.toolbarFlg = toolbars.BTN_SELECT;
     copyCutFlg = false;
     drawFlg = false;
     selectedFlg = false;
+    
+
 
     //	Array.prototype.insert = function(index, item) {
     //	    this.splice(index, 0,item);
     //	};
 };
-var userInfo = "tung";
+
+
+var waitMouseUpFlg = false;
+var deleteLayerFlag = true;
+
+
+var ctrlDown = false;
+var CTRLKEY = 17;
+var CMDKEY = 91;
+var VKEY = 86;
+var CKEY = 67;
+var clickOnSelectedBound = false;
+var layerNoMax = 0;
+var contrast = 100;
+var brightness = 100;
+var checkGrayscale = true;
+var tmpContrast = 100;
+var tmpBrightness = 100;
+var tmpCheckGrayscale = true;
+var xGrayscale = null;
+var filterChild = null;
+var userInfo = window.userId;
+var templateLayerName = "TMP5";
 var commentImage = "resources/images/imageViewer/rsz_commenticon.jpg";
 var cursorImage = "resources/images/imageViewer/Pen-50.png";
 
@@ -63,9 +89,9 @@ var result = {
 };
 
 var documentType = {
-    IMAGE: "1",
-    PDF: "2",
-    TIFF: "3"
+    IMAGE: "image",
+    PDF: "pdf",
+    TIFF: "tiff"
 };
 
 var rotateType = {
@@ -100,6 +126,7 @@ var toolbars = {
     BTN_PASTE: "#paste",
     BTN_PROPERTIES: "#properties",
     BTN_OKPROPERTIES: "#okProperties",
+    BTN_CANCELPROPERTIES: "#cancelProperties",
     BTN_TEXTPROPERTIES: "#textProperties",
     BTN_COMMENTPROPERTIES: "#commentProperties",
     BTN_CANCELCOMMENTPROPERTIES: "#cancelCommentProperties",
@@ -109,16 +136,34 @@ var toolbars = {
     BTN_LAST: "#last",
     BTN_NEXT: "#next",
     BTN_PREVIOUS: "#previous",
-    BTN_FIRST: "#first"
+    BTN_FIRST: "#first",
+    BTN_ADDLAYER: "#addLayer",
+    BTN_REMOVELAYER: "#removeLayer",
+    BTN_RENAMELAYER: "#renameLayer",
+    BTN_ACTIVELAYER: "#activeLayer",
+    BTN_DISPLAYLAYER: "#displayLayer",
+    BTN_OKLAYER: "#okLayer",
+    BTN_OKLAYERDELETE: "#okLayerDelete",
+    BTN_GRAYSCALE: "#btnGrayscale",
+    BTN_OKGRAYSCALE: "#okGrayscale",
+    BTN_CANCELGRAYSCALE: "#cancelGrayscale",
+    BTN_CONTROLS: "#controls",
+    BTN_CONTROLS1: "#controls1",
+    BTN_CBOX1: "#cbox1",
+    BTN_SAVEIMAGE: "#saveImage",
+    BTN_SUBIMAGE: "#subImage"
 };
 
 var textExample = {
     COMMENTTEXT: "#commentText",
     FONTSTYLEID: "#fontStyle",
     INPUTCOLOR: "input[name=color]:checked",
+    INPUTCOLOR1: "input[name=color]",
     INPUTFILL: "input[name=fill]:checked",
     INPUTHIGHLIGHT: "input[name=highlight]:checked",
-    WIDTH: '#width'
+    WIDTH: '#width',
+    COLOR: '#color',
+    COLORSELECT: '#color option:selected'
 }
 
 var commentExample = {
@@ -135,27 +180,3 @@ var annoTypes = {
     HIGHLIGHT: "#highlight",
     COMMENT: "#comment"
 };
-
-var Document = {
-    workitemId: null,
-    folderItemNo: null,
-    documentNo: null,
-    mgrTemplate: null,
-    pageCount: null,
-    viewInformation: null,
-    documentType: null,
-    action: null,
-    documentData: null,
-    documentPath: null,
-    documentBinary: null,
-    templateId: null,
-    layers: []
-}
-
-function Layer(layerName, layerOwner, layerDisplay, layerModified, layerCreated) {
-    this.layerName = layerName;
-    this.layerOwner = layerOwner;
-    this.layerDisplay = layerDisplay;
-    this.layerModified = layerModified;
-    this.layerCreated = layerCreated;
-}

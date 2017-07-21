@@ -1,30 +1,33 @@
 package co.jp.nej.earth.manager.connection;
 
-import co.jp.nej.earth.config.*;
-import co.jp.nej.earth.exception.*;
-import co.jp.nej.earth.model.*;
-import co.jp.nej.earth.model.constant.*;
-import co.jp.nej.earth.model.constant.Constant.*;
-import co.jp.nej.earth.service.*;
-import co.jp.nej.earth.util.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.jdbc.datasource.*;
-import org.springframework.stereotype.*;
-import org.springframework.transaction.*;
-import org.springframework.util.*;
+import co.jp.nej.earth.config.JdbcConfig;
+import co.jp.nej.earth.config.SpringConnectionProvider;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.MgrWorkspaceConnect;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.constant.Constant.ErrorCode;
+import co.jp.nej.earth.model.constant.Constant.ScreenItem;
+import co.jp.nej.earth.service.WorkspaceService;
+import co.jp.nej.earth.util.EMessageResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.StringUtils;
 
-import javax.annotation.*;
-import javax.inject.*;
-import javax.sql.*;
-import java.sql.*;
-import java.util.*;
+import javax.annotation.PostConstruct;
+import javax.inject.Provider;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class ConnectionManager {
 
     private static Map<String, DataSource> dataSources = new HashMap<String, DataSource>();
     private static Map<String, PlatformTransactionManager> mgrTransactions
-                                                                = new HashMap<String, PlatformTransactionManager>();
+            = new HashMap<String, PlatformTransactionManager>();
 
     private static JdbcConfig config;
     private static WorkspaceService wkService;
@@ -69,7 +72,7 @@ public class ConnectionManager {
     public static EarthQueryFactory getEarthQueryFactory(String id) throws EarthException {
 
         if (StringUtils.isEmpty(id)) {
-            throw new EarthException(messges.get(ErrorCode.E0001, new String[] { ScreenItem.WORKSPACE_ID }));
+            throw new EarthException(messges.get(ErrorCode.E0001, new String[]{ScreenItem.WORKSPACE_ID}));
         }
 
         if (!exists(id)) {
@@ -103,7 +106,7 @@ public class ConnectionManager {
         MgrWorkspaceConnect connection = wkService.getMgrConnectionByWorkspaceId(id);
         if (connection == null) {
             throw new EarthException(
-                    messges.get("connection.notfound", new String[] { ScreenItem.WORKSPACE_ID }));
+                    messges.get("connection.notfound", new String[]{id}));
         } else {
             DataSource dataSource = config.dataSource(connection.getWorkspaceId(), connection);
             addDataSource(id, dataSource);

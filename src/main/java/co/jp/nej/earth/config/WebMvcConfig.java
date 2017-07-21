@@ -54,7 +54,7 @@ class WebMvcConfig extends WebMvcConfigurerAdapter {
 
         Properties settings = new Properties();
         settings.put("auto_import", "/common/standardPage.ftl as standard, spring.ftl as spring, "
-                                    + "/common/component.ftl as component");
+                + "/common/component.ftl as component");
         //settings.put("auto_import", "/common/standardPage.ftl as standard");
         configurer.setFreemarkerSettings(settings);
         configurer.setDefaultEncoding("UTF-8");

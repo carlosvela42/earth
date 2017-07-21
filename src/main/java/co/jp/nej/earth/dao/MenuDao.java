@@ -9,6 +9,7 @@ public interface MenuDao extends BaseDao<MgrMenu> {
 
     List<MgrMenu> getMenuByProfileId(List<String> profileIds) throws EarthException;
 
+    List<MgrMenu> getAll() throws EarthException;
 
 
 }

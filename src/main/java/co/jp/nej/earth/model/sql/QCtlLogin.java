@@ -6,9 +6,8 @@ import co.jp.nej.earth.model.enums.TableNames;
 import com.querydsl.core.types.PathMetadataFactory;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
 
-public class QCtlLogin extends RelationalPathBase<CtlLogin> {
+public class QCtlLogin extends QBase<CtlLogin> {
 
     /**
      *

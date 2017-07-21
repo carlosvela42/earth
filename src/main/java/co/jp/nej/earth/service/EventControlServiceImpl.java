@@ -9,26 +9,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Path;
 
 import co.jp.nej.earth.dao.EventDao;
 import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.WorkItem;
+import co.jp.nej.earth.id.EEventId;
+import co.jp.nej.earth.model.TransactionManager;
+import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.constant.Constant.AgentBatch;
-import co.jp.nej.earth.model.constant.Constant.ErrorCode;
-import co.jp.nej.earth.model.constant.Constant.ScreenItem;
 import co.jp.nej.earth.model.entity.CtlEvent;
 import co.jp.nej.earth.model.sql.QCtlEvent;
-import co.jp.nej.earth.model.ws.RestResponse;
 import co.jp.nej.earth.util.ConversionUtil;
-import co.jp.nej.earth.util.EMessageResource;
+import co.jp.nej.earth.util.DateUtil;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 @Service
 public class EventControlServiceImpl extends BaseService implements EventControlService {
@@ -37,7 +32,8 @@ public class EventControlServiceImpl extends BaseService implements EventControl
     private EventDao eventDao;
 
     @Autowired
-    private EMessageResource eMessageResource;
+    private EEventId eventId;
+
     /**
      * log
      */
@@ -47,32 +43,50 @@ public class EventControlServiceImpl extends BaseService implements EventControl
      * {@inheritDoc}
      */
     @Override
-    public boolean insertEvent(String workspaceId, WorkItem workItem) throws EarthException {
-        return (boolean) this.executeTransaction(workspaceId, () -> {
-            try {
-                // parse object to json
-                String json = null;
-                try {
-                    json = new ObjectMapper().writeValueAsString(workItem);
-                } catch (JsonProcessingException e) {
-                    LOG.error(e.getMessage());
-                    throw new EarthException(e);
-                }
-                CtlEvent event = new CtlEvent();
-                // TODO
-                // user function increase event id
-                event.setEventId(Integer.toString((eventDao.findAll(workspaceId).size() + 1)));
-                event.setStatus(AgentBatch.STATUS_EDIT);
-                event.setTaskId("1");
-                event.setWorkitemData(json);
-                event.setWorkitemId(" -1");
-                event.setUserId("1");
-                return eventDao.add(workspaceId, event) > 0;
-            } catch (Exception e) {
-                throw new EarthException(e);
-            }
-        });
+    public boolean insertEvent(String workspaceId, CtlEvent event) throws EarthException {
+        TransactionManager transactionManager = null;
+        try {
+            transactionManager = new TransactionManager(workspaceId);
 
+            event.setLastUpdateTime(DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
+            event.setEventId(eventId.getAutoId());
+            eventDao.add(workspaceId, event);
+
+            transactionManager.getManager().commit(transactionManager.getTxStatus());
+            return true;
+        } catch (EarthException ex) {
+            if (transactionManager != null) {
+                transactionManager.getManager().rollback(transactionManager.getTxStatus());
+            }
+
+            LOG.error(ex.getMessage());
+            return false;
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean insertEvents(String workspaceId, List<CtlEvent> events) throws EarthException {
+        TransactionManager transactionManager = null;
+        try {
+            transactionManager = new TransactionManager(workspaceId);
+            for(CtlEvent event:events){
+                event.setEventId(eventId.getAutoId());
+                eventDao.add(workspaceId, event);
+            }
+            transactionManager.getManager().commit(transactionManager.getTxStatus());
+            return true;
+        } catch (EarthException ex) {
+            if (transactionManager != null) {
+                transactionManager.getManager().rollback(transactionManager.getTxStatus());
+            }
+
+            LOG.error(ex.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -126,15 +140,7 @@ public class EventControlServiceImpl extends BaseService implements EventControl
     @Override
     public boolean deleteEvent(CtlEvent event, String workSpaceId) throws EarthException {
         return (boolean) this.executeTransaction(workSpaceId, () -> {
-            try {
-                QCtlEvent qCtlEvent = QCtlEvent.newInstance();
-                Map<Path<?>, Object> condition = new HashMap<>();
-                condition.put(qCtlEvent.eventId, event.getEventId());
-                condition.put(qCtlEvent.status, AgentBatch.STATUS_EDITTING);
-                return eventDao.delete(workSpaceId, condition) > 0;
-            } catch (Exception e) {
-                throw new EarthException(e);
-            }
+            return eventDao.deleteEvent(workSpaceId, event);
         });
     }
 
@@ -142,34 +148,61 @@ public class EventControlServiceImpl extends BaseService implements EventControl
      * {@inheritDoc}
      */
     @Override
-    public RestResponse unlockEventControl(String workspaceId, String eventId) throws EarthException {
-        return (RestResponse) this.executeTransaction(workspaceId, () -> {
+    public boolean unlockEventControl(String workspaceId, String eventId) throws EarthException {
+        return (boolean) this.executeTransaction(workspaceId, () -> {
+            QCtlEvent qCtlEvent = QCtlEvent.newInstance();
+            Map<Path<?>, Object> condition = new HashMap<>();
+            condition.put(qCtlEvent.eventId, eventId);
+            condition.put(qCtlEvent.status, AgentBatch.STATUS_OPEN);
+
+            // Processing delete.
+            if (eventDao.delete(workspaceId, condition) > 0) {
+                return true;
+            }
+
+            // Processing update.
+            Map<Path<?>, Object> updateMap = new HashMap<>();
+            updateMap.put(qCtlEvent.status, AgentBatch.STATUS_EDIT);
+            condition.put(qCtlEvent.status, AgentBatch.STATUS_EDITTING);
+            if (eventDao.update(workspaceId, condition, updateMap) > 0) {
+                return true;
+            }
+            return false;
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean unlockEventControls(String workspaceId, List<String> eventIds) throws EarthException {
+        return (boolean) this.executeTransaction(workspaceId, () -> {
+            // Delete events have status is open.
+            eventDao.deleteBulkEvents(workspaceId, eventIds, AgentBatch.STATUS_OPEN);
+
+            // Update events have status is Editing to Edit.
+            eventDao.updateBulkEventStatus(workspaceId, eventIds, AgentBatch.STATUS_EDITTING, AgentBatch.STATUS_EDIT);
+
+            return true;
+        });
+    }
+
+    /**
+     * Update status and TransactionToken for event
+     *
+     * @param status
+     * @param workSpaceId
+     * @return
+     */
+    @Override
+    public CtlEvent getOneEventByStatusForUpdate(String status, String workSpaceId, String userId)
+        throws EarthException {
+        return (CtlEvent) this.executeTransaction(workSpaceId, () -> {
             try {
-                RestResponse response = new RestResponse();
-                QCtlEvent qCtlEvent = QCtlEvent.newInstance();
-                Map<Path<?>, Object> condition = new HashMap<>();
-                condition.put(qCtlEvent.eventId, eventId);
-                CtlEvent event = eventDao.findOne(workspaceId, condition);
-                if (event == null) {
-                    response.setResult(false);
-                    response.setData(eMessageResource.get(ErrorCode.E0002, new String[] { ScreenItem.EVEN_TID }));
-                    return response;
-                }
-                String eventStatus = event.getStatus();
-                boolean result = false;
-                if (AgentBatch.STATUS_OPEN.equalsIgnoreCase(eventStatus)) {
-                    result = eventDao.delete(workspaceId, condition) > 0;
-                } else if (AgentBatch.STATUS_EDITTING.equalsIgnoreCase(eventStatus)) {
-                    Map<Path<?>, Object> updateMap = new HashMap<>();
-                    updateMap.put(qCtlEvent.status, AgentBatch.STATUS_EDIT);
-                    result = eventDao.update(workspaceId, condition, updateMap) > 0;
-                }
-                response.setResult(result);
-                return response;
+                return eventDao.getEventIsEditing(status, workSpaceId, userId);
             } catch (Exception e) {
                 throw new EarthException(e);
             }
         });
     }
-
 }

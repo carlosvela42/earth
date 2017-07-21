@@ -1,12 +1,11 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QStrCal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QStrCal;
+import java.io.Serializable;
 
 public class StrCal extends BaseModel<StrCal> implements Serializable {
 
@@ -27,10 +26,10 @@ public class StrCal extends BaseModel<StrCal> implements Serializable {
     }
 
     public StrCal(String division, String processTime, String profileId, int availableLicenseCount,
-            int useLicenseCount) {
+                  int useLicenseCount) {
         this();
         LOG.debug("Call to (division, processTime, profileId, availableLicenseCount,"
-                    +"useLicenseCount) constructor");
+                + "useLicenseCount) constructor");
         this.division = division;
         this.processTime = processTime;
         this.profileId = profileId;

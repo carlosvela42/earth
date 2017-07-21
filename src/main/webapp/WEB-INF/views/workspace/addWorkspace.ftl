@@ -6,11 +6,11 @@
 <script src="${rc.getContextPath()}/resources/js/workspace.js"></script>
 </#assign>
 
-<@standard.standardPage title=e.get("workspace.edit") contentFooter=contentFooter script=script>
+<@standard.standardPage title=e.get("workspace.edit") contentFooter=contentFooter script=script imageLink="process">
 <br>
     <#assign isPersisted = (workspaceForm.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
-<form id="workspaceForm" action="${rc.getContextPath()}/workspace/${formAction}" object="workspaceForm" method="post">
+<form id="workspaceForm" action="${rc.getContextPath()}/workspace/${formAction}" object="workspaceForm" method="post" >
     <#include "../common/messages.ftl">
     <div class="board-wrapper">
         <div class="board board-half">

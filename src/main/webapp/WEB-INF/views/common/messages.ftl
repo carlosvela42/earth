@@ -8,6 +8,7 @@
   <#if messages??>
     <#list messages as message>
         <div>
+            <br>
             <b data-code="${(message.getCode()!"")}" style="color: red;">${message.getContent()}</b>
         </div>
     </#list>

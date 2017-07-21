@@ -21,9 +21,9 @@ public class TaskServiceImpl extends BaseService implements TaskService {
 
     @Override
     public List<MgrTask> getAll() throws EarthException {
-        return (List<MgrTask>) ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID,() ->{
-           return  taskDao.findAll(Constant.EARTH_WORKSPACE_ID);
-        }) ,MgrTask.class);
+        return (List<MgrTask>) ConversionUtil.castList(executeTransaction(Constant.EARTH_WORKSPACE_ID, () -> {
+            return taskDao.findAll(Constant.EARTH_WORKSPACE_ID);
+        }), MgrTask.class);
     }
 
 }

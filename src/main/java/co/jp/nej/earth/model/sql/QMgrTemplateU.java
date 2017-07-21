@@ -7,9 +7,8 @@ import com.querydsl.core.types.PathMetadataFactory;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
 
-public class QMgrTemplateU extends RelationalPathBase<MgrTemplateU> {
+public class QMgrTemplateU extends QBase<MgrTemplateU> {
 
     /**
      * @author p-tvo-thuynd

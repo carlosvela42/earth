@@ -1,10 +1,11 @@
 package co.jp.nej.earth.web.controller;
 
 import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.id.ESiteId;
+import co.jp.nej.earth.id.EAutoIncrease;
 import co.jp.nej.earth.model.Directory;
 import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.constant.Constant.EarthId;
 import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.service.DirectoryService;
 import co.jp.nej.earth.service.SiteService;
@@ -14,6 +15,8 @@ import co.jp.nej.earth.util.EStringUtil;
 import co.jp.nej.earth.util.SessionUtil;
 import co.jp.nej.earth.util.ValidatorUtil;
 import co.jp.nej.earth.web.form.SiteForm;
+import co.jp.nej.earth.web.form.ClientSearchForm;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +46,7 @@ public class SiteController extends BaseController {
     private DirectoryService directoryService;
 
     @Autowired
-    private ESiteId eSiteId;
+    private EAutoIncrease eSiteId;
 
     @Autowired
     private ValidatorUtil validatorUtil;
@@ -54,18 +58,29 @@ public class SiteController extends BaseController {
         return redirectToList(URL);
     }
 
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/"}, method = {RequestMethod.GET,RequestMethod.POST})
     public String showList(Model model, HttpServletRequest request) throws EarthException {
         SessionUtil.loadWorkspaces(workspaceService, model, request);
         String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
+
+        HttpSession session = request.getSession();
+        SessionUtil.clearAllOtherSearchCondition(session, Constant.ScreenKey.PROCESS_SITE);
+        ClientSearchForm searchForm = (ClientSearchForm) SessionUtil.getSearchCondtionValue(session,
+            Constant.ScreenKey.PROCESS_SITE);
+
+        if(searchForm == null) {
+            searchForm = new ClientSearchForm();
+        }
+        model.addAttribute("searchForm", searchForm);
         model.addAttribute("siteIds", siteService.getAllSiteIds(workspaceId));
         model.addAttribute("messages", model.asMap().get("messages"));
         return "site/siteList";
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public String deleteList(@ModelAttribute("siteIds") String siteIds, Model model, HttpServletRequest request)
-            throws EarthException {
+    public String deleteList(@ModelAttribute("siteIds") String siteIds, Model model, HttpServletRequest request,
+        ClientSearchForm searchForm) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.PROCESS_SITE, searchForm);
         if (!EStringUtil.isEmpty(siteIds)) {
             List<Integer> siteIdInteger = new ArrayList<>();
             List<String> siteIdList = Arrays.asList(siteIds.split("\\s*,\\s*"));
@@ -77,11 +92,12 @@ public class SiteController extends BaseController {
         return redirectToList("site");
     }
 
-    @RequestMapping(value = "/addNew", method = RequestMethod.GET)
-    public String addNew(Model model, HttpServletRequest request) throws EarthException {
+    @RequestMapping(value = "/addNew", method = {RequestMethod.GET, RequestMethod.POST})
+    public String addNew(Model model, HttpServletRequest request, ClientSearchForm searchForm) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.PROCESS_SITE, searchForm);
         List<Directory> directories = directoryService.getAllDirectories();
         SiteForm siteForm = new SiteForm();
-        siteForm.setSiteId(String.valueOf(eSiteId.getAutoId()));
+        siteForm.setSiteId(String.valueOf(eSiteId.getAutoId(EarthId.SITE,request.getSession().getId())));
         siteForm.setDirectories(directories);
         model.addAttribute("siteForm", siteForm);
         return "site/addSite";
@@ -115,9 +131,10 @@ public class SiteController extends BaseController {
         return redirectToList("site");
     }
 
-    @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
-    public String showDetail(@ModelAttribute("siteId") String siteId, Model model, HttpServletRequest request)
-            throws EarthException {
+    @RequestMapping(value = "/showDetail", method = {RequestMethod.GET, RequestMethod.POST})
+    public String showDetail(@ModelAttribute("siteId") String siteId, Model model, HttpServletRequest request,
+         ClientSearchForm searchForm) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.PROCESS_SITE, searchForm);
         List<Directory> directorys = directoryService.getAllDirectories();
         List<Directory> directoryBySites = directoryService.getAllDirectoriesBySite(siteId,
                 Constant.EARTH_WORKSPACE_ID);

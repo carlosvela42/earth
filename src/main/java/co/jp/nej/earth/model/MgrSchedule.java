@@ -14,12 +14,13 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     private static final Logger LOG = LoggerFactory.getLogger(MgrSchedule.class);
 
     private String scheduleId;
+    private String hostName;
     private int processId;
-    private String processName;
+    private String processIServiceId;
+    // private String processName;
     private String taskId;
     private String taskName;
-    private String hostName;
-    private String processIServiceId;
+    private String className;
     private String startTime;
     private String endTime;
     private String enableDisable;
@@ -29,19 +30,17 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     private String runIntervalMinute;
     private String runIntervalSecond;
 
-
     public MgrSchedule() {
         LOG.debug("Call to blank contructor");
         this.setqObj(QMgrSchedule.newInstance());
     }
 
     public MgrSchedule(String scheduleId, int processId, String processName, String taskId, String taskName,
-                       String hostName, String processIServiceId, String startTime, String endTime,
-                       String enableDisable) {
+            String hostName, String processIServiceId, String startTime, String endTime, String enableDisable) {
         this();
         this.scheduleId = scheduleId;
         this.processId = processId;
-        this.processName = processName;
+        // this.processName = processName;
         this.taskId = taskId;
         this.taskName = taskName;
         this.hostName = hostName;
@@ -52,9 +51,8 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     public MgrSchedule(String scheduleId, int processId, String taskId, String hostName, String processIServiceId,
-                       String enableDisable, String startTime, String endTime, String nextRunDate,
-                       String runIntervalDay, String runIntervalHour, String runIntervalMinute,
-                       String runIntervalSecond, String lastUpdateTime) {
+            String enableDisable, String startTime, String endTime, String nextRunDate, String runIntervalDay,
+            String runIntervalHour, String runIntervalMinute, String runIntervalSecond, String lastUpdateTime) {
         this();
         this.scheduleId = scheduleId;
         this.processId = processId;
@@ -80,7 +78,8 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     /**
-     * @param scheduleId the scheduleId to set
+     * @param scheduleId
+     *            the scheduleId to set
      */
     public void setScheduleId(String scheduleId) {
         this.scheduleId = scheduleId;
@@ -94,25 +93,26 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     /**
-     * @param processId the processId to set
+     * @param processId
+     *            the processId to set
      */
     public void setProcessId(int processId) {
         this.processId = processId;
     }
 
-    /**
-     * @return the processName
-     */
-    public String getProcessName() {
-        return processName;
-    }
+    // /**
+    // * @return the processName
+    // */
+    // public String getProcessName() {
+    // return processName;
+    // }
 
-    /**
-     * @param processName the processName to set
-     */
-    public void setProcessName(String processName) {
-        this.processName = processName;
-    }
+    // /**
+    // * @param processName the processName to set
+    // */
+    // public void setProcessName(String processName) {
+    // this.processName = processName;
+    // }
 
     /**
      * @return the taskId
@@ -122,7 +122,8 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     /**
-     * @param taskId the taskId to set
+     * @param taskId
+     *            the taskId to set
      */
     public void setTaskId(String taskId) {
         this.taskId = taskId;
@@ -136,10 +137,26 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     /**
-     * @param taskName the taskName to set
+     * @param taskName
+     *            the taskName to set
      */
     public void setTaskName(String taskName) {
         this.taskName = taskName;
+    }
+
+    /**
+     * @return the className
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
+     * @param className
+     *            the className to set
+     */
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     /**
@@ -150,7 +167,8 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     /**
-     * @param hostName the hostName to set
+     * @param hostName
+     *            the hostName to set
      */
     public void setHostName(String hostName) {
         this.hostName = hostName;
@@ -164,7 +182,8 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     /**
-     * @param processIServiceId the processIseviceId to set
+     * @param processIServiceId
+     *            the processIseviceId to set
      */
     public void setProcessIServiceId(String processIServiceId) {
         this.processIServiceId = processIServiceId;
@@ -178,7 +197,8 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     /**
-     * @param startTime the startTime to set
+     * @param startTime
+     *            the startTime to set
      */
     public void setStartTime(String startTime) {
         this.startTime = startTime;
@@ -192,7 +212,8 @@ public class MgrSchedule extends BaseModel<MgrSchedule> {
     }
 
     /**
-     * @param endTime the endTime to set
+     * @param endTime
+     *            the endTime to set
      */
     public void setEndTime(String endTime) {
         this.endTime = endTime;

@@ -160,14 +160,5 @@ IV.prototype.okPropertiesClick = function(){
 }
 
 IV.prototype.inputColorChange = function(){
-	$('#example').attr('stroke',$('input[name=color]:checked').val());
 	$("#color").val($( "#color option:selected" ).text());
-}
-
-IV.prototype.inputFillChange = function(){
-	$('#example').attr('fill',$('input[name=fill]:checked').val());
-}
-
-IV.prototype.widthChange = function(){
-	$('#example').attr('stroke-width',$('#width').val());
 }

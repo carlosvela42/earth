@@ -1,9 +1,9 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
+
+import java.io.Serializable;
 
 public class MgrUserProfile extends BaseModel<MgrUserProfile> implements Serializable {
     /**
@@ -13,25 +13,28 @@ public class MgrUserProfile extends BaseModel<MgrUserProfile> implements Seriali
     private String profileId;
     private String userId;
 
-    public MgrUserProfile(){
+    public MgrUserProfile() {
         this.setqObj(QMgrUserProfile.newInstance());
     }
 
-    public MgrUserProfile(String userId,String profileId){
+    public MgrUserProfile(String userId, String profileId) {
         this();
-        this.userId=userId;
-        this.profileId=profileId;
+        this.userId = userId;
+        this.profileId = profileId;
     }
 
     public String getProfileId() {
         return profileId;
     }
+
     public void setProfileId(String profileId) {
         this.profileId = profileId;
     }
+
     public String getUserId() {
         return userId;
     }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }

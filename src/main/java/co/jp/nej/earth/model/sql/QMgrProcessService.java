@@ -7,9 +7,8 @@ import com.querydsl.core.types.PathMetadataFactory;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
 
-public class QMgrProcessService extends RelationalPathBase<MgrProcessService> {
+public class QMgrProcessService extends QBase<MgrProcessService> {
 
     private static final long serialVersionUID = 1L;
 

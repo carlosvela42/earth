@@ -41,8 +41,7 @@ public class Field {
     }
 
     /**
-     * @param name
-     *            the name to set
+     * @param name the name to set
      */
     public void setName(String name) {
         this.name = name;
@@ -56,8 +55,7 @@ public class Field {
     }
 
     /**
-     * @param description
-     *            the description to set
+     * @param description the description to set
      */
     public void setDescription(String description) {
         this.description = description;
@@ -71,8 +69,7 @@ public class Field {
     }
 
     /**
-     * @param type
-     *            the type to set
+     * @param type the type to set
      */
     public void setType(Integer type) {
         this.type = type;
@@ -86,8 +83,7 @@ public class Field {
     }
 
     /**
-     * @param size
-     *            the size to set
+     * @param size the size to set
      */
     public void setSize(Integer size) {
         this.size = size;
@@ -101,8 +97,7 @@ public class Field {
     }
 
     /**
-     * @param required
-     *            the required to set
+     * @param required the required to set
      */
     public void setRequired(Boolean required) {
         this.required = required;
@@ -115,9 +110,12 @@ public class Field {
         return encrypted;
     }
 
+    public Boolean isEncrypted() {
+        return (encrypted!= null && encrypted.booleanValue());
+    }
+
     /**
-     * @param encrypted
-     *            the encrypted to set
+     * @param encrypted the encrypted to set
      */
     public void setEncrypted(Boolean encrypted) {
         this.encrypted = encrypted;

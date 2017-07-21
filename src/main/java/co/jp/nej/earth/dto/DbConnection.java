@@ -16,7 +16,7 @@ public class DbConnection {
     }
 
     public DbConnection(String schemaName, String dbUser, String dbPassword, String owner, Integer port,
-            DatabaseType dbType) {
+                        DatabaseType dbType) {
         super();
         this.schemaName = schemaName;
         this.dbUser = dbUser;

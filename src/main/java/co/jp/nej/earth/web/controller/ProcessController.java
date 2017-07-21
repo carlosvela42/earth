@@ -1,18 +1,19 @@
 package co.jp.nej.earth.web.controller;
 
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.Message;
-import co.jp.nej.earth.model.MgrProcess;
-import co.jp.nej.earth.model.StrageDb;
-import co.jp.nej.earth.model.StrageFile;
-import co.jp.nej.earth.model.form.DeleteProcessForm;
-import co.jp.nej.earth.model.form.ProcessForm;
-import co.jp.nej.earth.model.ws.Response;
-import co.jp.nej.earth.service.ProcessService;
-import co.jp.nej.earth.service.SiteService;
-import co.jp.nej.earth.service.WorkspaceService;
-import co.jp.nej.earth.util.SessionUtil;
-import co.jp.nej.earth.util.ValidatorUtil;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,19 +25,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.Message;
+import co.jp.nej.earth.model.MgrProcess;
+import co.jp.nej.earth.model.StrageDb;
+import co.jp.nej.earth.model.StrageFile;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.form.DeleteProcessForm;
+import co.jp.nej.earth.model.form.ProcessForm;
+import co.jp.nej.earth.service.ProcessService;
+import co.jp.nej.earth.service.SiteService;
+import co.jp.nej.earth.service.WorkspaceService;
+import co.jp.nej.earth.util.SessionUtil;
+import co.jp.nej.earth.util.ValidatorUtil;
+import co.jp.nej.earth.web.form.ClientSearchForm;
 
 /**
  * @author p-tvo-sonta
@@ -66,10 +68,19 @@ public class ProcessController extends BaseController {
      * @return
      * @throws EarthException
      */
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+    @RequestMapping(value = { "", "/" }, method = {RequestMethod.GET, RequestMethod.POST})
     public String showList(Model model, HttpServletRequest request) throws EarthException {
         SessionUtil.loadWorkspaces(workspaceService, model, request);
         String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
+        HttpSession session = request.getSession();
+        SessionUtil.clearAllOtherSearchCondition(session, Constant.ScreenKey.PROCESS_PROCESS);
+        ClientSearchForm searchForm = (ClientSearchForm) SessionUtil.getSearchCondtionValue(session,
+            Constant.ScreenKey.PROCESS_PROCESS);
+
+        if(searchForm == null) {
+            searchForm = new ClientSearchForm();
+        }
+        model.addAttribute("searchForm", searchForm);
         model.addAttribute("processes", processService.getAllByWorkspace(workspaceId));
         model.addAttribute("messages", model.asMap().get("messages"));
         return "process/processList";
@@ -81,10 +92,10 @@ public class ProcessController extends BaseController {
      * @return
      * @throws EarthException
      */
-    @RequestMapping(value = "/addNew", method = RequestMethod.GET)
-    public String addNew(Model model, HttpServletRequest request)
-            throws EarthException {
+    @RequestMapping(value = "/addNew", method = {RequestMethod.GET, RequestMethod.POST})
+    public String addNew(Model model, HttpServletRequest request, ClientSearchForm searchForm) throws EarthException {
         loadInfo(request, model, new ProcessForm());
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.PROCESS_PROCESS, searchForm);
         return "process/addProcess";
     }
 
@@ -97,7 +108,7 @@ public class ProcessController extends BaseController {
      */
     @RequestMapping(value = "/insertOne", method = RequestMethod.POST)
     public String insertOne(@Valid @ModelAttribute("processForm") ProcessForm processForm, BindingResult result,
-                            Model model, HttpServletRequest request) throws EarthException {
+            Model model, HttpServletRequest request) throws EarthException {
         validator.validate(processForm.getProcess(), result);
         List<Message> messages = validatorUtil.validate(result);
         messages.addAll(processService.validateProcess(processForm));
@@ -107,8 +118,8 @@ public class ProcessController extends BaseController {
             return "process/addProcess";
         }
         processForm.setWorkspaceId(SessionUtil.getSearchConditionWorkspaceId(request.getSession()));
-        processService.insertOne(processForm);
-        return redirectToList();
+        processService.insertOne(processForm,request.getSession().getId());
+        return redirectToList(URL);
     }
 
     /**
@@ -117,8 +128,10 @@ public class ProcessController extends BaseController {
      * @return
      * @throws EarthException
      */
-    @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
-    public String showDetail(String processId, HttpServletRequest request, Model model) throws EarthException {
+    @RequestMapping(value = "/showDetail", method = {RequestMethod.GET, RequestMethod.POST})
+    public String showDetail(String processId, HttpServletRequest request, Model model,
+            ClientSearchForm searchForm) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.PROCESS_PROCESS, searchForm);
         String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
         Map<String, Object> result = processService.getDetail(workspaceId, processId);
         ProcessForm processForm = new ProcessForm();
@@ -139,9 +152,8 @@ public class ProcessController extends BaseController {
      * @throws EarthException
      */
     @RequestMapping(value = "/updateOne", method = RequestMethod.POST)
-    public String updateOne(@Valid @ModelAttribute("processForm") ProcessForm processForm,
-                            BindingResult result, HttpServletRequest request, Model model)
-            throws EarthException {
+    public String updateOne(@Valid @ModelAttribute("processForm") ProcessForm processForm, BindingResult result,
+            HttpServletRequest request, Model model) throws EarthException {
         List<Message> messages = validatorUtil.validate(result);
         messages.addAll(processService.validateProcess(processForm));
 
@@ -150,9 +162,8 @@ public class ProcessController extends BaseController {
             model.addAttribute("messages", messages);
             return "process/addProcess";
         }
-
         processService.updateOne(processForm);
-        return redirectToList();
+        return redirectToList(URL);
     }
 
     /**
@@ -163,17 +174,11 @@ public class ProcessController extends BaseController {
      * @throws EarthException
      */
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    public String deleteList(
-            DeleteProcessForm deleteProcessForm, final RedirectAttributes redirectAttrs) throws EarthException {
-        Map<String, Object> result = new HashMap<>();
-        Response respone = processService.validateDeleteAction(deleteProcessForm);
-        // todo: delete all process in list
-        if (!respone.isResult()) {
-            List<Message> messages = new ArrayList<>();
-            messages.add(new Message("error", respone.getMessage()));
-            redirectAttrs.addFlashAttribute("messages", messages);
-        }
-        return redirectToList();
+    public String deleteList(DeleteProcessForm deleteProcessForm, final RedirectAttributes redirectAttrs,
+            ClientSearchForm searchForm, HttpServletRequest request) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.PROCESS_PROCESS, searchForm);
+        processService.deleteList(deleteProcessForm);
+        return redirectToList(URL);
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)

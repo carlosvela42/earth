@@ -1,10 +1,15 @@
 package co.jp.nej.earth.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import co.jp.nej.earth.BaseTest;
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.model.constant.Constant;
+import co.jp.nej.earth.model.entity.CtlLogin;
+import co.jp.nej.earth.model.sql.QCtlLogin;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,23 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Predicate;
-
-import co.jp.nej.earth.BaseTest;
-import co.jp.nej.earth.exception.EarthException;
-import co.jp.nej.earth.model.constant.Constant;
-import co.jp.nej.earth.model.entity.CtlLogin;
-import co.jp.nej.earth.model.sql.QCtlLogin;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Test generic DAO.
  *
  * @author landd
- *
  */
 public class GenericDaoTest extends BaseTest {
 

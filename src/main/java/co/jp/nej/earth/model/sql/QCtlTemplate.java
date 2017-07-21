@@ -1,16 +1,14 @@
 package co.jp.nej.earth.model.sql;
 
 import com.querydsl.core.types.PathMetadataFactory;
-import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
 
 import co.jp.nej.earth.model.entity.CtlTemplate;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
 
-public class QCtlTemplate extends RelationalPathBase<CtlTemplate> {
+public class QCtlTemplate extends QBase<CtlTemplate> {
 
     /**
      * @author p-tvo-thuynd
@@ -19,8 +17,7 @@ public class QCtlTemplate extends RelationalPathBase<CtlTemplate> {
 
     public final StringPath userId = createString(ColumnNames.USER_ID.toString());
     public final StringPath templateId = createString(ColumnNames.TEMPLATE_ID.toString());
-    public final NumberPath<Integer> accessAuthority = createNumber(ColumnNames.ACCESS_AUTHORITY.toString(),
-            Integer.class);
+    public final StringPath accessAuthority = createString(ColumnNames.ACCESS_AUTHORITY.toString());
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());
 
     public static QCtlTemplate newInstance() {

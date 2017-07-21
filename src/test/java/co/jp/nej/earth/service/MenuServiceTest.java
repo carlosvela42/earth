@@ -96,7 +96,7 @@ public class MenuServiceTest extends BaseTest {
         LOG.info("Before Insert User");
         for (int i = 1; i <= RECORD_USER; i++) {
             MgrUser mgrUser = new MgrUser(USER_ID + i, USER_NAME + i, PASSWORD + i, PASSWORD + i, true,
-                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
             userService.insertOne(mgrUser);
             userIds.add(USER_ID + i);
             mgrUsers.add(mgrUser);

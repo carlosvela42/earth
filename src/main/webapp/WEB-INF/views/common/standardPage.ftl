@@ -1,5 +1,5 @@
 <#ftl encoding='UTF-8'>
-<#macro standardPage title="" displayWorkspace=false contentFooter="" script="">
+<#macro standardPage title="" imageLink="" displayWorkspace=false contentFooter="" script="">
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +22,7 @@
     <script src="${rc.getContextPath()}/resources/js/lib/jquery.query-object.js"></script>
     <script src="${rc.getContextPath()}/resources/js/lib/handlebars-v4.0.10.js"></script>
     <script src="${rc.getContextPath()}/resources/js/common.js"></script>
+    <script>${h.getMessageSourceJS()}</script>
     ${(script)}
 </head>
 
@@ -36,13 +37,13 @@
 
             <div class="info">
                 <div class="name">
-                    <figure><img src="${rc.getContextPath()}/resources/images/global/header_icon.png" alt="header_icon"
-                                 width="44"
-                                 height="44" /></figure>
+                    <#--<figure><img src="${rc.getContextPath()}/resources/images/global/header_icon.png" alt="header_icon"-->
+                                 <#--width="44"-->
+                                 <#--height="44" /></figure>-->
                     <p>
                         <#if Session.userInfo??>
                             <#assign userInfo =Session.userInfo>
-                            <label>${userInfo.userId}| ${userInfo.userName}</label>
+                            <label>${userInfo.userId} | ${userInfo.userName}</label>
                         </#if>
                     </p>
                 </div><!-- .name -->
@@ -63,7 +64,7 @@
         <div class="content_head">
             <div class="content_main_common">
                 <div class="pull-left">
-                    <a href="http://placehold.it"><img src="${rc.getContextPath()}/resources/images/global/user.png"></a>
+                    <img src="${rc.getContextPath()}/resources/images/global/${imageLink}.png">
                     <span class="content_title"> ${title} </span>
                 </div>
 

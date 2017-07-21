@@ -1,15 +1,13 @@
 package co.jp.nej.earth.model.sql;
 
-import com.querydsl.core.types.PathMetadataFactory;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
-
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
+import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
 
-public class QMgrTemplate extends RelationalPathBase<MgrTemplate> {
+public class QMgrTemplate extends QBase<MgrTemplate> {
 
     /**
      *

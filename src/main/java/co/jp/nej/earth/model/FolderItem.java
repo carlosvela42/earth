@@ -3,17 +3,18 @@
  */
 package co.jp.nej.earth.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import co.jp.nej.earth.model.entity.MgrTemplate;
+import co.jp.nej.earth.model.enums.AccessRight;
+import co.jp.nej.earth.model.sql.QFolderItem;
+import co.jp.nej.earth.util.EStringUtil;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import co.jp.nej.earth.model.entity.MgrTemplate;
-import co.jp.nej.earth.model.sql.QFolderItem;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author p-tvo-khanhnv
- *
  */
 public class FolderItem extends BaseModel<FolderItem> {
     /**
@@ -24,13 +25,15 @@ public class FolderItem extends BaseModel<FolderItem> {
      *
      */
     private String workitemId;
-    @NotEmpty(message = "E0002,folderItemNo")
-    private Integer folderItemNo;
+    @NotEmpty(message = "E0001,folderItemNo")
+    private String folderItemNo;
+    private Integer folderItemOrder;
     private MgrTemplate mgrTemplate;
     private Integer action;
     private TemplateData folderItemData;
     private String templateId;
     private List<Document> documents = new ArrayList<Document>();
+    private AccessRight accessRight;
 
     public FolderItem() {
         this.setqObj(QFolderItem.newInstance());
@@ -44,8 +47,7 @@ public class FolderItem extends BaseModel<FolderItem> {
     }
 
     /**
-     * @param workitemId
-     *            the workitemId to set
+     * @param workitemId the workitemId to set
      */
     public void setWorkitemId(String workitemId) {
         this.workitemId = workitemId;
@@ -54,15 +56,14 @@ public class FolderItem extends BaseModel<FolderItem> {
     /**
      * @return the folderItemNo
      */
-    public Integer getFolderItemNo() {
+    public String getFolderItemNo() {
         return folderItemNo;
     }
 
     /**
-     * @param folderItemNo
-     *            the folderItemNo to set
+     * @param folderItemNo the folderItemNo to set
      */
-    public void setFolderItemNo(Integer folderItemNo) {
+    public void setFolderItemNo(String folderItemNo) {
         this.folderItemNo = folderItemNo;
     }
 
@@ -82,8 +83,7 @@ public class FolderItem extends BaseModel<FolderItem> {
     }
 
     /**
-     * @param action
-     *            the action to set
+     * @param action the action to set
      */
     public void setAction(Integer action) {
         this.action = action;
@@ -97,8 +97,7 @@ public class FolderItem extends BaseModel<FolderItem> {
     }
 
     /**
-     * @param folderItemData
-     *            the folderItemData to set
+     * @param folderItemData the folderItemData to set
      */
     public void setFolderItemData(TemplateData folderItemData) {
         this.folderItemData = folderItemData;
@@ -112,8 +111,7 @@ public class FolderItem extends BaseModel<FolderItem> {
     }
 
     /**
-     * @param templateId
-     *            the templateId to set
+     * @param templateId the templateId to set
      */
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
@@ -127,16 +125,31 @@ public class FolderItem extends BaseModel<FolderItem> {
     }
 
     /**
-     * @param documents
-     *            the documents to set
+     * @param documents the documents to set
      */
     public void setDocuments(List<Document> documents) {
         this.documents = documents;
     }
 
     public void addDocument(Document document) {
-        if (document != null && !documents.contains(document)) {
+        if (document != null && (!EStringUtil.isEmpty(document.getDocumentNo())) && (!documents.contains(document))) {
             documents.add(document);
         }
+    }
+
+    public AccessRight getAccessRight() {
+        return accessRight;
+    }
+
+    public void setAccessRight(AccessRight accessRight) {
+        this.accessRight = accessRight;
+    }
+
+    public Integer getFolderItemOrder() {
+        return folderItemOrder;
+    }
+
+    public void setFolderItemOrder(Integer folderItemOrder) {
+        this.folderItemOrder = folderItemOrder;
     }
 }

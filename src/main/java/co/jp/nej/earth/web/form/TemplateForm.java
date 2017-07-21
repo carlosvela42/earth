@@ -1,66 +1,81 @@
 package co.jp.nej.earth.web.form;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.Field;
-import co.jp.nej.earth.model.entity.MgrTemplate;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import java.util.List;
 
-public class TemplateForm extends BaseModel<MgrTemplate> {
+import org.hibernate.validator.constraints.NotEmpty;
 
-  @NotEmpty(message = "E0001,templateId")
-  private String templateId;
+import co.jp.nej.earth.model.Field;
 
-  @NotEmpty(message = "E0001,templateName")
-  private String templateName;
+public class TemplateForm {
 
-  public String getWorkspaceId() {
-    return workspaceId;
-  }
+    @NotEmpty(message = "E0001,template.id")
+    private String templateId;
 
-  public void setWorkspaceId(String workspaceId) {
-    this.workspaceId = workspaceId;
-  }
+    @NotEmpty(message = "E0001,template.name")
+    private String templateName;
 
-  @NotEmpty(message = "E0001,templateTableName")
-  private String templateTableName;
+    private String lastUpdateTime;
 
-  @NotEmpty(message = "E0001,templateFields")
-  private List<Field> templateFields;
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
 
-  private String workspaceId;
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
 
-  public List<Field> getTemplateFields() {
-    return templateFields;
-  }
+    @NotEmpty(message = "E0001,template.tableName")
+    private String templateTableName;
 
-  public void setTemplateFields(List<Field> templateFields) {
-    this.templateFields = templateFields;
-  }
+    @NotEmpty(message = "E0001,template.definition")
+    private List<Field> templateFields;
 
-  public String getTemplateId() {
-    return templateId;
-  }
+    private String workspaceId;
 
-  public void setTemplateId(String templateId) {
-    this.templateId = templateId;
-  }
+    public List<Field> getTemplateFields() {
+        return templateFields;
+    }
 
-  public String getTemplateName() {
-    return templateName;
-  }
+    public void setTemplateFields(List<Field> templateFields) {
+        this.templateFields = templateFields;
+    }
 
-  public void setTemplateName(String templateName) {
-    this.templateName = templateName;
-  }
+    public String getTemplateId() {
+        return templateId;
+    }
 
-  public String getTemplateTableName() {
-    return templateTableName;
-  }
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
+    }
 
-  public void setTemplateTableName(String templateTableName) {
-    this.templateTableName = templateTableName;
-  }
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
+    public String getTemplateTableName() {
+        return templateTableName;
+    }
+
+    public void setTemplateTableName(String templateTableName) {
+        this.templateTableName = templateTableName;
+    }
+
+    /**
+     * @return the lastUpdateTime
+     */
+    public String getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    /**
+     * @param lastUpdateTime the lastUpdateTime to set
+     */
+    public void setLastUpdateTime(String lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
 
 }

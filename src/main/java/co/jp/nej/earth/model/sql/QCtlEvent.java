@@ -1,15 +1,13 @@
 package co.jp.nej.earth.model.sql;
 
-import com.querydsl.core.types.PathMetadataFactory;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
-
 import co.jp.nej.earth.model.entity.CtlEvent;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
+import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
 
-public class QCtlEvent extends RelationalPathBase<CtlEvent> {
+public class QCtlEvent extends QBase<CtlEvent> {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,9 +17,8 @@ public class QCtlEvent extends RelationalPathBase<CtlEvent> {
     public final StringPath status = createString(ColumnNames.STATUS.toString());
     public final StringPath taskId = createString(ColumnNames.TASK_ID.toString());
     public final StringPath workitemData = createString(ColumnNames.WORKITEM_DATA.toString());
+    public final StringPath transactionToken = createString(ColumnNames.TRANSACTION_TOKEN.toString());
 
-    // public final StringPath workitemData =
-    // createString(ColumnNames.WORKITEM_DATA.toString());
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());
 
     public static QCtlEvent newInstance() {
@@ -39,6 +36,7 @@ public class QCtlEvent extends RelationalPathBase<CtlEvent> {
         addMetadata(workitemId, ColumnMetadata.named(ColumnNames.WORKITEM_ID.toString()));
         addMetadata(status, ColumnMetadata.named(ColumnNames.STATUS.toString()));
         addMetadata(taskId, ColumnMetadata.named(ColumnNames.TASK_ID.toString()));
+        addMetadata(transactionToken, ColumnMetadata.named(ColumnNames.TRANSACTION_TOKEN.toString()));
         addMetadata(workitemData, ColumnMetadata.named(ColumnNames.WORKITEM_DATA.toString()));
         addMetadata(lastUpdateTime, ColumnMetadata.named(ColumnNames.LAST_UPDATE_TIME.toString()));
     }

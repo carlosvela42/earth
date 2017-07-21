@@ -1,12 +1,11 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrTemplateU;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QMgrTemplateU;
+import java.io.Serializable;
 
 /**
  * Created by minhtv on 3/29/2017.

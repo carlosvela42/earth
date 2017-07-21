@@ -14,8 +14,7 @@ public class MgrWorkspaceConnect extends DbConnection {
     }
 
     /**
-     * @param workspaceId
-     *            the workspaceId to set
+     * @param workspaceId the workspaceId to set
      */
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
@@ -29,8 +28,7 @@ public class MgrWorkspaceConnect extends DbConnection {
     }
 
     /**
-     * @param lastUpdateTime
-     *            the lastUpdateTime to set
+     * @param lastUpdateTime the lastUpdateTime to set
      */
     public void setLastUpdateTime(String lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;

@@ -1,9 +1,7 @@
 package co.jp.nej.earth.model.form;
 
 /**
- *
  * @author p-tvo-sonta
- *
  */
 public class ProcessDetailForm {
     private Integer processId;
@@ -17,8 +15,7 @@ public class ProcessDetailForm {
     }
 
     /**
-     * @param processId
-     *            the processId to set
+     * @param processId the processId to set
      */
     public void setProcessId(Integer processId) {
         this.processId = processId;
@@ -32,8 +29,7 @@ public class ProcessDetailForm {
     }
 
     /**
-     * @param workspaceId
-     *            the workspaceId to set
+     * @param workspaceId the workspaceId to set
      */
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;

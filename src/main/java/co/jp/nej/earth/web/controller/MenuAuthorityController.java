@@ -3,11 +3,15 @@ package co.jp.nej.earth.web.controller;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.ProfileAccessRight;
 import co.jp.nej.earth.model.UserAccessRight;
+import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrMenu;
 import co.jp.nej.earth.model.form.MenuAuthorityForm;
 import co.jp.nej.earth.service.MenuService;
 import co.jp.nej.earth.service.ProfileService;
 import co.jp.nej.earth.service.UserService;
+import co.jp.nej.earth.util.SessionUtil;
+import co.jp.nej.earth.web.form.ClientSearchForm;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,18 +37,27 @@ public class MenuAuthorityController extends BaseController {
     @Autowired
     private ProfileService profileService;
 
-    private static final String URL = "menuAccessRight/menuList";
+    private static final String URL = "menuAccessRight";
 
-    @RequestMapping(value = "/menuList")
-    public String menuList(Model model) throws EarthException {
+    @RequestMapping(value = { "", "/" }, method= {RequestMethod.GET, RequestMethod.POST})
+    public String menuList(Model model, HttpServletRequest request) throws EarthException {
+        HttpSession session = request.getSession();
+        SessionUtil.clearAllOtherSearchCondition(session, Constant.ScreenKey.AUTHORITY_MENU);
+        ClientSearchForm searchForm = (ClientSearchForm) SessionUtil.getSearchCondtionValue(session,
+            Constant.ScreenKey.AUTHORITY_MENU);
+
+        if(searchForm == null) {
+            searchForm = new ClientSearchForm();
+        }
+        model.addAttribute("searchForm", searchForm);
         model.addAttribute("mgrMenus", menuService.getAll());
         return "menuAccessRight/menuList";
     }
 
-    @RequestMapping(value = "/showDetail")
+    @RequestMapping(value = "/showDetail", method= {RequestMethod.GET, RequestMethod.POST})
     public String menuDetail(String functionId, Model model, HttpServletRequest
-            request)
-            throws EarthException {
+            request, ClientSearchForm searchForm) throws EarthException {
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.AUTHORITY_MENU, searchForm);
         MgrMenu mgrMenu = menuService.getDetail(functionId);
         model.addAttribute("mgrUsers", userService.getAll());
         model.addAttribute("mgrProfiles", profileService.getAll());
@@ -56,7 +71,7 @@ public class MenuAuthorityController extends BaseController {
 
     @RequestMapping(value = "/updateMenuAccessRight", method = RequestMethod.POST)
     public String updateOne(MenuAuthorityForm menuAuthorityForm,
-                            Model model) throws EarthException {
+                            Model model, ClientSearchForm searchForm) throws EarthException {
         List<UserAccessRight> userAccessRights = new ArrayList<>();
         List<UserAccessRight> userAccessRights1 = menuAuthorityForm.getUserAccessRights();
         if (userAccessRights1 != null) {

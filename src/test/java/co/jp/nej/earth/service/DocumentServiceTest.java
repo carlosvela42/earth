@@ -1,21 +1,20 @@
 package co.jp.nej.earth.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import co.jp.nej.earth.BaseTest;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Directory;
 import co.jp.nej.earth.model.Document;
 import co.jp.nej.earth.model.DocumentSavingInfo;
 import co.jp.nej.earth.model.enums.DocumentSavingType;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DocumentServiceTest extends BaseTest {
 
@@ -26,7 +25,7 @@ public class DocumentServiceTest extends BaseTest {
 
     private DocumentSavingInfo documentSavingInfo;
 
-    private static final int FOLDERITEMNO = 1121;
+    private static final String FOLDERITEMNO = "1121";
 
     @Before
     public void excutedBefore() throws IOException {
@@ -39,7 +38,7 @@ public class DocumentServiceTest extends BaseTest {
         }
         document = new Document();
         document.setFolderItemNo(FOLDERITEMNO);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("src\\test\\resource\\test.png");
         document.setWorkitemId("1002");
 

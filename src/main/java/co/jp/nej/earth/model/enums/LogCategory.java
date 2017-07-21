@@ -7,6 +7,7 @@ public enum LogCategory {
     WEB_SERVICE("Web Service");
 
     private String propertyName;
+
     LogCategory(String name) {
         propertyName = name;
     }

@@ -1,9 +1,9 @@
 package co.jp.nej.earth.model.entity;
 
 import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QMgrWorkitemId;
+import co.jp.nej.earth.model.sql.QMgrWorkItemId;
 
-public class MgrWorkitemId extends BaseModel<MgrWorkitemId> {
+public class MgrWorkItemId extends BaseModel<MgrWorkItemId> {
 
     /**
      * Serial version
@@ -28,7 +28,7 @@ public class MgrWorkitemId extends BaseModel<MgrWorkitemId> {
         this.count = count;
     }
 
-    public MgrWorkitemId() {
-        this.setqObj(QMgrWorkitemId.newInstance());
+    public MgrWorkItemId() {
+        this.setqObj(QMgrWorkItemId.newInstance());
     }
 }

@@ -1,12 +1,11 @@
 package co.jp.nej.earth.web.form;
 
-import java.util.List;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.Directory;
 import co.jp.nej.earth.model.Site;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.List;
 
 public class SiteForm extends BaseModel<Site> {
     @NotEmpty(message = "E0001,siteId")

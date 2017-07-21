@@ -14,6 +14,7 @@ public class CtlEvent extends BaseModel<CtlEvent> {
     private String status;
     private String taskId;
     private String workitemData;
+    private String transactionToken;
 
     public CtlEvent() {
         this.setqObj(QCtlEvent.newInstance());
@@ -65,6 +66,20 @@ public class CtlEvent extends BaseModel<CtlEvent> {
 
     public void setWorkitemData(String workitemData) {
         this.workitemData = workitemData;
+    }
+
+    /**
+     * @return the transactionToken
+     */
+    public String getTransactionToken() {
+        return transactionToken;
+    }
+
+    /**
+     * @param transactionToken the transactionToken to set
+     */
+    public void setTransactionToken(String transactionToken) {
+        this.transactionToken = transactionToken;
     }
 
 }

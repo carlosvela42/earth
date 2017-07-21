@@ -1,16 +1,5 @@
 package co.jp.nej.earth.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import co.jp.nej.earth.BaseTest;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.ProfileAccessRight;
@@ -22,6 +11,16 @@ import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.util.DateUtil;
 import co.jp.nej.earth.util.EStringUtil;
 import co.jp.nej.earth.util.UserAccessRightUtil;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TemplateServiceTest2 extends BaseTest {
 
@@ -163,7 +162,7 @@ public class TemplateServiceTest2 extends BaseTest {
     }
 
     public boolean compare2ListUserAccessRight(List<UserAccessRight> userAccessRights,
-            List<UserAccessRight> userAccessRights2) {
+                                               List<UserAccessRight> userAccessRights2) {
         int count = 0;
         if (userAccessRights.size() != userAccessRights2.size()) {
             return false;
@@ -186,7 +185,7 @@ public class TemplateServiceTest2 extends BaseTest {
     }
 
     public boolean compare2ListProfileAccessRight(List<ProfileAccessRight> profileAccessRights,
-            List<ProfileAccessRight> profileAccessRights2) {
+                                                  List<ProfileAccessRight> profileAccessRights2) {
         int count = 0;
         if (profileAccessRights.size() != profileAccessRights2.size()) {
             return false;
@@ -257,6 +256,7 @@ public class TemplateServiceTest2 extends BaseTest {
 
     /**
      * In case SaveAuthority unsuccessfully!
+     *
      * @throws EarthException
      */
     @Test

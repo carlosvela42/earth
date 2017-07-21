@@ -1,20 +1,19 @@
 package co.jp.nej.earth.model.sql;
 
-import java.util.List;
-
-import com.querydsl.core.types.PathMetadataFactory;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
-
 import co.jp.nej.earth.model.Field;
 import co.jp.nej.earth.model.TemplateData;
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TemplateType;
+import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
 
-public class QTemplateData extends RelationalPathBase<TemplateData> {
+import java.util.List;
+
+public class QTemplateData extends QBase<TemplateData> {
     /**
      *
      */
@@ -22,12 +21,17 @@ public class QTemplateData extends RelationalPathBase<TemplateData> {
 
     public final StringPath processId = createString(ColumnNames.PROCESS_ID.toString());
     public final StringPath workItemId = createString(ColumnNames.WORKITEM_ID.toString());
-    public final NumberPath<Integer> folderItemNo = createNumber(ColumnNames.FOLDER_ITEM_NO.toString(), Integer.class);
-    public final NumberPath<Integer> documentNo = createNumber(ColumnNames.DOCUMENT_NO.toString(), Integer.class);
-    public final NumberPath<Integer> layerNo = createNumber(ColumnNames.LAYER_NO.toString(), Integer.class);
+    public final StringPath folderItemNo = createString(ColumnNames.FOLDER_ITEM_NO.toString());
+    public final StringPath documentNo = createString(ColumnNames.DOCUMENT_NO.toString());
+    public final StringPath layerNo = createString(ColumnNames.LAYER_NO.toString());
 
     public final NumberPath<Integer> historyNo = createNumber(ColumnNames.HISTORY_NO.toString(), Integer.class);
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());
+
+
+    public BooleanExpression booleanExpression(String name) {
+        return QTemplateData.newInstance(new MgrTemplate()).createBoolean(name);
+    }
 
     public static QTemplateData newInstance(MgrTemplate template) {
         return new QTemplateData(QTemplateData.class.getSimpleName(), template);

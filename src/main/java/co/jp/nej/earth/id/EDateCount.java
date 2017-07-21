@@ -6,5 +6,5 @@ import co.jp.nej.earth.model.constant.Constant.EarthId;
 
 public interface EDateCount {
 
-   String getDateCountId(EarthId earthId) throws EarthException;
+    String getDateCountId(EarthId earthId) throws EarthException;
 }

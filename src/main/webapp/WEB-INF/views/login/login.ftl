@@ -34,12 +34,12 @@
                 </tr>
                 <tr>
                     <td colspan="2" class="text">
-                        <input type="text" style=" height: 33px; width: 270px;" id="txtUser" name="userId">
+                        <input type="text" style=" height: 33px; width: 270px;" id="txtUser" name="userId" tabindex="1" autofocus="autofocus" placeholder="userName">
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2" class="text">
-                        <input type="password" style=" height: 33px; width: 270px;" id="txtPassWord" name="password">
+                        <input type="password" style=" height: 33px; width: 270px;" id="txtPassWord" name="password" placeholder="password">
                     </td>
                 </tr>
                 <tr>
@@ -50,7 +50,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <button type="submit" class="btn btn_login"
+                        <button type="submit" class="btn btn_login">
                             <span>${e.get('login.login')}</span>
                         </button>
                     </td>
@@ -59,5 +59,6 @@
         </div>
     </div>
 </form>
+ <#include "../common/footer.ftl">
 </body>
 </html>

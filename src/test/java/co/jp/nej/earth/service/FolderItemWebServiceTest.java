@@ -1,21 +1,19 @@
 package co.jp.nej.earth.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import co.jp.nej.earth.BaseTest;
 import co.jp.nej.earth.model.Document;
 import co.jp.nej.earth.model.FolderItem;
 import co.jp.nej.earth.model.Layer;
 import co.jp.nej.earth.model.TemplateData;
 import co.jp.nej.earth.model.WorkItem;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class FolderItemWebServiceTest extends BaseTest {
 
@@ -34,13 +32,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         List<FolderItem> folderItems = new ArrayList<>();
         FolderItem folderItem = new FolderItem();
         folderItem.setAction(1);
-        folderItem.setFolderItemNo(1);
+        folderItem.setFolderItemNo("1");
         folderItem.setWorkitemId("1");
         folderItem.setTemplateId("1");
         folderItem.setFolderItemData(templateData);
@@ -49,10 +47,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         document.setAction(1);
         document.setDocumentBinary(new byte[10]);
         document.setDocumentData(templateData);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("1");
         document.setDocumentType("1");
-        document.setFolderItemNo(1);
+        document.setFolderItemNo("1");
         document.setPageCount(1);
         document.setTemplateId("1");
         document.setViewInformation("1");
@@ -62,10 +60,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         Layer layer = new Layer();
         layer.setAction(1);
         layer.setAnnotations("1");
-        layer.setDocumentNo(1);
-        layer.setFolderItemNo(1);
+        layer.setDocumentNo("1");
+        layer.setFolderItemNo("1");
         layer.setLayerData(templateData);
-        layer.setLayerNo(1);
+        layer.setLayerNo("1");
         layer.setOwnerId("1");
         layer.setWorkitemId("1");
         layer.setTemplateId("1");
@@ -76,7 +74,8 @@ public class FolderItemWebServiceTest extends BaseTest {
         folderItems.add(folderItem);
         workItem.setFolderItems(folderItems);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.getFolderItem(session, "003", "1", 1).isResult(), true);
+       /* Assert.assertEquals(folderItemService.getFolderItem(session, "003"
+                , "1", 1), true);*/
     }
 
     @Test
@@ -88,13 +87,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         List<FolderItem> folderItems = new ArrayList<>();
         FolderItem folderItem = new FolderItem();
         folderItem.setAction(1);
-        folderItem.setFolderItemNo(1);
+        folderItem.setFolderItemNo("1");
         folderItem.setWorkitemId("1");
         folderItem.setTemplateId("1");
         folderItem.setFolderItemData(templateData);
@@ -103,10 +102,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         document.setAction(1);
         document.setDocumentBinary(new byte[10]);
         document.setDocumentData(templateData);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("1");
         document.setDocumentType("1");
-        document.setFolderItemNo(1);
+        document.setFolderItemNo("1");
         document.setPageCount(1);
         document.setTemplateId("1");
         document.setViewInformation("1");
@@ -116,10 +115,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         Layer layer = new Layer();
         layer.setAction(1);
         layer.setAnnotations("1");
-        layer.setDocumentNo(1);
-        layer.setFolderItemNo(1);
+        layer.setDocumentNo("1");
+        layer.setFolderItemNo("1");
         layer.setLayerData(templateData);
-        layer.setLayerNo(1);
+        layer.setLayerNo("1");
         layer.setOwnerId("1");
         layer.setWorkitemId("1");
         layer.setTemplateId("1");
@@ -130,7 +129,8 @@ public class FolderItemWebServiceTest extends BaseTest {
         folderItems.add(folderItem);
         workItem.setFolderItems(folderItems);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.getFolderItem(session, "003", "2", 1).isResult(), false);
+        /*Assert.assertEquals(folderItemService.getFolderItem(session, "003"
+                , "2", 1), false);*/
     }
 
     @Test
@@ -142,13 +142,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         List<FolderItem> folderItems = new ArrayList<>();
         FolderItem folderItem = new FolderItem();
         folderItem.setAction(1);
-        folderItem.setFolderItemNo(1);
+        folderItem.setFolderItemNo("1");
         folderItem.setWorkitemId("1");
         folderItem.setTemplateId("1");
         folderItem.setFolderItemData(templateData);
@@ -157,10 +157,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         document.setAction(1);
         document.setDocumentBinary(new byte[10]);
         document.setDocumentData(templateData);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("1");
         document.setDocumentType("1");
-        document.setFolderItemNo(1);
+        document.setFolderItemNo("1");
         document.setPageCount(1);
         document.setTemplateId("1");
         document.setViewInformation("1");
@@ -170,10 +170,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         Layer layer = new Layer();
         layer.setAction(1);
         layer.setAnnotations("1");
-        layer.setDocumentNo(1);
-        layer.setFolderItemNo(1);
+        layer.setDocumentNo("1");
+        layer.setFolderItemNo("1");
         layer.setLayerData(templateData);
-        layer.setLayerNo(1);
+        layer.setLayerNo("1");
         layer.setOwnerId("1");
         layer.setWorkitemId("1");
         layer.setTemplateId("1");
@@ -184,7 +184,8 @@ public class FolderItemWebServiceTest extends BaseTest {
         folderItems.add(folderItem);
         workItem.setFolderItems(folderItems);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.getFolderItem(session, "003", "1", 2).isResult(), false);
+        /*Assert.assertEquals(folderItemService.getFolderItem(session, "003"
+                , "1", 2), false);*/
     }
 
     @Test
@@ -196,12 +197,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         workItem.setFolderItems(null);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.getFolderItem(session, "003", "1", 1).isResult(), false);
+        /*Assert.assertEquals(folderItemService.getFolderItem(session, "003"
+                , "1", 1), false);*/
     }
 
     @Test
@@ -213,13 +215,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         List<FolderItem> folderItems = new ArrayList<>();
         FolderItem folderItem = new FolderItem();
         folderItem.setAction(1);
-        folderItem.setFolderItemNo(1);
+        folderItem.setFolderItemNo("1");
         folderItem.setWorkitemId("2");
         folderItem.setTemplateId("1");
         folderItem.setFolderItemData(templateData);
@@ -228,10 +230,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         document.setAction(1);
         document.setDocumentBinary(new byte[10]);
         document.setDocumentData(templateData);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("1");
         document.setDocumentType("1");
-        document.setFolderItemNo(1);
+        document.setFolderItemNo("1");
         document.setPageCount(1);
         document.setTemplateId("1");
         document.setViewInformation("1");
@@ -241,10 +243,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         Layer layer = new Layer();
         layer.setAction(1);
         layer.setAnnotations("1");
-        layer.setDocumentNo(1);
-        layer.setFolderItemNo(1);
+        layer.setDocumentNo("1");
+        layer.setFolderItemNo("1");
         layer.setLayerData(templateData);
-        layer.setLayerNo(1);
+        layer.setLayerNo("1");
         layer.setOwnerId("1");
         layer.setWorkitemId("1");
         layer.setTemplateId("1");
@@ -255,7 +257,8 @@ public class FolderItemWebServiceTest extends BaseTest {
         folderItems.add(folderItem);
         workItem.setFolderItems(folderItems);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.getFolderItem(session, "003", "1", 1).isResult(), false);
+        /*Assert.assertEquals(folderItemService.getFolderItem(session, "003"
+                , "1", 1), false);*/
     }
 
     @Test
@@ -265,7 +268,7 @@ public class FolderItemWebServiceTest extends BaseTest {
         workItem.setWorkitemId("1");
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), new ArrayList<>());
         try {
-            folderItemService.getFolderItem(session, "003", "1", 1);
+            folderItemService.getFolderItemSession(session, "003", "1", "1");
         } catch (Exception e) {
             Assert.assertTrue(true);
         }
@@ -277,7 +280,7 @@ public class FolderItemWebServiceTest extends BaseTest {
         workItem.setWorkitemId("1");
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), new ArrayList<>());
         try {
-            folderItemService.updateFolderItem(session, "003", "1", new FolderItem());
+            folderItemService.updateFolderItemSession(session, "003", "1", new FolderItem());
         } catch (Exception e) {
             Assert.assertTrue(true);
         }
@@ -292,13 +295,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         List<FolderItem> folderItems = new ArrayList<>();
         FolderItem folderItem = new FolderItem();
         folderItem.setAction(1);
-        folderItem.setFolderItemNo(1);
+        folderItem.setFolderItemNo("1");
         folderItem.setWorkitemId("1");
         folderItem.setTemplateId("1");
         folderItem.setFolderItemData(templateData);
@@ -307,10 +310,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         document.setAction(1);
         document.setDocumentBinary(new byte[10]);
         document.setDocumentData(templateData);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("1");
         document.setDocumentType("1");
-        document.setFolderItemNo(1);
+        document.setFolderItemNo("1");
         document.setPageCount(1);
         document.setTemplateId("1");
         document.setViewInformation("1");
@@ -320,10 +323,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         Layer layer = new Layer();
         layer.setAction(1);
         layer.setAnnotations("1");
-        layer.setDocumentNo(1);
-        layer.setFolderItemNo(1);
+        layer.setDocumentNo("1");
+        layer.setFolderItemNo("1");
         layer.setLayerData(templateData);
-        layer.setLayerNo(1);
+        layer.setLayerNo("1");
         layer.setOwnerId("1");
         layer.setWorkitemId("1");
         layer.setTemplateId("1");
@@ -334,7 +337,7 @@ public class FolderItemWebServiceTest extends BaseTest {
         folderItems.add(folderItem);
         workItem.setFolderItems(folderItems);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.updateFolderItem(session, "003", "2", new FolderItem()).isResult(),
+        Assert.assertEquals(folderItemService.updateFolderItemSession(session, "003", "2", new FolderItem()),
                 false);
     }
 
@@ -347,13 +350,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         List<FolderItem> folderItems = new ArrayList<>();
         FolderItem folderItem = new FolderItem();
         folderItem.setAction(1);
-        folderItem.setFolderItemNo(1);
+        folderItem.setFolderItemNo("1");
         folderItem.setWorkitemId("1");
         folderItem.setTemplateId("1");
         folderItem.setFolderItemData(templateData);
@@ -362,10 +365,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         document.setAction(1);
         document.setDocumentBinary(new byte[10]);
         document.setDocumentData(templateData);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("1");
         document.setDocumentType("1");
-        document.setFolderItemNo(1);
+        document.setFolderItemNo("1");
         document.setPageCount(1);
         document.setTemplateId("1");
         document.setViewInformation("1");
@@ -375,10 +378,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         Layer layer = new Layer();
         layer.setAction(1);
         layer.setAnnotations("1");
-        layer.setDocumentNo(1);
-        layer.setFolderItemNo(1);
+        layer.setDocumentNo("1");
+        layer.setFolderItemNo("1");
         layer.setLayerData(templateData);
-        layer.setLayerNo(1);
+        layer.setLayerNo("1");
         layer.setOwnerId("1");
         layer.setWorkitemId("1");
         layer.setTemplateId("1");
@@ -389,7 +392,7 @@ public class FolderItemWebServiceTest extends BaseTest {
         folderItems.add(folderItem);
         workItem.setFolderItems(folderItems);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.updateFolderItem(session, "003", "1", new FolderItem()).isResult(),
+        Assert.assertEquals(folderItemService.updateFolderItemSession(session, "003", "1", new FolderItem()),
                 false);
     }
 
@@ -402,12 +405,12 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         workItem.setFolderItems(null);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.updateFolderItem(session, "003", "1", new FolderItem()).isResult(),
+        Assert.assertEquals(folderItemService.updateFolderItemSession(session, "003", "1", new FolderItem()),
                 false);
     }
 
@@ -420,13 +423,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         List<FolderItem> folderItems = new ArrayList<>();
         FolderItem folderItem = new FolderItem();
         folderItem.setAction(1);
-        folderItem.setFolderItemNo(1);
+        folderItem.setFolderItemNo("1");
         folderItem.setWorkitemId("2");
         folderItem.setTemplateId("1");
         folderItem.setFolderItemData(templateData);
@@ -435,10 +438,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         document.setAction(1);
         document.setDocumentBinary(new byte[10]);
         document.setDocumentData(templateData);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("1");
         document.setDocumentType("1");
-        document.setFolderItemNo(1);
+        document.setFolderItemNo("1");
         document.setPageCount(1);
         document.setTemplateId("1");
         document.setViewInformation("1");
@@ -448,10 +451,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         Layer layer = new Layer();
         layer.setAction(1);
         layer.setAnnotations("1");
-        layer.setDocumentNo(1);
-        layer.setFolderItemNo(1);
+        layer.setDocumentNo("1");
+        layer.setFolderItemNo("1");
         layer.setLayerData(templateData);
-        layer.setLayerNo(1);
+        layer.setLayerNo("1");
         layer.setOwnerId("1");
         layer.setWorkitemId("2");
         layer.setTemplateId("1");
@@ -462,7 +465,7 @@ public class FolderItemWebServiceTest extends BaseTest {
         folderItems.add(folderItem);
         workItem.setFolderItems(folderItems);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.updateFolderItem(session, "003", "1", new FolderItem()).isResult(),
+        Assert.assertEquals(folderItemService.updateFolderItemSession(session, "003", "1", new FolderItem()),
                 false);
     }
 
@@ -475,13 +478,13 @@ public class FolderItemWebServiceTest extends BaseTest {
         templateData.setDataMap(new HashMap<>());
         workItem.setTemplateId("1");
         workItem.setTaskId("1");
-        workItem.setEventStatus(1);
+        
         workItem.setLastHistoryNo(0);
         workItem.setWorkItemData(templateData);
         List<FolderItem> folderItems = new ArrayList<>();
         FolderItem folderItem = new FolderItem();
         folderItem.setAction(1);
-        folderItem.setFolderItemNo(1);
+        folderItem.setFolderItemNo("1");
         folderItem.setWorkitemId("1");
         folderItem.setTemplateId("1");
         folderItem.setFolderItemData(templateData);
@@ -490,10 +493,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         document.setAction(1);
         document.setDocumentBinary(new byte[10]);
         document.setDocumentData(templateData);
-        document.setDocumentNo(1);
+        document.setDocumentNo("1");
         document.setDocumentPath("1");
         document.setDocumentType("1");
-        document.setFolderItemNo(1);
+        document.setFolderItemNo("1");
         document.setPageCount(1);
         document.setTemplateId("1");
         document.setViewInformation("1");
@@ -503,10 +506,10 @@ public class FolderItemWebServiceTest extends BaseTest {
         Layer layer = new Layer();
         layer.setAction(1);
         layer.setAnnotations("1");
-        layer.setDocumentNo(1);
-        layer.setFolderItemNo(1);
+        layer.setDocumentNo("1");
+        layer.setFolderItemNo("1");
         layer.setLayerData(templateData);
-        layer.setLayerNo(1);
+        layer.setLayerNo("1");
         layer.setOwnerId("1");
         layer.setWorkitemId("1");
         layer.setTemplateId("1");
@@ -517,6 +520,6 @@ public class FolderItemWebServiceTest extends BaseTest {
         folderItems.add(folderItem);
         workItem.setFolderItems(folderItems);
         session.setAttribute("ORIGIN003&" + workItem.getWorkitemId(), workItem);
-        Assert.assertEquals(folderItemService.updateFolderItem(session, "003", "1", folderItem).isResult(), true);
+        Assert.assertEquals(folderItemService.updateFolderItemSession(session, "003", "1", folderItem), true);
     }
 }

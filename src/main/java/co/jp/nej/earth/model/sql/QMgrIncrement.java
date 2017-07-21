@@ -1,27 +1,24 @@
 package co.jp.nej.earth.model.sql;
 
-import com.querydsl.core.types.PathMetadataFactory;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.sql.ColumnMetadata;
-import com.querydsl.sql.RelationalPathBase;
-
 import co.jp.nej.earth.model.entity.MgrIncrement;
 import co.jp.nej.earth.model.enums.ColumnNames;
 import co.jp.nej.earth.model.enums.TableNames;
 
-public class QMgrIncrement extends RelationalPathBase<MgrIncrement> {
+
+import com.querydsl.core.types.PathMetadataFactory;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.sql.ColumnMetadata;
+
+public class QMgrIncrement extends QBase<MgrIncrement> {
 
     private static final long serialVersionUID = 1L;
 
-    public final NumberPath<Integer> processId = createNumber(ColumnNames.PROCESS_ID.toString(), Integer.class);
-    public final StringPath templateId = createString(ColumnNames.TEMPLATE_ID.toString());
-    public final NumberPath<Integer> workspaceId = createNumber(ColumnNames.WORKSPACE_ID.toString(), Integer.class);
-    public final NumberPath<Integer> dataDirectoryId = createNumber(ColumnNames.DATA_DIRECTORY_ID.toString(),
-                                                                    Integer.class);
-    public final NumberPath<Integer> siteId = createNumber(ColumnNames.SITE_ID.toString(), Integer.class);
-    public final NumberPath<Integer> scheduleId = createNumber(ColumnNames.SCHEDULE_ID.toString(), Integer.class);
-
+    //public final NumberPath<Integer> id = createNumber(ColumnNames.INCREMENT_ID.toString(), Integer.class);
+    public final StringPath incrementType = createString(ColumnNames.INCREMENTTYPE.toString());
+    public final NumberPath<Integer> incrementData = createNumber(ColumnNames.INCREMENTDATA.toString(), Integer.class);
+    public final StringPath incrementDateTime = createString(ColumnNames.INCREMENTDATETIME.toString());
+    public final StringPath sessionId = createString(ColumnNames.SESSION_ID.toString());
     public final StringPath lastUpdateTime = createString(ColumnNames.LAST_UPDATE_TIME.toString());
 
     public static QMgrIncrement newInstance() {
@@ -34,12 +31,11 @@ public class QMgrIncrement extends RelationalPathBase<MgrIncrement> {
     }
 
     protected void addMetadata() {
-        addMetadata(processId, ColumnMetadata.named(ColumnNames.PROCESS_ID.toString()));
-        addMetadata(templateId, ColumnMetadata.named(ColumnNames.TEMPLATE_ID.toString()));
-        addMetadata(workspaceId, ColumnMetadata.named(ColumnNames.WORKSPACE_ID.toString()));
-        addMetadata(dataDirectoryId, ColumnMetadata.named(ColumnNames.DATA_DIRECTORY_ID.toString()));
-        addMetadata(siteId, ColumnMetadata.named(ColumnNames.SITE_ID.toString()));
-        addMetadata(scheduleId, ColumnMetadata.named(ColumnNames.SCHEDULE_ID.toString()));
+        //addMetadata(incrementType, ColumnMetadata.named(ColumnNames.INCREMENT_ID.toString()));
+        addMetadata(incrementType, ColumnMetadata.named(ColumnNames.INCREMENTTYPE.toString()));
+        addMetadata(incrementData, ColumnMetadata.named(ColumnNames.INCREMENTDATA.toString()));
+        addMetadata(incrementDateTime, ColumnMetadata.named(ColumnNames.INCREMENTDATETIME.toString()));
+        addMetadata(sessionId, ColumnMetadata.named(ColumnNames.SESSION_ID.toString()));
         addMetadata(lastUpdateTime, ColumnMetadata.named(ColumnNames.LAST_UPDATE_TIME.toString()));
     }
 

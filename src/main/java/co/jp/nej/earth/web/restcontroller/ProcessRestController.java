@@ -1,20 +1,29 @@
 package co.jp.nej.earth.web.restcontroller;
 
-import co.jp.nej.earth.exception.*;
-import co.jp.nej.earth.manager.session.*;
-import co.jp.nej.earth.model.*;
-import co.jp.nej.earth.model.enums.*;
-import co.jp.nej.earth.model.form.*;
-import co.jp.nej.earth.model.ws.*;
-import co.jp.nej.earth.service.*;
-import co.jp.nej.earth.util.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.validation.*;
-import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-import javax.servlet.http.*;
-import javax.validation.*;
-import java.util.*;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import co.jp.nej.earth.exception.EarthException;
+import co.jp.nej.earth.manager.session.EarthSessionManager;
+import co.jp.nej.earth.model.DatProcess;
+import co.jp.nej.earth.model.Message;
+import co.jp.nej.earth.model.ws.CloseAndSaveWorkItemRequest;
+import co.jp.nej.earth.model.ws.CloseProcessRequest;
+import co.jp.nej.earth.model.ws.GetProcessRequest;
+import co.jp.nej.earth.model.ws.GetProcessResponse;
+import co.jp.nej.earth.model.ws.OpenProcessRequest;
+import co.jp.nej.earth.model.ws.Response;
+import co.jp.nej.earth.model.ws.UpdateProcessRequest;
+import co.jp.nej.earth.service.ProcessService;
+import co.jp.nej.earth.service.WorkItemService;
 
 @RestController
 @RequestMapping("/WS")
@@ -23,126 +32,70 @@ public class ProcessRestController extends BaseRestController {
     private ProcessService processService;
 
     @Autowired
-    private ValidatorUtil validatorUtil;
+    private WorkItemService workItemService;
 
-    @RequestMapping(value = "/openProcess", method = RequestMethod.GET)
-    public RestResponse openProcess(OpenProcessForm form, BindingResult result, HttpServletRequest request)
+    @RequestMapping(value = "/openProcess")
+    public Response openProcess(@Valid @RequestBody OpenProcessRequest request, BindingResult bindingResult)
             throws EarthException {
-        RestResponse respone = new RestResponse();
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-        try {
-            respone.setResult(
-                    processService.openProcess(EarthSessionManager.find(form.getSessionId()), form.getWorkspaceId(),
-                            null, form.getWorkItemId(), OpenProcessMode.findOpenModeByMode(form.getMode())));
-            return respone;
-        } catch (EarthException e) {
-            respone.setResult(false);
-            respone.setData(e.getMessage());
-            return respone;
-        }
-    }
-
-    @RequestMapping(value = "/closeProcess", method = RequestMethod.POST)
-    public RestResponse closeProcess(@Valid CloseProcessForm form, BindingResult result, HttpServletRequest request)
-            throws EarthException {
-        RestResponse respone = new RestResponse();
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                respone.setResult(processService.closeProcess(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getWorkitemId(), form.getEventId()));
-                return respone;
-            } catch (EarthException e) {
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
+        return getRestResponse(request, bindingResult, () -> {
+            List<Message> result = workItemService.openWorkItem(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getProcessId(), request.getWorkItemId(),
+                    Integer.parseInt(request.getMode()));
+            if (result.size() > 0) {
+                return new Response(result);
             }
+
+            return new Response(true);
         });
     }
 
-    @RequestMapping(value = "/getProcess", method = RequestMethod.POST)
-    public RestResponse getProcess(@Valid GetProcessForm form, BindingResult result, HttpServletRequest request)
+    @RequestMapping(value = "/closeProcess")
+    public Response closeProcess(@Valid CloseProcessRequest request, BindingResult bindingResult)
             throws EarthException {
+        return getRestResponse(request, bindingResult, () -> {
+            List<Message> result = workItemService.closeWorkItem(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId());
 
-        RestResponse respone = new RestResponse();
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                respone.setData(processService.getProcess(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getProcessId()));
-                return respone;
-            } catch (EarthException e) {
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
+            if (result.size() > 0) {
+                return new Response(result);
             }
+
+            return new Response(true);
+        });
+    }
+
+    @RequestMapping(value = "/getProcess")
+    public Response getProcess(@Valid GetProcessRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+
+            DatProcess process = processService.getProcessSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId(), Integer.parseInt(request.getProcessId()));
+
+            GetProcessResponse respone = new GetProcessResponse(true);
+            respone.setProcessResult(process);
+
+            return respone;
         });
     }
 
     @RequestMapping(value = "/updateProcess", method = RequestMethod.POST)
-    public RestResponse updateProcess(@Valid ProcessRestForm form, BindingResult result, HttpServletRequest request)
+    public Response updateProcess(@Valid @RequestBody UpdateProcessRequest request, BindingResult bindingResult)
             throws EarthException {
-
-        RestResponse respone = new RestResponse();
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                respone.setResult(processService.updateProcess(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getDatProcess()));
-                return respone;
-            } catch (EarthException e) {
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+        return getRestResponse(request, bindingResult, () -> {
+            boolean result = processService.updateProcessSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getDatProcess());
+            return new Response(result);
         });
     }
 
-    @RequestMapping(value = "/closeAndSaveWorkItem", method = RequestMethod.POST)
-    public RestResponse closeAndSaveWorkItem(WorkItemChangeForm form, BindingResult result, HttpServletRequest request)
-            throws EarthException {
-
-        RestResponse respone = new RestResponse();
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                respone.setResult(processService.closeAndSaveProcess(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkItem(), form.getWorkspaceId()));
-                return respone;
-            } catch (EarthException e) {
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    @RequestMapping(value = "/closeAndSaveProcess", method = RequestMethod.POST)
+    public Response closeAndSaveProcess(@Valid @RequestBody CloseAndSaveWorkItemRequest request,
+            BindingResult bindingResult) throws EarthException {
+        return getRestResponse(request, bindingResult, () -> {
+            boolean result = workItemService.closeAndSaveWorkItem(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkItemId(), request.getWorkspaceId());
+            return new Response(result);
         });
     }
 }

@@ -1,12 +1,15 @@
 package co.jp.nej.earth.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import co.jp.nej.earth.model.constant.Constant;
 
 public class EStringUtil extends StringUtils {
 
@@ -14,6 +17,7 @@ public class EStringUtil extends StringUtils {
 
     public static final String EMPTY = "";
     public static final int NUMBER_255 = 255;
+    private static final Pattern PATTERN = Pattern.compile(Constant.WorkSpace.IP_VALIDATION);
 
     public static boolean checkAlphabet(String string) {
         for (char ch : string.toCharArray()) {
@@ -22,6 +26,19 @@ public class EStringUtil extends StringUtils {
             }
         }
         return true;
+    }
+
+    public static boolean checkNumber(String number) {
+        for (char ch : number.toCharArray()) {
+            if (!(Character.isDigit(ch))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean checkIpAddress(String ipAddress) {
+        return PATTERN.matcher(ipAddress).matches();
     }
 
     public static boolean checkJapanese(String string) {

@@ -1,8 +1,8 @@
 package co.jp.nej.earth.model;
 
-import java.util.List;
-
 import co.jp.nej.earth.model.enums.DocumentSavingType;
+
+import java.util.List;
 
 public class DocumentSavingInfo {
 
@@ -18,8 +18,7 @@ public class DocumentSavingInfo {
     }
 
     /**
-     * @param savingType
-     *            the savingType to set
+     * @param savingType the savingType to set
      */
     public void setSavingType(DocumentSavingType savingType) {
         this.savingType = savingType;
@@ -33,8 +32,7 @@ public class DocumentSavingInfo {
     }
 
     /**
-     * @param dataDef
-     *            the dataDef to set
+     * @param dataDef the dataDef to set
      */
     public void setDataDef(List<Directory> dataDef) {
         this.dataDef = dataDef;

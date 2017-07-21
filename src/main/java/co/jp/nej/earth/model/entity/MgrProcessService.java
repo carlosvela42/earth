@@ -20,9 +20,9 @@ public class MgrProcessService extends BaseModel<MgrProcessService> {
 
     public MgrProcessService(int processIServiceId, int workspaceId, String processIServiceName) {
         this();
-        this.processIServiceId=processIServiceId;
-        this.workspaceId=workspaceId;
-        this.processIServiceName=processIServiceName;
+        this.processIServiceId = processIServiceId;
+        this.workspaceId = workspaceId;
+        this.processIServiceName = processIServiceName;
     }
 
     public int getProcessIServiceId() {

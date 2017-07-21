@@ -6,7 +6,7 @@
 <script src="${rc.getContextPath()}/resources/js/site.js"></script>
 </#assign>
 
-<@standard.standardPage title=e.get("site.edit") contentFooter=contentFooter script=script>
+<@standard.standardPage title=e.get("site.edit") contentFooter=contentFooter script=script imageLink="process">
 <br>    
     <#assign isPersisted = (siteForm.lastUpdateTime??)>
     <#assign formAction = isPersisted?then('updateOne', 'insertOne')>
@@ -30,24 +30,26 @@
 		  </tr>		
 	   </table>
 	<div><input type="hidden" name="lastUpdateTime" value="${siteForm.lastUpdateTime!""}"/></div>
-	<br>
-	   <table class="clientSearch table_list">
+	<br/>
+	<label>${e.get("directory.list")}</label>
+	<hr/>
+	   <table class="clientSearch table_list" >
 	   <thead>    
 			<tr class="table_header">
 			    <td class=""><input type="checkbox" class="deleteAllCheckBox" /></td>
 				<td>${e.get("site.datadirectoryid")}</td>
 				<td>${e.get("site.folderpath")}</td>
 				<td>${e.get("site.createnew")}</td>
-				<td>${e.get("site.secureddiskspace")}</td>
-				<td>${e.get("site.diskcapacity")}</td>
+				<td>${e.get("site.secureddiskspace")} (MB)</td>
+				<td>${e.get("site.diskcapacity")} (MB)</td>
 			</tr>
 		</thead>
-		<tbody id="siteTbody" class="table_body">
+		<tbody class="table_body" id="siteTbody">
 		<#if siteForm??>
 			<#if siteForm.directories??>
 	                <#list siteForm.directories as directory>
 	                <tr id="row${directory?index}">
-	                     <td><input type="checkbox" class="deleteCheckBox" id="chooseRow${directory?index}" name="ChooseRow" value="${directory.dataDirectoryId}" ${directory.checked?string("checked","") } ></td>
+	                     <td><input type="checkbox" class="deleteCheckBox" id="chooseRow${directory?index}" name="ChooseRow" value="${directory.dataDirectoryId}" ${directory.checked?string("checked","") }></td>
 	                     <td id="dataDirectoryId${directory?index}" value="${directory.dataDirectoryId}">${directory.dataDirectoryId}</td>
 	                     <td id="folderPath${directory?index}" value="${directory.folderPath}">${directory.folderPath}</td>
 	                     <td id="newCreateFile${directory?index}" value="${directory.newCreateFile}">${directory.newCreateFile}</td>

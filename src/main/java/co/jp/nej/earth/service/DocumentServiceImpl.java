@@ -3,13 +3,16 @@ package co.jp.nej.earth.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
@@ -24,15 +27,11 @@ import com.querydsl.core.types.Path;
 import co.jp.nej.earth.dao.DataDbDao;
 import co.jp.nej.earth.dao.DataFileDao;
 import co.jp.nej.earth.dao.DirectoryDao;
-import co.jp.nej.earth.dao.DocumentDao;
-import co.jp.nej.earth.dao.LayerDao;
 import co.jp.nej.earth.dao.ProcessDao;
 import co.jp.nej.earth.dao.StrageFileDao;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Directory;
 import co.jp.nej.earth.model.Document;
-import co.jp.nej.earth.model.DocumentImageKey;
-import co.jp.nej.earth.model.DocumentResponse;
 import co.jp.nej.earth.model.DocumentSavingInfo;
 import co.jp.nej.earth.model.FolderItem;
 import co.jp.nej.earth.model.Layer;
@@ -40,25 +39,26 @@ import co.jp.nej.earth.model.Message;
 import co.jp.nej.earth.model.MgrProcess;
 import co.jp.nej.earth.model.StrageFile;
 import co.jp.nej.earth.model.WorkItem;
+import co.jp.nej.earth.model.WorkItemDictionary;
 import co.jp.nej.earth.model.constant.Constant.ErrorCode;
 import co.jp.nej.earth.model.entity.StrDataDb;
 import co.jp.nej.earth.model.entity.StrDataFile;
+import co.jp.nej.earth.model.enums.Action;
 import co.jp.nej.earth.model.enums.DocumentSavingType;
+import co.jp.nej.earth.model.enums.Operation;
 import co.jp.nej.earth.model.sql.QMgrProcess;
 import co.jp.nej.earth.model.sql.QStrDataDb;
 import co.jp.nej.earth.model.sql.QStrDataFile;
 import co.jp.nej.earth.model.sql.QStrageFile;
-import co.jp.nej.earth.model.ws.RestResponse;
-import co.jp.nej.earth.util.ConversionUtil;
+import co.jp.nej.earth.model.ws.DisplayImageResponse;
 import co.jp.nej.earth.util.DateUtil;
-import co.jp.nej.earth.util.EMessageResource;
+import co.jp.nej.earth.util.EModelUtil;
 import co.jp.nej.earth.util.EStringUtil;
 import co.jp.nej.earth.util.FileUtil;
-import co.jp.nej.earth.util.ImageUtil;
+import co.jp.nej.earth.util.SessionUtil;
 
 @Service
 public class DocumentServiceImpl extends BaseService implements DocumentService {
-
     @Autowired
     private DataFileDao dataFileDao;
     @Autowired
@@ -70,16 +70,7 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
     @Autowired
     private StrageFileDao strageFileDao;
     @Autowired
-    private DocumentDao documentDao;
-    @Autowired
-    private LayerDao layerDao;
-    @Autowired
-    private EMessageResource eMessageResource;
-    @Autowired
     private ProcessDao processDao;
-
-    private static final int WIDTH = 1024;
-    private static final int HEIGHT = 500;
     /**
      * log
      */
@@ -108,14 +99,14 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
                             File fileOutPut = new File(
                                     directoryFile.getAbsolutePath() + File.separator + file.getName());
                             copyFileToDirectory(document, file, fileOutPut);
-                            result = saveDocument2DataFile(workspaceId, document, fileOutPut);
+                            result = saveDocumentToDataFile(workspaceId, document, fileOutPut);
                         }
                     }
                 } else if (DocumentSavingType.FILE_ROUND_ROBIN.equals(documentSavingInfo.getSavingType())) {
                     Directory directory = FileUtil.getDirectoryUsedStorageMin(directories);
                     File fileOutPut = new File(directory.getFolderPath() + File.separator + file.getName());
                     copyFileToDirectory(document, file, fileOutPut);
-                    result = saveDocument2DataFile(workspaceId, document, fileOutPut);
+                    result = saveDocumentToDataFile(workspaceId, document, fileOutPut);
                 } else if (DocumentSavingType.DATABASE.equals(documentSavingInfo.getSavingType())) {
                     try {
                         result = saveDocumentToDB(workspaceId, file, document);
@@ -128,8 +119,8 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
                 deleteFile(file);
                 if (!result) {
                     LOG.error(new Message("",
-                            messageSource.getMessage(ErrorCode.E1012, new String[] { "" }, Locale.ENGLISH))
-                                    .getContent());
+                            messageSource.getMessage(ErrorCode.E1012, new String[]{""}, Locale.ENGLISH))
+                            .getContent());
                 }
                 return result;
             } catch (Exception e) {
@@ -177,7 +168,6 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
      *
      * @param document
      * @param file
-     * @param directoryFile
      * @throws EarthException
      */
     private void copyFileToDirectory(Document document, File file, File fileOutPut) throws EarthException {
@@ -197,10 +187,10 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
      * @return
      * @throws EarthException
      */
-    private boolean saveDocument2DataFile(String workspaceId, Document document, File fileOutPut)
+    private boolean saveDocumentToDataFile(String workspaceId, Document document, File fileOutPut)
             throws EarthException {
         QStrDataFile qStrDataFile = QStrDataFile.newInstance();
-        if (document.getDocumentNo() == -1) {
+        if (EStringUtil.isEmpty(document.getDocumentNo())) {
             // instance object
             StrDataFile dataFile = new StrDataFile();
             dataFile.setWorkitemId(document.getWorkitemId());
@@ -234,7 +224,7 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
     private boolean saveDocumentToDB(String workspaceId, File file, Document document)
             throws EarthException, IOException {
         byte[] dataFile = FileUtil.convertFileToBinary(file);
-        if (document.getDocumentNo() == -1) {
+        if (EStringUtil.isEmpty(document.getDocumentNo())) {
             StrDataDb dataDb = new StrDataDb();
             dataDb.setWorkitemId(document.getWorkitemId());
             dataDb.setDocumentNo(document.getDocumentNo());
@@ -310,230 +300,103 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
         });
     }
 
-    @Override
-    public List<Document> getDocumentListInfo(String workspaceId, String workitemId, int folderItemNo,
-            String documentNo) throws EarthException {
-        return ConversionUtil.castList(this.executeTransaction(workspaceId, () -> {
-            return documentDao.getAllByWorkspace(workspaceId, workitemId, folderItemNo, documentNo);
-        }), Document.class);
-    }
-
-    @Override
-    public RestResponse getDocumentList(String workspaceId, String workitemId, int folderItemNo, int documentNo,
-            String action) throws EarthException {
-        RestResponse respone = new RestResponse();
-        List<Document> lstDocument = ConversionUtil.castList(this.executeTransaction(workspaceId, () -> {
-            return documentDao.getAll(workspaceId, workitemId, folderItemNo);
-        }), Document.class);
-        Document doc = null;
-        int i = 0, rowNum = -1;
-        do {
-            int ss = lstDocument.get(i).getDocumentNo();
-            if (ss==documentNo) {
-                rowNum = i;
-            }
-            i++;
-        } while (rowNum < 0&&i<lstDocument.size());
-        switch(action){
-        case "first":
-            rowNum = 0;
-            break;
-        case "previous":
-            rowNum--;
-            break;
-        case "next":
-            rowNum++;
-            break;
-        case "last":
-            rowNum = lstDocument.size()-1;
-            break;
-        default:
-            break;
-        }
-        doc = lstDocument.get(rowNum);
-        int tmpDocNo = doc.getDocumentNo();
-        List<Layer> lstLayer = ConversionUtil.castList(this.executeTransaction(workspaceId, () -> {
-            return layerDao.getAll(workspaceId, workitemId, folderItemNo, tmpDocNo);
-        }), Layer.class);
-        doc.setLayers(lstLayer);
-        DocumentResponse docRes = new DocumentResponse(doc,rowNum,lstDocument.size());
-        respone.setResult(true);
-        respone.setData(docRes);
-        return respone;
-    }
-
-    @Override
-    public RestResponse getDocument(HttpSession session, String workspaceId, String workitemId, Integer folderItemNo,
-            Integer documentNo) throws EarthException {
-        RestResponse respone = new RestResponse();
-        // get work item data from session
-        WorkItem workItem = null;
-        try {
-            workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
-        } catch (Exception e) {
-            throw new EarthException(e);
-        }
-        if (workItem == null) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "session" }));
-            return respone;
-        }
-        // from work item data find document data
-        Document document = getDocumentFromWorkItem(workItem, workitemId, folderItemNo, documentNo);
-        // if don't find any folder item return message
-        if (document == null) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "document" }));
-            return respone;
-        }
-        // remove information of document
-        document.setLayers(null);
-        respone.setData(document);
-        return respone;
-    }
-
-    @Override
-    public RestResponse updateDocument(HttpSession session, String workspaceId, String workitemId, Integer folderItemNo,
-            Document document) throws EarthException {
-        RestResponse respone = new RestResponse();
-        // get work item data from session
-        WorkItem workItem = null;
-        try {
-            workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
-        } catch (Exception e) {
-            throw new EarthException(e);
-        }
-        if (workItem == null) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "session" }));
-            return respone;
-        }
-        // from work item data find document data and update value of this
-        List<FolderItem> folderItems = workItem.getFolderItems();
-        boolean isDocumentExisted = false;
-        if (folderItems != null) {
-            for (FolderItem folderItem : folderItems) {
-                if (folderItem.getWorkitemId().equals(workitemId)
-                        && folderItem.getFolderItemNo().equals(folderItemNo)) {
-                    List<Document> documents = folderItem.getDocuments();
-                    if (documents != null) {
-                        for (Document temp : documents) {
-                            if (temp.getWorkitemId().equals(workitemId) && temp.getFolderItemNo().equals(folderItemNo)
-                                    && temp.getDocumentNo().equals(document.getDocumentNo())) {
-                                temp.setTemplateId(document.getTemplateId());
-                                temp.setDocumentData(document.getDocumentData());
-                                temp.setDocumentBinary(document.getDocumentBinary());
-                                temp.setDocumentPath(document.getDocumentPath());
-                                temp.setDocumentType(document.getDocumentType());
-                                temp.setLastUpdateTime(document.getLastUpdateTime());
-                                temp.setPageCount(document.getPageCount());
-                                temp.setViewInformation(document.getViewInformation());
-                                // TODO don't know what is the value of action
-                                // update
-                                temp.setAction(0);
-                                isDocumentExisted = true;
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        // if don't find any folder item return message
-        if (!isDocumentExisted) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "document" }));
-            return respone;
-        }
-        // set workitem data after update to session
-        session.setAttribute("ORIGIN" + workspaceId + "&" + workItem.getWorkitemId(), workItem);
-        return respone;
-    }
-
-    @Override
-    public RestResponse displayImage(HttpSession session, String workspaceId, String workitemId, Integer folderItemNo,
-            Integer documentNo) throws EarthException {
-        RestResponse respone = new RestResponse();
-        // get work item data from session
-        WorkItem workItem = null;
-        try {
-            workItem = (WorkItem) session.getAttribute("ORIGIN" + workspaceId + "&" + workitemId);
-        } catch (Exception e) {
-            throw new EarthException(e);
-        }
-        if (workItem == null) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "session" }));
-            return respone;
-        }
-        // from work item data find document data
-        Document document = getDocumentFromWorkItem(workItem, workitemId, folderItemNo, documentNo);
-        // if don't find any folder item return message
-        if (document == null) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "document" }));
-            return respone;
-        }
-        WorkItem workItem2 = null;
-        try {
-            workItem2 = (WorkItem) session.getAttribute("TMP" + workspaceId + "&" + workitemId);
-        } catch (Exception e) {
-            throw new EarthException(e);
-        }
-        if (workItem2 == null) {
-            try {
-                document.setDocumentBinary(getBinaryDataOfDocument(workspaceId, document));
-            } catch (Exception e) {
-                throw new EarthException(e);
-            }
-            // set workitem data after update to session
-            session.setAttribute("TMP" + workspaceId + "&" + workItem.getWorkitemId(), workItem);
-        } else {
-            document = getDocumentFromWorkItem(workItem2, workitemId, folderItemNo, documentNo);
-        }
-        respone.setData(document);
-        return respone;
-    }
-
     /**
-     * get document from workitem
+     * Get Document object from session
      *
-     * @param workItem
-     * @param workitemId
+     * @param session
+     * @param workspaceId
+     * @param workItemId
      * @param folderItemNo
      * @param documentNo
      * @return
+     * @throws EarthException
      */
-    private Document getDocumentFromWorkItem(WorkItem workItem, String workitemId, Integer folderItemNo,
-            Integer documentNo) {
-        List<FolderItem> folderItems = workItem.getFolderItems();
-        Document document = null;
-        if (folderItems != null) {
-            for (FolderItem folderItem : folderItems) {
-                if (folderItem.getWorkitemId().equals(workitemId)
-                        && folderItem.getFolderItemNo().equals(folderItemNo)) {
-                    List<Document> documents = folderItem.getDocuments();
-                    if (documents != null) {
-                        for (Document temp : documents) {
-                            if (temp.getWorkitemId().equals(workitemId) && temp.getFolderItemNo().equals(folderItemNo)
-                                    && temp.getDocumentNo().equals(documentNo)) {
-                                document = temp;
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                }
+    @Override
+    public Document getDocumentSession(HttpSession session, String workspaceId, String workItemId, String folderItemNo,
+                                       String documentNo) throws EarthException {
+        // Get Document data from session.
+        Document documentSession = (Document) getDataItemFromSession(session,
+                SessionUtil.getOriginWorkItemDictionaryKey(workspaceId, workItemId),
+                EModelUtil.getDocumentIndex(workItemId, String.valueOf(folderItemNo), String.valueOf(documentNo)));
+        checkPermission(documentSession, Operation.GET_DATA);
+        Document document = EModelUtil.clone(documentSession, Document.class);
+        document.setLayers(new ArrayList<Layer>());
+        return document;
+    }
+
+    @Override
+    public boolean updateDocumentSession(HttpSession session, String workspaceId, String workItemId,
+                                         String folderItemNo, Document document) throws EarthException {
+        Document documentSession = (Document) getDataItemFromSession(session,
+                SessionUtil.getOriginWorkItemDictionaryKey(workspaceId, workItemId), EModelUtil.getDocumentIndex(
+                        workItemId, folderItemNo, document.getDocumentNo()));
+        checkPermission(documentSession, Operation.UPDATE_DATA);
+        documentSession.setTemplateId(document.getTemplateId());
+        documentSession.setDocumentData(document.getDocumentData());
+        documentSession.setMgrTemplate(document.getMgrTemplate());
+        documentSession.setAction(Action.UPDATE.getAction());
+        return true;
+    }
+
+    private FolderItem getFolderItemDataStructureSession(HttpSession session, String workspaceId, String workItemId,
+                                                         String folderItemNo) throws EarthException {
+        // Get FolderItem data from session
+        FolderItem folderItemSession = (FolderItem) getDataItemFromSession(session,
+                SessionUtil.getOriginWorkItemDictionaryKey(workspaceId, workItemId),
+                EModelUtil.getFolderItemIndex(workItemId, folderItemNo));
+        checkPermission(folderItemSession, Operation.GET_DATA);
+        FolderItem folderItem = EModelUtil.clone(folderItemSession, FolderItem.class);
+        return folderItem;
+    }
+
+    @Override
+    public DisplayImageResponse displayImage(HttpSession session, String workspaceId, String workItemId,
+                                             String folderItemNo, String currentDocumentNo) throws EarthException {
+        WorkItemDictionary workItemTempDictionary = (WorkItemDictionary) session
+                .getAttribute(SessionUtil.getTempWorkItemDictionaryKey(workspaceId, workItemId));
+        if (workItemTempDictionary == null) {
+            FolderItem folderItem = getFolderItemDataStructureSession(session, workspaceId, workItemId, folderItemNo);
+
+            WorkItem originWorkItemSession = (WorkItem) getDataItemFromSession(session,
+                    SessionUtil.getOriginWorkItemDictionaryKey(workspaceId, workItemId),
+                    EModelUtil.getWorkItemIndex(workItemId));
+
+            WorkItem workItem = EModelUtil.clone(originWorkItemSession, WorkItem.class);
+            workItem.setFolderItems(new ArrayList<>());
+            workItem.addFolderItem(folderItem);
+
+            // Create new temporary WorkItem Dictionary for Displaying ImageViewer Screen.
+            WorkItemDictionary workItemDictionary = createWorkItemDictionaries(workItem);
+            session.setAttribute(SessionUtil.getTempWorkItemDictionaryKey(workspaceId, workItemId), workItemDictionary);
+        }
+
+        FolderItem tempFolderItem = (FolderItem) getDataItemFromSession(session,
+                SessionUtil.getTempWorkItemDictionaryKey(workspaceId, workItemId),
+                EModelUtil.getFolderItemIndex(workItemId, folderItemNo));
+        List<Document> documents = tempFolderItem.getDocuments();
+        Map<String, Document> documentMap = new LinkedHashMap<>();
+        int currentDocumentIndex = 0;
+        for (Document document : documents) {
+            documentMap.put(document.getDocumentNo(), document);
+            if (currentDocumentNo.equals(document.getDocumentNo())) {
+                currentDocumentIndex = documents.indexOf(document);
             }
         }
-        return document;
+
+        return new DisplayImageResponse(currentDocumentIndex, documentMap);
     }
 
     @Override
     public byte[] getBinaryDataOfDocument(String workspaceId, Document document) throws EarthException {
         return (byte[]) this.executeTransaction(workspaceId, () -> {
             try {
+                if (!EStringUtil.isEmpty(document.getDocumentPath())) {
+                    File file = new File(document.getDocumentPath());
+                    if (file.exists()) {
+                        return FileUtil.convertFileToBinary(file);
+                    }
+                }
+
                 QStrDataDb qStrDataDb = QStrDataDb.newInstance();
                 Map<Path<?>, Object> keyMap = new HashMap<>();
                 keyMap.put(qStrDataDb.workitemId, document.getWorkitemId());
@@ -542,164 +405,117 @@ public class DocumentServiceImpl extends BaseService implements DocumentService 
                 StrDataDb dataDb = dataDbDao.findOne(workspaceId, keyMap);
                 if (dataDb != null) {
                     if (!EStringUtil.isEmpty(dataDb.getDocumentData())) {
-                        return dataDb.getDocumentData().getBytes();
-                    }
-                    return null;
-                }
-                QStrDataFile qStrDataFile = QStrDataFile.newInstance();
-                Map<Path<?>, Object> condition = new HashMap<>();
-                condition.put(qStrDataFile.documentNo, document.getDocumentNo());
-                condition.put(qStrDataFile.folderItemNo, document.getFolderItemNo());
-                condition.put(qStrDataFile.workitemId, document.getWorkitemId());
-                StrDataFile dataFile = dataFileDao.findOne(workspaceId, condition);
-                if (!EStringUtil.isEmpty(dataFile.getDocumentDataPath())) {
-                    File file = new File(dataFile.getDocumentDataPath());
-                    if (file.exists()) {
-                        return FileUtil.convertFileToBinary(file);
+                        return Base64.decodeBase64(dataDb.getDocumentData());
                     }
                 }
-                return null;
             } catch (Exception e) {
                 throw new EarthException(e);
             }
+            return null;
         });
     }
 
     @Override
-    public RestResponse saveImage(HttpSession session, String workspaceId, Document document) throws EarthException {
-        RestResponse respone = new RestResponse();
-        // get work item data from session
-        WorkItem workItem = null;
-        try {
-            workItem = (WorkItem) session.getAttribute("TMP" + workspaceId + "&" + document.getWorkitemId());
-        } catch (Exception e) {
-            throw new EarthException(e);
-        }
-        if (workItem == null) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "session" }));
-            return respone;
-        }
-        // from work item data find document data and update value of this
-        List<FolderItem> folderItems = workItem.getFolderItems();
-        boolean isDocumentExisted = false;
-        if (folderItems != null) {
-            for (FolderItem folderItem : folderItems) {
-                if (folderItem.getWorkitemId().equals(document.getWorkitemId())
-                        && folderItem.getFolderItemNo().equals(document.getFolderItemNo())) {
-                    List<Document> documents = folderItem.getDocuments();
-                    if (documents != null) {
-                        for (Document temp : documents) {
-                            if (temp.getWorkitemId().equals(document.getWorkitemId())
-                                    && temp.getFolderItemNo().equals(document.getFolderItemNo())
-                                    && temp.getDocumentNo().equals(document.getDocumentNo())) {
-                                temp.setTemplateId(document.getTemplateId());
-                                temp.setDocumentData(document.getDocumentData());
-                                temp.setDocumentBinary(document.getDocumentBinary());
-                                temp.setDocumentPath(document.getDocumentPath());
-                                temp.setDocumentType(document.getDocumentType());
-                                temp.setLastUpdateTime(document.getLastUpdateTime());
-                                temp.setPageCount(document.getPageCount());
-                                temp.setViewInformation(document.getViewInformation());
-                                temp.setLayers(document.getLayers());
-                                // TODO don't know what is the value of action
-                                // update
-                                temp.setAction(0);
-                                isDocumentExisted = true;
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        // if don't find any folder item return message
-        if (!isDocumentExisted) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "document" }));
-            return respone;
-        }
-        // set workitem data after update to session
-        session.setAttribute("TMP" + workspaceId + "&" + workItem.getWorkitemId(), workItem);
-        return respone;
+    public boolean saveImageSession(HttpSession session, String workspaceId, Document document) throws EarthException {
+        // Get work item data from session.
+        Document documentSession = (Document) getDataItemFromSession(
+                session
+                ,SessionUtil.getTempWorkItemDictionaryKey(workspaceId, document.getWorkitemId())
+                ,EModelUtil.getDocumentIndex(
+                        document.getWorkitemId()
+                        ,String.valueOf(document.getFolderItemNo())
+                        ,String.valueOf(document.getDocumentNo())));
+
+        documentSession.setLayers(document.getLayers());
+        documentSession.setAction(Action.UPDATE.getAction());
+
+        return true;
     }
 
     @Override
-    public RestResponse closeImage(HttpSession session, String workspaceId, String workitemId) throws EarthException {
-        RestResponse respone = new RestResponse();
-        // remove template session
-        session.removeAttribute("TMP" + workspaceId + "&" + workitemId);
-        return respone;
+    public boolean closeImage(HttpSession session, String workspaceId, String workItemId, String folderItemNo,
+                              String documentNo) throws EarthException {
+        // Get Origin Document Session.
+        Document orginDocument = (Document) getDataItemFromSession(
+                session,
+                SessionUtil.getOriginWorkItemDictionaryKey(workspaceId, workItemId),
+                EModelUtil.getDocumentIndex(workItemId, folderItemNo, documentNo));
+
+        // Replace document into temporary session.
+        setDataItemToSession(
+                session
+                ,SessionUtil.getTempWorkItemDictionaryKey(workspaceId, workItemId),
+                EModelUtil.getDocumentIndex(workItemId, folderItemNo, documentNo),
+                orginDocument);
+        return true;
     }
 
     @Override
-    public RestResponse saveAndCloseImages(HttpSession session, String workspaceId, String workitemId,
-            List<Document> docImages) throws EarthException {
-        RestResponse respone = new RestResponse();
-        WorkItem workItem = null;
-        try {
-            workItem = (WorkItem) session.getAttribute("TMP" + workspaceId + "&" + workitemId);
-        } catch (Exception e) {
-            throw new EarthException(e);
-        }
-        if (workItem == null) {
-            respone.setResult(false);
-            respone.setData(eMessageResource.get("E0002", new String[] { "session" }));
-            return respone;
-        }
-        // instance map with key is DocumentImageKey and value is Document
-        Map<DocumentImageKey, Document> mapDocumentImage = new HashMap<>();
-        for (Document doc : docImages) {
-            mapDocumentImage.put(new DocumentImageKey(doc.getWorkitemId(), doc.getFolderItemNo(), doc.getDocumentNo()),
-                    doc);
-        }
-
-        // from work item data find document data and update value of this
-        List<FolderItem> folderItems = workItem.getFolderItems();
-        if (folderItems != null) {
-            for (FolderItem folderItem : folderItems) {
-                List<Document> documents = folderItem.getDocuments();
-                if (documents != null) {
-                    for (Document doc : documents) {
-                        DocumentImageKey documentImageKey = new DocumentImageKey(workitemId, doc.getFolderItemNo(),
-                                doc.getDocumentNo());
-                        if (mapDocumentImage.containsKey(documentImageKey)) {
-                            doc = mapDocumentImage.get(documentImageKey);
-                        }
-                    }
-                }
-            }
-        }
-        // set workitem data after update to session
-        session.setAttribute("ORIGIN" + workspaceId + "&" + workItem.getWorkitemId(), workItem);
-        // remove template session
-        session.removeAttribute("TMP" + workspaceId + "&" + workitemId);
-        return respone;
-
-    }
-
-    @Override
-    public RestResponse closeWithoutSavingImage(HttpSession session, String workspaceId, String workitemId)
+    public boolean saveAndCloseImages(HttpSession session, String workspaceId, String workItemId, String folderItemNo)
             throws EarthException {
-        return closeImage(session, workspaceId, workitemId);
+        FolderItem tempFolderItemSession = (FolderItem) getDataItemFromSession(session,
+                SessionUtil.getTempWorkItemDictionaryKey(workspaceId, workItemId),
+                EModelUtil.getFolderItemIndex(workItemId, folderItemNo));
+
+        // Get Origin WorkItem Dictionary.
+        WorkItemDictionary originWorkItemDictionary = (WorkItemDictionary) session
+                .getAttribute(SessionUtil.getOriginWorkItemDictionaryKey(workspaceId, workItemId));
+        // Save document image session into origin document image session.
+        List<Document> tempDocuments = tempFolderItemSession.getDocuments();
+        for (Document doc : tempDocuments) {
+            List<Layer> tempLayers = doc.getLayers();
+            for (Layer tempLayer : tempLayers) {
+                Layer newLayer = EModelUtil.clone(tempLayer, Layer.class);
+                // In case create new Layer.
+                if (newLayer.getLayerNo() == null) {
+                    originWorkItemDictionary.put(
+                            EModelUtil.getLayerIndex(
+                                    tempLayer.getWorkitemId(), tempLayer.getFolderItemNo(),
+                                    tempLayer.getDocumentNo(), tempLayer.getLayerNo()),
+                            newLayer);
+                } else {
+                    // In case Update Layer.
+                    Layer originLayer =  (Layer) originWorkItemDictionary.get(
+                            EModelUtil.getLayerIndex(
+                                    tempLayer.getWorkitemId(), tempLayer.getFolderItemNo(),
+                                    tempLayer.getDocumentNo(), tempLayer.getLayerNo()));
+                    originLayer.setLayerName(newLayer.getLayerName());
+                    originLayer.setAnnotations(newLayer.getAnnotations());
+                    originLayer.setAction(Action.UPDATE.getAction());
+                }
+            }
+        }
+
+        session.removeAttribute(SessionUtil.getTempWorkItemDictionaryKey(workspaceId, workItemId));
+        return true;
     }
 
     @Override
-    public RestResponse getThumbnail(HttpSession session, String workspaceId, String workitemId, Integer folderItemNo,
-            Integer documentNo) throws EarthException {
-        RestResponse respone = new RestResponse();
-        Document document = new Document();
-        document.setWorkitemId(workitemId);
-        document.setFolderItemNo(folderItemNo);
-        document.setDocumentNo(documentNo);
-        // TODO because don't know how to get outputType, and width, height of
-        // image
-        byte[] bytes = getBinaryDataOfDocument(workspaceId, document);
-        if (bytes != null && bytes.length > 0) {
-            respone.setData(ImageUtil.getThumbnail(bytes, WIDTH, HEIGHT, ImageUtil.PNG_TYPE));
-        }
-        return respone;
+    public boolean closeWithoutSavingImage(HttpSession session, String workspaceId, String workItemId)
+            throws EarthException {
+        session.removeAttribute(SessionUtil.getTempWorkItemDictionaryKey(workspaceId, workItemId));
+        return true;
     }
 
+    @Override
+    public String getThumbnail(HttpSession session, String workspaceId, String workItemId, String folderItemNo,
+                               String documentNo) throws EarthException {
+        // Get Document data from session.
+        Document documentSession = (Document) getDataItemFromSession(session,
+                SessionUtil.getOriginWorkItemDictionaryKey(workspaceId, workItemId),
+                EModelUtil.getDocumentIndex(workItemId, String.valueOf(folderItemNo), String.valueOf(documentNo)));
+        List<Layer> layers = documentSession.getLayers();
+        if (layers.size() == 0) {
+            return EStringUtil.EMPTY;
+        }
+
+        StringBuilder thumbernail = new StringBuilder();
+        for (Layer layer : layers) {
+            if (!EStringUtil.isEmpty(layer.getAnnotations())) {
+                thumbernail.append(layer.getAnnotations());
+            }
+        }
+
+        return thumbernail.toString();
+    }
 }

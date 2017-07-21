@@ -1,23 +1,5 @@
 package co.jp.nej.earth.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Predicate;
-
 import co.jp.nej.earth.dao.LicenseHistoryDao;
 import co.jp.nej.earth.dao.LoginControlDao;
 import co.jp.nej.earth.dao.MenuAuthorityDao;
@@ -45,11 +27,28 @@ import co.jp.nej.earth.model.entity.MgrMenuU;
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.entity.MgrUserProfile;
 import co.jp.nej.earth.model.entity.StrCal;
+import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.sql.QCtlMenu;
 import co.jp.nej.earth.model.sql.QMgrMenu;
 import co.jp.nej.earth.model.sql.QMgrProfile;
 import co.jp.nej.earth.model.sql.QMgrUserProfile;
 import co.jp.nej.earth.util.ConversionUtil;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class PreparingDataService extends BaseService {
@@ -76,7 +75,7 @@ public class PreparingDataService extends BaseService {
 
     @Autowired
     private TemplateDao templateDao;
-    
+
     @Autowired
     private LoginControlDao loginControlDao;
 
@@ -101,23 +100,23 @@ public class PreparingDataService extends BaseService {
         }
     }
 
-    public Map<TemplateKey, TemplateAccessRight> getMixAuthorityTemplate(String userId, String workspaceId)
+    public  Map<TemplateKey, AccessRight> getMixAuthorityTemplate(String userId, String workspaceId)
             throws EarthException {
-            PlatformTransactionManager transactionManager = null;
-            TransactionStatus txStatus = null;
-            Map<TemplateKey, TemplateAccessRight> accessMap = new HashMap<>();
-            try {
-                TransactionDefinition txDef = new DefaultTransactionDefinition();
-                transactionManager = ConnectionManager.getTransactionManager(workspaceId);
-                txStatus = transactionManager.getTransaction(txDef);
-                accessMap = templateAuthorityDao.getMixAuthority("admin", workspaceId);
-                transactionManager.commit(txStatus);
-            } catch (EarthException e) {
-                if (transactionManager != null) {
-                    transactionManager.rollback(txStatus);
-                }
+        PlatformTransactionManager transactionManager = null;
+        TransactionStatus txStatus = null;
+        Map<TemplateKey, AccessRight> accessMap = new HashMap<>();
+        try {
+            TransactionDefinition txDef = new DefaultTransactionDefinition();
+            transactionManager = ConnectionManager.getTransactionManager(workspaceId);
+            txStatus = transactionManager.getTransaction(txDef);
+            accessMap = templateAuthorityDao.getMixAuthority("admin", workspaceId);
+            transactionManager.commit(txStatus);
+        } catch (EarthException e) {
+            if (transactionManager != null) {
+                transactionManager.rollback(txStatus);
             }
-            return accessMap;
+        }
+        return accessMap;
     }
 
     public Map<String, MenuAccessRight> getMixAuthorityMenu(String userId) throws EarthException {
@@ -171,7 +170,7 @@ public class PreparingDataService extends BaseService {
         transactionManager.getManager().commit(transactionManager.getTxStatus());
         return ctlLogin;
     }
-    
+
     public boolean deleteListUsers(List<String> userIds) throws EarthException {
         TransactionManager transactionManager = new TransactionManager(Constant.EARTH_WORKSPACE_ID);
         boolean del = false;

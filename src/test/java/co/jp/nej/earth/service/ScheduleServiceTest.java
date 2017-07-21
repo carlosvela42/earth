@@ -49,7 +49,7 @@ public class ScheduleServiceTest extends BaseTest {
                     String.valueOf(i), ENABLE, START_TIME, END_TIME, START_TIME,
                     String.valueOf(i), String.valueOf(i),
                     String.valueOf(i), String.valueOf(i),
-                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                    DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
             mgrSchedules.add(mgrSchedule);
             scheduleService.insertOne(WORKSPACE_ID, mgrSchedule);
             scheduleIds.add(String.valueOf(NUMBER + i));
@@ -124,7 +124,7 @@ public class ScheduleServiceTest extends BaseTest {
                 HOST_NAME + RECORD + 1, String.valueOf(RECORD + 1), ENABLE,
                 START_TIME, END_TIME, START_TIME, String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
                 String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
-                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
         List<Message> messages = scheduleService.validate(WORKSPACE_ID, mgrSchedule, true);
         Assert.assertFalse(messages != null && messages.size() > 0);
         insert = scheduleService.insertOne(WORKSPACE_ID, mgrSchedule);
@@ -139,7 +139,7 @@ public class ScheduleServiceTest extends BaseTest {
                 HOST_NAME + RECORD + 1, String.valueOf(RECORD + 1), ENABLE,
                 START_TIME, END_TIME_ERROR, START_TIME, String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
                 String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
-                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
         List<Message> messages = scheduleService.validate(WORKSPACE_ID, mgrSchedule, true);
         Assert.assertTrue(messages != null && messages.size() > 0);
         LOG.info("Error : " + messages.size());
@@ -151,7 +151,7 @@ public class ScheduleServiceTest extends BaseTest {
                 HOST_NAME + RECORD + 1, String.valueOf(RECORD + 1), ENABLE,
                 START_TIME, END_TIME_ERROR, START_TIME, String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
                 String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
-                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
         List<Message> messages = scheduleService.validate(WORKSPACE_ID, mgrSchedule, true);
         Assert.assertTrue(messages != null && messages.size() > 0);
         LOG.info("Error : " + messages.size());
@@ -164,7 +164,7 @@ public class ScheduleServiceTest extends BaseTest {
                 HOST_NAME + RECORD + 1, String.valueOf(RECORD + 1), ENABLE,
                 START_TIME, END_TIME, START_TIME, String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
                 String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
-                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
         List<Message> messages = scheduleService.validate(WORKSPACE_ID, mgrSchedule, false);
         Assert.assertFalse(messages != null && messages.size() > 0);
         update = scheduleService.updateOne(WORKSPACE_ID, mgrSchedule);
@@ -178,7 +178,7 @@ public class ScheduleServiceTest extends BaseTest {
                 HOST_NAME + RECORD + 1, String.valueOf(RECORD + 1), ENABLE,
                 START_TIME, END_TIME_ERROR_FORMAT, START_TIME, String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
                 String.valueOf(RECORD + 1), String.valueOf(RECORD + 1),
-                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS_SSS));
+                DateUtil.getCurrentDate(Constant.DatePattern.DATE_FORMAT_YYYYMMDDHHMMSS999));
         List<Message> messages = scheduleService.validate(WORKSPACE_ID, mgrSchedule, false);
         Assert.assertTrue(messages != null && messages.size() > 0);
         LOG.info("Error : " + messages.size());

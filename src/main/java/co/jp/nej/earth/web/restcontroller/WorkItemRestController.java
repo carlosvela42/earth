@@ -2,7 +2,6 @@ package co.jp.nej.earth.web.restcontroller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.manager.session.EarthSessionManager;
-import co.jp.nej.earth.model.Message;
-import co.jp.nej.earth.model.form.WorkItemForm;
-import co.jp.nej.earth.model.form.WorkItemSearchForm;
-import co.jp.nej.earth.model.form.WorkItemUpdateForm;
-import co.jp.nej.earth.model.ws.RestResponse;
+import co.jp.nej.earth.model.WorkItem;
+import co.jp.nej.earth.model.constant.Constant.ErrorCode;
+import co.jp.nej.earth.model.ws.GetDocumentResponse;
+import co.jp.nej.earth.model.ws.GetLayerResponse;
+import co.jp.nej.earth.model.ws.GetWorkItemRequest;
+import co.jp.nej.earth.model.ws.GetWorkItemResponse;
+import co.jp.nej.earth.model.ws.Response;
+import co.jp.nej.earth.model.ws.SearchWorkItemRequest;
+import co.jp.nej.earth.model.ws.WorkItemUpdateRequest;
 import co.jp.nej.earth.service.WorkItemService;
-import co.jp.nej.earth.util.ValidatorUtil;
 
 @RestController
 @RequestMapping("/WS")
@@ -28,100 +30,61 @@ public class WorkItemRestController extends BaseRestController {
     @Autowired
     private WorkItemService workItemService;
 
-    @Autowired
-    private ValidatorUtil validatorUtil;
+    @RequestMapping(value = "/getWorkItem")
+    public Response getWorkItem(@Valid GetWorkItemRequest request, BindingResult result)
+            throws EarthException {
+        return (Response) getRestResponse(request, result, () -> {
+            WorkItem workItem = workItemService.getWorkItemSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItemId());
 
-    @RequestMapping(value = "/getWorkitem", method = RequestMethod.POST)
-    public RestResponse getWorkitem(@Valid @RequestBody WorkItemForm workItemForm, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-        return getRestResponse(workItemForm.getSessionId(), null, () -> {
-            try {
-                return workItemService.getWorkItem(EarthSessionManager.find(workItemForm.getSessionId()),
-                        workItemForm.getWorkspaceId(), workItemForm.getWorkItemId());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
+            if (workItem == null) {
+                return new GetLayerResponse(messageSource.get(ErrorCode.E0029, new String[] { "workItem" }));
             }
+
+            return new GetWorkItemResponse(true, workItem);
         });
 
     }
 
     @RequestMapping(value = "/updateWorkItem", method = RequestMethod.POST)
-    public RestResponse updateWorkItem(@Valid @RequestBody WorkItemUpdateForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return workItemService.updateWorkItem(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getWorkItem());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
-            }
+    public Response updateWorkItem(@Valid @RequestBody WorkItemUpdateRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return getRestResponse(request, bindingResult, () -> {
+            boolean result = workItemService.updateWorkItemSession(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), request.getWorkItem());
+            return new Response(result);
         });
     }
 
-    @RequestMapping(value = "/getWorkItemStructure", method = RequestMethod.POST)
-    public RestResponse getWorkItemStructure(@Valid @RequestBody WorkItemForm workItemForm, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-        return getRestResponse(workItemForm.getSessionId(), null, () -> {
-            try {
-                return workItemService.getWorkItemStructure(EarthSessionManager.find(workItemForm.getSessionId()),
-                        workItemForm.getWorkspaceId(), workItemForm.getWorkItemId());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
+    @RequestMapping(value = "/getWorkItemStructure")
+    public Response getWorkItemStructure(@Valid GetWorkItemRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+            WorkItem workItem = workItemService.getWorkItemStructureSession(
+                    EarthSessionManager.find(request.getSessionId()), request.getWorkspaceId(),
+                    request.getWorkItemId());
+            if (workItem == null) {
+                return new GetLayerResponse(messageSource.get(ErrorCode.E0029, new String[] { "workItem" }));
             }
+
+            return new GetWorkItemResponse(true, workItem);
         });
     }
 
-    @RequestMapping(value = "/searchWorkItems", method = RequestMethod.POST)
-    public RestResponse searchWorkItems(@Valid @RequestBody WorkItemSearchForm form, BindingResult result,
-            HttpServletRequest request) throws EarthException {
-        List<Message> messages = validatorUtil.validate(result);
-        if (messages != null && messages.size() > 0) {
-            RestResponse respone = new RestResponse();
-            respone.setResult(false);
-            respone.setData(messages);
-            return respone;
-        }
-        return getRestResponse(form.getSessionId(), null, () -> {
-            try {
-                return workItemService.searchWorkItems(EarthSessionManager.find(form.getSessionId()),
-                        form.getWorkspaceId(), form.getSearchCondition());
-            } catch (EarthException e) {
-                RestResponse respone = new RestResponse();
-                respone.setResult(false);
-                respone.setData(e.getMessage());
-                return respone;
+    @RequestMapping(value = "/searchWorkItems")
+    public Response searchWorkItems(@Valid SearchWorkItemRequest request, BindingResult bindingResult)
+            throws EarthException {
+        return (Response) getRestResponse(request, bindingResult, () -> {
+            WorkItem workItem = new WorkItem(request.getWorkItemId(), request.getTaskId(), request.getTemplateId(),
+                    request.getLastHistoryNo(), request.getLastUpdateTime());
+
+            List<WorkItem> workItems = workItemService.searchWorkItems(EarthSessionManager.find(request.getSessionId()),
+                    request.getWorkspaceId(), workItem);
+            if (workItems.size() == 0) {
+                return new GetDocumentResponse(messageSource.get(ErrorCode.E0029, new String[] { "workItem" }));
             }
+
+            return new GetWorkItemResponse(true, workItems);
         });
     }
-
 }

@@ -1,12 +1,11 @@
 package co.jp.nej.earth.model.entity;
 
-import java.io.Serializable;
-
+import co.jp.nej.earth.model.BaseModel;
+import co.jp.nej.earth.model.sql.QMgrIncrement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import co.jp.nej.earth.model.BaseModel;
-import co.jp.nej.earth.model.sql.QMgrIncrement;
+import java.io.Serializable;
 
 public class MgrIncrement extends BaseModel<MgrIncrement> implements Serializable {
 
@@ -17,12 +16,11 @@ public class MgrIncrement extends BaseModel<MgrIncrement> implements Serializabl
 
     private static final Logger LOG = LoggerFactory.getLogger(MgrIncrement.class);
 
-    private Integer processId;
-    private String templateId;
-    private Integer workspaceId;
-    private Integer dataDirectoryId;
-    private Integer siteId;
-    private Integer scheduleId;
+    //private Integer id;
+    private String  incrementType;
+    private int incrementData;
+    private String incrementDateTime;
+    private String sessionId;
 
     public MgrIncrement() {
 
@@ -30,51 +28,47 @@ public class MgrIncrement extends BaseModel<MgrIncrement> implements Serializabl
         this.setqObj(QMgrIncrement.newInstance());
     }
 
-    public Integer getProcessId() {
-        return processId;
+
+    public String getIncrementType() {
+        return incrementType;
     }
 
-    public void setProcessId(Integer processId) {
-        this.processId = processId;
+    public void setIncrementType(String incrementType) {
+        this.incrementType = incrementType;
     }
 
-    public String getTemplateId() {
-        return templateId;
+    public int getIncrementData() {
+        return incrementData;
     }
 
-    public void setTemplateId(String templateId) {
-        this.templateId = templateId;
+    public void setIncrementData(int incrementData) {
+        this.incrementData = incrementData;
     }
 
-    public Integer getWorkspaceId() {
-        return workspaceId;
+    public String getIncrementDateTime() {
+        return incrementDateTime;
     }
 
-    public void setWorkspaceId(Integer workspaceId) {
-        this.workspaceId = workspaceId;
+    public void setIncrementDatetime(String incrementDateTime) {
+        this.incrementDateTime = incrementDateTime;
     }
 
-    public Integer getDataDirectoryId() {
-        return dataDirectoryId;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public void setDataDirectoryId(Integer dataDirectoryId) {
-        this.dataDirectoryId = dataDirectoryId;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
-    public Integer getSiteId() {
-        return siteId;
+
+    /*public Integer getId() {
+        return id;
     }
 
-    public void setSiteId(Integer siteId) {
-        this.siteId = siteId;
-    }
 
-    public Integer getScheduleId() {
-        return scheduleId;
-    }
+    public void setId(Integer id) {
+        this.id = id;
+    }*/
 
-    public void setScheduleId(Integer scheduleId) {
-        this.scheduleId = scheduleId;
-    }
 }

@@ -1,9 +1,22 @@
 package co.jp.nej.earth.web.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.ProfileAccessRight;
 import co.jp.nej.earth.model.TemplateKey;
 import co.jp.nej.earth.model.UserAccessRight;
+import co.jp.nej.earth.model.constant.Constant;
 import co.jp.nej.earth.model.entity.MgrTemplate;
 import co.jp.nej.earth.model.enums.AccessRight;
 import co.jp.nej.earth.model.form.TemplateAuthorityForm;
@@ -12,16 +25,7 @@ import co.jp.nej.earth.service.TemplateService;
 import co.jp.nej.earth.service.UserService;
 import co.jp.nej.earth.service.WorkspaceService;
 import co.jp.nej.earth.util.SessionUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import co.jp.nej.earth.web.form.ClientSearchForm;
 
 /**
  * @author p-tvo-thuynd
@@ -45,33 +49,25 @@ public class TemplateAuthorityController extends BaseController {
     private ProfileService profileService;
 
     /**
-     * @author p-tvo-thuynd this method is to show list of workspace in openning
-     *         screen of Template list
-     * @param model
-     *            to hold model attribute
-     * @return path of screen
-     */
-    /*
-     * @RequestMapping(value = "/initTemplateListScreen", method =
-     * RequestMethod.GET) public String showListWorkspace(Model model) { try {
-     * List<MgrWorkspace> mgrWorkspaces = templateService.getAllWorkspace();
-     * model.addAttribute("mgrWorkspaces", mgrWorkspaces); } catch
-     * (EarthException e) { String message =
-     * "Error: Can not get workspace list"; model.addAttribute("message",
-     * message); } return "templateAccessRight/showList"; }
-     */
-
-    /**
      * @param model to hold model attribute
      * @return path of screen
      * @throws EarthException
      * @author p-tvo-thuynd this method is to get list of template based on
      * workspace id
      */
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String getListTemplate(Model model, HttpServletRequest request) throws EarthException {
         SessionUtil.loadWorkspaces(workspaceService, model, request);
         String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
+        HttpSession session = request.getSession();
+        SessionUtil.clearAllOtherSearchCondition(session, Constant.ScreenKey.AUTHORITY_TEMPLATE);
+        ClientSearchForm searchForm = (ClientSearchForm) SessionUtil.getSearchCondtionValue(session,
+            Constant.ScreenKey.AUTHORITY_TEMPLATE);
+
+        if(searchForm == null) {
+            searchForm = new ClientSearchForm();
+        }
+        model.addAttribute("searchForm", searchForm);
         model.addAttribute("mgrTemplates", templateService.getTemplateListInfo(workspaceId));
         return "templateAccessRight/showList";
     }
@@ -81,38 +77,21 @@ public class TemplateAuthorityController extends BaseController {
      * @param templateId id of choosen template
      * @return path of screen
      * @throws EarthException
-     * @author p-tvo-thuynd this method is to show detail infor of an template
+     * @author p-tvo-thuynd this method is to show detail info of an template
      */
-    @RequestMapping(value = "/showDetail", method = RequestMethod.GET)
-    public String showDetail(Model model, String templateId, HttpServletRequest request) throws EarthException {
-        /*
-         * TemplateKey templateKey = new TemplateKey();
-         * templateKey.setTemplateId(templateId);
-         * templateKey.setWorkspaceId(workspaceId); MgrTemplate mgrTemplate =
-         * templateService.getById(templateKey); List<UserAccessRight>
-         * userAccessRights = templateService.getUserAuthority(templateKey);
-         * List<ProfileAccessRight> profileAccessRights =
-         * templateService.getProfileAuthority(templateKey); List<MgrUser>
-         * mgrUsers = templateService.getAllUser(); List<MgrProfile> mgrProfiles
-         * = templateService.getAllProfile(); List<AccessRight> accessRights =
-         * new ArrayList<AccessRight>(Arrays.asList(AccessRight.values()));
-         * model.addAttribute("userAccessRights", userAccessRights);
-         * model.addAttribute("profileAccessRights", profileAccessRights);
-         * model.addAttribute("mgrTemplate", mgrTemplate);
-         * model.addAttribute("mgrUsers", mgrUsers);
-         * model.addAttribute("mgrProfiles", mgrProfiles);
-         * model.addAttribute("accessRights", accessRights);
-         * model.addAttribute("templateId", templateId);
-         * model.addAttribute("workspaceId", workspaceId);
-         */
+    @RequestMapping(value = "/showDetail", method = {RequestMethod.GET, RequestMethod.POST})
+    public String showDetail(Model model, String templateId, HttpServletRequest request,
+            ClientSearchForm searchForm) throws EarthException {
         SessionUtil.loadWorkspaces(workspaceService, model, request);
+        SessionUtil.setSearchCondtionValue(request.getSession(), Constant.ScreenKey.AUTHORITY_TEMPLATE, searchForm);
         String workspaceId = SessionUtil.getSearchConditionWorkspaceId(request.getSession());
         model.addAttribute("templateId", templateId);
 
         model.addAttribute("mgrUsers", userService.getAll());
         model.addAttribute("mgrProfiles", profileService.getAll());
 
-        List<AccessRight> accessRights = new ArrayList<AccessRight>(Arrays.asList(AccessRight.values()));
+        // Get access right info from Database.
+        List<AccessRight> accessRights = templateService.getAccessRightsFromDb();
         model.addAttribute("accessRights", accessRights);
 
         TemplateKey templateKey = new TemplateKey();
@@ -170,6 +149,11 @@ public class TemplateAuthorityController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return redirectToList(URL);
+    }
+
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    public String cancel() {
         return redirectToList(URL);
     }
 }

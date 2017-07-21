@@ -5,5 +5,5 @@ import co.jp.nej.earth.model.constant.Constant.EarthId;
 
 public interface EAutoIncrease {
 
-    int getAutoId(EarthId earthId) throws EarthException;
+    int getAutoId(EarthId type, String sessionID) throws EarthException;
 }

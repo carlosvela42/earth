@@ -1,14 +1,5 @@
 package co.jp.nej.earth.service;
 
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import co.jp.nej.earth.BaseTest;
 import co.jp.nej.earth.exception.EarthException;
 import co.jp.nej.earth.model.Message;
@@ -16,6 +7,13 @@ import co.jp.nej.earth.model.UserInfo;
 import co.jp.nej.earth.model.constant.Constant.MessageCodeLogin;
 import co.jp.nej.earth.model.constant.Constant.Session;
 import co.jp.nej.earth.util.LoginUtil;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 public class UserServiceTest1 extends BaseTest {
     @Autowired

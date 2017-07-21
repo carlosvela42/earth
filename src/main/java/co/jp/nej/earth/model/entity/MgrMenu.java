@@ -1,14 +1,12 @@
-
 package co.jp.nej.earth.model.entity;
-
-import java.io.Serializable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import co.jp.nej.earth.model.BaseModel;
 import co.jp.nej.earth.model.MenuLink;
 import co.jp.nej.earth.model.sql.QMgrMenu;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
 
 public class MgrMenu extends BaseModel<MgrMenu> implements Serializable {
 
@@ -29,11 +27,11 @@ public class MgrMenu extends BaseModel<MgrMenu> implements Serializable {
     }
 
     public MgrMenu(String functionId, String functionName, String functionCategoryId, String functionCategoryName,
-            int functionSortNo, String functionInformation) {
+                   int functionSortNo, String functionInformation) {
         this();
         LOG.debug(
                 "Call to (functionId, functionName, functionCategoryId, functionCategoryName, functionSortNo, "
-                + "functionInformation, menuInformation) constructor");
+                        + "functionInformation, menuInformation) constructor");
         this.functionId = functionId;
         this.functionName = functionName;
         this.functionCategoryId = functionCategoryId;
